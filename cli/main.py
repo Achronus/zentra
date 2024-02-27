@@ -2,6 +2,8 @@ import typer
 from typing_extensions import Annotated
 from rich.console import Console
 
+from .tasks.setup import Setup
+
 
 app = typer.Typer()
 
@@ -11,7 +13,8 @@ console = Console()
 @app.command("init")
 def init_app() -> None:
     """Perform basic configuration to setup your app to work with Zentra."""
-    ...
+    setup = Setup()
+    setup.init_app()
 
 
 @app.command("generate")

@@ -12,4 +12,4 @@ def dir_name() -> str:
 
 @pytest.fixture
 def zentra_path(tmp_path, dir_name) -> str:
-    return os.path.join(tmp_path, dir_name)
+    return os.path.join(tmp_path, dir_name, "models")

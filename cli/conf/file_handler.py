@@ -18,3 +18,7 @@ class FileHandler:
             return True
 
         return False
+
+    def get_python_files(self) -> list[str]:
+        """Retrieves a list of python files in the `self.folder_path`, if any exist."""
+        return [file for file in os.listdir(self.folder_path) if file.endswith(".py")]

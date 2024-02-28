@@ -1,5 +1,5 @@
 from cli.utils.printables import local_path
-from cli.conf.constants import ZENTRA_MODELS_PATH
+from cli.conf.constants import ZentaFilepaths
 from cli.conf.handler.file import FileHandler
 from .base import BaseController
 
@@ -8,7 +8,7 @@ class FolderDoesNotExistController(BaseController):
     """A controller for handling tasks when the Zentra path does not exist."""
 
     def __init__(self) -> None:
-        self.folder_path = ZENTRA_MODELS_PATH
+        self.folder_path = ZentaFilepaths.MODELS
         self.fh = FileHandler(self.folder_path)
 
         self.highlighted_path = (

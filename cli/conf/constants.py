@@ -18,4 +18,8 @@ PARTY = ":party_popper:"
 FOLDER_NAME = "zentra"
 DOCS_URL = "#"
 
-ZENTRA_MODELS_PATH = os.path.join(os.getcwd(), FOLDER_NAME, "models")
+
+class ZentaFilepaths:
+    ROOT = os.path.join(os.getcwd(), FOLDER_NAME)
+    MODELS = os.path.join(ROOT, "models")
+    GENERATED = os.path.join(ROOT, "generated")

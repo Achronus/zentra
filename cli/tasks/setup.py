@@ -3,7 +3,7 @@ import typer
 from cli.tasks.controllers import run_tasks
 from cli.utils.printables import path_exists_table, configuration_complete_panel
 from .controllers.path import FolderDoesNotExistController
-from cli.conf.constants import ZENTRA_MODELS_PATH, StatusCode, PARTY, DOCS_URL
+from cli.conf.constants import ZentaFilepaths, StatusCode, PARTY, DOCS_URL
 from cli.conf.handler.file import FileHandler
 
 from rich.console import Console
@@ -21,7 +21,7 @@ class Setup:
     """A class for handling the `zentra init` command."""
 
     def __init__(self) -> None:
-        self.folder_path = ZENTRA_MODELS_PATH
+        self.folder_path = ZentaFilepaths.MODELS
         self.fh = FileHandler(self.folder_path)
 
         self.path_exists = self.fh.check_folder_exists()

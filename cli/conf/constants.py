@@ -16,4 +16,6 @@ PARTY = ":party_popper:"
 
 # Filepaths
 FOLDER_NAME = "zentra"
+DOCS_URL = "#"
+
 ZENTRA_MODELS_PATH = os.path.join(os.getcwd(), FOLDER_NAME, "models")

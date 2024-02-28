@@ -2,6 +2,8 @@ import os
 
 
 class FileHandler:
+    """A class dedicated to managing files."""
+
     def __init__(self, folder_path: str) -> None:
         self.folder_path = folder_path
 

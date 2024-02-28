@@ -27,3 +27,26 @@ class ZodJsonSchema(GenerateJsonSchema):
         """
         words = name.split("_")
         return words[0] + "".join(word.capitalize() for word in words[1:])
+
+
+# ---------------
+# Example Usage
+# ---------------
+# import json
+# from pydantic import BaseModel
+
+# class FormSchema(BaseModel):
+#     name: str
+#     company_email: str
+#     company_phone: str
+#     white_label: bool
+#     address: str
+#     city: str
+#     zip_code: str
+#     state: str
+#     country: str
+#     agency_logo: str
+
+# schema = FormSchema.model_json_schema(schema_generator=ZodJsonSchema)
+# json_schema = json.dumps(schema, indent=2)
+# print(json_schema)

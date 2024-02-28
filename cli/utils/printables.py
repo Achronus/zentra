@@ -17,11 +17,21 @@ def path_exists_table(zentra_path: str, folder_exists: str) -> Table:
     return table
 
 
-def complete_panel() -> Panel:
-    """Creates a printable complete panel."""
+def configuration_complete_panel(folder_path: str, link: str) -> Panel:
+    """Creates a printable complete panel related to configuration success."""
+    panel = Panel.fit(
+        f"\nCreate your models in [bright_cyan]{local_path(folder_path)}[/bright_cyan]!\n\nNeed [bright_cyan]help[/bright_cyan] getting started? Check the [bright_cyan][link={link}]docs[/link][/bright_cyan]!\n",
+        title=f"{PARTY} Application configured! {PARTY}",
+        border_style="bright_green",
+        style="bright_green",
+    )
+    return panel
+
+
+def component_complete_panel() -> Panel:
+    """Creates a printable complete panel related to component creation."""
     panel = Panel.fit(
         f"\n{PARTY} Components created successfully! {PARTY}",
-        height=5,
         border_style="bright_green",
         style="bright_green",
     )

@@ -2,23 +2,12 @@ from pydantic import BaseModel
 
 
 class Component(BaseModel):
-    """A Zentra model for creating a single React component."""
-
-    ...
-
-
-class Field(BaseModel):
-    """A Zentra model for shadcn/ui form fields."""
-
-
-class Form(BaseModel):
-    """A Zentra model for shadcn/ui forms."""
+    """A Zentra model for all React components."""
 
     name: str
-    fields: list[Field]
 
 
 class Page(BaseModel):
-    """A Zentra model for multiple React components."""
+    """A Zentra model for a single webpage of React components."""
 
     components: list[Component]

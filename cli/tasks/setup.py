@@ -4,7 +4,7 @@ from cli.tasks.controllers import run_tasks
 from cli.utils.printables import path_exists_table, configuration_complete_panel
 from .controllers.path import FolderDoesNotExistController
 from cli.conf.constants import ZENTRA_MODELS_PATH, StatusCode, PARTY, DOCS_URL
-from cli.conf.file_handler import FileHandler
+from cli.conf.handler.file import FileHandler
 
 from rich.console import Console
 

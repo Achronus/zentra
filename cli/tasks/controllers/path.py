@@ -1,6 +1,6 @@
 from cli.utils.printables import local_path
 from cli.conf.constants import ZENTRA_MODELS_PATH
-from cli.conf.file_handler import FileHandler
+from cli.conf.handler.file import FileHandler
 from .base import BaseController
 
 

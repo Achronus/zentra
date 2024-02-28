@@ -1,7 +1,7 @@
 import os
 import pytest
 
-from cli.conf.file_handler import FileHandler
+from cli.conf.handler.file import FileHandler
 
 
 class TestFileHandler:

@@ -1,40 +1,40 @@
-import os
 import typer
 
-from ..conf.constants import PASS, StatusCode
-from ..conf.file_handler import FileHandler
+from cli.tasks.controllers import run_tasks
+from cli.utils.printables import path_exists_table
+from .controllers.path import FolderDoesNotExistController
+from cli.conf.constants import ZENTRA_MODELS_PATH, StatusCode, PARTY
+from cli.conf.file_handler import FileHandler
 
-from rich import print
+from rich.console import Console
+
+
+console = Console()
+root_path_msg = "Configuring [green]zentra[/green] project..."
+
+PATH_NOT_EXIST_TASKS = [
+    (FolderDoesNotExistController, root_path_msg),
+]
 
 
 class Setup:
-    def __init__(self) -> None:
-        self.folder_name = "zentra"
-        self.folder_path = os.path.join(os.getcwd(), self.folder_name, "models")
+    """A class for handling the `zentra init` command."""
 
+    def __init__(self) -> None:
+        self.folder_path = ZENTRA_MODELS_PATH
         self.fh = FileHandler(self.folder_path)
 
-        self.zentra_models_exists = self.fh.check_folder_exists()
-        self.zentra_models_empty = self.fh.check_folder_empty()
-
-    def __check_for_model(self) -> bool:
-        """Helper function to check for component models in the `zentra` folder."""
-        pass
-
-    def create_demo_component(self) -> None:
-        """Creates an example Zentra component."""
-        pass
+        self.path_exists = self.fh.check_folder_exists()
 
     def init_app(self) -> None:
-        """Performs configuration to initialise application with `zentra`."""
-        if self.zentra_models_exists:
-            if self.zentra_models_empty:
-                self.create_demo_component()
-            else:
-                if self.fh.check_component_model_exists():
-                    print(
-                        f"{PASS} Application already configured with components! Use [green]zentra generate[/green] to create them!"
-                    )
-                    typer.Exit(code=StatusCode.CONFIGURED)
+        """Performs configuration to initialise application with Zentra."""
+        console.print(path_exists_table(self.folder_path, self.path_exists))
+
+        if self.path_exists:
+            console.print(
+                f"\n{PARTY} Application already configured with components! Use [green]zentra generate[/green] to create them! {PARTY}\n"
+            )
+            typer.Exit(code=StatusCode.CONFIGURED)
+
         else:
-            os.mkdir(self.folder_path)
+            run_tasks(PATH_NOT_EXIST_TASKS)

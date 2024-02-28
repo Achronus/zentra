@@ -1,9 +1,9 @@
 import typer
 
 from cli.tasks.controllers import run_tasks
-from cli.utils.printables import path_exists_table
+from cli.utils.printables import path_exists_table, configuration_complete_panel
 from .controllers.path import FolderDoesNotExistController
-from cli.conf.constants import ZENTRA_MODELS_PATH, StatusCode, PARTY
+from cli.conf.constants import ZENTRA_MODELS_PATH, StatusCode, PARTY, DOCS_URL
 from cli.conf.file_handler import FileHandler
 
 from rich.console import Console
@@ -38,3 +38,7 @@ class Setup:
 
         else:
             run_tasks(PATH_NOT_EXIST_TASKS)
+
+            console.print()
+            console.print(configuration_complete_panel(self.folder_path, link=DOCS_URL))
+            console.print()

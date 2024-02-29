@@ -18,6 +18,6 @@ class Form(Component):
 
 
 class FileUpload(Component):
-    """A Zentra model for `uploadthings` FileUpload fields."""
+    """A Zentra model for the `uploadthing` FileUpload fields."""
 
     ...

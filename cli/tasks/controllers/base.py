@@ -1,12 +1,21 @@
-from ...conf.constants import PASS, FAIL
+import logging
+from typing import TypeVar
+
+from cli.conf.constants import PASS, FAIL
 
 from rich.progress import Progress
+
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("Task Status Logger")
+
+ControllerMethod = TypeVar("ControllerMethod", bound="BaseController")
 
 
 class BaseController:
     """A base controller class for all CLI tasks.
 
-    :param tasks: (list[tuple]) - a list of tuples in the format of (task, desc), where `task` is a class method and `desc` is a descriptive string highlighting what the task does. For example:
+    :param tasks: (list[tuple[ControllerMethod, str]]) - a list of tuples in the format of (task, desc), where `task` is a class method and `desc` is a descriptive string highlighting what the task does. For example:
     ```python
     sub_tasks = [
         (self.create, "Building venv"),
@@ -15,7 +24,7 @@ class BaseController:
     ```
     """
 
-    def __init__(self, tasks: list[tuple]) -> None:
+    def __init__(self, tasks: list[tuple[ControllerMethod, str]]) -> None:
         self.tasks = tasks
 
     @staticmethod

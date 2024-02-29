@@ -2,7 +2,12 @@ from pydantic import BaseModel
 
 
 class Component(BaseModel):
-    """A Zentra model for all React components."""
+    """
+    A Zentra model for all React components.
+
+    Parameters:
+    - name (str) - the name of the component.
+    """
 
     name: str
 

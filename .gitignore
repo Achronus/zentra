@@ -55,3 +55,7 @@ venv.bak/
 
 # mkdocs documentation
 /site
+
+
+# Debug logs
+logs/

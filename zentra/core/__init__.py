@@ -11,3 +11,9 @@ class Page(BaseModel):
     """A Zentra model for a single webpage of React components."""
 
     components: list[Component]
+
+
+class Icon(BaseModel):
+    """A Zentra model for [Radix Ui Icons](https://www.radix-ui.com/icons)."""
+
+    name: str

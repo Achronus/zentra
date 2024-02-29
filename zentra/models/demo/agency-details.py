@@ -4,13 +4,7 @@ from zentra.ui.control import Input
 from zentra.ui.presentation import Card
 
 
-class AgencyDetails(Page):
-    """Agency details page."""
-
-    ...
-
-
-AgencyDetails(
+agency_details = Page(
     components=[
         Card(
             title="Agency Information",

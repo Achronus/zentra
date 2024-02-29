@@ -1,13 +1,26 @@
-import logging
 from typing import TypeVar
+from functools import wraps
 
 from cli.conf.constants import PASS, FAIL
+from cli.conf.logger import task_status_logger
 
 from rich.progress import Progress
 
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("Task Status Logger")
+def status(func):
+    """A wrapper around controller functions to define the function completion status."""
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            func(*args, **kwargs)
+            return True
+        except Exception as e:
+            task_status_logger.error(f"{type(e).__name__}: {e}")
+            return False
+
+    return wrapper
+
 
 ControllerMethod = TypeVar("ControllerMethod", bound="BaseController")
 

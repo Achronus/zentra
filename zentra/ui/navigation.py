@@ -2,20 +2,20 @@ from zentra.core import Component
 
 
 class Menubar(Component):
-    """A Zentra model for the `shadcn/ui` Menubar component."""
+    """A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Menubar component."""
 
 
 class NavMenu(Component):
-    """A Zentra model for the `shadcn/ui` NavMenu component."""
+    """A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) NavMenu component."""
 
 
 class DropdownMenu(Component):
-    """A Zentra model for the `shadcn/ui` DropdownMenu component."""
+    """A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) DropdownMenu component."""
 
 
 class ContextMenu(Component):
-    """A Zentra model for the `shadcn/ui` ContextMenu component."""
+    """A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) ContextMenu component."""
 
 
 class Command(Component):
-    """A Zentra model for the `shadcn/ui` Command component."""
+    """A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Command component."""

@@ -2,6 +2,7 @@ from enum import Enum
 
 
 class ButtonVariant(str, Enum):
+    none = "none"
     primary = "primary"
     secondary = "secondary"
     destructive = "destructive"

@@ -7,10 +7,11 @@ class Button(Component):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Button component.
 
     Parameters:
-    - text (str, optional) - the text displayed inside the button.
-    - url (str, optional) - the URL the button links to.
-    - variant (str, optional) - the style of the button. Valid options: `['primary', 'secondary', 'destructive', 'outline', 'ghost', 'link']`.
-    - icon (Icon, optional) - the [Radix UI Icon](https://www.radix-ui.com/icons) to add inside the button.
+    - name (str) - the name of the component.
+    - text (str, optional) - the text displayed inside the button. Hidden by default.
+    - url (str, optional) - the URL the button links to. Hidden by default.
+    - variant (str, optional) - the style of the button. Valid options: `['none', 'primary', 'secondary', 'destructive', 'outline', 'ghost', 'link']`. `none` by default.
+    - icon (Icon, optional) - the [Radix UI Icon](https://www.radix-ui.com/icons) to add inside the button. Hidden by default.
     - icon_position (str, optional) - the position of the icon inside the button. When set to `start`, icon appears before the text. When `end`, it appears after the text. `start` by default. Valid options: `['start', 'end']`.
     - icon_only (bool, optional) - converts the button to an icon only button. Ignores text parameter. `False` by default.
     - disabled (bool, optional) - adds the disabled property, preventing it from being clicked. `False` by default.
@@ -18,7 +19,7 @@ class Button(Component):
 
     text: str = None
     url: str = None
-    variant: ButtonVariant = None
+    variant: ButtonVariant = "none"
     icon: Icon = None
     icon_position: ButtonIconPosition = "start"
     icon_only: bool = False

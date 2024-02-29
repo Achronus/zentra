@@ -1,4 +1,5 @@
 from zentra.core import Component, Icon
+from zentra.core.enums.ui import ButtonVariant, ButtonIconPosition
 
 
 class Button(Component):
@@ -17,9 +18,9 @@ class Button(Component):
 
     text: str = None
     url: str = None
-    variant: str = None
+    variant: ButtonVariant = None
     icon: Icon = None
-    icon_position: str = "start"
+    icon_position: ButtonIconPosition = "start"
     icon_only: bool = False
     disabled: bool = False
 

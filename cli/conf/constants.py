@@ -38,8 +38,8 @@ class ZentraUIFilepaths:
     ROOT = os.path.join(ZentraGeneratedFilepaths.ZENTRA, "ui")
     BASE = os.path.join(ROOT, "base")  # ui/base
 
-    CONTROL = os.path.join(BASE, "control")  # ui/control
-    MODAL = os.path.join(BASE, "modal")  # ui/modal
-    NAVIGATION = os.path.join(BASE, "navigation")  # ui/navigation
-    NOTIFICATION = os.path.join(BASE, "notification")  # ui/notification
-    PRESENTATION = os.path.join(BASE, "presentation")  # ui/presentation
+    CONTROL = os.path.join(ROOT, "control")  # ui/control
+    MODAL = os.path.join(ROOT, "modal")  # ui/modal
+    NAVIGATION = os.path.join(ROOT, "navigation")  # ui/navigation
+    NOTIFICATION = os.path.join(ROOT, "notification")  # ui/notification
+    PRESENTATION = os.path.join(ROOT, "presentation")  # ui/presentation

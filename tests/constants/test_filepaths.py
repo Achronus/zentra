@@ -50,21 +50,21 @@ class TestZentraUIFilepaths(unittest.TestCase):
         self.assertEqual(ZentraUIFilepaths.BASE, expected_path)
 
     def test_control_path(self):
-        expected_path = os.path.join(ZentraUIFilepaths.BASE, "control")
+        expected_path = os.path.join(ZentraUIFilepaths.ROOT, "control")
         self.assertEqual(ZentraUIFilepaths.CONTROL, expected_path)
 
     def test_modal_path(self):
-        expected_path = os.path.join(ZentraUIFilepaths.BASE, "modal")
+        expected_path = os.path.join(ZentraUIFilepaths.ROOT, "modal")
         self.assertEqual(ZentraUIFilepaths.MODAL, expected_path)
 
     def test_navigation_path(self):
-        expected_path = os.path.join(ZentraUIFilepaths.BASE, "navigation")
+        expected_path = os.path.join(ZentraUIFilepaths.ROOT, "navigation")
         self.assertEqual(ZentraUIFilepaths.NAVIGATION, expected_path)
 
     def test_notification_path(self):
-        expected_path = os.path.join(ZentraUIFilepaths.BASE, "notification")
+        expected_path = os.path.join(ZentraUIFilepaths.ROOT, "notification")
         self.assertEqual(ZentraUIFilepaths.NOTIFICATION, expected_path)
 
     def test_presentation_path(self):
-        expected_path = os.path.join(ZentraUIFilepaths.BASE, "presentation")
+        expected_path = os.path.join(ZentraUIFilepaths.ROOT, "presentation")
         self.assertEqual(ZentraUIFilepaths.PRESENTATION, expected_path)

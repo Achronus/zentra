@@ -18,3 +18,12 @@ class FileHandler:
             return True
 
         return False
+
+    def get_filenames_in_subdir(self, name: str) -> list[str]:
+        """Retrieves a list of all filenames in a subdirectory of the `self.folder_name`. Ignores folder subdirectories."""
+        filenames = []
+        for root, dirs, files in os.walk(os.path.join(self.folder_path, name)):
+            for file in files:
+                if file.endswith("py"):
+                    filenames.append(os.path.join(root, file))
+        return filenames

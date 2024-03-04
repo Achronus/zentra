@@ -29,17 +29,17 @@ class ZentaFilepaths:
 class ZentraGeneratedFilepaths:
     # (cwd)/zentra/generated
     ROOT = ZentaFilepaths.GENERATED
-    COMPONENTS = os.path.join(ROOT, "components")  # ../components
-    ZENTRA = os.path.join(COMPONENTS, "zentra")  # ../zentra
+    COMPONENTS = os.path.join(ROOT, "components")  # generated/components
+    ZENTRA = os.path.join(COMPONENTS, "zentra")  # generated/zentra
 
 
 class ZentraUIFilepaths:
     # (cwd)/zentra/generated/components/zentra/ui
     ROOT = os.path.join(ZentraGeneratedFilepaths.ZENTRA, "ui")
-    BASE = os.path.join(ROOT, "base")  # ../base
+    BASE = os.path.join(ROOT, "base")  # ui/base
 
-    CONTROL = os.path.join(BASE, "control")  # ../control
-    MODAL = os.path.join(BASE, "modal")  # ../modal
-    NAVIGATION = os.path.join(BASE, "navigation")  # ../navigation
-    NOTIFICATION = os.path.join(BASE, "notification")  # ../notification
-    PRESENTATION = os.path.join(BASE, "presentation")  # ../presentation
+    CONTROL = os.path.join(BASE, "control")  # ui/control
+    MODAL = os.path.join(BASE, "modal")  # ui/modal
+    NAVIGATION = os.path.join(BASE, "navigation")  # ui/navigation
+    NOTIFICATION = os.path.join(BASE, "notification")  # ui/notification
+    PRESENTATION = os.path.join(BASE, "presentation")  # ui/presentation

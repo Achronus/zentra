@@ -3,6 +3,7 @@ from typing_extensions import Annotated
 from rich.console import Console
 
 from .tasks.setup import Setup
+from .tasks.generate import Generate
 
 
 app = typer.Typer()
@@ -27,11 +28,13 @@ def generate_components(
         ),
     ] = "all",
 ) -> None:
-    """Generates all React components based on the models stored in the 'zentra' folder. Optionally, takes a single 'filename' as argument to only generate certain components."""
-    if filename:
-        ...
+    """Generates all React components based on the models stored in the 'zentra/models' folder. Optionally, supply a single 'filename' as argument to only generate certain components."""
+    generate = Generate()
+
+    if filename == "all":
+        generate.components()
     else:
-        ...
+        pass
 
 
 @app.callback()

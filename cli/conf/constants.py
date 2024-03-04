@@ -6,6 +6,7 @@ class StatusCode(Enum):
     SUCCESS = 0
     FAIL = 1
     CONFIGURED = 2
+    NO_COMPONENTS = 3
 
 
 # Custom print emoji's

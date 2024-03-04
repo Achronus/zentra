@@ -1,14 +1,28 @@
+import os
 import typer
-from typing_extensions import Annotated
-from rich.console import Console
 
+from cli.conf.constants import FAIL, StatusCode
 from .tasks.setup import Setup
 from .tasks.generate import Generate
+
+from typing_extensions import Annotated
+from rich.console import Console
 
 
 app = typer.Typer()
 
 console = Console()
+
+
+def check_in_correct_folder() -> bool:
+    """Checks if the user is in the correct folder before using the tool."""
+    current_directory = os.getcwd()
+    zentra_folder_path = os.path.join(current_directory, "zentra")
+
+    if os.path.exists(zentra_folder_path) and os.path.isdir(zentra_folder_path):
+        return True
+
+    return False
 
 
 @app.command("init")
@@ -29,6 +43,12 @@ def generate_components(
     ] = "all",
 ) -> None:
     """Generates all React components based on the models stored in the 'zentra/models' folder. Optionally, supply a single 'filename' as argument to only generate certain components."""
+    if not check_in_correct_folder():
+        print(
+            f"\n{FAIL} The [green]zentra[/green] folder is missing! Are you in the correct directory and have you configured your application with Zentra using [green]zentra init[/green]? {FAIL}\n"
+        )
+        typer.Exit(StatusCode.FAIL)
+
     generate = Generate()
 
     if filename == "all":

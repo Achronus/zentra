@@ -34,7 +34,7 @@ class ZentraGeneratedFilepaths:
     # (cwd)/zentra/generated
     ROOT = ZentaFilepaths.GENERATED
     COMPONENTS = os.path.join(ROOT, "components")  # generated/components
-    ZENTRA = os.path.join(COMPONENTS, "zentra")  # generated/zentra
+    ZENTRA = os.path.join(COMPONENTS, "zentra")  # generated/components/zentra
 
 
 class LocalCoreComponentFilepaths:

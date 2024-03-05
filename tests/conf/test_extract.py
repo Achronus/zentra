@@ -21,6 +21,8 @@ class TestGetFilenamesInSubdir:
         result_filenames = get_filenames_in_subdir(
             os.path.join(zentra_path, subdir_name)
         )
+
+        dummy_files = [os.path.basename(file) for file in dummy_files]
         assert result_filenames == dummy_files, "Error retrieving files."
 
     def test_fail(self, zentra_path):

@@ -1,7 +1,7 @@
+from .base import BaseController, status
+from cli.conf.create import make_path_dirs
 from cli.utils.printables import local_path
 from cli.conf.constants import ZentaFilepaths
-from cli.conf.handler.file import FileHandler
-from .base import BaseController, status
 
 
 class FolderDoesNotExistController(BaseController):
@@ -9,7 +9,6 @@ class FolderDoesNotExistController(BaseController):
 
     def __init__(self) -> None:
         self.folder_path = ZentaFilepaths.MODELS
-        self.fh = FileHandler(self.folder_path)
 
         self.highlighted_path = (
             f"[bright_cyan]{local_path(self.folder_path)}[/bright_cyan]"
@@ -28,7 +27,7 @@ class FolderDoesNotExistController(BaseController):
     @status
     def make_path(self) -> None:
         """Create the folder path."""
-        self.fh.make_path_dirs()
+        make_path_dirs(self.folder_path)
 
     @status
     def create_demo_component(self) -> None:

@@ -1,7 +1,7 @@
 import re
 
 
-def name_to_camel_case(name: str) -> str:
+def name_from_camel_case(name: str) -> str:
     """
     Converts a name from camel case to a lowercase dashed format.
 

@@ -21,12 +21,16 @@ DOCS_URL = "#"
 
 
 class ZentaFilepaths:
+    """A storage container for the core filepaths in the `zentra` folder."""
+
     ROOT = os.path.join(os.getcwd(), FOLDER_NAME)  # (cwd)/zentra
     MODELS = os.path.join(ROOT, "models")  # (cwd)/zentra/models
     GENERATED = os.path.join(ROOT, "generated")  # (cwd)/zentra/generated
 
 
 class ZentraGeneratedFilepaths:
+    """A storage container for the master filepaths in the `zentra/generated` folder."""
+
     # (cwd)/zentra/generated
     ROOT = ZentaFilepaths.GENERATED
     COMPONENTS = os.path.join(ROOT, "components")  # generated/components
@@ -34,6 +38,8 @@ class ZentraGeneratedFilepaths:
 
 
 class ZentraUIFilepaths:
+    """A storage container for filepaths in the `generated/components/zentra/ui` folder."""
+
     # (cwd)/zentra/generated/components/zentra/ui
     ROOT = os.path.join(ZentraGeneratedFilepaths.ZENTRA, "ui")
     BASE = os.path.join(ROOT, "base")  # ui/base

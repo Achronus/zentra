@@ -6,7 +6,18 @@ class Alert(Component):
 
 
 class AlertDialog(Component):
-    """A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) AlertDialog component."""
+    """
+    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) AlertDialog component.
+
+    Parameters:
+    - name (str) - the name of the component.
+    """
+
+    title: str = None
+    description: str = None
+    content: list[Component] | str = None
+    footer: list[Component] | str = None
+    trigger: list[Component] | str = None
 
 
 class Sonner(Component):

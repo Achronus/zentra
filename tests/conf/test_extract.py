@@ -1,6 +1,8 @@
 import os
+import pytest
 
-from cli.conf.extract import get_filenames_in_subdir
+from cli.conf.extract import extract_component_names, get_filenames_in_subdir
+from zentra.models.demo.agency_details import agency_details
 
 
 class TestGetFilenamesInSubdir:
@@ -29,3 +31,20 @@ class TestGetFilenamesInSubdir:
             os.path.join(zentra_path, subdir_name)
         )
         assert result_filenames == [], "Error: files exist when they shouldn't!"
+
+
+class TestExtractComponentNames:
+    def test_success(self):
+        json_data = agency_details.get_schema()
+
+        result = extract_component_names(json_data)
+        assert result == [
+            "Page",
+            "AlertDialog",
+            "Card",
+            "Form",
+            "FormField",
+            "FileUpload",
+            "FormField",
+            "Input",
+        ]

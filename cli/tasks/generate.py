@@ -1,6 +1,7 @@
 import typer
 
-from cli.conf.constants import FAIL, StatusCode
+from cli.conf.constants import FAIL, StatusCode, ZentaFilepaths
+from cli.conf.extract import get_filenames_in_subdir
 
 from rich.console import Console
 
@@ -11,6 +12,11 @@ console = Console()
 def calc_component_count() -> int:
     """Calculates the number of components in the `zentra/models` folder."""
     return 0
+
+
+def get_zentra_model_filenames() -> list[str]:
+    """Returns a list of filenames found in the `zentra/models` folder."""
+    return get_filenames_in_subdir(ZentaFilepaths.MODELS)
 
 
 class Generate:

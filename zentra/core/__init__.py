@@ -54,3 +54,23 @@ class Icon(BaseModel):
     """A Zentra model for [Radix Ui Icons](https://www.radix-ui.com/icons)."""
 
     name: str
+
+
+class Zentra(BaseModel):
+    """An application class for registering the components to create."""
+
+    pages: list[Page] = []
+    components: list[Component] = []
+
+    def register(self, components: list[Page] | list[Component]) -> None:
+        """Register a list of models to generate."""
+        for component in components:
+            if isinstance(component, Page):
+                self.pages.append(component)
+            elif isinstance(component, Component):
+                self.components.append(component)
+            else:
+                raise ValueError(f"Invalid component type: {type(component)}")
+
+
+zentra = Zentra()

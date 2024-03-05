@@ -71,6 +71,3 @@ class Zentra(BaseModel):
                 self.components.append(component)
             else:
                 raise ValueError(f"Invalid component type: {type(component)}")
-
-
-zentra = Zentra()

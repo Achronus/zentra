@@ -1,4 +1,4 @@
-from zentra.core import Component, Page, zentra
+from zentra.core import Component, Page, Zentra
 from zentra.models.demo.agency_details import agency_details
 from zentra.models.demo.user_button import user_btn
 
@@ -11,6 +11,9 @@ page_map: list[Page] = [
 standalone_components: list[Component] = [
     user_btn,
 ]
+
+# Setup the application
+zentra = Zentra()
 
 # Register the pages and components to generate
 zentra.register(page_map)

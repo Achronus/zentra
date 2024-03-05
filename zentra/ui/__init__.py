@@ -5,7 +5,7 @@ class FormField(Component):
     """A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) FormField inside the Form component."""
 
     label: str
-    component: Component
+    content: Component
     disabled: bool = False
     description: str = None
     message: bool = True

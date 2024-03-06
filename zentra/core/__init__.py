@@ -24,10 +24,8 @@ class Page(BaseModel):
             node = self
 
         formatted_schema = {
-            "node": {
-                "type": node.__class__.__name__,
-                "attrs": node.model_dump(),
-            }
+            "type": node.__class__.__name__,
+            "attrs": node.model_dump(),
         }
 
         valid_attrs = ["content", "components", "fields"]

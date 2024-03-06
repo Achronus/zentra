@@ -75,7 +75,7 @@ class Zentra(BaseModel):
             base_type = component.__class__.__base__
 
             if comp_type not in valid_types:
-                comp_type = base_type if comp_type in valid_types else None
+                comp_type = base_type if base_type in valid_types else None
 
                 if comp_type is None:
                     raise ValueError(

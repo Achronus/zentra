@@ -1,6 +1,8 @@
 from typing import Any
 from pydantic import BaseModel, field_validator
 
+from cli.conf.extract import extract_component_names
+
 
 class Component(BaseModel):
     """
@@ -90,3 +92,24 @@ class Zentra(BaseModel):
 
             comp_type = self.__set_type(component, valid_types)
             type_mapping[comp_type].append(component)
+
+        self.__set_component_cls_names()
+
+    def __get_page_component_names(self) -> list[str]:
+        """A helper function for retrieving the page component names."""
+        page_components = []
+
+        for page in self.pages:
+            page_components += extract_component_names(page.get_schema())
+
+        return page_components
+
+    def __set_component_cls_names(self) -> None:
+        """A helper function for storing the component class names."""
+        filter_items = ["Page", "FormField"]
+        page_components = self.__get_page_component_names()
+
+        for component in self.components:
+            page_components.append(component.__class__.__name__)
+
+        self.component_names = list(set(page_components) - set(filter_items))

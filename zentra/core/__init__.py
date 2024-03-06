@@ -62,12 +62,24 @@ class Zentra(BaseModel):
     pages: list[Page] = []
     components: list[Component] = []
 
-    def register(self, components: list[Page] | list[Component]) -> None:
-        """Register a list of models to generate."""
+    def register(self, components: list[Page | Component]) -> None:
+        """Register a list of Zentra models to generate."""
+        type_mapping: dict[BaseModel, list] = {
+            Page: self.pages,
+            Component: self.components,
+        }
+        valid_types = tuple(type_mapping.keys())
+
         for component in components:
-            if isinstance(component, Page):
-                self.pages.append(component)
-            elif isinstance(component, Component):
-                self.components.append(component)
-            else:
-                raise ValueError(f"Invalid component type: {type(component)}")
+            comp_type = type(component)
+            base_type = component.__class__.__base__
+
+            if comp_type not in valid_types:
+                comp_type = base_type if comp_type in valid_types else None
+
+                if comp_type is None:
+                    raise ValueError(
+                        f"Invalid component type: {type(component)}.\nMust be (or inherit from): {valid_types}"
+                    )
+
+            type_mapping[comp_type].append(component)

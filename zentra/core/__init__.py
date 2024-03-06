@@ -1,4 +1,5 @@
-from pydantic import BaseModel
+from typing import Any
+from pydantic import BaseModel, field_validator
 
 
 class Component(BaseModel):
@@ -59,6 +60,12 @@ class Zentra(BaseModel):
 
     pages: list[Page] = []
     components: list[Component] = []
+    component_names: list[str] = []
+
+    @field_validator("pages", "components", "component_names", mode="plain")
+    @classmethod
+    def prevent_init_editing(cls, value: Any) -> ValueError:
+        raise ValueError("Attributes cannot be updated during initialisation.")
 
     def __set_type(
         self, component: BaseModel, valid_types: tuple[BaseModel, ...]

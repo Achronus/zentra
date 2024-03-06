@@ -1,3 +1,4 @@
+from itertools import chain
 import os
 
 
@@ -12,16 +13,17 @@ def get_filenames_in_subdir(filepath: str) -> list[str]:
 
 def extract_component_names(page_schema: dict[str, str]) -> list[str]:
     """Recursively extracts the `Component` names from a `Page` schema."""
-    types_list = []
+    component_type = [page_schema.get("type")]
 
-    for key, value in page_schema.items():
-        if key == "type":
-            types_list.append(value)
-        elif isinstance(value, dict):
-            types_list.extend(extract_component_names(value))
-        elif isinstance(value, list):
-            for item in value:
-                if isinstance(item, dict):
-                    types_list.extend(extract_component_names(item))
+    nested_types = [
+        extract_component_names(item)
+        for value in page_schema.values()
+        if isinstance(value, list)
+        for item in value
+        if isinstance(item, dict)
+    ]
 
-    return types_list
+    # Compress to single list
+    flattened_types = list(chain.from_iterable(nested_types))
+
+    return component_type + flattened_types

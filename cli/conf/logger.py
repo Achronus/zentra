@@ -65,8 +65,8 @@ class BaseLogger:
         self.logger.critical(msg)
 
 
-class TaskStatusLogger(BaseLogger):
-    """A logger specific to the task status wrapper."""
+class DebugLogger(BaseLogger):
+    """A logger specific to for debugging purposes."""
 
     def __init__(self, logger_name: str, log_filename: str = "debug.log"):
         super().__init__(logger_name, log_filename)
@@ -77,4 +77,4 @@ class TaskStatusLogger(BaseLogger):
         self.file_handler(log_filepath)
 
 
-task_status_logger = TaskStatusLogger("TaskStatusLogger")
+task_status_logger = DebugLogger("TaskStatusLogger")

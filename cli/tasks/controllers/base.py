@@ -33,9 +33,9 @@ class BaseController:
 
     :param tasks: (list[tuple[ControllerMethod, str]]) - a list of tuples in the format of (task, desc), where `task` is a class method and `desc` is a descriptive string highlighting what the task does. For example:
     ```python
-    sub_tasks = [
-        (self.create, "Building venv"),
-        (self.update_pip, "Updating PIP")
+    tasks = [
+        (self.create, "Creating my awesome components"),
+        (self.update, "Updating my components")
     ]
     ```
     """

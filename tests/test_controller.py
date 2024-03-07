@@ -27,7 +27,7 @@ class TestStatus:
     def test_fail(self):
         @status
         def failing_task():
-            raise Exception("Test exception")
+            raise ValueError("Test exception in 'test_controller.py' -> 'TestStatus'")
 
         result = failing_task()
         assert result is False

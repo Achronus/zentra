@@ -1,30 +1,63 @@
+from pydantic import BaseModel
+from cli.conf.format import name_from_camel_case
 from cli.tasks.controllers.base import BaseController, status
-from cli.conf.constants import LocalUIComponentFilepaths
+from cli.conf.constants import LocalUIComponentFilepaths, LocalUploadthingFilepaths
 from cli.conf.extract import get_filenames_in_subdir
-from zentra.models import zentra
+from zentra.core import Zentra
+
+
+# TODO: add --nextjs flag
+NEXTJS_PROJECT = False
+
+
+class NameStorage(BaseModel):
+    """A storage container for Zentra model filenames."""
+
+    UI_BASE: list[str] = get_filenames_in_subdir(LocalUIComponentFilepaths.BASE)
+    UI_TO_GENERATE: list[str] = []
+
+    UPLOADTHING: list[str] = get_filenames_in_subdir(
+        LocalUploadthingFilepaths.BASE_NEXTJS
+        if NEXTJS_PROJECT
+        else LocalUploadthingFilepaths.BASE_BASIC
+    )
+    UT_TO_GENERATE: list[str] = []
 
 
 class GenerateController(BaseController):
-    """A controller for handling tasks that generate the Zentra components."""
+    """
+    A controller for handling tasks that generate the Zentra components.
 
-    def __init__(self) -> None:
+    Parameters:
+    - zentra (zentra.core.Zentra) - the Zentra application containing components to generate
+    """
+
+    def __init__(self, zentra: Zentra) -> None:
         tasks = [
-            (self.extracting_models, "Retrieving [magenta]Zentra[/magenta] models"),
-            (self.create_files, "Generating [cyan]React[/cyan] components"),
-            (self.update_template_files, "Modifying [cyan]React[/cyan] components"),
+            (self.extract_models, "Retrieving [magenta]Zentra[/magenta] models"),
+            (self.create_files, "Creating [cyan]React[/cyan] component files"),
+            (self.update_template_files, "Configuring [cyan]React[/cyan] components"),
         ]
 
         super().__init__(tasks)
 
-    def _get_ui_base_filenames(self) -> list[str]:
-        """Returns a list of filenames found in the `components/zentra/ui/base` folder."""
-        return get_filenames_in_subdir(LocalUIComponentFilepaths.BASE)
+        self.storage = NameStorage()
+        self.zentra = zentra
 
     @status
-    def extracting_models(self) -> None:
-        """Extracts the zentra models and prepares them for file generation."""
-        base_ui_filenames = self._get_ui_base_filenames()
-        # Steps 1 to 3
+    def extract_models(self) -> None:
+        """Extracts the Zentra models and prepares them for file generation."""
+        formatted_names = [
+            f"{name_from_camel_case(name)}.tsx" for name in self.zentra.component_names
+        ]
+
+        self.storage.UT_TO_GENERATE = list(
+            set(formatted_names) - set(self.storage.UI_BASE)
+        )
+
+        self.storage.UI_TO_GENERATE = list(
+            set(formatted_names) - set(self.storage.UT_TO_GENERATE)
+        )
 
     @status
     def create_files(self) -> None:
@@ -40,8 +73,8 @@ class GenerateController(BaseController):
 
 
 # 1. [X] Get filenames from components/ui/base <- make dynamic for future libraries
-# 2. [] Get components from zentra class
-# 3. [] Convert component names from camelcase
+# 2. [X] Get components from zentra class
+# 3. [X] Convert component names from camelcase
 # 4. [] Copy files in base that match component names to components/zentra/ui/base
 # 5. [] Copy template files that match component names to components/zentra/ui/<filename>
 # 6. [] Convert components to JSON

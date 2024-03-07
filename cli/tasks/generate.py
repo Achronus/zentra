@@ -25,8 +25,7 @@ class Generate:
 
         if num_components == 0:
             console.print(
-                f"\n{FAIL} [red]No components found[/red] in [green]zentra/models[/green]! Need help? Check the [bright_blue][link=#]starter guide[/link][/bright_blue]! {FAIL}\n",
-                markup=True,
+                f"\n{FAIL} [red]No components found[/red] in [green]zentra/models[/green]! [magenta]Need help?[/magenta] Check the [bright_blue][link=#]starter guide[/link][/bright_blue]! {FAIL}\n"
             )
             typer.Exit(code=StatusCode.NO_COMPONENTS)
         else:

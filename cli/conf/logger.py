@@ -20,15 +20,14 @@ class BaseLogger:
         self,
         level: int = logging.INFO,
         format: str = "%(name)s: %(levelname)s | %(message)s",
-    ) -> logging.StreamHandler:
+    ) -> None:
         """Configuration for console handlers."""
         handler = logging.StreamHandler()
         handler.setLevel(level=level)
 
         formatter = logging.Formatter(format)
         handler.setFormatter(formatter)
-
-        return handler
+        self.logger.addHandler(handler)
 
     def file_handler(
         self,
@@ -36,14 +35,14 @@ class BaseLogger:
         level: int = logging.DEBUG,
         format: str = "%(asctime)s (%(name)s): %(levelname)s | %(message)s",
         datefmt: str = "%Y-%m-%d %H:%M:%S",
-    ) -> logging.FileHandler:
+    ) -> None:
         """Configuration for file handlers."""
         handler = logging.FileHandler(log_filepath)
         handler.setLevel(level=level)
 
         formatter = logging.Formatter(format, datefmt=datefmt)
         handler.setFormatter(formatter)
-        return handler
+        self.logger.addHandler(handler)
 
     def debug(self, msg: str) -> None:
         """Sends a debug message to the logger."""
@@ -74,8 +73,8 @@ class TaskStatusLogger(BaseLogger):
 
         log_filepath = os.path.join(os.getcwd(), "cli", "conf", "logs", log_filename)
 
-        self.logger.addHandler(self.console_handler())
-        self.logger.addHandler(self.file_handler(log_filepath))
+        self.console_handler()
+        self.file_handler(log_filepath)
 
 
 task_status_logger = TaskStatusLogger("TaskStatusLogger")

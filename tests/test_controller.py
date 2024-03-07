@@ -1,14 +1,58 @@
 import pytest
+
 from cli.conf.constants import LocalUploadthingFilepaths
 from cli.conf.format import name_from_camel_case
-
+from cli.tasks.controllers.base import status, BaseController
 from cli.tasks.controllers.path import FolderDoesNotExistController
 from cli.tasks.controllers.generate import GenerateController
+
 from zentra.core import Page, Zentra
 from zentra.ui import FileUpload, Form, FormField
 from zentra.ui.control import Input
 from zentra.ui.notification import AlertDialog
 from zentra.ui.presentation import Card
+
+from rich.progress import Progress
+
+
+class TestStatus:
+    def test_success(self):
+        @status
+        def success_task():
+            pass
+
+        result = success_task()
+        assert result is True
+
+    def test_fail(self):
+        @status
+        def failing_task():
+            raise Exception("Test exception")
+
+        result = failing_task()
+        assert result is False
+
+
+class TestBaseController:
+    def test_format_tasks(self):
+        tasks = [(None, "Task 1"), (None, "Task 2")]
+        controller = BaseController(tasks=tasks)
+        controller.format_tasks()
+
+        valid_tasks = [(None, "   Task 1..."), (None, "   Task 2...")]
+        assert controller.tasks == valid_tasks
+
+    def test_run(self):
+        tasks = [(lambda: True, "Task 1"), (lambda: False, "Task 2")]
+        controller = BaseController(tasks=tasks)
+        controller.run(Progress())
+        assert all(
+            [
+                len(controller.called_tasks) == 2,
+                controller.called_tasks[0] == ("   Task 1...", True),
+                controller.called_tasks[1] == ("   Task 2...", False),
+            ]
+        ), controller.called_tasks
 
 
 class TestFolderDoesNotExistController:

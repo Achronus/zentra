@@ -39,6 +39,7 @@ class BaseController:
 
     def __init__(self, tasks: list[tuple[ControllerMethod, str]]) -> None:
         self.tasks = tasks
+        self.called_tasks = []
 
     @staticmethod
     def update_desc(desc: str) -> str:
@@ -60,5 +61,6 @@ class BaseController:
         for task, desc in self.tasks:
             task_id = progress.add_task(description=desc, total=None)
             is_successful = task()
+            self.called_tasks.append((desc, is_successful))
             status = PASS if is_successful else FAIL
             progress.update(task_id, completed=1, description=f"{desc} {status}")

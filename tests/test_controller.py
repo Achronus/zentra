@@ -12,8 +12,6 @@ from zentra.ui.control import Input
 from zentra.ui.notification import AlertDialog
 from zentra.ui.presentation import Card
 
-from rich.progress import Progress
-
 
 class TestStatus:
     def test_success(self):
@@ -21,38 +19,43 @@ class TestStatus:
         def success_task():
             pass
 
-        result = success_task()
-        assert result is True
+        result, e = success_task()
+        assert result is True and e is None
 
     def test_fail(self):
         @status
         def failing_task():
-            raise ValueError("Test exception in 'test_controller.py' -> 'TestStatus'")
+            raise Exception("Test exception in 'test_controller.py' -> 'TestStatus'")
 
-        result = failing_task()
-        assert result is False
+        result, e = failing_task()
+        assert result is False, e is ValueError
 
 
 class TestBaseController:
-    def test_format_tasks(self):
-        tasks = [(None, "Task 1"), (None, "Task 2")]
-        controller = BaseController(tasks=tasks)
-        controller.format_tasks()
-
-        valid_tasks = [(None, "   Task 1..."), (None, "   Task 2...")]
-        assert controller.tasks == valid_tasks
-
     def test_run(self):
-        tasks = [(lambda: True, "Task 1"), (lambda: False, "Task 2")]
+        @status
+        @staticmethod
+        def task():
+            pass
+
+        @status
+        @staticmethod
+        def task_fail():
+            raise Exception(
+                "Test exception in 'test_controller.py' -> 'TestBaseController'"
+            )
+
+        tasks = [(task, "Task 1"), (task_fail, "Task 2")]
         controller = BaseController(tasks=tasks)
-        controller.run(Progress())
-        assert all(
-            [
-                len(controller.called_tasks) == 2,
-                controller.called_tasks[0] == ("   Task 1...", True),
-                controller.called_tasks[1] == ("   Task 2...", False),
-            ]
-        ), controller.called_tasks
+        with pytest.raises(Exception):
+            controller.run()
+            assert all(
+                [
+                    len(controller.called_tasks) == 2,
+                    controller.called_tasks[0] == ("1. Task 1...", True),
+                    controller.called_tasks[1] == ("2. Task 2...", False),
+                ]
+            ), controller.called_tasks
 
 
 class TestFolderDoesNotExistController:
@@ -61,7 +64,8 @@ class TestFolderDoesNotExistController:
         return FolderDoesNotExistController()
 
     def test_make_path_success(self, controller: FolderDoesNotExistController):
-        assert controller.make_path() is True
+        result, e = controller.make_path()
+        assert result is True and e is None
 
 
 class TestNameStorage:

@@ -1,5 +1,6 @@
 import os
 import pytest
+import logging
 
 from cli.conf.logger import BaseLogger
 
@@ -14,6 +15,7 @@ class TestBaseLogger:
         """Fixture to provide a mock logger instance."""
         logger = BaseLogger("TestLogger")
 
+        logger.console_handler(level=logging.ERROR)
         logger.file_handler(log_file)
         return logger
 

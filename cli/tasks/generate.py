@@ -1,22 +1,8 @@
-from functools import partial
 import typer
 
-from cli.conf.constants import FAIL, StatusCode
-from cli.tasks.controllers import run_tasks
+from cli.conf.constants import StatusCode
 from cli.tasks.controllers.generate import GenerateController
 from zentra.models import zentra
-
-from rich.console import Console
-
-
-console = Console()
-
-GENERATE_TASKS = [
-    (
-        partial(GenerateController, zentra),
-        "Generating [cyan]React[/cyan] models...",
-    )
-]
 
 
 def calc_component_count() -> int:
@@ -35,9 +21,7 @@ class Generate:
         num_components = calc_component_count()
 
         if num_components == 0:
-            console.print(
-                f"\n{FAIL} [red]No components found[/red] in [green]zentra/models[/green]! [magenta]Need help?[/magenta] Check the [bright_blue][link=#]starter guide[/link][/bright_blue]! {FAIL}\n"
-            )
-            typer.Exit(code=StatusCode.NO_COMPONENTS)
+            raise typer.Exit(code=StatusCode.NO_COMPONENTS)
         else:
-            run_tasks(GENERATE_TASKS)
+            controller = GenerateController(zentra=zentra)
+            controller.run()

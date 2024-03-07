@@ -8,13 +8,10 @@ class BaseLogger:
     def __init__(
         self,
         logger_name: str,
-        log_filename: str = "debug.log",
         level: int = logging.DEBUG,
     ) -> None:
         self.logger = logging.getLogger(logger_name)
         self.logger.setLevel(level=level)
-
-        self.log_filename = log_filename
 
     def console_handler(
         self,
@@ -66,10 +63,10 @@ class BaseLogger:
 
 
 class DebugLogger(BaseLogger):
-    """A logger specific to for debugging purposes."""
+    """A logger specific for debugging purposes."""
 
     def __init__(self, logger_name: str, log_filename: str = "debug.log"):
-        super().__init__(logger_name, log_filename)
+        super().__init__(logger_name, level=logging.DEBUG)
 
         log_filepath = os.path.join(os.getcwd(), "cli", "conf", "logs", log_filename)
 

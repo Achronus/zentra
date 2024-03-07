@@ -12,10 +12,7 @@ class TestBaseLogger:
     @pytest.fixture
     def mock_logger(self, log_file):
         """Fixture to provide a mock logger instance."""
-        logger = BaseLogger(
-            "test_logger",
-            log_filename=log_file,
-        )
+        logger = BaseLogger("TestLogger")
 
         logger.file_handler(log_file)
         return logger

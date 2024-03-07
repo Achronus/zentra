@@ -1,11 +1,22 @@
+from functools import partial
 import typer
 
 from cli.conf.constants import FAIL, StatusCode
+from cli.tasks.controllers import run_tasks
+from cli.tasks.controllers.generate import GenerateController
+from zentra.models import zentra
 
 from rich.console import Console
 
 
 console = Console()
+
+GENERATE_TASKS = [
+    (
+        partial(GenerateController, zentra),
+        "Generating [cyan]React[/cyan] models...",
+    )
+]
 
 
 def calc_component_count() -> int:
@@ -29,5 +40,4 @@ class Generate:
             )
             typer.Exit(code=StatusCode.NO_COMPONENTS)
         else:
-            # generate components
-            pass
+            run_tasks(GENERATE_TASKS)

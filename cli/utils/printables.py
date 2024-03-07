@@ -6,7 +6,7 @@ from rich.table import Table
 from rich.panel import Panel
 
 
-def path_exists_table(zentra_path: str, folder_exists: str) -> Table:
+def path_exists_table(zentra_path: str, folder_exists: bool) -> Table:
     """Creates a printable table showing the `zentra_path` and if the `folder` exists."""
     icon = PASS if folder_exists else FAIL
 

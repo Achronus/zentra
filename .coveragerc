@@ -2,3 +2,4 @@
 omit = 
     cli/tasks/controllers/__init__.py
     cli/utils/printables.py
+    tests/*

@@ -43,7 +43,7 @@ def generate_components(
     ] = "all",
 ) -> None:
     """Generates all React components based on the models stored in the 'zentra/models' folder. Optionally, supply a single 'filename' as argument to only generate certain components."""
-    if check_in_correct_folder():
+    if not check_in_correct_folder():
         console.print(
             f"\n{FAIL} The [magenta]zentra[/magenta] folder is [red]missing[/red]! Are you in the [yellow]correct directory(?)[/yellow] and have you [yellow]configured[/yellow] your project with [green]zentra init[/green]? {FAIL}\n"
         )

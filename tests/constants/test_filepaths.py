@@ -4,6 +4,7 @@ import unittest
 from cli.conf.constants import (
     LocalCoreComponentFilepaths,
     LocalUIComponentFilepaths,
+    LocalUploadthingFilepaths,
     ZentaFilepaths,
     ZentraGeneratedFilepaths,
     ZentraUIFilepaths,
@@ -63,6 +64,12 @@ class TestLocalCoreComponentsFilepaths(unittest.TestCase):
             os.path.join(os.getcwd(), "components", "ui"),
         )
 
+    def test_uploadthing_path(self):
+        self.assertEqual(
+            LocalCoreComponentFilepaths.UPLOADTHING,
+            os.path.join(os.getcwd(), "components", "uploadthing"),
+        )
+
 
 class TestUIComponentFilepaths(unittest.TestCase):
     def test_root_path(self):
@@ -81,6 +88,38 @@ class TestUIComponentFilepaths(unittest.TestCase):
         self.assertEqual(
             LocalUIComponentFilepaths.TEMPLATES,
             os.path.join(os.getcwd(), "components", "ui", "templates"),
+        )
+
+
+class TestLocalUploadthingFilepaths(unittest.TestCase):
+    def test_root_path(self):
+        self.assertEqual(
+            LocalUploadthingFilepaths.ROOT,
+            os.path.join(os.getcwd(), "components", "uploadthing"),
+        )
+
+    def test_base_path(self):
+        self.assertEqual(
+            LocalUploadthingFilepaths.BASE,
+            os.path.join(os.getcwd(), "components", "uploadthing", "base"),
+        )
+
+    def test_templates_path(self):
+        self.assertEqual(
+            LocalUploadthingFilepaths.TEMPLATES,
+            os.path.join(os.getcwd(), "components", "uploadthing", "templates"),
+        )
+
+    def test_base_basic_path(self):
+        self.assertEqual(
+            LocalUploadthingFilepaths.BASE_BASIC,
+            os.path.join(os.getcwd(), "components", "uploadthing", "base", "basic"),
+        )
+
+    def test_base_nextjs_path(self):
+        self.assertEqual(
+            LocalUploadthingFilepaths.BASE_NEXTJS,
+            os.path.join(os.getcwd(), "components", "uploadthing", "base", "nextjs"),
         )
 
 

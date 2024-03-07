@@ -43,6 +43,7 @@ class LocalCoreComponentFilepaths:
     # (cwd)/components
     ROOT = os.path.join(os.getcwd(), "components")
     UI = os.path.join(ROOT, "ui")  # components/ui
+    UPLOADTHING = os.path.join(ROOT, "uploadthing")  # components/uploadthing
 
 
 class LocalUIComponentFilepaths:
@@ -52,6 +53,18 @@ class LocalUIComponentFilepaths:
     ROOT = LocalCoreComponentFilepaths.UI
     BASE = os.path.join(ROOT, "base")  # ui/base
     TEMPLATES = os.path.join(ROOT, "templates")  # ui/templates
+
+
+class LocalUploadthingFilepaths:
+    """A storage container for the local Uploadthing component filepaths in the `components/uploadthing` folder."""
+
+    # (cwd)/components/uploadthing
+    ROOT = LocalCoreComponentFilepaths.UPLOADTHING
+    BASE = os.path.join(ROOT, "base")  # uploadthing/base
+    TEMPLATES = os.path.join(ROOT, "templates")  # uploadthing/templates
+
+    BASE_BASIC = os.path.join(BASE, "basic")  # base/basic
+    BASE_NEXTJS = os.path.join(BASE, "nextjs")  # base/nextjs
 
 
 class ZentraUIFilepaths:

@@ -10,7 +10,7 @@ from rich.console import Console
 
 
 console = Console()
-root_path_msg = "Configuring [green]zentra[/green] project..."
+root_path_msg = "Configuring [magenta]Zentra[/magenta] project..."
 
 PATH_NOT_EXIST_TASKS = [
     (FolderDoesNotExistController, root_path_msg),

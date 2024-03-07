@@ -24,6 +24,7 @@ def init_app() -> None:
     try:
         setup = Setup()
         setup.init_app()
+
     except typer.Exit as e:
         error_handler.msg(e)
 
@@ -49,5 +50,6 @@ def generate_components(
             generate.components()
         else:
             pass
+
     except typer.Exit as e:
         error_handler.msg(e)

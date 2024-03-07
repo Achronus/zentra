@@ -1,6 +1,6 @@
-import os
 import typer
 
+from cli.conf.checks import check_in_correct_folder
 from cli.conf.constants import StatusCode
 from cli.conf.error import ErrorHandler
 from cli.tasks.setup import Setup
@@ -16,17 +16,6 @@ app = typer.Typer(
 
 console = Console()
 error_handler = ErrorHandler(console)
-
-
-def check_in_correct_folder() -> bool:
-    """Checks if the user is in the correct folder before using the tool."""
-    current_directory = os.getcwd()
-    zentra_folder_path = os.path.join(current_directory, "zentra")
-
-    if os.path.exists(zentra_folder_path) and os.path.isdir(zentra_folder_path):
-        return True
-
-    return False
 
 
 @app.command("init")

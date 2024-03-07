@@ -1,17 +1,21 @@
 import os
 import typer
 
-from cli.conf.constants import FAIL, StatusCode
-from .tasks.setup import Setup
-from .tasks.generate import Generate
+from cli.conf.constants import StatusCode
+from cli.conf.error import ErrorHandler
+from cli.tasks.setup import Setup
+from cli.tasks.generate import Generate
 
 from typing_extensions import Annotated
 from rich.console import Console
 
 
-app = typer.Typer()
+app = typer.Typer(
+    help="Configure your project to work with Zentra using 'zentra init' or create your React components with 'zentra generate' based on your models in the zentra folder."
+)
 
 console = Console()
+error_handler = ErrorHandler(console)
 
 
 def check_in_correct_folder() -> bool:
@@ -28,8 +32,11 @@ def check_in_correct_folder() -> bool:
 @app.command("init")
 def init_app() -> None:
     """Perform basic configuration to setup your app to work with Zentra."""
-    setup = Setup()
-    setup.init_app()
+    try:
+        setup = Setup()
+        setup.init_app()
+    except typer.Exit as e:
+        error_handler.msg(e)
 
 
 @app.command("generate")
@@ -43,25 +50,15 @@ def generate_components(
     ] = "all",
 ) -> None:
     """Generates all React components based on the models stored in the 'zentra/models' folder. Optionally, supply a single 'filename' as argument to only generate certain components."""
-    if not check_in_correct_folder():
-        console.print(
-            f"\n{FAIL} The [magenta]zentra[/magenta] folder is [red]missing[/red]! Are you in the [yellow]correct directory(?)[/yellow] and have you [yellow]configured[/yellow] your project with [green]zentra init[/green]? {FAIL}\n"
-        )
-        typer.Exit(StatusCode.FAIL)
+    try:
+        if not check_in_correct_folder():
+            raise typer.Exit(StatusCode.ZENTRA_MISSING)
 
-    generate = Generate()
+        generate = Generate()
 
-    if filename == "all":
-        generate.components()
-    else:
-        pass
-
-
-@app.callback()
-def callback() -> None:
-    """
-    Configure your project to work with Zentra using 'zentra init' or create your React components with 'zentra generate' based on your models in the zentra folder.
-
-    Still confused? Use the '--help' flag on each command to gain more information!
-    """
-    pass
+        if filename == "all":
+            generate.components()
+        else:
+            pass
+    except typer.Exit as e:
+        error_handler.msg(e)

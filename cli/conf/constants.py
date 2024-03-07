@@ -3,10 +3,12 @@ from enum import Enum
 
 
 class StatusCode(Enum):
-    SUCCESS = 0
-    FAIL = 1
-    CONFIGURED = 2
+    INIT_SUCCESS = 0
+    CONFIGURED = 1
+    ZENTRA_MISSING = 2
     NO_COMPONENTS = 3
+    SRC_DIR_MISSING = 4
+    DEST_DIR_MISSING = 5
 
 
 # Custom print emoji's

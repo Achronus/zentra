@@ -7,17 +7,19 @@ from cli.conf.constants import CommonErrorCodes
 from cli.conf.logger import file_copy_logger
 
 
-def copy_list_of_files(src: str, dest: str, filenames: list[str]) -> None:
+def copy_list_of_files(
+    src: str, dest: str, filenames: list[str], src_err_code: int, dest_err_code: int
+) -> None:
     """Copies a list of files from one directory to another."""
     if not check_folder_exists(src):
         file_copy_logger.error(
             f"FileNotFoundError: '{os.path.basename(src)}' directory does not exist. Path: {src}"
         )
-        raise typer.Exit(code=CommonErrorCodes.SRC_DIR_MISSING)
+        raise typer.Exit(code=src_err_code)
 
     if not check_folder_exists(dest):
         file_copy_logger.error(f"FileNotFoundError: '{dest}' directory does not exist.")
-        raise typer.Exit(code=CommonErrorCodes.DEST_DIR_MISSING)
+        raise typer.Exit(code=dest_err_code)
 
     for filename in filenames:
         src_path = os.path.join(src, filename)

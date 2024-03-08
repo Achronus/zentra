@@ -3,7 +3,7 @@ import pytest
 from cli.conf.constants import LocalUploadthingFilepaths
 from cli.conf.format import name_from_camel_case
 from cli.tasks.controllers.base import status, BaseController
-from cli.tasks.controllers.path import FolderDoesNotExistController
+from cli.tasks.controllers.setup import SetupController
 from cli.tasks.controllers.generate import GenerateController
 
 from zentra.core import Page, Zentra
@@ -60,10 +60,10 @@ class TestBaseController:
 
 class TestFolderDoesNotExistController:
     @pytest.fixture
-    def controller(self) -> FolderDoesNotExistController:
-        return FolderDoesNotExistController()
+    def controller(self) -> SetupController:
+        return SetupController()
 
-    def test_make_path_success(self, controller: FolderDoesNotExistController):
+    def test_make_path_success(self, controller: SetupController):
         result, e = controller.make_path()
         assert result is True and e is None
 

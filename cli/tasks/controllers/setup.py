@@ -4,8 +4,8 @@ from cli.utils.printables import local_path
 from cli.conf.constants import ZentaFilepaths
 
 
-class FolderDoesNotExistController(BaseController):
-    """A controller for handling tasks when the Zentra path does not exist."""
+class SetupController(BaseController):
+    """A controller for handling tasks for configuring Zentra."""
 
     def __init__(self) -> None:
         self.folder_path = ZentaFilepaths.MODELS

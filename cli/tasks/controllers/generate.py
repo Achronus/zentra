@@ -1,23 +1,26 @@
+import ast
 import os
 import typer
 from pydantic import BaseModel
 
 from cli.conf.checks import (
-    check_file_contents,
+    CheckConfigFileValid,
     check_file_exists,
     check_models_registered,
 )
 from cli.conf.format import name_from_camel_case
+from cli.conf.move import copy_zentra_files
 from cli.tasks.controllers.base import BaseController, status
 from cli.conf.constants import (
+    LocalUIComponentFilepaths,
     LocalUploadthingFilepaths,
     CommonErrorCodes,
     ZentaFilepaths,
+    ZentraUIFilepaths,
 )
-from cli.conf.extract import get_filenames_in_subdir
+from cli.conf.extract import get_file_content, get_filenames_in_subdir
 
 from zentra.core import Zentra
-
 
 # TODO: add --nextjs flag
 NEXTJS_PROJECT = False
@@ -64,17 +67,20 @@ class GenerateController(BaseController):
     @status
     def check_config(self) -> None:
         """Checks that the config files are setup correctly."""
+        # Check models file exists
         if not check_models_registered(self.zentra):
             raise typer.Exit(code=CommonErrorCodes.MODELS_DIR_MISSING)
 
         # Check config file exists
-        if not check_file_exists(
-            os.path.join(ZentaFilepaths.MODELS, ZentaFilepaths.SETUP_FILENAME)
-        ):
+        config_path = os.path.join(ZentaFilepaths.MODELS, ZentaFilepaths.SETUP_FILENAME)
+        if not check_file_exists(config_path):
             raise typer.Exit(code=CommonErrorCodes.CONFIG_MISSING)
 
         # Check config file content is valid
-        valid_content = check_file_contents()
+        check_config = CheckConfigFileValid()
+        file_content_tree = ast.parse(get_file_content(config_path))
+        check_config.visit(file_content_tree)
+        valid_content = check_config.is_valid()
 
         if not valid_content:
             raise typer.Exit(code=CommonErrorCodes.INVALID_CONFIG)

@@ -70,8 +70,8 @@ class DebugLogger(BaseLogger):
 
         log_filepath = os.path.join(os.getcwd(), "cli", "conf", "logs", log_filename)
 
-        self.console_handler()
         self.file_handler(log_filepath)
 
 
 task_status_logger = DebugLogger("TaskStatusLogger")
+file_copy_logger = DebugLogger("FileCopyLogger")

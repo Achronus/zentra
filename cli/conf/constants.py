@@ -37,14 +37,7 @@ class ZentaFilepaths:
     MODELS = os.path.join(ROOT, "models")  # (cwd)/zentra/models
     GENERATED = os.path.join(ROOT, "generated")  # (cwd)/zentra/generated
 
-
-class ZentraGeneratedFilepaths:
-    """A storage container for the core filepaths in the `zentra/generated` folder."""
-
-    # (cwd)/zentra/generated
-    ROOT = ZentaFilepaths.GENERATED
-    COMPONENTS = os.path.join(ROOT, "components")  # generated/components
-    ZENTRA = os.path.join(COMPONENTS, "zentra")  # generated/components/zentra
+    SETUP_FILENAME = "__init__.py"
 
 
 class LocalCoreComponentFilepaths:
@@ -75,6 +68,15 @@ class LocalUploadthingFilepaths:
 
     BASE_BASIC = os.path.join(BASE, "basic")  # base/basic
     BASE_NEXTJS = os.path.join(BASE, "nextjs")  # base/nextjs
+
+
+class ZentraGeneratedFilepaths:
+    """A storage container for the core filepaths in the `zentra/generated` folder."""
+
+    # (cwd)/zentra/generated
+    ROOT = ZentaFilepaths.GENERATED
+    COMPONENTS = os.path.join(ROOT, "components")  # generated/components
+    ZENTRA = os.path.join(COMPONENTS, "zentra")  # generated/components/zentra
 
 
 class ZentraUIFilepaths:

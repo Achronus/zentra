@@ -91,10 +91,6 @@ COMMON_ERROR_MAP = {
 
     This is a bug, please report this as an issue [bright_blue][link={GITHUB_ISSUES_URL}]on GitHub[/link][/bright_blue].
     """,
-    CommonErrorCodes.DEST_DIR_MISSING: msg_with_checks(
-        title=f"\n{FAIL} Oops! Looks like you are [red]missing files[/red] in the [magenta]zentra[/magenta] folder! {FAIL}\n",
-        checks=MISSING_FILES_CHECKS,
-    ),
 }
 
 SETUP_ERROR_MAP = {}

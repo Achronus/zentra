@@ -24,7 +24,7 @@ msg_handler = MessageHandler(console)
 def init_app() -> None:
     """Perform basic configuration to setup your app to work with Zentra."""
     try:
-        setup = Setup(zentra=zentra)
+        setup = Setup(zentra)
         setup.init_app()
 
     except typer.Exit as e:
@@ -46,7 +46,7 @@ def generate_components(
         if not check_in_correct_folder():
             raise typer.Exit(CommonErrorCodes.ZENTRA_MISSING)
 
-        generate = Generate()
+        generate = Generate(zentra)
 
         if filename == "all":
             generate.components()

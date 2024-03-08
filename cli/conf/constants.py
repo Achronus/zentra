@@ -11,9 +11,13 @@ class CommonErrorCodes(Enum):
     DEST_DIR_MISSING = 6
 
 
+class SetupSuccessCodes(Enum):
+    INIT_SUCCESS = 10
+    CONFIGURED = 11
+
+
 class SetupErrorCodes(Enum):
-    INIT_SUCCESS = 0
-    CONFIGURED = 1
+    FAIL = 12
 
 
 class GenerateErrorCodes(Enum):

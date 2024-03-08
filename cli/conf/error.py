@@ -38,8 +38,8 @@ GENERATE_ERROR_MAP = {
 ERROR_MSG_MAPPER = {**COMMON_ERROR_MAP, **SETUP_ERROR_MAP, **GENERATE_ERROR_MAP}
 
 
-class ErrorHandler:
-    """Handles all the errors of the CLI."""
+class MessageHandler:
+    """Handles all the messages of the CLI."""
 
     def __init__(self, console: Console) -> None:
         self.console = console

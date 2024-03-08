@@ -2,7 +2,7 @@ import typer
 
 from cli.conf.checks import check_in_correct_folder
 from cli.conf.constants import CommonErrorCodes
-from cli.conf.error import ErrorHandler
+from cli.conf.error import MessageHandler
 from cli.tasks.setup import Setup
 from cli.tasks.generate import Generate
 
@@ -15,7 +15,7 @@ app = typer.Typer(
 )
 
 console = Console()
-error_handler = ErrorHandler(console)
+msg_handler = MessageHandler(console)
 
 
 @app.command("init")
@@ -26,7 +26,7 @@ def init_app() -> None:
         setup.init_app()
 
     except typer.Exit as e:
-        error_handler.msg(e)
+        msg_handler.msg(e)
 
 
 @app.command("generate")
@@ -52,4 +52,4 @@ def generate_components(
             pass
 
     except typer.Exit as e:
-        error_handler.msg(e)
+        msg_handler.msg(e)

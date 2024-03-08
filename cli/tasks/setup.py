@@ -3,7 +3,7 @@ import typer
 from cli.conf.checks import check_folder_exists
 from cli.utils.printables import path_exists_table, configuration_complete_panel
 from .controllers.path import FolderDoesNotExistController
-from cli.conf.constants import ZentaFilepaths, StatusCode, DOCS_URL
+from cli.conf.constants import ZentaFilepaths, SetupErrorCodes, DOCS_URL
 
 from rich.console import Console
 
@@ -23,11 +23,11 @@ class Setup:
         console.print(path_exists_table(self.folder_path, self.path_exists))
 
         if self.path_exists:
-            raise typer.Exit(code=StatusCode.CONFIGURED)
-        else:
-            controller = FolderDoesNotExistController()
-            controller.run()
+            raise typer.Exit(code=SetupErrorCodes.CONFIGURED)
 
-            console.print()
-            console.print(configuration_complete_panel(self.folder_path, link=DOCS_URL))
-            console.print()
+        controller = FolderDoesNotExistController()
+        controller.run()
+
+        console.print()
+        console.print(configuration_complete_panel(self.folder_path, link=DOCS_URL))
+        console.print()

@@ -2,13 +2,21 @@ import os
 from enum import Enum
 
 
-class StatusCode(Enum):
+class CommonErrorCodes(Enum):
+    CONFIG_MISSING = 1
+    MODELS_DIR_MISSING = 2
+    SRC_DIR_MISSING = 3
+    DEST_DIR_MISSING = 4
+
+
+class SetupErrorCodes(Enum):
     INIT_SUCCESS = 0
     CONFIGURED = 1
     ZENTRA_MISSING = 2
-    NO_COMPONENTS = 3
-    SRC_DIR_MISSING = 4
-    DEST_DIR_MISSING = 5
+
+
+class GenerateErrorCodes(Enum):
+    NO_COMPONENTS = 1
 
 
 # Custom print emoji's

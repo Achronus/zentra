@@ -1,6 +1,6 @@
 import typer
 
-from cli.conf.constants import StatusCode
+from cli.conf.constants import GenerateErrorCodes
 from cli.tasks.controllers.generate import GenerateController
 from zentra.models import zentra
 
@@ -21,7 +21,7 @@ class Generate:
         num_components = calc_component_count()
 
         if num_components == 0:
-            raise typer.Exit(code=StatusCode.NO_COMPONENTS)
+            raise typer.Exit(code=GenerateErrorCodes.NO_COMPONENTS)
         else:
             controller = GenerateController(zentra=zentra)
             controller.run()

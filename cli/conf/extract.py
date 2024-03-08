@@ -27,3 +27,9 @@ def extract_component_names(page_schema: dict[str, str]) -> list[str]:
     flattened_types = list(chain.from_iterable(nested_types))
 
     return component_type + flattened_types
+
+
+def get_file_content(filepath: str) -> str:
+    """Reads a file and returns it as a string."""
+    with open(filepath, "r") as f:
+        return f.read()

@@ -33,10 +33,14 @@ class GenerateController(BaseController):
     """
 
     def __init__(self, zentra: Zentra) -> None:
+        react_str = "[cyan]React[/cyan]"
+        zentra_str = "[magenta]Zentra[/magenta]"
+
         tasks = [
-            (self.extract_models, "Retrieving [magenta]Zentra[/magenta] models"),
-            (self.create_files, "Creating [cyan]React[/cyan] component files"),
-            (self.update_template_files, "Configuring [cyan]React[/cyan] components"),
+            (self.check_config, f"Checking {zentra_str} configured correctly"),
+            (self.extract_models, f"Retrieving {zentra_str} models"),
+            (self.create_files, f"Creating {react_str} component files"),
+            (self.update_template_files, f"Configuring {react_str} components"),
         ]
 
         super().__init__(tasks)

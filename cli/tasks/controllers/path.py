@@ -18,7 +18,7 @@ class FolderDoesNotExistController(BaseController):
             (self.make_path, f"Creating {self.highlighted_path} folder"),
             (
                 self.create_demo_component,
-                f"Creating demo [bright_blue]component[/bright_blue] in {self.highlighted_path}",
+                f"Creating demo [cyan]component[/cyan] in {self.highlighted_path}",
             ),
         ]
 

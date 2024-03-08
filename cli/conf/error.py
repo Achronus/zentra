@@ -13,6 +13,7 @@ from cli.conf.constants import (
 ERROR_MSG_MAPPER = {
     # Common error codes
     CommonErrorCodes.CONFIG_MISSING: f"CONFIG FILE MISSING!",
+    CommonErrorCodes.INVALID_CONFIG: f"INVALID CONFIG FILE!",
     CommonErrorCodes.MODELS_DIR_MISSING: f"MODELS DIR MISSING!",
     CommonErrorCodes.SRC_DIR_MISSING: f"\n{FAIL} [red]Source directory missing[/red]! This is a bug, please log this as an issue [bright_blue][link=https://github.com/Astrum-AI/Zentra/issues]on GitHub[/link][/bright_blue]. {FAIL}\n",
     CommonErrorCodes.DEST_DIR_MISSING: f"\n{FAIL} Oops! Looks like you are [red]missing files[/red] in the [magenta]zentra[/magenta] folder! Are you in the [yellow]correct directory(?)[/yellow] and have you [yellow]configured[/yellow] your project with [green]zentra init[/green]? {FAIL}\n",

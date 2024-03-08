@@ -1,8 +1,21 @@
+import os
+import typer
 from pydantic import BaseModel
+
+from cli.conf.checks import (
+    check_file_contents,
+    check_file_exists,
+    check_models_registered,
+)
 from cli.conf.format import name_from_camel_case
 from cli.tasks.controllers.base import BaseController, status
-from cli.conf.constants import LocalUIComponentFilepaths, LocalUploadthingFilepaths
+from cli.conf.constants import (
+    LocalUploadthingFilepaths,
+    CommonErrorCodes,
+    ZentaFilepaths,
+)
 from cli.conf.extract import get_filenames_in_subdir
+
 from zentra.core import Zentra
 
 
@@ -47,6 +60,24 @@ class GenerateController(BaseController):
 
         self.storage = NameStorage()
         self.zentra = zentra
+
+    @status
+    def check_config(self) -> None:
+        """Checks that the config files are setup correctly."""
+        if not check_models_registered(self.zentra):
+            raise typer.Exit(code=CommonErrorCodes.MODELS_DIR_MISSING)
+
+        # Check config file exists
+        if not check_file_exists(
+            os.path.join(ZentaFilepaths.MODELS, ZentaFilepaths.SETUP_FILENAME)
+        ):
+            raise typer.Exit(code=CommonErrorCodes.CONFIG_MISSING)
+
+        # Check config file content is valid
+        valid_content = check_file_contents()
+
+        if not valid_content:
+            raise typer.Exit(code=1)
 
     @status
     def extract_models(self) -> None:

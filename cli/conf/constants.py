@@ -4,9 +4,10 @@ from enum import Enum
 
 class CommonErrorCodes(Enum):
     CONFIG_MISSING = 1
-    MODELS_DIR_MISSING = 2
-    SRC_DIR_MISSING = 3
-    DEST_DIR_MISSING = 4
+    INVALID_CONFIG = 2
+    MODELS_DIR_MISSING = 3
+    SRC_DIR_MISSING = 4
+    DEST_DIR_MISSING = 5
 
 
 class SetupErrorCodes(Enum):

@@ -9,6 +9,8 @@ from cli.tasks.generate import Generate
 from typing_extensions import Annotated
 from rich.console import Console
 
+from zentra.models import zentra
+
 
 app = typer.Typer(
     help="Configure your project to work with Zentra using 'zentra init' or create your React components with 'zentra generate' based on your models in the zentra folder."
@@ -22,7 +24,7 @@ msg_handler = MessageHandler(console)
 def init_app() -> None:
     """Perform basic configuration to setup your app to work with Zentra."""
     try:
-        setup = Setup()
+        setup = Setup(zentra=zentra)
         setup.init_app()
 
     except typer.Exit as e:

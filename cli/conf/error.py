@@ -1,42 +1,115 @@
+import textwrap
 import typer
 
 from rich.console import Console
 from rich.panel import Panel
 
 from cli.conf.constants import (
+    ERROR_GUIDE_URL,
+    GITHUB_ISSUES_URL,
     CommonErrorCodes,
     SetupErrorCodes,
     GenerateErrorCodes,
     PARTY,
     FAIL,
+    SetupSuccessCodes,
+    ZentaFilepaths,
 )
 
-COMMON_ERROR_MAP = {
-    CommonErrorCodes.CONFIG_MISSING: f"CONFIG FILE MISSING!",
-    CommonErrorCodes.INVALID_CONFIG: f"INVALID CONFIG FILE!",
-    CommonErrorCodes.ZENTRA_MISSING: f"\n{FAIL} The [magenta]zentra[/magenta] folder is [red]missing[/red]! Are you in the [yellow]correct directory(?)[/yellow] and have you [yellow]configured[/yellow] your project with [green]zentra init[/green]? {FAIL}\n",
-    CommonErrorCodes.MODELS_DIR_MISSING: f"MODELS DIR MISSING!",
-    CommonErrorCodes.SRC_DIR_MISSING: f"\n{FAIL} [red]Source directory missing[/red]! This is a bug, please log this as an issue [bright_blue][link=https://github.com/Astrum-AI/Zentra/issues]on GitHub[/link][/bright_blue]. {FAIL}\n",
-    CommonErrorCodes.DEST_DIR_MISSING: f"""
-    {FAIL} Oops! Looks like you are [red]missing files[/red] in the [magenta]zentra[/magenta] folder! {FAIL} 
-    
-    Things to check:
-      1. You are in the [yellow]correct directory[/yellow]
-      2.You have [yellow]configured[/yellow] your project with [green]zentra init[/green]
-    """,
+
+MORE_HELP_INFO = f"""
+[dark_goldenrod]Need more help?[/dark_goldenrod] 
+  Check our [bright_blue][link={ERROR_GUIDE_URL}]Error Message Guide[/link][/bright_blue].
+
+[red]Really stuck?[/red] 
+  Report the issue [bright_blue][link={GITHUB_ISSUES_URL}]on GitHub[/link][/bright_blue].
+"""
+
+UNKNOWN_ERROR = f"""
+{FAIL} 🥴 Well this is awkward... We didn't account for this! 🥴 {FAIL}
+
+You've encountered something unexpected 🤯. Please report this issue on [bright_blue][link={GITHUB_ISSUES_URL}]on GitHub[/link][/bright_blue].
+"""
+
+
+MISSING_FILES_CHECKS = """
+Things to check:
+  1. You are in the [yellow]correct directory[/yellow]
+  2. You have [yellow]configured[/yellow] your project with [green]zentra init[/green]
+"""
+
+INVALID_CONFIG_CHECKS = f"""
+Access the file at [magenta]zentra/models/{ZentaFilepaths.SETUP_FILENAME}[/magenta].
+
+Then, check if:
+  1. [magenta]zentra = Zentra()[/magenta] is initalised
+  2. Zentra models are registered with [magenta]zentra.register()[/magenta] and has a list of Zentra pages or components inside it
+"""
+
+
+def msg_with_checks(title: str, checks: str) -> str:
+    """Formats messages that have a title and a list of checks."""
+    return textwrap.dedent(title) + checks
+
+
+SUCCESS_MSG_MAP = {
+    SetupSuccessCodes.INIT_SUCCESS: f"\n{PARTY} Application successfully configured! Refer to the demo files in [magenta]zentra/models[/magenta] to get started. {PARTY}\n",
+    SetupSuccessCodes.CONFIGURED: f"\n{PARTY} Application already configured with components! Use [green]zentra generate[/green] to create them! {PARTY}\n",
 }
 
-SETUP_ERROR_MAP = {
-    SetupErrorCodes.INIT_SUCCESS: f"\n{PARTY} Application successfully configured! Refer to the demo files in [magenta]zentra/models[/magenta] to get started. {PARTY}\n",
-    SetupErrorCodes.CONFIGURED: f"\n{PARTY} Application already configured with components! Use [green]zentra generate[/green] to create them! {PARTY}\n",
+
+COMMON_ERROR_MAP = {
+    CommonErrorCodes.CONFIG_MISSING: msg_with_checks(
+        f"\n{FAIL} [magenta]zentra/models[/magenta] config file missing! {FAIL}\n",
+        checks=MISSING_FILES_CHECKS,
+    ),
+    CommonErrorCodes.INVALID_CONFIG: msg_with_checks(
+        f"\n{FAIL} Oops! [magenta]zentra/models[/magenta] is configured incorrectly! {FAIL}\n",
+        checks=INVALID_CONFIG_CHECKS,
+    ),
+    CommonErrorCodes.ZENTRA_MISSING: msg_with_checks(
+        title=f"\n{FAIL} The [magenta]zentra[/magenta] folder is [red]missing[/red]! {FAIL}\n",
+        checks=MISSING_FILES_CHECKS,
+    ),
+    CommonErrorCodes.MODELS_DIR_MISSING: msg_with_checks(
+        f"\n{FAIL} [magenta]zentra/models[/magenta] is missing! {FAIL}\n",
+        checks=MISSING_FILES_CHECKS,
+    ),
+    CommonErrorCodes.SRC_DIR_MISSING: f"""
+    {FAIL} [red]Source directory missing[/red]! {FAIL}
+
+    This is a bug, please report this as an issue [bright_blue][link={GITHUB_ISSUES_URL}]on GitHub[/link][/bright_blue].
+    """,
+    CommonErrorCodes.DEST_DIR_MISSING: msg_with_checks(
+        title=f"\n{FAIL} Oops! Looks like you are [red]missing files[/red] in the [magenta]zentra[/magenta] folder! {FAIL}\n",
+        checks=MISSING_FILES_CHECKS,
+    ),
 }
+
+SETUP_ERROR_MAP = {}
 
 GENERATE_ERROR_MAP = {
     # TODO: update URL
-    GenerateErrorCodes.NO_COMPONENTS: f"\n{FAIL} [red]No components found[/red] in [green]zentra/models[/green]! [magenta]Need help?[/magenta] Check the [bright_blue][link=#]starter guide[/link][/bright_blue]! {FAIL}\n",
+    GenerateErrorCodes.NO_COMPONENTS: f"""
+    {FAIL} [red]No components found[/red] in [green]zentra/models[/green]! {FAIL}
+
+    Things to check:
+      1. [green]zentra/models/{ZentaFilepaths.SETUP_FILENAME}[/green] exists
+      2. [magenta]page_map = [][/magenta] has pages
+      3. [magenta]standalone_components = [][/magenta] has components
+      4. [yellow]zentra.register(page_map)[/yellow] exists
+      5. [yellow]zentra.register(standalone_components)[/yellow] exist
+
+    Note: only one of [magenta]page_map[/magenta] and [magenta]standalone_components[/magenta] need to have items.
+    """,
 }
 
-ERROR_MSG_MAPPER = {**COMMON_ERROR_MAP, **SETUP_ERROR_MAP, **GENERATE_ERROR_MAP}
+MSG_MAPPER = {
+    **SUCCESS_MSG_MAP,
+    **COMMON_ERROR_MAP,
+    **SETUP_ERROR_MAP,
+    **GENERATE_ERROR_MAP,
+}
 
 
 class MessageHandler:

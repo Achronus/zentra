@@ -22,7 +22,7 @@ class SetupErrorCodes(Enum):
 
 
 class GenerateErrorCodes(Enum):
-    NO_COMPONENTS = 1
+    NO_COMPONENTS = 20
 
 
 # Custom print emoji's
@@ -31,9 +31,12 @@ FAIL = "[red]\u274c[/red]"
 PARTY = ":party_popper:"
 
 
+# TODO: update URLS
 # Core folder names and URLS
 FOLDER_NAME = "zentra"
 DOCS_URL = "#"
+ERROR_GUIDE_URL = "#"
+GITHUB_ISSUES_URL = "https://github.com/Astrum-AI/Zentra/issues"
 
 
 class ZentaFilepaths:

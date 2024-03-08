@@ -75,7 +75,7 @@ COMMON_ERROR_MAP = {
         checks=MISSING_FILES_CHECKS,
     ),
     CommonErrorCodes.INVALID_CONFIG: error_msg_with_checks(
-        "Oops! [magenta]zentra/models[/magenta] is configured incorrectly!",
+        "Oops! [magenta]zentra/models[/magenta] configured incorrectly!",
         checks=INVALID_CONFIG_CHECKS,
     ),
     CommonErrorCodes.ZENTRA_MISSING: error_msg_with_checks(

@@ -87,7 +87,7 @@ class Zentra(BaseModel):
         for component in components:
             if not isinstance(component, valid_types):
                 raise ValueError(
-                    f"Invalid component type: {type(component)}.\nMust be (or inherit from): {valid_types}"
+                    f"Invalid component type: {type(component)}.\nMust be (or inherit from) a list of either: {valid_types}.\n\nValid examples:\n  zentra.register([Page(...), Page(...)])\n  zentra.register([Accordion(...), Button(...)])\n  zentra.register([Page(...), Accordion(...)])\n"
                 )
 
             comp_type = self.__set_type(component, valid_types)

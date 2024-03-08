@@ -42,8 +42,19 @@ INVALID_CONFIG_CHECKS = f"""
 Access the file at [magenta]zentra/models/{ZentaFilepaths.SETUP_FILENAME}[/magenta].
 
 Then, check if:
-  1. [magenta]zentra = Zentra()[/magenta] is initalised
-  2. Zentra models are registered with [magenta]zentra.register()[/magenta] and has a list of Zentra pages or components inside it
+  1. [magenta]zentra = [yellow]Zentra[/yellow]()[/magenta] is initalised
+  2. Zentra models are registered with [magenta]zentra.[yellow]register[/yellow]()[/magenta] and has a list of Zentra pages or components inside it
+"""
+
+NO_COMPONENTS_CHECKS = f"""
+Things to check:
+  1. [green]zentra/models/{ZentaFilepaths.SETUP_FILENAME}[/green] exists
+
+If it does, access it and check if:
+  1. [magenta]zentra = [yellow]Zentra[/yellow]()[/magenta] is initalised
+  2. Zentra models are registered with [magenta]zentra.[yellow]register[/yellow]()[/magenta] and has either:
+    a) A list of Zentra pages (e.g., [magenta][[yellow]Page[/yellow](), [yellow]Page[/yellow]()][/magenta])
+    b) Or a list of components (e.g., [magenta][[yellow]Button[/yellow](), [yellow]Accordion[/yellow]()][/magenta])
 """
 
 
@@ -89,19 +100,10 @@ COMMON_ERROR_MAP = {
 SETUP_ERROR_MAP = {}
 
 GENERATE_ERROR_MAP = {
-    # TODO: update URL
-    GenerateErrorCodes.NO_COMPONENTS: f"""
-    {FAIL} [red]No components found[/red] in [green]zentra/models[/green]! {FAIL}
-
-    Things to check:
-      1. [green]zentra/models/{ZentaFilepaths.SETUP_FILENAME}[/green] exists
-      2. [magenta]page_map = [][/magenta] has pages
-      3. [magenta]standalone_components = [][/magenta] has components
-      4. [yellow]zentra.register(page_map)[/yellow] exists
-      5. [yellow]zentra.register(standalone_components)[/yellow] exist
-
-    Note: only one of [magenta]page_map[/magenta] and [magenta]standalone_components[/magenta] need to have items.
-    """,
+    GenerateErrorCodes.NO_COMPONENTS: msg_with_checks(
+        f"\n{FAIL} [red]No components found[/red] in [green]zentra/models[/green]! {FAIL}\n",
+        checks=NO_COMPONENTS_CHECKS,
+    ),
 }
 
 MSG_MAPPER = {

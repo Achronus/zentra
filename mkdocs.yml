@@ -29,6 +29,7 @@ nav:
     - Why use Zentra: starting/why.md
     - Installation: starting/install.md
     - Basic Usage: starting/basic_usage.md
+    - Error Handling: starting/errors.md
   - UI Components:
     - UI Components: components/ui/index.md
     - Core: components/ui/core.md

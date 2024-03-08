@@ -5,15 +5,15 @@ from enum import Enum
 class CommonErrorCodes(Enum):
     CONFIG_MISSING = 1
     INVALID_CONFIG = 2
-    MODELS_DIR_MISSING = 3
-    SRC_DIR_MISSING = 4
-    DEST_DIR_MISSING = 5
+    ZENTRA_MISSING = 3
+    MODELS_DIR_MISSING = 4
+    SRC_DIR_MISSING = 5
+    DEST_DIR_MISSING = 6
 
 
 class SetupErrorCodes(Enum):
     INIT_SUCCESS = 0
     CONFIGURED = 1
-    ZENTRA_MISSING = 2
 
 
 class GenerateErrorCodes(Enum):

@@ -77,7 +77,7 @@ class GenerateController(BaseController):
         valid_content = check_file_contents()
 
         if not valid_content:
-            raise typer.Exit(code=1)
+            raise typer.Exit(code=CommonErrorCodes.INVALID_CONFIG)
 
     @status
     def extract_models(self) -> None:

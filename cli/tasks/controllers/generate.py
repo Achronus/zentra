@@ -97,8 +97,12 @@ class GenerateController(BaseController):
     @status
     def create_files(self) -> None:
         """Creates the React components based on the extracting models."""
-        pass
         # Steps 4 and 5
+        copy_zentra_files(
+            LocalUIComponentFilepaths.BASE,
+            ZentraUIFilepaths.BASE,
+            self.storage.UI_TO_GENERATE,
+        )
 
     @status
     def update_template_files(self) -> None:

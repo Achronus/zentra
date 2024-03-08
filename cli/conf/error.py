@@ -1,6 +1,7 @@
 import typer
 
 from rich.console import Console
+from rich.panel import Panel
 
 from cli.conf.constants import (
     CommonErrorCodes,
@@ -44,6 +45,37 @@ class MessageHandler:
     def __init__(self, console: Console) -> None:
         self.console = console
 
-    def msg(self, e: typer.Exit):
-        msg = ERROR_MSG_MAPPER.get(e.exit_code, "Unknown error.")
-        self.console.print(msg)
+    @staticmethod
+    def __error_msg(msg: str, e: typer.Exit) -> Panel:
+        """Handles error messages and returns a panel with their information."""
+        err_str = "[cyan]Error code[/cyan]"
+        error_code = f"\n{err_str}: {e.exit_code.value}\n"
+
+        return Panel(
+            msg + MORE_HELP_INFO + error_code,
+            expand=False,
+            border_style="bright_red",
+        )
+
+    @staticmethod
+    def __success_msg(msg: str, e: typer.Exit) -> Panel:
+        """Handles success messages and returns a panel with their information."""
+        return Panel(msg, expand=False, border_style="bright_green")
+
+    def msg(self, e: typer.Exit) -> None:
+        """Assigns a success or error message depending on the code received."""
+        try:
+            e.exit_code.value
+        except AttributeError:
+            e.exit_code = CommonErrorCodes.UNKNOWN_ERROR
+
+        msg = textwrap.dedent(MSG_MAPPER.get(e.exit_code, UNKNOWN_ERROR))
+        msg_type = e.exit_code.__class__.__name__
+
+        panel = (
+            self.__error_msg(msg, e)
+            if "Error" in msg_type
+            else self.__success_msg(msg, e)
+        )
+
+        self.console.print(panel)

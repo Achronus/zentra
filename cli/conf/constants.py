@@ -9,6 +9,7 @@ class CommonErrorCodes(Enum):
     MODELS_DIR_MISSING = 4
     SRC_DIR_MISSING = 5
     DEST_DIR_MISSING = 6
+    UNKNOWN_ERROR = 1000
 
 
 class SetupSuccessCodes(Enum):

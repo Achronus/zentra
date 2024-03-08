@@ -7,6 +7,7 @@ from cli.conf.checks import (
     CheckConfigFileValid,
     check_file_exists,
     check_models_registered,
+    check_zentra_models_exist,
 )
 from cli.conf.format import name_from_camel_case
 from cli.conf.move import copy_zentra_files
@@ -67,8 +68,8 @@ class GenerateController(BaseController):
     @status
     def check_config(self) -> None:
         """Checks that the config files are setup correctly."""
-        # Check models file exists
-        if not check_models_registered(self.zentra):
+        # Check models folder exists
+        if not check_zentra_models_exist():
             raise typer.Exit(code=CommonErrorCodes.MODELS_DIR_MISSING)
 
         # Check config file exists

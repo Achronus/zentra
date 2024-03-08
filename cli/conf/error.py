@@ -39,7 +39,7 @@ Things to check:
 """
 
 INVALID_CONFIG_CHECKS = f"""
-Access the file at [magenta]zentra/models/{ZentaFilepaths.SETUP_FILENAME}[/magenta].
+Access the config file at [magenta]zentra/models/{ZentaFilepaths.SETUP_FILENAME}[/magenta].
 
 Then, check if:
   1. [magenta]zentra = [yellow]Zentra[/yellow]()[/magenta] is initalised
@@ -58,9 +58,9 @@ If it does, access it and check if:
 """
 
 
-def msg_with_checks(title: str, checks: str) -> str:
-    """Formats messages that have a title and a list of checks."""
-    return textwrap.dedent(title) + checks
+def error_msg_with_checks(title: str, checks: str) -> str:
+    """Formats error messages that have a title and a list of checks."""
+    return textwrap.dedent(f"\n{FAIL} {title} {FAIL}\n") + checks
 
 
 SUCCESS_MSG_MAP = {
@@ -70,20 +70,20 @@ SUCCESS_MSG_MAP = {
 
 
 COMMON_ERROR_MAP = {
-    CommonErrorCodes.CONFIG_MISSING: msg_with_checks(
-        f"\n{FAIL} [magenta]zentra/models[/magenta] config file missing! {FAIL}\n",
+    CommonErrorCodes.CONFIG_MISSING: error_msg_with_checks(
+        "[magenta]zentra/models[/magenta] config file missing!",
         checks=MISSING_FILES_CHECKS,
     ),
-    CommonErrorCodes.INVALID_CONFIG: msg_with_checks(
-        f"\n{FAIL} Oops! [magenta]zentra/models[/magenta] is configured incorrectly! {FAIL}\n",
+    CommonErrorCodes.INVALID_CONFIG: error_msg_with_checks(
+        "Oops! [magenta]zentra/models[/magenta] is configured incorrectly!",
         checks=INVALID_CONFIG_CHECKS,
     ),
-    CommonErrorCodes.ZENTRA_MISSING: msg_with_checks(
-        title=f"\n{FAIL} The [magenta]zentra[/magenta] folder is [red]missing[/red]! {FAIL}\n",
+    CommonErrorCodes.ZENTRA_MISSING: error_msg_with_checks(
+        title="The [magenta]zentra[/magenta] folder is [red]missing[/red]!",
         checks=MISSING_FILES_CHECKS,
     ),
-    CommonErrorCodes.MODELS_DIR_MISSING: msg_with_checks(
-        f"\n{FAIL} [magenta]zentra/models[/magenta] is missing! {FAIL}\n",
+    CommonErrorCodes.MODELS_DIR_MISSING: error_msg_with_checks(
+        "[magenta]zentra/models[/magenta] is missing!",
         checks=MISSING_FILES_CHECKS,
     ),
     CommonErrorCodes.SRC_DIR_MISSING: f"""
@@ -96,8 +96,8 @@ COMMON_ERROR_MAP = {
 SETUP_ERROR_MAP = {}
 
 GENERATE_ERROR_MAP = {
-    GenerateErrorCodes.NO_COMPONENTS: msg_with_checks(
-        f"\n{FAIL} [red]No components found[/red] in [green]zentra/models[/green]! {FAIL}\n",
+    GenerateErrorCodes.NO_COMPONENTS: error_msg_with_checks(
+        "[red]No components found[/red] in [green]zentra/models[/green]!",
         checks=NO_COMPONENTS_CHECKS,
     ),
 }

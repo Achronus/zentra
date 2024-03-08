@@ -57,7 +57,7 @@ class TestZentra:
         assert zentra.pages == [page]
         assert zentra.components == [component]
 
-    def test_invalid_input(self, zentra: Zentra):
+    def test_register_invalid_input(self, zentra: Zentra):
         invalid_input = "InvalidInput"
         with pytest.raises(ValueError):
             zentra.register(invalid_input)

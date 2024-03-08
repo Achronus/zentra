@@ -35,26 +35,18 @@ You've encountered something unexpected 🤯. Please report this issue on [brigh
 MISSING_FILES_CHECKS = """
 Things to check:
   1. You are in the [yellow]correct directory[/yellow]
-  2. You have [yellow]configured[/yellow] your project with [green]zentra init[/green]
+  2. You have [yellow]configured[/yellow] your project with [green]zentra init[/green]  
 """
 
-INVALID_CONFIG_CHECKS = f"""
-Access the config file at [magenta]zentra/models/{ZentaFilepaths.SETUP_FILENAME}[/magenta].
+INVALID_CONFIG_CHECKS = """
+  1. [magenta]zentra[/magenta] = [yellow]Zentra[/yellow]() is initalised
+  2. Zentra models are registered with [magenta]zentra[/magenta].[yellow]register[/yellow]() with   
+    a list of [magenta]Zentra[/magenta] [yellow]Pages[/yellow] or [yellow]Components[/yellow]
 
-Then, check if:
-  1. [magenta]zentra = [yellow]Zentra[/yellow]()[/magenta] is initalised
-  2. Zentra models are registered with [magenta]zentra.[yellow]register[/yellow]()[/magenta] and has a list of Zentra pages or components inside it
-"""
-
-NO_COMPONENTS_CHECKS = f"""
-Things to check:
-  1. [green]zentra/models/{ZentaFilepaths.SETUP_FILENAME}[/green] exists
-
-If it does, access it and check if:
-  1. [magenta]zentra = [yellow]Zentra[/yellow]()[/magenta] is initalised
-  2. Zentra models are registered with [magenta]zentra.[yellow]register[/yellow]()[/magenta] and has either:
-    a) A list of Zentra pages (e.g., [magenta][[yellow]Page[/yellow](), [yellow]Page[/yellow]()][/magenta])
-    b) Or a list of components (e.g., [magenta][[yellow]Button[/yellow](), [yellow]Accordion[/yellow]()][/magenta])
+For example:
+  [magenta]zentra[/magenta].[yellow]register[/yellow]([cyan][[/cyan][yellow]Page[/yellow](...), [yellow]Page[/yellow](...)[cyan]][/cyan])
+  [magenta]zentra[/magenta].[yellow]register[/yellow]([cyan][[/cyan][yellow]Accordion[/yellow](...), [yellow]Button[/yellow](...)[cyan]][/cyan])
+  [magenta]zentra[/magenta].[yellow]register[/yellow]([cyan][[/cyan][yellow]Page[/yellow](...), [yellow]Accordion[/yellow](...)[cyan]][/cyan])
 """
 
 
@@ -76,7 +68,8 @@ COMMON_ERROR_MAP = {
     ),
     CommonErrorCodes.INVALID_CONFIG: error_msg_with_checks(
         "Oops! [magenta]zentra/models[/magenta] configured incorrectly!",
-        checks=INVALID_CONFIG_CHECKS,
+        checks=f"\nAccess the config file at [magenta]zentra/models/{ZentaFilepaths.SETUP_FILENAME}[/magenta].\n\nThen, check if:"
+        + INVALID_CONFIG_CHECKS,
     ),
     CommonErrorCodes.ZENTRA_MISSING: error_msg_with_checks(
         title="The [magenta]zentra[/magenta] folder is [red]missing[/red]!",
@@ -98,7 +91,8 @@ SETUP_ERROR_MAP = {}
 GENERATE_ERROR_MAP = {
     GenerateErrorCodes.NO_COMPONENTS: error_msg_with_checks(
         "[red]No components found[/red] in [green]zentra/models[/green]!",
-        checks=NO_COMPONENTS_CHECKS,
+        checks=f"\nThings to check:\n  1. [magenta]zentra/models/{ZentaFilepaths.SETUP_FILENAME}[/magenta] exists\n\nIf it does, access it and check if:"
+        + INVALID_CONFIG_CHECKS,
     ),
 }
 

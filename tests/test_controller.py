@@ -1,6 +1,9 @@
+import os
 import pytest
+import typer
+from cli.conf.checks import check_folder_exists
 
-from cli.conf.constants import LocalUploadthingFilepaths
+from cli.conf.constants import LocalUploadthingFilepaths, ZentaFilepaths
 from cli.conf.format import name_from_camel_case
 from cli.tasks.controllers.base import status, BaseController
 from cli.tasks.controllers.setup import SetupController
@@ -174,3 +177,13 @@ class TestGenerateController:
                 "input.tsx",
             ]
             assert len(result) == len(valid)
+
+    class TestCheckConfig:
+        def test_success(self, tmp_path, controller: GenerateController):
+            config_path = os.path.join(tmp_path, "config_file.py")
+            with open(config_path, "w") as f:
+                f.write(
+                    "\nfrom zentra.core import Zentra\nzentra = Zentra()\nzentra.register()"
+                )
+
+            assert controller.check_config() == (True, None)

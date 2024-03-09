@@ -1,7 +1,27 @@
+import ast
 import os
+import tempfile
 import pytest
 
-from cli.conf.checks import check_folder_exists
+from cli.conf.checks import (
+    CheckConfigFileValid,
+    check_file_exists,
+    check_folder_exists,
+    check_in_correct_folder,
+    check_models_registered,
+    check_zentra_models_exist,
+)
+from cli.conf.extract import get_file_content
+from zentra.core import Component, Zentra
+
+
+class TestCheckFileExists:
+    def test_success(self):
+        with tempfile.NamedTemporaryFile() as temp_file:
+            assert check_file_exists(temp_file.name)
+
+    def test_invalid_file(self):
+        assert not check_file_exists("/nonexistentfile")
 
 
 class TestCheckFolderExists:
@@ -18,3 +38,48 @@ class TestCheckFolderExists:
     def test_invalid_file(self, zentra_path):
         file_path = os.path.join(zentra_path, "test_file.txt")
         assert not check_folder_exists(file_path)
+
+
+def test_check_in_correct_folder_valid():
+    assert check_in_correct_folder()
+
+
+def test_check_zentra_models_exist_valid():
+    assert check_zentra_models_exist()
+
+
+class TestCheckModelsRegistered:
+    def test_fail(self):
+        zentra = Zentra()
+        assert not check_models_registered(zentra)
+
+    def test_success(self):
+        zentra = Zentra()
+        zentra.register([Component(name="Component1")])
+        assert check_models_registered(zentra)
+
+
+class TestCheckConfigFileValid:
+    def test_success(self, tmp_path):
+        filepath = os.path.join(tmp_path, "valid_code")
+        with open(filepath, "w") as f:
+            f.write(
+                "from zentra.core import Zentra\nzentra = Zentra()\nzentra.register()"
+            )
+
+        checker = CheckConfigFileValid()
+        file_content = get_file_content(filepath)
+        tree = ast.parse(file_content, filename=filepath)
+        checker.visit(tree)
+        assert checker.is_valid()
+
+    def test_fail(self, tmp_path):
+        filepath = os.path.join(tmp_path, "invalid_code")
+        with open(filepath, "w") as f:
+            f.write("from zentra.core import Zentra\nzentra = Zentra()")
+
+        checker = CheckConfigFileValid()
+        file_content = get_file_content(filepath)
+        tree = ast.parse(file_content, filename=filepath)
+        checker.visit(tree)
+        assert not checker.is_valid()

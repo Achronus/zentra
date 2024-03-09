@@ -35,6 +35,7 @@ class Setup:
         self.paths = PathStorage(
             config=os.path.join(ZentaFilepaths.MODELS, ZentaFilepaths.SETUP_FILENAME),
             models=ZentaFilepaths.MODELS,
+            demo=ZentaFilepaths.DEMO_FOLDER,
         )
 
         self.config_storage = ConfigExistStorage()

@@ -17,26 +17,27 @@ class SetupController(BaseController):
         self.paths = paths
         self.config_storage = config_storage
 
-        self.highlighted_path = (
-            f"[bright_cyan]{local_path(self.paths.models)}[/bright_cyan]"
-        )
+        self.highlighted_path = f"[magenta]{local_path(self.paths.demo)}[/magenta]"
 
         tasks = [
-            (self.make_path, f"Creating {self.highlighted_path} folder"),
             (
-                self.create_demo_component,
-                f"Creating demo [cyan]component[/cyan] in {self.highlighted_path}",
+                self.create_missing_files,
+                "Creating [yellow]configuration[/yellow] files",
+            ),
+            (
+                self.create_demo_files,
+                f"Creating demo files in {self.highlighted_path}",
             ),
         ]
 
         super().__init__(tasks)
 
     @status
-    def make_path(self) -> None:
-        """Create the folder path."""
-        make_path_dirs(self.paths.models)
+    def create_missing_files(self) -> None:
+        """Creates the missing zentra files."""
+        # make_path_dirs(self.paths.models)
 
     @status
-    def create_demo_component(self) -> None:
-        """Creates a demo component in the Zentra path."""
+    def create_demo_files(self) -> None:
+        """Creates a demo folder with files to demonstrate how to use create Zentra Pages and Components."""
         pass

@@ -55,19 +55,19 @@ class TestLocalCoreComponentsFilepaths(unittest.TestCase):
     def test_root_path(self):
         self.assertEqual(
             LocalCoreComponentFilepaths.ROOT,
-            os.path.join(os.getcwd(), "components"),
+            os.path.join(os.getcwd(), "cli", "components"),
         )
 
     def test_ui_path(self):
         self.assertEqual(
             LocalCoreComponentFilepaths.UI,
-            os.path.join(os.getcwd(), "components", "ui"),
+            os.path.join(os.getcwd(), "cli", "components", "ui"),
         )
 
     def test_uploadthing_path(self):
         self.assertEqual(
             LocalCoreComponentFilepaths.UPLOADTHING,
-            os.path.join(os.getcwd(), "components", "uploadthing"),
+            os.path.join(os.getcwd(), "cli", "components", "uploadthing"),
         )
 
 
@@ -75,19 +75,19 @@ class TestUIComponentFilepaths(unittest.TestCase):
     def test_root_path(self):
         self.assertEqual(
             LocalUIComponentFilepaths.ROOT,
-            os.path.join(os.getcwd(), "components", "ui"),
+            os.path.join(os.getcwd(), "cli", "components", "ui"),
         )
 
     def test_base_path(self):
         self.assertEqual(
             LocalUIComponentFilepaths.BASE,
-            os.path.join(os.getcwd(), "components", "ui", "base"),
+            os.path.join(os.getcwd(), "cli", "components", "ui", "base"),
         )
 
     def test_templates_path(self):
         self.assertEqual(
             LocalUIComponentFilepaths.TEMPLATES,
-            os.path.join(os.getcwd(), "components", "ui", "templates"),
+            os.path.join(os.getcwd(), "cli", "components", "ui", "templates"),
         )
 
 
@@ -95,31 +95,35 @@ class TestLocalUploadthingFilepaths(unittest.TestCase):
     def test_root_path(self):
         self.assertEqual(
             LocalUploadthingFilepaths.ROOT,
-            os.path.join(os.getcwd(), "components", "uploadthing"),
+            os.path.join(os.getcwd(), "cli", "components", "uploadthing"),
         )
 
     def test_base_path(self):
         self.assertEqual(
             LocalUploadthingFilepaths.BASE,
-            os.path.join(os.getcwd(), "components", "uploadthing", "base"),
+            os.path.join(os.getcwd(), "cli", "components", "uploadthing", "base"),
         )
 
     def test_templates_path(self):
         self.assertEqual(
             LocalUploadthingFilepaths.TEMPLATES,
-            os.path.join(os.getcwd(), "components", "uploadthing", "templates"),
+            os.path.join(os.getcwd(), "cli", "components", "uploadthing", "templates"),
         )
 
     def test_base_basic_path(self):
         self.assertEqual(
             LocalUploadthingFilepaths.BASE_BASIC,
-            os.path.join(os.getcwd(), "components", "uploadthing", "base", "basic"),
+            os.path.join(
+                os.getcwd(), "cli", "components", "uploadthing", "base", "basic"
+            ),
         )
 
     def test_base_nextjs_path(self):
         self.assertEqual(
             LocalUploadthingFilepaths.BASE_NEXTJS,
-            os.path.join(os.getcwd(), "components", "uploadthing", "base", "nextjs"),
+            os.path.join(
+                os.getcwd(), "cli", "components", "uploadthing", "base", "nextjs"
+            ),
         )
 
 

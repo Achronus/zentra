@@ -10,7 +10,7 @@ from cli.conf.checks import (
 
 from cli.conf.checks import check_folder_exists
 from cli.conf.extract import get_file_content
-from cli.tasks.controllers.base import PathStorage
+from cli.conf.storage import ConfigExistStorage, PathStorage
 from cli.utils.printables import configuration_complete_panel
 from .controllers.setup import SetupController
 from cli.conf.constants import GETTING_STARTED_URL, SetupSuccessCodes, ZentaFilepaths
@@ -20,42 +20,6 @@ from rich.console import Console
 
 
 console = Console()
-
-
-class ConfigExistStorage:
-    """
-    A storage container for boolean values for the following config checks:
-    1. `zentra/models` folder exists
-    2. `zentra/models` setup file exists
-    3. `zentra/models` setup file is valid with required elements
-    4. Models are registered to the `Zentra()` app
-    """
-
-    def __init__(self) -> None:
-        self.models_folder_exists = False
-        self.config_file_exists = False
-        self.config_file_valid = False
-        self.models_registered = False
-
-    def set_true(self, attr: str) -> None:
-        """Switches an attributes value to True."""
-        if not hasattr(self, attr):
-            raise ValueError(
-                f"'{attr}' does not exist! Did you mean one of these: {list(self.__dict__.keys())}?"
-            )
-
-        setattr(self, attr, True)
-
-    def app_configured(self) -> bool:
-        """Checks if Zentra has already been configured correctly."""
-        return all(
-            [
-                self.models_folder_exists,
-                self.config_file_exists,
-                self.config_file_valid,
-                self.models_registered,
-            ]
-        )
 
 
 class Setup:
@@ -84,7 +48,7 @@ class Setup:
             raise typer.Exit(code=SetupSuccessCodes.CONFIGURED)
 
         # Create missing items
-        controller = SetupController(paths=self.paths)
+        controller = SetupController(paths=self.paths, config=self.config_storage)
         controller.run()
 
         # Setup complete

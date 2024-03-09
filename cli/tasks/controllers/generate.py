@@ -10,7 +10,8 @@ from cli.conf.checks import (
 )
 from cli.conf.format import name_from_camel_case
 from cli.conf.move import copy_zentra_files
-from cli.tasks.controllers.base import BaseController, PathStorage, status
+from cli.conf.storage import PathStorage
+from cli.tasks.controllers.base import BaseController, status
 from cli.conf.constants import (
     LocalUIComponentFilepaths,
     LocalUploadthingFilepaths,
@@ -44,7 +45,7 @@ class GenerateController(BaseController):
 
     Parameters:
     - zentra (zentra.core.Zentra) - the Zentra application containing components to generate
-    - paths (controllers.base.PathStorage) - a path storage container with filepaths specific to the controller
+    - paths (storage.PathStorage) - a path storage container with filepaths specific to the controller
     """
 
     def __init__(self, zentra: Zentra, paths: PathStorage) -> None:

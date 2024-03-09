@@ -7,7 +7,7 @@ from cli.conf.constants import (
     ZentaFilepaths,
     ZentraUIFilepaths,
 )
-from cli.tasks.controllers.base import PathStorage
+from cli.conf.storage import PathStorage
 from cli.tasks.controllers.generate import GenerateController
 from cli.utils.printables import component_count_panel
 from zentra.core import Zentra

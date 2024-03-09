@@ -6,7 +6,8 @@ from cli.conf.constants import (
     LocalUploadthingFilepaths,
 )
 from cli.conf.format import name_from_camel_case
-from cli.tasks.controllers.base import PathStorage, status, BaseController
+from cli.conf.storage import PathStorage
+from cli.tasks.controllers.base import status, BaseController
 from cli.tasks.controllers.setup import SetupController
 from cli.tasks.controllers.generate import GenerateController
 

@@ -25,20 +25,6 @@ def status(func):
     return wrapper
 
 
-class PathStorage:
-    """A storage container for folder paths provided to controllers."""
-
-    def __init__(self, **kwargs):
-        for key, val in kwargs.items():
-            setattr(self, key, self._validate_path(val))
-
-    def _validate_path(self, path: str) -> str:
-        """Validates kwarg values to ensure they are strings."""
-        if not isinstance(path, str):
-            raise TypeError(f"Invalid path type: {type(path)}. Path must be a string.")
-        return path
-
-
 ControllerMethod = TypeVar("ControllerMethod", bound="BaseController")
 
 

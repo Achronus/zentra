@@ -1,4 +1,5 @@
-from .base import BaseController, PathStorage, status
+from cli.conf.storage import ConfigExistStorage, PathStorage
+from cli.tasks.controllers.base import BaseController, status
 from cli.conf.create import make_path_dirs
 from cli.utils.printables import local_path
 
@@ -8,11 +9,13 @@ class SetupController(BaseController):
     A controller for handling tasks for configuring Zentra.
 
     Parameters:
-    - paths (controllers.base.PathStorage) - a path storage container with filepaths specific to the controller
+    - paths (storage.PathStorage) - a path storage container with filepaths specific to the controller
+    - config_storage (storage.ConfigExistStorage) - a boolean value storage container for config checks
     """
 
-    def __init__(self, paths: PathStorage) -> None:
+    def __init__(self, paths: PathStorage, config_storage: ConfigExistStorage) -> None:
         self.paths = paths
+        self.config_storage = config_storage
 
         self.highlighted_path = (
             f"[bright_cyan]{local_path(self.paths.models)}[/bright_cyan]"

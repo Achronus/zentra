@@ -1,7 +1,7 @@
 import typer
 
-from cli.conf.checks import check_in_correct_folder
-from cli.conf.constants import CommonErrorCodes
+from cli.conf.checks import check_folder_exists
+from cli.conf.constants import CommonErrorCodes, ZentaFilepaths
 from cli.conf.error import MessageHandler
 from cli.tasks.setup import Setup
 from cli.tasks.generate import Generate
@@ -43,7 +43,8 @@ def generate_components(
 ) -> None:
     """Generates all React components based on the models stored in the 'zentra/models' folder. Optionally, supply a single 'filename' as argument to only generate certain components."""
     try:
-        if not check_in_correct_folder():
+        # Check cwd has access to zentra
+        if not check_folder_exists(ZentaFilepaths.ROOT):
             raise typer.Exit(CommonErrorCodes.ZENTRA_MISSING)
 
         generate = Generate(zentra)

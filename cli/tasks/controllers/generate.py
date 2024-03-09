@@ -6,8 +6,8 @@ from pydantic import BaseModel
 from cli.conf.checks import (
     CheckConfigFileValid,
     check_file_exists,
+    check_folder_exists,
     check_models_registered,
-    check_zentra_models_exist,
 )
 from cli.conf.format import name_from_camel_case
 from cli.conf.move import copy_zentra_files
@@ -69,7 +69,7 @@ class GenerateController(BaseController):
     def check_config(self) -> None:
         """Checks that the config files are setup correctly."""
         # Check models folder exists
-        if not check_zentra_models_exist():
+        if not check_folder_exists(ZentaFilepaths.MODELS):
             raise typer.Exit(code=CommonErrorCodes.MODELS_DIR_MISSING)
 
         # Check config file exists
@@ -81,6 +81,7 @@ class GenerateController(BaseController):
         check_config = CheckConfigFileValid()
         file_content_tree = ast.parse(get_file_content(config_path))
         check_config.visit(file_content_tree)
+
         valid_content = check_config.is_valid()
 
         if not valid_content:
@@ -116,13 +117,3 @@ class GenerateController(BaseController):
         """Updates the React components based on the Zentra model attributes."""
         pass
         # Steps 6 to 8
-
-
-# 1. [X] Get filenames from components/ui/base <- make dynamic for future libraries
-# 2. [X] Get components from zentra class
-# 3. [X] Convert component names from camelcase
-# 4. [] Copy files in base that match component names to components/zentra/ui/base
-# 5. [] Copy template files that match component names to components/zentra/ui/<filename>
-# 6. [] Convert components to JSON
-# 7. [] Update template files with information from component attributes using JSON
-# 8. [] Update components/zentra/ui/index.tsx with component exports

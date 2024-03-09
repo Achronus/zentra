@@ -78,7 +78,7 @@ class Setup:
         if self.config_storage.app_configured():
             raise typer.Exit(code=SetupSuccessCodes.CONFIGURED)
 
-        # Otherwise, proceed with setting up missing items
+        # Create missing items
         console.print()
         console.print(path_exists_table(self.folder_path, self.path_exists))
 

@@ -21,16 +21,6 @@ def check_folder_exists(dirpath: str) -> bool:
     return False
 
 
-def check_in_correct_folder() -> bool:
-    """Checks if the user is in the correct folder before using the tool."""
-    return check_folder_exists(ZentaFilepaths.ROOT)
-
-
-def check_zentra_models_exist() -> bool:
-    """Checks if the `zentra/models` folder exists."""
-    return check_folder_exists(ZentaFilepaths.MODELS)
-
-
 def check_models_registered(zentra: Zentra) -> bool:
     """Checks if any models are registered to the `Zentra` app."""
     if len(zentra.component_names) > 0:

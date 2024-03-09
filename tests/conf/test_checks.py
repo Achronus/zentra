@@ -7,9 +7,7 @@ from cli.conf.checks import (
     CheckConfigFileValid,
     check_file_exists,
     check_folder_exists,
-    check_in_correct_folder,
     check_models_registered,
-    check_zentra_models_exist,
 )
 from cli.conf.extract import get_file_content
 from zentra.core import Component, Zentra
@@ -38,14 +36,6 @@ class TestCheckFolderExists:
     def test_invalid_file(self, zentra_path):
         file_path = os.path.join(zentra_path, "test_file.txt")
         assert not check_folder_exists(file_path)
-
-
-def test_check_in_correct_folder_valid():
-    assert check_in_correct_folder()
-
-
-def test_check_zentra_models_exist_valid():
-    assert check_zentra_models_exist()
 
 
 class TestCheckModelsRegistered:

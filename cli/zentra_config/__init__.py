@@ -1,6 +1,6 @@
 from zentra.core import Component, Page, Zentra
-from zentra.models.demo.agency_details import agency_details
-from zentra.models.demo.user_button import user_btn
+from ._demo.agency_details import agency_details
+from ._demo.user_button import user_btn
 
 # Web pages that contain multiple React components
 page_map: list[Page] = [

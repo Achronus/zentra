@@ -62,10 +62,15 @@ class TestBaseController:
             ), controller.called_tasks
 
 
-class TestFolderDoesNotExistController:
+class TestSetupController:
     @pytest.fixture
-    def controller(self) -> SetupController:
-        return SetupController()
+    def controller(self, tmp_path) -> SetupController:
+        return SetupController(
+            PathStorage(
+                config=os.path.join(tmp_path, "zentra_init.py"),
+                models=os.path.join(tmp_path, "zentra_models"),
+            )
+        )
 
     def test_make_path_success(self, controller: SetupController):
         result, e = controller.make_path()

@@ -1,4 +1,7 @@
 import os
+from cli.conf.format import component_count_str
+
+from zentra.core import Zentra
 
 from ..conf.constants import PARTY, PASS, FAIL
 
@@ -26,6 +29,17 @@ def configuration_complete_panel(folder_path: str, link: str) -> Panel:
         style="bright_green",
     )
     return panel
+
+
+def component_count_panel(
+    zentra: Zentra, text_start: str = "", text_end: str = "."
+) -> Panel:
+    """Creates a printable panel highlighting the number of components and pages in the Zentra app with a custom message."""
+    return Panel(
+        f"{text_start}{component_count_str(zentra)}{text_end}",
+        expand=False,
+        border_style="yellow",
+    )
 
 
 def component_complete_panel() -> Panel:

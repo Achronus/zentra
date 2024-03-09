@@ -15,6 +15,8 @@ from cli.conf.constants import (
     SetupSuccessCodes,
     ZentaFilepaths,
 )
+from cli.conf.format import plural_name_formatter
+from zentra.models import zentra
 
 
 MORE_HELP_INFO = f"""
@@ -40,7 +42,7 @@ Things to check:
 
 INVALID_CONFIG_CHECKS = """
   1. [magenta]zentra[/magenta] = [yellow]Zentra[/yellow]() is initalised
-  2. Zentra models are registered with [magenta]zentra[/magenta].[yellow]register[/yellow]() with   
+  2. [magenta]Zentra[/magenta] models are registered with [magenta]zentra[/magenta].[yellow]register[/yellow]() with   
     a list of [magenta]Zentra[/magenta] [yellow]Pages[/yellow] or [yellow]Components[/yellow]
 
 For example:
@@ -49,15 +51,35 @@ For example:
   [magenta]zentra[/magenta].[yellow]register[/yellow]([cyan][[/cyan][yellow]Page[/yellow](...), [yellow]Accordion[/yellow](...)[cyan]][/cyan])
 """
 
+page_count = len(zentra.pages)
+component_count = len(zentra.component_names)
+
+ZENTRA_COMPONENT_COUNTS = f"""
+Use [green]zentra generate[/green] to create:
+  - {page_count} [yellow]{plural_name_formatter('Page', page_count)}[/yellow]
+  - {component_count} [yellow]{plural_name_formatter('Component', component_count)}[/yellow]
+"""
+
 
 def error_msg_with_checks(title: str, checks: str) -> str:
     """Formats error messages that have a title and a list of checks."""
     return textwrap.dedent(f"\n{FAIL} {title} {FAIL}\n") + checks
 
 
+def success_msg_with_checks(title: str, checks: str) -> str:
+    """Formats success messages that have a title and a list of checks."""
+    return textwrap.dedent(f"\n{PARTY} {title} {PARTY}\n") + checks
+
+
 SUCCESS_MSG_MAP = {
-    SetupSuccessCodes.INIT_SUCCESS: f"\n{PARTY} Application successfully configured! Refer to the demo files in [magenta]zentra/models[/magenta] to get started. {PARTY}\n",
-    SetupSuccessCodes.CONFIGURED: f"\n{PARTY} Application already configured with components! Use [green]zentra generate[/green] to create them! {PARTY}\n",
+    SetupSuccessCodes.INIT_SUCCESS: success_msg_with_checks(
+        "Application successfully configured!",
+        checks="\n\nRefer to the demo files in [magenta]zentra/models[/magenta] to get started.\n",
+    ),
+    SetupSuccessCodes.CONFIGURED: success_msg_with_checks(
+        "Application already configured with components!",
+        checks=ZENTRA_COMPONENT_COUNTS,
+    ),
 }
 
 

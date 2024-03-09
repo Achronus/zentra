@@ -2,12 +2,12 @@ import typer
 
 from cli.conf.constants import GenerateErrorCodes
 from cli.tasks.controllers.generate import GenerateController
+from cli.utils.printables import component_count_panel
 from zentra.core import Zentra
 
+from rich.console import Console
 
-def calc_component_count() -> int:
-    """Calculates the number of components in the `zentra/models` folder."""
-    return 0
+console = Console()
 
 
 class Generate:
@@ -18,10 +18,11 @@ class Generate:
 
     def components(self) -> None:
         """Generates the react components based on the `zentra/models` folder."""
-        num_components = calc_component_count()
 
-        if num_components == 0:
+        if len(self.zentra.component_names) == 0:
             raise typer.Exit(code=GenerateErrorCodes.NO_COMPONENTS)
-        else:
-            controller = GenerateController(self.zentra)
-            controller.run()
+
+        console.print(component_count_panel(self.zentra, text_start="Generating "))
+
+        controller = GenerateController(self.zentra)
+        controller.run()

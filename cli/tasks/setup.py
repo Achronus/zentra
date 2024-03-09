@@ -6,7 +6,6 @@ from cli.conf.checks import (
     CheckConfigFileValid,
     check_file_exists,
     check_models_registered,
-    check_zentra_models_exist,
 )
 
 from cli.conf.checks import check_folder_exists

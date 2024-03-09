@@ -1,5 +1,4 @@
 import ast
-import os
 import typer
 from pydantic import BaseModel
 
@@ -11,13 +10,11 @@ from cli.conf.checks import (
 )
 from cli.conf.format import name_from_camel_case
 from cli.conf.move import copy_zentra_files
-from cli.tasks.controllers.base import BaseController, status
+from cli.tasks.controllers.base import BaseController, PathStorage, status
 from cli.conf.constants import (
     LocalUIComponentFilepaths,
     LocalUploadthingFilepaths,
     CommonErrorCodes,
-    ZentaFilepaths,
-    ZentraUIFilepaths,
 )
 from cli.conf.extract import get_file_content, get_filenames_in_subdir
 
@@ -49,7 +46,7 @@ class GenerateController(BaseController):
     - zentra (zentra.core.Zentra) - the Zentra application containing components to generate
     """
 
-    def __init__(self, zentra: Zentra) -> None:
+    def __init__(self, zentra: Zentra, paths: PathStorage) -> None:
         react_str = "[cyan]React[/cyan]"
         zentra_str = "[magenta]Zentra[/magenta]"
 
@@ -63,29 +60,39 @@ class GenerateController(BaseController):
         super().__init__(tasks)
 
         self.storage = NameStorage()
+        self.paths = paths
         self.zentra = zentra
 
-    @status
-    def check_config(self) -> None:
-        """Checks that the config files are setup correctly."""
-        # Check models folder exists
-        if not check_folder_exists(ZentaFilepaths.MODELS):
+    @staticmethod
+    def _model_folder_exists(filepath: str) -> None:
+        """Helper function to check if the model folder exists. Raises an error if False."""
+        if not check_folder_exists(filepath):
             raise typer.Exit(code=CommonErrorCodes.MODELS_DIR_MISSING)
 
-        # Check config file exists
-        config_path = os.path.join(ZentaFilepaths.MODELS, ZentaFilepaths.SETUP_FILENAME)
-        if not check_file_exists(config_path):
+    @staticmethod
+    def _config_file_exists(filepath: str) -> None:
+        """Helper function to check if the config file exists. Raises an error if False."""
+        if not check_file_exists(filepath):
             raise typer.Exit(code=CommonErrorCodes.CONFIG_MISSING)
 
-        # Check config file content is valid
+    @staticmethod
+    def _config_file_valid(filepath: str) -> None:
+        """A helper function to check if the config file is valid. Raises an error if False."""
         check_config = CheckConfigFileValid()
-        file_content_tree = ast.parse(get_file_content(config_path))
+        file_content_tree = ast.parse(get_file_content(filepath))
         check_config.visit(file_content_tree)
 
         valid_content = check_config.is_valid()
 
         if not valid_content:
             raise typer.Exit(code=CommonErrorCodes.INVALID_CONFIG)
+
+    @status
+    def check_config(self) -> None:
+        """Checks that the config files are setup correctly. Raises errors if files exist."""
+        self._model_folder_exists(self.paths.models)
+        self._config_file_exists(self.paths.config)
+        self._config_file_valid(self.paths.config)
 
     @status
     def extract_models(self) -> None:
@@ -107,8 +114,8 @@ class GenerateController(BaseController):
         """Creates the React components based on the extracting models."""
         # Steps 4 and 5
         copy_zentra_files(
-            LocalUIComponentFilepaths.BASE,
-            ZentraUIFilepaths.BASE,
+            self.paths.local_ui_base,
+            self.paths.generated_ui_base,
             self.storage.UI_TO_GENERATE,
         )
 

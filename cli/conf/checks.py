@@ -1,7 +1,6 @@
 import ast
 import os
 
-from cli.conf.constants import ZentaFilepaths
 from zentra.core import Zentra
 
 

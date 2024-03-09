@@ -1,11 +1,12 @@
 import os
 import pytest
 import typer
-from cli.conf.checks import check_folder_exists
 
-from cli.conf.constants import LocalUploadthingFilepaths, ZentaFilepaths
+from cli.conf.constants import (
+    LocalUploadthingFilepaths,
+)
 from cli.conf.format import name_from_camel_case
-from cli.tasks.controllers.base import status, BaseController
+from cli.tasks.controllers.base import PathStorage, status, BaseController
 from cli.tasks.controllers.setup import SetupController
 from cli.tasks.controllers.generate import GenerateController
 
@@ -140,8 +141,14 @@ class TestGenerateController:
         return zentra
 
     @pytest.fixture
-    def controller(self, zentra: Zentra) -> GenerateController:
-        return GenerateController(zentra)
+    def controller(self, tmp_path, zentra: Zentra) -> GenerateController:
+        return GenerateController(
+            zentra,
+            paths=PathStorage(
+                config=os.path.join(tmp_path, "zentra_init.py"),
+                models=os.path.join(tmp_path, "zentra_models"),
+            ),
+        )
 
     class TestExtractModels:
         @pytest.fixture
@@ -179,11 +186,30 @@ class TestGenerateController:
             assert len(result) == len(valid)
 
     class TestCheckConfig:
-        def test_success(self, tmp_path, controller: GenerateController):
-            config_path = os.path.join(tmp_path, "config_file.py")
-            with open(config_path, "w") as f:
+        @staticmethod
+        def test_model_folder_exists_error(controller: GenerateController):
+            with pytest.raises(typer.Exit):
+                controller._model_folder_exists(controller.paths.models)
+
+        @staticmethod
+        def test_config_file_exists_error(controller: GenerateController):
+            with pytest.raises(typer.Exit):
+                controller._config_file_exists(controller.paths.config)
+
+        @staticmethod
+        def test_config_file_valid_error(controller: GenerateController):
+            with open(controller.paths.config, "w") as f:
+                f.write("from zentra.core import Zentra\nzentra = Zentra()")
+
+            with pytest.raises(typer.Exit):
+                controller._config_file_valid(controller.paths.config)
+
+        @staticmethod
+        def test_success(controller: GenerateController):
+            os.makedirs(controller.paths.models, exist_ok=True)
+            with open(controller.paths.config, "w") as f:
                 f.write(
-                    "\nfrom zentra.core import Zentra\nzentra = Zentra()\nzentra.register()"
+                    "from zentra.core import Zentra\nzentra = Zentra()\nzentra.register()"
                 )
 
             assert controller.check_config() == (True, None)

@@ -1,17 +1,21 @@
-from .base import BaseController, status
+from .base import BaseController, PathStorage, status
 from cli.conf.create import make_path_dirs
 from cli.utils.printables import local_path
-from cli.conf.constants import ZentaFilepaths
 
 
 class SetupController(BaseController):
-    """A controller for handling tasks for configuring Zentra."""
+    """
+    A controller for handling tasks for configuring Zentra.
 
-    def __init__(self) -> None:
-        self.folder_path = ZentaFilepaths.MODELS
+    Parameters:
+    - paths (controllers.base.PathStorage) - a path storage container with filepaths specific to the controller
+    """
+
+    def __init__(self, paths: PathStorage) -> None:
+        self.paths = paths
 
         self.highlighted_path = (
-            f"[bright_cyan]{local_path(self.folder_path)}[/bright_cyan]"
+            f"[bright_cyan]{local_path(self.paths.models)}[/bright_cyan]"
         )
 
         tasks = [
@@ -27,7 +31,7 @@ class SetupController(BaseController):
     @status
     def make_path(self) -> None:
         """Create the folder path."""
-        make_path_dirs(self.folder_path)
+        make_path_dirs(self.paths.models)
 
     @status
     def create_demo_component(self) -> None:

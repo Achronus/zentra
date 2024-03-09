@@ -10,9 +10,10 @@ from cli.conf.checks import (
 
 from cli.conf.checks import check_folder_exists
 from cli.conf.extract import get_file_content
-from cli.utils.printables import path_exists_table, configuration_complete_panel
+from cli.tasks.controllers.base import PathStorage
+from cli.utils.printables import configuration_complete_panel
 from .controllers.setup import SetupController
-from cli.conf.constants import ZentaFilepaths, DOCS_URL, SetupSuccessCodes
+from cli.conf.constants import DOCS_URL, SetupSuccessCodes, ZentaFilepaths
 from zentra.core import Zentra
 
 from rich.console import Console
@@ -58,14 +59,19 @@ class ConfigExistStorage:
 
 
 class Setup:
-    """A class for handling the `zentra init` command."""
+    """
+    A class for handling the `zentra init` command.
+
+    Parameters:
+    - zentra (zentra.core.Zentra) - the Zentra application containing components to generate
+    """
 
     def __init__(self, zentra: Zentra) -> None:
         self.zentra = zentra
-
-        self.folder_path = ZentaFilepaths.MODELS
-        self.path_exists = check_folder_exists(self.folder_path)
-        self.config_path = os.path.join(self.folder_path, ZentaFilepaths.SETUP_FILENAME)
+        self.paths = PathStorage(
+            config=os.path.join(ZentaFilepaths.MODELS, ZentaFilepaths.SETUP_FILENAME),
+            models=ZentaFilepaths.MODELS,
+        )
 
         self.config_storage = ConfigExistStorage()
 
@@ -78,29 +84,26 @@ class Setup:
             raise typer.Exit(code=SetupSuccessCodes.CONFIGURED)
 
         # Create missing items
-        console.print()
-        console.print(path_exists_table(self.folder_path, self.path_exists))
-
-        controller = SetupController()
+        controller = SetupController(paths=self.paths)
         controller.run()
 
         console.print()
-        console.print(configuration_complete_panel(self.folder_path, link=DOCS_URL))
+        console.print(configuration_complete_panel(self.paths.models, link=DOCS_URL))
         console.print()
 
     def check_config(self) -> None:
         """Checks if the config files are already setup."""
         # Check models file exists
-        if check_zentra_models_exist():
+        if check_folder_exists(self.paths.models):
             self.config_storage.set_true("models_folder_exists")
 
         # Check config file exists
-        if check_file_exists(self.config_path):
+        if check_file_exists(self.paths.config):
             self.config_storage.set_true("config_file_exists")
 
         # Check config file content is valid
         check_config = CheckConfigFileValid()
-        file_content_tree = ast.parse(get_file_content(self.config_path))
+        file_content_tree = ast.parse(get_file_content(self.paths.config))
         check_config.visit(file_content_tree)
 
         self.config_storage.set_true("config_file_valid")

@@ -44,6 +44,7 @@ class GenerateController(BaseController):
 
     Parameters:
     - zentra (zentra.core.Zentra) - the Zentra application containing components to generate
+    - paths (controllers.base.PathStorage) - a path storage container with filepaths specific to the controller
     """
 
     def __init__(self, zentra: Zentra, paths: PathStorage) -> None:

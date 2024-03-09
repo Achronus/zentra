@@ -18,7 +18,12 @@ console = Console()
 
 
 class Generate:
-    """A class for handling the logic for the `zentra generate` command."""
+    """
+    A class for handling the logic for the `zentra generate` command.
+
+    Parameters:
+    - zentra (zentra.core.Zentra) - the Zentra application containing components to generate
+    """
 
     def __init__(self, zentra: Zentra) -> None:
         self.zentra = zentra

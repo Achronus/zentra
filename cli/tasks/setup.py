@@ -49,10 +49,12 @@ class Setup:
             raise typer.Exit(code=SetupSuccessCodes.CONFIGURED)
 
         # Create missing items
-        controller = SetupController(paths=self.paths, config=self.config_storage)
+        console.print()
+        controller = SetupController(self.paths, self.config_storage)
         controller.run()
 
         # Setup complete
+        console.print()
         console.print(
             configuration_complete_panel(self.paths.models, link=GETTING_STARTED_URL)
         )

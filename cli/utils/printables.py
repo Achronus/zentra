@@ -9,9 +9,14 @@ from rich.table import Table
 from rich.panel import Panel
 
 
+def set_icon(exists: bool) -> str:
+    """A helper function for setting the correct icon for tables."""
+    return PASS if exists else FAIL
+
+
 def path_exists_table(zentra_path: str, folder_exists: bool) -> Table:
     """Creates a printable table showing the `zentra_path` and if the `folder` exists."""
-    icon = PASS if folder_exists else FAIL
+    icon = set_icon(folder_exists)
 
     table = Table()
     table.add_column("Zentra Path", style="bright_cyan", justify="center")
@@ -21,7 +26,7 @@ def path_exists_table(zentra_path: str, folder_exists: bool) -> Table:
 
 
 def configuration_complete_panel(folder_path: str, link: str) -> Panel:
-    """Creates a printable complete panel related to configuration success."""
+    """Creates a printable panel related to configuration success."""
     panel = Panel.fit(
         f"\nCreate your models in the [magenta]{local_path(folder_path)}[/magenta] folder!\n\n[dark_goldenrod]Need help?[/dark_goldenrod]\nCheck our [bright_blue][link={link}]Getting Started Guide[/link][/bright_blue]!\n",
         title=f"{PARTY} Application configured! {PARTY}",

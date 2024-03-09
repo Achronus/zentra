@@ -3,6 +3,7 @@ import typer
 
 from rich.console import Console
 from rich.panel import Panel
+from cli.conf.checks import check_zentra_exists
 
 from cli.conf.constants import (
     ERROR_GUIDE_URL,
@@ -16,7 +17,6 @@ from cli.conf.constants import (
     ZentaFilepaths,
 )
 from cli.conf.format import plural_name_formatter
-from zentra.models import zentra
 
 
 MORE_HELP_INFO = f"""
@@ -51,15 +51,6 @@ For example:
   [magenta]zentra[/magenta].[yellow]register[/yellow]([cyan][[/cyan][yellow]Page[/yellow](...), [yellow]Accordion[/yellow](...)[cyan]][/cyan])
 """
 
-page_count = len(zentra.pages)
-component_count = len(zentra.component_names)
-
-ZENTRA_COMPONENT_COUNTS = f"""
-Use [green]zentra generate[/green] to create:
-  - {page_count} [yellow]{plural_name_formatter('Page', page_count)}[/yellow]
-  - {component_count} [yellow]{plural_name_formatter('Component', component_count)}[/yellow]
-"""
-
 
 def error_msg_with_checks(title: str, checks: str) -> str:
     """Formats error messages that have a title and a list of checks."""
@@ -78,7 +69,7 @@ SUCCESS_MSG_MAP = {
     ),
     SetupSuccessCodes.CONFIGURED: success_msg_with_checks(
         "Application already configured with components!",
-        checks=ZENTRA_COMPONENT_COUNTS,
+        checks="\nUse [green]zentra generate[/green] to create:",
     ),
 }
 
@@ -149,6 +140,16 @@ class MessageHandler:
         """Handles success messages and returns a panel with their information."""
         return Panel(msg, expand=False, border_style="bright_green")
 
+    def __msg_with_counts(self, msg: str) -> str:
+        """Adds Zentra page and component counts to a message and returns the updated version."""
+        zentra = check_zentra_exists()
+
+        page_count = len(zentra.pages)
+        component_count = len(zentra.component_names)
+
+        component_str = f"\n  - {page_count} [yellow]{plural_name_formatter('Page', page_count)}[/yellow]\n  - {component_count} [yellow]{plural_name_formatter('Component', component_count)}[/yellow]\n"
+        return msg + component_str
+
     def msg(self, e: typer.Exit) -> None:
         """Assigns a success or error message depending on the code received."""
         try:
@@ -158,6 +159,9 @@ class MessageHandler:
 
         msg = textwrap.dedent(MSG_MAPPER.get(e.exit_code, UNKNOWN_ERROR))
         msg_type = e.exit_code.__class__.__name__
+
+        if e.exit_code == SetupSuccessCodes.CONFIGURED:
+            msg = self.__msg_with_counts(msg)
 
         panel = (
             self.__error_msg(msg, e)

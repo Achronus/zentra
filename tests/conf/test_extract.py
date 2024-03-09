@@ -2,7 +2,7 @@ import os
 import pytest
 
 from cli.conf.extract import extract_component_names, get_filenames_in_subdir
-from zentra.models.demo.agency_details import agency_details
+from cli.zentra_config._demo.agency_details import agency_details
 
 
 class TestGetFilenamesInSubdir:

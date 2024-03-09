@@ -1,15 +1,12 @@
 import typer
+from cli.conf.checks import check_zentra_exists
 
-from cli.conf.checks import check_folder_exists
-from cli.conf.constants import CommonErrorCodes, ZentaFilepaths
 from cli.conf.error import MessageHandler
 from cli.tasks.setup import Setup
 from cli.tasks.generate import Generate
 
 from typing_extensions import Annotated
 from rich.console import Console
-
-from zentra.models import zentra
 
 
 app = typer.Typer(
@@ -24,6 +21,7 @@ msg_handler = MessageHandler(console)
 def init_app() -> None:
     """Perform basic configuration to setup your app to work with Zentra."""
     try:
+        zentra = check_zentra_exists()
         setup = Setup(zentra)
         setup.init_app()
 
@@ -43,10 +41,7 @@ def generate_components(
 ) -> None:
     """Generates all React components based on the models stored in the 'zentra/models' folder. Optionally, supply a single 'filename' as argument to only generate certain components."""
     try:
-        # Check cwd has access to zentra
-        if not check_folder_exists(ZentaFilepaths.ROOT):
-            raise typer.Exit(CommonErrorCodes.ZENTRA_MISSING)
-
+        zentra = check_zentra_exists()
         generate = Generate(zentra)
 
         if filename == "all":

@@ -51,16 +51,16 @@ class ZentaFilepaths:
 class LocalCoreComponentFilepaths:
     """A storage container for the local core component filepaths in the `components` folder."""
 
-    # (cwd)/components
-    ROOT = os.path.join(os.getcwd(), "components")
-    UI = os.path.join(ROOT, "ui")  # components/ui
-    UPLOADTHING = os.path.join(ROOT, "uploadthing")  # components/uploadthing
+    # (cwd)/cli/components
+    ROOT = os.path.join(os.getcwd(), "cli", "components")
+    UI = os.path.join(ROOT, "ui")  # cli/components/ui
+    UPLOADTHING = os.path.join(ROOT, "uploadthing")  # cli/components/uploadthing
 
 
 class LocalUIComponentFilepaths:
     """A storage container for the local UI component filepaths in the `components/ui` folder."""
 
-    # (cwd)/components/ui
+    # (cwd)/cli/components/ui
     ROOT = LocalCoreComponentFilepaths.UI
     BASE = os.path.join(ROOT, "base")  # ui/base
     TEMPLATES = os.path.join(ROOT, "templates")  # ui/templates

@@ -13,7 +13,7 @@ from cli.conf.extract import get_file_content
 from cli.tasks.controllers.base import PathStorage
 from cli.utils.printables import configuration_complete_panel
 from .controllers.setup import SetupController
-from cli.conf.constants import DOCS_URL, SetupSuccessCodes, ZentaFilepaths
+from cli.conf.constants import GETTING_STARTED_URL, SetupSuccessCodes, ZentaFilepaths
 from zentra.core import Zentra
 
 from rich.console import Console
@@ -87,9 +87,10 @@ class Setup:
         controller = SetupController(paths=self.paths)
         controller.run()
 
-        console.print()
-        console.print(configuration_complete_panel(self.paths.models, link=DOCS_URL))
-        console.print()
+        # Setup complete
+        console.print(
+            configuration_complete_panel(self.paths.models, link=GETTING_STARTED_URL)
+        )
 
     def check_config(self) -> None:
         """Checks if the config files are already setup."""

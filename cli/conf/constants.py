@@ -33,7 +33,7 @@ PARTY = ":party_popper:"
 # TODO: update URLS
 # Core folder names and URLS
 FOLDER_NAME = "zentra"
-DOCS_URL = "#"
+GETTING_STARTED_URL = "#"
 ERROR_GUIDE_URL = "#"
 GITHUB_ISSUES_URL = "https://github.com/Astrum-AI/Zentra/issues"
 

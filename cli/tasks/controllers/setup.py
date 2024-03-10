@@ -1,3 +1,4 @@
+import os
 from cli.conf.constants import CommonErrorCodes
 from cli.conf.move import copy_list_of_files
 from cli.conf.storage import ConfigExistStorage, PathStorage
@@ -47,6 +48,7 @@ class SetupController(BaseController):
                 self.paths.models,
                 CommonErrorCodes.SRC_DIR_MISSING,
                 CommonErrorCodes.ZENTRA_MISSING,
+                filenames=[os.path.basename(self.paths.config)],
             )
 
     @status

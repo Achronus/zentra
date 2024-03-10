@@ -13,7 +13,7 @@ from cli.conf.checks import (
     check_models_registered,
     check_zentra_exists,
 )
-from cli.conf.constants import CommonErrorCodes
+from cli.conf.constants import SetupErrorCodes
 from cli.conf.extract import get_file_content
 from zentra.core import Component, Zentra
 
@@ -35,7 +35,7 @@ class TestCheckZentraExists:
             with pytest.raises(typer.Exit) as exc_info:
                 check_zentra_exists()
 
-        assert exc_info.value.exit_code == CommonErrorCodes.ZENTRA_MISSING
+        assert exc_info.value.exit_code == SetupErrorCodes.IMPORT_ERROR
 
 
 class TestCheckFileExists:

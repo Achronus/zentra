@@ -91,6 +91,7 @@ SUCCESS_MSG_MAP = {
 
 
 COMMON_ERROR_MAP = {
+    CommonErrorCodes.TEST_ERROR: "Test",
     CommonErrorCodes.CONFIG_MISSING: error_msg_with_checks(
         "[magenta]zentra/models[/magenta] config file missing!",
         checks=MISSING_FILES_CHECKS,

@@ -3,6 +3,7 @@ from enum import Enum
 
 
 class CommonErrorCodes(Enum):
+    TEST_ERROR = -1
     CONFIG_MISSING = 1
     INVALID_CONFIG = 2
     ZENTRA_MISSING = 3

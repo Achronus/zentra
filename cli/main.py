@@ -5,7 +5,6 @@ from cli.conf.error import MessageHandler
 from cli.tasks.setup import Setup
 from cli.tasks.generate import Generate
 
-from typing_extensions import Annotated
 from rich.console import Console
 
 
@@ -21,8 +20,7 @@ msg_handler = MessageHandler(console)
 def init_app() -> None:
     """Perform basic configuration to setup your app to work with Zentra."""
     try:
-        zentra = check_zentra_exists()
-        setup = Setup(zentra)
+        setup = Setup()
         setup.init_app()
 
     except typer.Exit as e:

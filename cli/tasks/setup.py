@@ -15,6 +15,7 @@ from cli.utils.printables import configuration_complete_panel
 from .controllers.setup import SetupController
 from cli.conf.constants import (
     GETTING_STARTED_URL,
+    CommonErrorCodes,
     SetupErrorCodes,
     SetupSuccessCodes,
     ZentaFilepaths,
@@ -82,4 +83,4 @@ class Setup:
             if check_config.is_valid():
                 self.config_storage.config_file_valid = True
             else:
-                raise typer.Exit(code=SetupErrorCodes.INVALID_CONFIG)
+                raise typer.Exit(code=CommonErrorCodes.INVALID_CONFIG)

@@ -95,6 +95,10 @@ COMMON_ERROR_MAP = {
         "[magenta]zentra/models[/magenta] config file missing!",
         checks=MISSING_FILES_CHECKS,
     ),
+    CommonErrorCodes.INVALID_CONFIG: error_msg_with_checks(
+        "[red]Invalid[/red] config file detected!",
+        checks=INVALID_CONFIG_CHECKS,
+    ),
     CommonErrorCodes.ZENTRA_MISSING: error_msg_with_checks(
         title="The [magenta]zentra[/magenta] folder is [red]missing[/red]!",
         checks=MISSING_FILES_CHECKS,
@@ -111,10 +115,6 @@ COMMON_ERROR_MAP = {
 }
 
 SETUP_ERROR_MAP = {
-    SetupErrorCodes.INVALID_CONFIG: error_msg_with_checks(
-        "[red]Invalid[/red] config file detected!",
-        checks=INVALID_CONFIG_CHECKS,
-    ),
     SetupErrorCodes.NO_COMPONENTS: error_msg_with_checks(
         "Config [green]valid[/green] but [red]no components found[/red]!",
         checks=VALID_CONFIG_NO_COMPONENTS,

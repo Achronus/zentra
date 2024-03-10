@@ -28,6 +28,7 @@ class GenerateErrorCodes(Enum):
 PASS = "[green]\u2713[/green]"
 FAIL = "[red]\u274c[/red]"
 PARTY = ":party_popper:"
+MAGIC = ":sparkles:"
 
 
 # TODO: update URLS

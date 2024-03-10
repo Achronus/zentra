@@ -1,16 +1,10 @@
 from zentra.core import Component, Page, Zentra
-from ._demo.agency_details import agency_details
-from ._demo.user_button import user_btn
 
 # Web pages that contain multiple React components
-page_map: list[Page] = [
-    agency_details,
-]
+page_map: list[Page] = []
 
 # Single components that are not in pages
-standalone_components: list[Component] = [
-    user_btn,
-]
+standalone_components: list[Component] = []
 
 # Setup the application
 zentra = Zentra()

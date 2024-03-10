@@ -30,24 +30,12 @@ def init_app() -> None:
 
 
 @app.command("generate")
-def generate_components(
-    filename: Annotated[
-        str,
-        typer.Argument(
-            help="An optional filename for a set of React components stored in the zentra folder.",
-            show_default=True,
-        ),
-    ] = "all",
-) -> None:
-    """Generates all React components based on the models stored in the 'zentra/models' folder. Optionally, supply a single 'filename' as argument to only generate certain components."""
+def generate_components() -> None:
+    """Generates all React components based on the models stored in the 'zentra/models' folder."""
     try:
         zentra = check_zentra_exists()
         generate = Generate(zentra)
-
-        if filename == "all":
-            generate.components()
-        else:
-            pass
+        generate.components()
 
     except typer.Exit as e:
         msg_handler.msg(e)

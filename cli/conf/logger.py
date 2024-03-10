@@ -75,3 +75,4 @@ class DebugLogger(BaseLogger):
 
 task_status_logger = DebugLogger("TaskStatusLogger")
 file_copy_logger = DebugLogger("FileCopyLogger")
+zentra_missing_logger = DebugLogger("ZentraMissingLogger")

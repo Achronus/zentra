@@ -6,20 +6,19 @@ import typer
 from cli.conf.constants import CommonErrorCodes
 
 from zentra.core import Zentra
+from cli.conf.logger import zentra_missing_logger
 
 
 def check_zentra_exists() -> Zentra:
     """Checks if the `Zentra` app has been created by the user."""
     try:
         zentra_module = importlib.import_module("zentra.models")
-
-        if hasattr(zentra_module, "zentra"):
-            return zentra_module.zentra
-
-        raise ModuleNotFoundError
-
-    except ModuleNotFoundError:
+    except ModuleNotFoundError as e:
+        zentra_missing_logger.error(e)
         raise typer.Exit(CommonErrorCodes.ZENTRA_MISSING)
+
+    if hasattr(zentra_module, "zentra"):
+        return zentra_module.zentra
 
 
 def check_file_exists(filepath: str) -> bool:

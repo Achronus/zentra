@@ -13,15 +13,6 @@ class ConfigExistStorage:
         self.config_file_valid = False
         self.models_registered = False
 
-    def set_true(self, attr: str) -> None:
-        """Switches an attributes value to True."""
-        if not hasattr(self, attr):
-            raise ValueError(
-                f"'{attr}' does not exist! Did you mean one of these: {list(self.__dict__.keys())}?"
-            )
-
-        setattr(self, attr, True)
-
     def app_configured(self) -> bool:
         """Checks if Zentra has already been configured correctly."""
         return all(

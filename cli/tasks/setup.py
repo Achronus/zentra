@@ -63,19 +63,19 @@ class Setup:
         """Checks if the config files are already setup."""
         # Check models file exists
         if check_folder_exists(self.paths.models):
-            self.config_storage.set_true("models_folder_exists")
+            self.config_storage.models_folder_exists = True
 
         # Check config file exists
         if check_file_exists(self.paths.config):
-            self.config_storage.set_true("config_file_exists")
+            self.config_storage.config_file_exists = True
 
         # Check config file content is valid
         check_config = CheckConfigFileValid()
         file_content_tree = ast.parse(get_file_content(self.paths.config))
         check_config.visit(file_content_tree)
 
-        self.config_storage.set_true("config_file_valid")
+        self.config_storage.config_file_valid = True
 
         # Checks models are registered
         if check_models_registered(self.zentra):
-            self.config_storage.set_true("models_registered")
+            self.config_storage.models_registered = True

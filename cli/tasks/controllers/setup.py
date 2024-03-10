@@ -1,3 +1,5 @@
+from cli.conf.constants import CommonErrorCodes
+from cli.conf.move import copy_list_of_files
 from cli.conf.storage import ConfigExistStorage, PathStorage
 from cli.tasks.controllers.base import BaseController, status
 from cli.conf.create import make_path_dirs
@@ -32,12 +34,34 @@ class SetupController(BaseController):
 
         super().__init__(tasks)
 
+    def _make_models_dir(self) -> None:
+        """Creates the `zentra/models` directory if needed."""
+        if not self.config_storage.models_folder_exists:
+            make_path_dirs(self.paths.models)
+
+    def _make_config_file(self) -> None:
+        """Moves the config file from `zentra_config` to `zentra/models` if doesn't exist."""
+        if not self.config_storage.config_file_exists:
+            copy_list_of_files(
+                self.paths.zentra_local,
+                self.paths.models,
+                CommonErrorCodes.SRC_DIR_MISSING,
+                CommonErrorCodes.ZENTRA_MISSING,
+            )
+
     @status
     def create_missing_files(self) -> None:
         """Creates the missing zentra files."""
-        # make_path_dirs(self.paths.models)
+        self._make_models_dir()
+        self._make_config_file()
 
     @status
     def create_demo_files(self) -> None:
-        """Creates a demo folder with files to demonstrate how to use create Zentra Pages and Components."""
-        pass
+        """Creates a demo folder with files to demonstrate how to create Zentra Pages and Components."""
+        make_path_dirs(self.paths.demo)
+        copy_list_of_files(
+            self.paths.local_demo,
+            self.paths.demo,
+            CommonErrorCodes.SRC_DIR_MISSING,
+            CommonErrorCodes.ZENTRA_MISSING,
+        )

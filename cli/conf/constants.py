@@ -49,6 +49,14 @@ class ZentaFilepaths:
     SETUP_FILENAME = "__init__.py"
 
 
+class ZentraConfigFilepaths:
+    """A storage container for the core filepaths in the `zentra_config` folder."""
+
+    # (cwd)/cli/zentra_config
+    ROOT = os.path.join(os.getcwd(), "cli", "zentra_config")
+    DEMO = os.path.join(ROOT, "_demo")  # /zentra_config/_demo
+
+
 class LocalCoreComponentFilepaths:
     """A storage container for the local core component filepaths in the `components` folder."""
 

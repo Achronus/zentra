@@ -3,7 +3,7 @@ import importlib
 import os
 
 import typer
-from cli.conf.constants import CommonErrorCodes
+from cli.conf.constants import SetupErrorCodes
 
 from zentra.core import Zentra
 from cli.conf.logger import zentra_missing_logger
@@ -15,7 +15,7 @@ def check_zentra_exists() -> Zentra:
         zentra_module = importlib.import_module("zentra.models")
     except ModuleNotFoundError as e:
         zentra_missing_logger.error(e)
-        raise typer.Exit(CommonErrorCodes.ZENTRA_MISSING)
+        raise typer.Exit(SetupErrorCodes.IMPORT_ERROR)
 
     if hasattr(zentra_module, "zentra"):
         return zentra_module.zentra

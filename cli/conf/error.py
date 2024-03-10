@@ -30,7 +30,7 @@ MORE_HELP_INFO = f"""
 UNKNOWN_ERROR = f"""
 {FAIL} 🥴 Well this is awkward... We didn't account for this! 🥴 {FAIL}
 
-You've encountered something unexpected 🤯. Please report this issue on [bright_blue][link={GITHUB_ISSUES_URL}]on GitHub[/link][/bright_blue].
+You've encountered something unexpected 🤯. Please report this issue on [bright_blue][link={GITHUB_ISSUES_URL}]GitHub[/link][/bright_blue].
 """
 
 
@@ -40,7 +40,10 @@ Things to check:
   2. You have [yellow]configured[/yellow] your project with [green]zentra init[/green]  
 """
 
-INVALID_CONFIG_CHECKS = """
+INVALID_CONFIG_CHECKS = f"""
+Access the config file at [magenta]zentra/models/[/magenta][yellow]{ZentaFilepaths.SETUP_FILENAME}[/yellow].
+
+Then, check if:
   1. [magenta]zentra[/magenta] = [yellow]Zentra[/yellow]() is initalised
   2. [magenta]Zentra[/magenta] models are registered with [magenta]zentra[/magenta].[yellow]register[/yellow]() with   
     a list of [magenta]Zentra[/magenta] [yellow]Pages[/yellow] or [yellow]Components[/yellow]
@@ -49,6 +52,23 @@ For example:
   [magenta]zentra[/magenta].[yellow]register[/yellow]([cyan][[/cyan][yellow]Page[/yellow](...), [yellow]Page[/yellow](...)[cyan]][/cyan])
   [magenta]zentra[/magenta].[yellow]register[/yellow]([cyan][[/cyan][yellow]Accordion[/yellow](...), [yellow]Button[/yellow](...)[cyan]][/cyan])
   [magenta]zentra[/magenta].[yellow]register[/yellow]([cyan][[/cyan][yellow]Page[/yellow](...), [yellow]Accordion[/yellow](...)[cyan]][/cyan])
+"""
+
+VALID_CONFIG_NO_COMPONENTS = f"""
+Access the config file at [magenta]zentra/models/[/magenta][yellow]{ZentaFilepaths.SETUP_FILENAME}[/yellow].
+
+Then, check if:
+  1. You've [magenta]imported[/magenta] your created models
+  2. You've [green]added[/green] them to [magenta]zentra[/magenta].[yellow]register[/yellow]()
+"""
+
+IMPORT_ERROR_CHECKS = f"""
+Access the config file at [magenta]zentra/models/[/magenta][yellow]{ZentaFilepaths.SETUP_FILENAME}[/yellow].
+
+Then, check if:
+  1. You've [magenta]imported[/magenta] your created models
+  2. [magenta]from[/magenta] [green]zentra[/green].[green]core[/green] [magenta]import[/magenta] [green]Zentra[/green] - is present
+  3. [magenta]zentra[/magenta] = [yellow]Zentra[/yellow]() - is set
 """
 
 
@@ -63,10 +83,6 @@ def success_msg_with_checks(title: str, checks: str) -> str:
 
 
 SUCCESS_MSG_MAP = {
-    SetupSuccessCodes.INIT_SUCCESS: success_msg_with_checks(
-        "Application successfully configured!",
-        checks="\n\nRefer to the demo files in [magenta]zentra/models[/magenta] to get started.\n",
-    ),
     SetupSuccessCodes.CONFIGURED: success_msg_with_checks(
         "Application already configured with components!",
         checks="\nUse [green]zentra generate[/green] to create:",
@@ -78,11 +94,6 @@ COMMON_ERROR_MAP = {
     CommonErrorCodes.CONFIG_MISSING: error_msg_with_checks(
         "[magenta]zentra/models[/magenta] config file missing!",
         checks=MISSING_FILES_CHECKS,
-    ),
-    CommonErrorCodes.INVALID_CONFIG: error_msg_with_checks(
-        "Oops! [magenta]zentra/models[/magenta] configured incorrectly!",
-        checks=f"\nAccess the config file at [magenta]zentra/models/{ZentaFilepaths.SETUP_FILENAME}[/magenta].\n\nThen, check if:"
-        + INVALID_CONFIG_CHECKS,
     ),
     CommonErrorCodes.ZENTRA_MISSING: error_msg_with_checks(
         title="The [magenta]zentra[/magenta] folder is [red]missing[/red]!",
@@ -99,13 +110,25 @@ COMMON_ERROR_MAP = {
     """,
 }
 
-SETUP_ERROR_MAP = {}
+SETUP_ERROR_MAP = {
+    SetupErrorCodes.INVALID_CONFIG: error_msg_with_checks(
+        "[red]Invalid[/red] config file detected!",
+        checks=INVALID_CONFIG_CHECKS,
+    ),
+    SetupErrorCodes.NO_COMPONENTS: error_msg_with_checks(
+        "Config [green]valid[/green] but [red]no components found[/red]!",
+        checks=VALID_CONFIG_NO_COMPONENTS,
+    ),
+    SetupErrorCodes.IMPORT_ERROR: error_msg_with_checks(
+        "[red]Cannot[/red] find or access the [magenta]Zentra[/magenta] app!",
+        checks=IMPORT_ERROR_CHECKS,
+    ),
+}
 
 GENERATE_ERROR_MAP = {
     GenerateErrorCodes.NO_COMPONENTS: error_msg_with_checks(
         "[red]No components found[/red] in [green]zentra/models[/green]!",
-        checks=f"\nThings to check:\n  1. [magenta]zentra/models/{ZentaFilepaths.SETUP_FILENAME}[/magenta] exists\n\nIf it does, access it and check if:"
-        + INVALID_CONFIG_CHECKS,
+        checks=INVALID_CONFIG_CHECKS,
     ),
 }
 
@@ -153,14 +176,13 @@ class MessageHandler:
     def msg(self, e: typer.Exit) -> None:
         """Assigns a success or error message depending on the code received."""
         try:
-            e.exit_code.value
+            msg = textwrap.dedent(MSG_MAPPER.get(e.exit_code, UNKNOWN_ERROR))
         except AttributeError:
             e.exit_code = CommonErrorCodes.UNKNOWN_ERROR
 
-        msg = textwrap.dedent(MSG_MAPPER.get(e.exit_code, UNKNOWN_ERROR))
         msg_type = e.exit_code.__class__.__name__
 
-        if e.exit_code.value == SetupSuccessCodes.CONFIGURED:
+        if e.exit_code == SetupSuccessCodes.CONFIGURED:
             msg = self.__msg_with_counts(msg)
 
         panel = (

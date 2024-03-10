@@ -4,7 +4,6 @@ from enum import Enum
 
 class CommonErrorCodes(Enum):
     CONFIG_MISSING = 1
-    INVALID_CONFIG = 2
     ZENTRA_MISSING = 3
     MODELS_DIR_MISSING = 4
     SRC_DIR_MISSING = 5
@@ -12,12 +11,13 @@ class CommonErrorCodes(Enum):
 
 
 class SetupSuccessCodes(Enum):
-    INIT_SUCCESS = 10
     CONFIGURED = 11
 
 
 class SetupErrorCodes(Enum):
-    FAIL = 12
+    INVALID_CONFIG = 12
+    NO_COMPONENTS = 13
+    IMPORT_ERROR = 14
 
 
 class GenerateErrorCodes(Enum):

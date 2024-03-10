@@ -160,7 +160,7 @@ class MessageHandler:
         msg = textwrap.dedent(MSG_MAPPER.get(e.exit_code, UNKNOWN_ERROR))
         msg_type = e.exit_code.__class__.__name__
 
-        if e.exit_code == SetupSuccessCodes.CONFIGURED:
+        if e.exit_code.value == SetupSuccessCodes.CONFIGURED:
             msg = self.__msg_with_counts(msg)
 
         panel = (

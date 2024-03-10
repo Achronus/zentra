@@ -2,15 +2,40 @@ import ast
 import os
 import tempfile
 import pytest
+from unittest.mock import patch, MagicMock
+
+import typer
 
 from cli.conf.checks import (
     CheckConfigFileValid,
     check_file_exists,
     check_folder_exists,
     check_models_registered,
+    check_zentra_exists,
 )
+from cli.conf.constants import CommonErrorCodes
 from cli.conf.extract import get_file_content
 from zentra.core import Component, Zentra
+
+
+class TestCheckZentraExists:
+    @staticmethod
+    def test_success():
+        mock_zentra_module = MagicMock()
+        setattr(mock_zentra_module, "zentra", Zentra())
+
+        with patch("importlib.import_module", return_value=mock_zentra_module):
+            result = check_zentra_exists()
+
+        assert isinstance(result, Zentra)
+
+    @staticmethod
+    def test_fail_except():
+        with patch("importlib.import_module", side_effect=ModuleNotFoundError):
+            with pytest.raises(typer.Exit) as exc_info:
+                check_zentra_exists()
+
+        assert exc_info.value.exit_code == CommonErrorCodes.ZENTRA_MISSING
 
 
 class TestCheckFileExists:

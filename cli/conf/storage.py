@@ -1,3 +1,12 @@
+from pydantic import BaseModel
+from cli.conf.constants import LocalUIComponentFilepaths, LocalUploadthingFilepaths
+from cli.conf.extract import get_filenames_in_subdir
+
+
+# TODO: add --nextjs flag
+NEXTJS_PROJECT = False
+
+
 class ConfigExistStorage:
     """
     A storage container for boolean values for the following config checks:
@@ -34,3 +43,17 @@ class PathStorage:
         if not isinstance(path, str):
             raise TypeError(f"Invalid path type: {type(path)}. Path must be a string.")
         return path
+
+
+class NameStorage(BaseModel):
+    """A storage container for Zentra model filenames."""
+
+    UI_BASE: list[str] = get_filenames_in_subdir(LocalUIComponentFilepaths.BASE)
+    UI_TO_GENERATE: list[str] = []
+
+    UPLOADTHING: list[str] = get_filenames_in_subdir(
+        LocalUploadthingFilepaths.BASE_NEXTJS
+        if NEXTJS_PROJECT
+        else LocalUploadthingFilepaths.BASE_BASIC
+    )
+    UT_TO_GENERATE: list[str] = []

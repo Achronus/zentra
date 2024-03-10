@@ -1,6 +1,5 @@
 import ast
 import typer
-from pydantic import BaseModel
 
 from cli.conf.checks import (
     CheckConfigFileValid,
@@ -10,33 +9,12 @@ from cli.conf.checks import (
 )
 from cli.conf.format import name_from_camel_case
 from cli.conf.move import copy_zentra_files
-from cli.conf.storage import PathStorage
+from cli.conf.storage import NameStorage, PathStorage
 from cli.tasks.controllers.base import BaseController, status
-from cli.conf.constants import (
-    LocalUIComponentFilepaths,
-    LocalUploadthingFilepaths,
-    CommonErrorCodes,
-)
-from cli.conf.extract import get_file_content, get_filenames_in_subdir
+from cli.conf.constants import CommonErrorCodes
+from cli.conf.extract import get_file_content
 
 from zentra.core import Zentra
-
-# TODO: add --nextjs flag
-NEXTJS_PROJECT = False
-
-
-class NameStorage(BaseModel):
-    """A storage container for Zentra model filenames."""
-
-    UI_BASE: list[str] = get_filenames_in_subdir(LocalUIComponentFilepaths.BASE)
-    UI_TO_GENERATE: list[str] = []
-
-    UPLOADTHING: list[str] = get_filenames_in_subdir(
-        LocalUploadthingFilepaths.BASE_NEXTJS
-        if NEXTJS_PROJECT
-        else LocalUploadthingFilepaths.BASE_BASIC
-    )
-    UT_TO_GENERATE: list[str] = []
 
 
 class GenerateController(BaseController):

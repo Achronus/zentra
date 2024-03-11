@@ -71,15 +71,78 @@ class TestSetupController:
                 config=os.path.join(tmp_path, "zentra_init.py"),
                 models=os.path.join(tmp_path, "zentra_models"),
                 demo=os.path.join(tmp_path, "zentra_models_demo"),
+                zentra_local=os.path.join(tmp_path, "zentra_local"),
+                local_demo=os.path.join(tmp_path, "zentra_local_demo"),
             ),
             config_storage=ConfigExistStorage(),
         )
 
     @staticmethod
+    def test_make_models_dir_true(controller: SetupController):
+        controller.config_storage.models_folder_exists = True
+        controller._make_models_dir()
+
+        assert not os.path.exists(controller.paths.models)
+
+    @staticmethod
+    def test_make_models_dir_false(controller: SetupController):
+        controller.config_storage.models_folder_exists = False
+        controller._make_models_dir()
+
+        assert os.path.exists(controller.paths.models)
+
+    @staticmethod
+    def test_make_config_file_true(controller: SetupController):
+        controller.config_storage.config_file_exists = True
+        controller._make_config_file()
+
+        assert not os.path.exists(controller.paths.config)
+
+    @staticmethod
+    def test_make_config_file_false(controller: SetupController):
+        local_config_filepath = os.path.join(
+            controller.paths.zentra_local, controller.paths.config
+        )
+        new_config_filepath = os.path.join(
+            controller.paths.models, controller.paths.config
+        )
+
+        os.makedirs(controller.paths.zentra_local, exist_ok=True)
+        os.makedirs(controller.paths.models, exist_ok=True)
+
+        with open(local_config_filepath, "w") as f:
+            f.write("test")
+
+        controller.config_storage.config_file_exists = False
+        controller._make_config_file()
+
+        assert os.path.exists(new_config_filepath)
+
+    @staticmethod
     def test_create_missing_files(controller: SetupController):
-        # result, e = controller.make_path()
-        # assert result is True and e is None
-        pass
+        try:
+            controller.create_missing_files()
+        except typer.Exit:
+            assert False
+
+    @staticmethod
+    def test_create_demo_files(controller: SetupController):
+        test_file = os.path.join(controller.paths.local_demo, "file1.txt")
+        new_test_filepath = os.path.join(controller.paths.demo, test_file)
+
+        os.makedirs(controller.paths.local_demo, exist_ok=True)
+
+        with open(test_file, "w") as f:
+            f.write("test")
+
+        controller.config_storage.config_file_exists = False
+        controller.create_demo_files()
+
+        checks = [
+            os.path.exists(controller.paths.demo),
+            os.path.exists(new_test_filepath),
+        ]
+        assert all(checks)
 
 
 class TestNameStorage:

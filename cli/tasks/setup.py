@@ -61,9 +61,7 @@ class Setup:
 
         # Setup complete
         console.print()
-        console.print(
-            configuration_complete_panel(self.paths.models, link=GETTING_STARTED_URL)
-        )
+        console.print(configuration_complete_panel(link=GETTING_STARTED_URL))
 
     def check_config(self) -> None:
         """Checks if the config files are already setup."""

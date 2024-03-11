@@ -4,7 +4,7 @@ from cli.conf.move import copy_list_of_files
 from cli.conf.storage import ConfigExistStorage, PathStorage
 from cli.tasks.controllers.base import BaseController, status
 from cli.conf.create import make_path_dirs
-from cli.utils.printables import local_path
+from cli.conf.extract import local_path
 
 
 class SetupController(BaseController):

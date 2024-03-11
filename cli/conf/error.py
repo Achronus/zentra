@@ -6,8 +6,11 @@ from rich.panel import Panel
 from cli.conf.checks import check_zentra_exists
 
 from cli.conf.constants import (
+    CONFIG_FILEPATH,
+    CONFIG_URL,
     ERROR_GUIDE_URL,
     GITHUB_ISSUES_URL,
+    MODELS_FILEPATH,
     CommonErrorCodes,
     SetupErrorCodes,
     GenerateErrorCodes,
@@ -41,7 +44,7 @@ Things to check:
 """
 
 INVALID_CONFIG_CHECKS = f"""
-Access the config file at [magenta]zentra/models/[/magenta][yellow]{ZentaFilepaths.SETUP_FILENAME}[/yellow].
+Access the config file at [link={CONFIG_URL}]{CONFIG_FILEPATH}[/link].
 
 Then, check if:
   1. [magenta]zentra[/magenta] = [yellow]Zentra[/yellow]() is initalised
@@ -55,7 +58,7 @@ For example:
 """
 
 VALID_CONFIG_NO_COMPONENTS = f"""
-Access the config file at [magenta]zentra/models/[/magenta][yellow]{ZentaFilepaths.SETUP_FILENAME}[/yellow].
+Access the config file at [link={CONFIG_URL}]{CONFIG_FILEPATH}[/link].
 
 Then, check if:
   1. You've [magenta]imported[/magenta] your created models
@@ -63,7 +66,7 @@ Then, check if:
 """
 
 IMPORT_ERROR_CHECKS = f"""
-Access the config file at [magenta]zentra/models/[/magenta][yellow]{ZentaFilepaths.SETUP_FILENAME}[/yellow].
+Access the config file at [link={CONFIG_URL}]{CONFIG_FILEPATH}[/link].
 
 Then, check if:
   1. You've [magenta]imported[/magenta] your created models
@@ -93,7 +96,7 @@ SUCCESS_MSG_MAP = {
 COMMON_ERROR_MAP = {
     CommonErrorCodes.TEST_ERROR: "Test",
     CommonErrorCodes.CONFIG_MISSING: error_msg_with_checks(
-        "[magenta]zentra/models[/magenta] config file missing!",
+        f"{MODELS_FILEPATH} config file missing!",
         checks=MISSING_FILES_CHECKS,
     ),
     CommonErrorCodes.INVALID_CONFIG: error_msg_with_checks(
@@ -105,7 +108,7 @@ COMMON_ERROR_MAP = {
         checks=MISSING_FILES_CHECKS,
     ),
     CommonErrorCodes.MODELS_DIR_MISSING: error_msg_with_checks(
-        "[magenta]zentra/models[/magenta] is missing!",
+        f"{MODELS_FILEPATH} is missing!",
         checks=MISSING_FILES_CHECKS,
     ),
     CommonErrorCodes.SRC_DIR_MISSING: f"""
@@ -128,7 +131,7 @@ SETUP_ERROR_MAP = {
 
 GENERATE_ERROR_MAP = {
     GenerateErrorCodes.NO_COMPONENTS: error_msg_with_checks(
-        "[red]No components found[/red] in [green]zentra/models[/green]!",
+        f"[red]No components found[/red] in [green]{ZentaFilepaths.MODELS}[/green]!",
         checks=INVALID_CONFIG_CHECKS,
     ),
 }

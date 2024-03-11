@@ -33,3 +33,10 @@ def get_file_content(filepath: str) -> str:
     """Reads a file and returns it as a string."""
     with open(filepath, "r") as f:
         return f.read()
+
+
+def local_path(folder_path: str) -> str:
+    """Extracts the last two directories from a `folder_path`."""
+    head, tail = os.path.split(folder_path)
+    root = os.path.basename(head)
+    return "/".join([root, tail])

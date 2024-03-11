@@ -1,6 +1,8 @@
 import os
 from enum import Enum
 
+from cli.conf.extract import local_path
+
 
 class CommonErrorCodes(Enum):
     TEST_ERROR = -1
@@ -110,3 +112,9 @@ class ZentraUIFilepaths:
     NAVIGATION = os.path.join(ROOT, "navigation")  # ui/navigation
     NOTIFICATION = os.path.join(ROOT, "notification")  # ui/notification
     PRESENTATION = os.path.join(ROOT, "presentation")  # ui/presentation
+
+
+# Util filepaths
+MODELS_FILEPATH = f"[magenta]{local_path(ZentaFilepaths.MODELS)}[/magenta]"
+CONFIG_FILEPATH = f"{MODELS_FILEPATH}[yellow]/{ZentaFilepaths.SETUP_FILENAME}[/yellow]"
+CONFIG_URL = os.path.join(ZentaFilepaths.MODELS, ZentaFilepaths.SETUP_FILENAME)

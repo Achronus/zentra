@@ -1,4 +1,3 @@
-import os
 from cli.conf.format import component_count_str
 
 from zentra.core import Zentra

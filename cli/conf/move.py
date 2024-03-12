@@ -25,12 +25,14 @@ def copy_list_of_files(
     """
     if not check_folder_exists(src):
         file_copy_logger.error(
-            f"FileNotFoundError: '{os.path.basename(src)}' directory does not exist. Path: {src}"
+            f"SrcDirMissingError: '{os.path.basename(src)}' directory does not exist. Path: {src}"
         )
         raise typer.Exit(code=src_err_code)
 
     if not check_folder_exists(dest):
-        file_copy_logger.error(f"FileNotFoundError: '{dest}' directory does not exist.")
+        file_copy_logger.error(
+            f"DestDirMissingError: '{dest}' directory does not exist."
+        )
         raise typer.Exit(code=dest_err_code)
 
     if filenames is None:

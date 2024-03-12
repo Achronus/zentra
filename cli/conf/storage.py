@@ -45,34 +45,56 @@ class PathStorage:
         return path
 
 
-class SetupPathStorage(PathStorage):
+class CorePaths(BaseModel):
+    """
+    A storage container for folder paths specific to Zentra Core paths.
+
+    Parameters:
+    - config (str) - the filepath to the zentra models config file
+    - models (str) - the directory path to the zentra models folder
+    - demo (str) - the directory path to the zentra models demo folder
+    """
+
+    config: str
+    models: str
+    demo: str
+
+
+class LocalPaths(BaseModel):
+    """
+    A storage container for folder paths specific to local Zentra paths.
+
+    Parameters:
+    - zentra (str) - the path to the local zentra config folder
+    - demo (str) - the path to the local zentra config demo folder
+    """
+
+    zentra: str
+    demo: str
+
+
+class SetupPathStorage(BaseModel):
     """
     A storage container for folder paths specific to `zentra init`.
 
     Parameters:
-    - config (str) - the path to the `zentra/models` config file
-    - models (str) - the path to the `zentra/models` folder
-    - demo (str) - the path to the `zentra/models` demo folder
-    - zentra_local (str) - the path to the local zentra config folder
-    - local_demo (str) - the path to the local zentra config demo folder
+    - core (storage.CorePaths) - a CorePaths object containing core filepaths
+    - local (storage.LocalPaths) - a LocalPaths object containing local filepaths
     """
 
-    def __init__(
-        self, config: str, models: str, demo: str, zentra_local: str, local_demo: str
-    ) -> None:
-        self.config = config
-        self.models = models
-        self.demo = demo
-        self.zentra_local = zentra_local
-        self.local_demo = local_demo
+    core: CorePaths
+    local: LocalPaths
 
-        super().__init__(
-            config=config,
-            models=models,
-            demo=demo,
-            zentra_local=zentra_local,
-            local_demo=local_demo,
-        )
+
+class GeneratePathStorage(PathStorage):
+    """A storage container for folder paths specific to `zentra generate`."""
+
+    def __init__(
+        self,
+        config: str,
+        models: str,
+    ) -> None:
+        super().__init__()
 
 
 class ModelStorage(BaseModel):

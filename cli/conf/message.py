@@ -1,3 +1,4 @@
+from enum import Enum
 import textwrap
 import typer
 
@@ -192,8 +193,9 @@ MSGS_WITH_COUNTS = [SetupSuccessCodes.ALREADY_CONFIGURED]
 class MessageHandler:
     """Handles all the messages of the CLI."""
 
-    def __init__(self, console: Console) -> None:
+    def __init__(self, console: Console, msg_mapper: dict[Enum, str]) -> None:
         self.console = console
+        self.msg_mapper = msg_mapper
 
     @staticmethod
     def __error_msg(msg: str, e: typer.Exit) -> Panel:
@@ -225,7 +227,7 @@ class MessageHandler:
     def msg(self, e: typer.Exit) -> None:
         """Assigns a success or error message depending on the code received."""
         try:
-            msg = textwrap.dedent(MSG_MAPPER.get(e.exit_code, UNKNOWN_ERROR))
+            msg = textwrap.dedent(self.msg_mapper.get(e.exit_code, UNKNOWN_ERROR))
         except AttributeError:
             e.exit_code = CommonErrorCodes.UNKNOWN_ERROR
 

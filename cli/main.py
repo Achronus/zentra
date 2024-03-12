@@ -7,7 +7,7 @@ from cli.conf.constants import (
     ZentraUIFilepaths,
 )
 
-from cli.conf.message import MessageHandler
+from cli.conf.message import MSG_MAPPER, MessageHandler
 from cli.conf.storage import PathStorage
 from cli.tasks.setup import Setup
 from cli.tasks.generate import Generate
@@ -20,7 +20,7 @@ app = typer.Typer(
 )
 
 console = Console()
-msg_handler = MessageHandler(console)
+msg_handler = MessageHandler(console, MSG_MAPPER)
 
 
 @app.command("init")

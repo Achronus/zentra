@@ -10,7 +10,7 @@ from cli.conf.constants import (
     LocalUploadthingFilepaths,
 )
 from cli.conf.format import name_from_camel_case
-from cli.conf.storage import ConfigExistStorage, PathStorage
+from cli.conf.storage import ConfigExistStorage, PathStorage, SetupPathStorage
 from cli.tasks.controllers.base import status, BaseController
 from cli.tasks.controllers.setup import SetupController
 from cli.tasks.controllers.generate import GenerateController
@@ -72,7 +72,7 @@ class TestSetupController:
     @pytest.fixture
     def controller(self, tmp_path) -> SetupController:
         return SetupController(
-            PathStorage(
+            SetupPathStorage(
                 config=os.path.join(tmp_path, "zentra_init.py"),
                 models=os.path.join(tmp_path, "zentra_models"),
                 demo=os.path.join(tmp_path, "zentra_models_demo"),
@@ -150,7 +150,7 @@ class TestSetupController:
         assert all(checks)
 
 
-class TestNameStorage:
+class TestModelStorage:
     def test_nextjs_project_false(self):
         nextjs_project = False
 

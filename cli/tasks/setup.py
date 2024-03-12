@@ -10,7 +10,7 @@ from cli.conf.checks import (
     check_zentra_exists,
 )
 from cli.conf.extract import get_file_content
-from cli.conf.storage import ConfigExistStorage, PathStorage
+from cli.conf.storage import ConfigExistStorage, SetupPathStorage
 from .controllers.setup import SetupController
 from cli.conf.constants import (
     CommonErrorCodes,
@@ -30,7 +30,7 @@ class Setup:
     """A class for handling the `zentra init` command."""
 
     def __init__(self) -> None:
-        self.paths = PathStorage(
+        self.paths = SetupPathStorage(
             config=os.path.join(ZentaFilepaths.MODELS, ZentaFilepaths.SETUP_FILENAME),
             models=ZentaFilepaths.MODELS,
             demo=ZentaFilepaths.DEMO_FOLDER,

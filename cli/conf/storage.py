@@ -34,7 +34,7 @@ class ConfigExistStorage:
 class PathStorage:
     """A storage container for folder paths provided to controllers."""
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         for key, val in kwargs.items():
             setattr(self, key, self._validate_path(val))
 
@@ -43,6 +43,36 @@ class PathStorage:
         if not isinstance(path, str):
             raise TypeError(f"Invalid path type: {type(path)}. Path must be a string.")
         return path
+
+
+class SetupPathStorage(PathStorage):
+    """
+    A storage container for folder paths specific to `zentra init`.
+
+    Parameters:
+    - config (str) - the path to the `zentra/models` config file
+    - models (str) - the path to the `zentra/models` folder
+    - demo (str) - the path to the `zentra/models` demo folder
+    - zentra_local (str) - the path to the local zentra config folder
+    - local_demo (str) - the path to the local zentra config demo folder
+    """
+
+    def __init__(
+        self, config: str, models: str, demo: str, zentra_local: str, local_demo: str
+    ) -> None:
+        self.config = config
+        self.models = models
+        self.demo = demo
+        self.zentra_local = zentra_local
+        self.local_demo = local_demo
+
+        super().__init__(
+            config=config,
+            models=models,
+            demo=demo,
+            zentra_local=zentra_local,
+            local_demo=local_demo,
+        )
 
 
 class ModelStorage(BaseModel):

@@ -1,5 +1,4 @@
 import typer
-from cli.conf.checks import check_zentra_exists
 
 from cli.conf.error import MessageHandler
 from cli.tasks.setup import Setup
@@ -31,8 +30,8 @@ def init_app() -> None:
 def generate_components() -> None:
     """Generates all React components based on the models stored in the 'zentra/models' folder."""
     try:
-        zentra = check_zentra_exists()
-        generate = Generate(zentra)
+        generate = Generate()
+        generate.init_checks()
         generate.components()
 
     except typer.Exit as e:

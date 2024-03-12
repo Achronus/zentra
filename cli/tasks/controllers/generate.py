@@ -1,18 +1,8 @@
-import ast
-import typer
-
-from cli.conf.checks import (
-    CheckConfigFileValid,
-    check_file_exists,
-    check_folder_exists,
-    check_models_registered,
-)
+from cli.conf.checks import check_models_registered
 from cli.conf.format import name_from_camel_case
 from cli.conf.move import copy_zentra_files
 from cli.conf.storage import NameStorage, PathStorage
 from cli.tasks.controllers.base import BaseController, status
-from cli.conf.constants import CommonErrorCodes
-from cli.conf.extract import get_file_content
 
 from zentra.core import Zentra
 
@@ -31,7 +21,6 @@ class GenerateController(BaseController):
         zentra_str = "[magenta]Zentra[/magenta]"
 
         tasks = [
-            (self.check_config, f"Checking {zentra_str} configured correctly"),
             (self.extract_models, f"Retrieving {zentra_str} models"),
             (self.create_files, f"Creating {react_str} component files"),
             (self.update_template_files, f"Configuring {react_str} components"),
@@ -42,37 +31,6 @@ class GenerateController(BaseController):
         self.storage = NameStorage()
         self.paths = paths
         self.zentra = zentra
-
-    @staticmethod
-    def _model_folder_exists(filepath: str) -> None:
-        """Helper function to check if the model folder exists. Raises an error if False."""
-        if not check_folder_exists(filepath):
-            raise typer.Exit(code=CommonErrorCodes.MODELS_DIR_MISSING)
-
-    @staticmethod
-    def _config_file_exists(filepath: str) -> None:
-        """Helper function to check if the config file exists. Raises an error if False."""
-        if not check_file_exists(filepath):
-            raise typer.Exit(code=CommonErrorCodes.CONFIG_MISSING)
-
-    @staticmethod
-    def _config_file_valid(filepath: str) -> None:
-        """A helper function to check if the config file is valid. Raises an error if False."""
-        check_config = CheckConfigFileValid()
-        file_content_tree = ast.parse(get_file_content(filepath))
-        check_config.visit(file_content_tree)
-
-        valid_content = check_config.is_valid()
-
-        if not valid_content:
-            raise typer.Exit(code=CommonErrorCodes.INVALID_CONFIG)
-
-    @status
-    def check_config(self) -> None:
-        """Checks that the config files are setup correctly. Raises errors if files exist."""
-        self._model_folder_exists(self.paths.models)
-        self._config_file_exists(self.paths.config)
-        self._config_file_valid(self.paths.config)
 
     @status
     def extract_models(self) -> None:

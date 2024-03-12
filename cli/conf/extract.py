@@ -35,6 +35,12 @@ def get_file_content(filepath: str) -> str:
         return f.read()
 
 
+def get_file_content_lines(filepath: str) -> list[str]:
+    """Reads a file and returns its lines as a list of strings."""
+    with open(filepath, "r") as f:
+        return f.readlines()
+
+
 def local_path(folder_path: str) -> str:
     """Extracts the last two directories from a `folder_path`."""
     head, tail = os.path.split(folder_path)

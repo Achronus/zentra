@@ -4,7 +4,6 @@ import typer
 from cli.conf.constants import (
     CommonErrorCodes,
     GenerateErrorCodes,
-    GenerateSuccessCodes,
 )
 from cli.conf.format import name_from_camel_case
 from cli.conf.move import copy_list_of_files

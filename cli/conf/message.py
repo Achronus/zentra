@@ -88,12 +88,6 @@ Then, check if:
 """
 )
 
-ALTERNATIVE_CONFIG_RESET = f"""
-Or:
-  1. [red]Delete[/red] the {CONFIG_URL_STR} file
-  2. Run [green]zentra init[/green] to create a new one
-"""
-
 BUG_MSG = f"""
 This is a bug, please report this as an issue [bright_blue][link={GITHUB_ISSUES_URL}]on GitHub[/link][/bright_blue].
 """
@@ -145,6 +139,10 @@ COMMON_ERROR_MAP = {
         "[red]Invalid[/red] [yellow]config[/yellow] file [green]detected[/green]!",
         checks=INVALID_CONFIG_CHECKS,
     ),
+    CommonErrorCodes.CONFIG_EMPTY: error_msg_with_checks(
+        "[yellow]Config[/yellow] file is [red]empty[/red]!",
+        checks="\nRun [green]zentra init[/green] to get started!\n",
+    ),
     CommonErrorCodes.ZENTRA_MISSING: error_msg_with_checks(
         title="The [magenta]zentra[/magenta] folder is [red]missing[/red]!",
         checks=MISSING_FILES_CHECKS,
@@ -172,7 +170,7 @@ SETUP_ERROR_MAP = {
 GENERATE_ERROR_MAP = {
     GenerateErrorCodes.NO_COMPONENTS: error_msg_with_checks(
         "[red]No components found[/red] in [yellow]config[/yellow] file!",
-        checks=INVALID_CONFIG_CHECKS + ALTERNATIVE_CONFIG_RESET,
+        checks=INVALID_CONFIG_CHECKS,
     ),
     GenerateErrorCodes.GENERATE_DIR_MISSING: error_msg_with_checks(
         title="The [magenta]zentra/generated[/magenta] folder is [red]missing[/red]!",

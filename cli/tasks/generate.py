@@ -14,7 +14,7 @@ from cli.conf.constants import (
     GenerateErrorCodes,
     GenerateSuccessCodes,
 )
-from cli.conf.extract import get_file_content
+from cli.conf.extract import get_file_content, get_file_content_lines
 from cli.conf.storage import PathStorage
 from cli.tasks.controllers.generate import GenerateController
 from cli.utils.printables import component_complete_panel, component_count_panel
@@ -37,6 +37,9 @@ class Generate:
 
         if not check_file_exists(self.paths.config):
             raise typer.Exit(code=CommonErrorCodes.CONFIG_MISSING)
+
+        if len(get_file_content_lines(self.paths.config)) == 0:
+            raise typer.Exit(code=CommonErrorCodes.CONFIG_EMPTY)
 
     def check_config_valid(self) -> None:
         """Checks if the config file is valid. Raises an error if False."""

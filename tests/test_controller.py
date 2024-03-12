@@ -6,6 +6,7 @@ import typer
 from cli.conf.constants import (
     CommonErrorCodes,
     GenerateErrorCodes,
+    GenerateSuccessCodes,
     LocalUploadthingFilepaths,
 )
 from cli.conf.format import name_from_camel_case
@@ -171,7 +172,7 @@ class TestNameStorage:
         assert result == LocalUploadthingFilepaths.BASE_NEXTJS
 
 
-class TestGenerateController:
+class TestGenerate:
     @pytest.fixture
     def path_storage(self, tmp_path) -> PathStorage:
         return PathStorage(
@@ -185,6 +186,121 @@ class TestGenerateController:
     @pytest.fixture
     def generate(self, path_storage: PathStorage) -> Generate:
         return Generate(paths=path_storage)
+
+    class TestCheckConfig:
+        @staticmethod
+        def test_model_folder_exists_error(generate: Generate):
+            with pytest.raises(typer.Exit) as e:
+                generate.init_checks()
+
+            assert e.value.exit_code == CommonErrorCodes.MODELS_DIR_MISSING
+
+        @staticmethod
+        def test_config_file_exists_error(generate: Generate):
+            os.makedirs(generate.paths.models)
+            with pytest.raises(typer.Exit) as e:
+                generate.init_checks()
+
+            assert e.value.exit_code == CommonErrorCodes.CONFIG_MISSING
+
+        @staticmethod
+        def test_config_file_empty(generate: Generate):
+            os.makedirs(generate.paths.models)
+            with open(generate.paths.config, "w") as f:
+                f.write("")
+
+            with pytest.raises(typer.Exit) as e:
+                generate.init_checks()
+
+            assert e.value.exit_code == CommonErrorCodes.CONFIG_EMPTY
+
+        @staticmethod
+        def test_config_file_valid_error(generate: Generate):
+            os.makedirs(generate.paths.models)
+            with open(generate.paths.config, "w") as f:
+                f.write("from zentra.core import Zentra\nzentra = Zentra()")
+
+            with pytest.raises(typer.Exit) as e:
+                generate.check_config_valid()
+
+            assert e.value.exit_code == CommonErrorCodes.INVALID_CONFIG
+
+        @staticmethod
+        def test_check_config_valid_success(generate: Generate):
+            os.makedirs(generate.paths.models, exist_ok=True)
+            with open(generate.paths.config, "w") as f:
+                f.write(
+                    "from zentra.core import Zentra\nzentra = Zentra()\nzentra.register()"
+                )
+
+            assert generate.check_config_valid() is None
+
+    class TestCheckComponentsExist:
+        @staticmethod
+        def test_no_new_components_raise(generate: Generate):
+            os.makedirs(generate.paths.generated_zentra)
+
+            with open(
+                os.path.join(generate.paths.generated_zentra, "file1.txt"), "w"
+            ) as f:
+                f.write("test")
+
+            with pytest.raises(typer.Exit) as e:
+                generate.check_components_exist()
+
+            assert e.value.exit_code == GenerateSuccessCodes.NO_NEW_COMPONENTS
+
+        @staticmethod
+        def test_no_raise(generate: Generate):
+            assert generate.check_components_exist() is None
+
+    class TestCreateComponents:
+        @staticmethod
+        def test_no_components_error(generate: Generate):
+            os.makedirs(generate.paths.models, exist_ok=True)
+            with open(generate.paths.config, "w") as f:
+                f.write(
+                    "from zentra.core import Zentra\nzentra = Zentra()\n\nzentra.register([])"
+                )
+
+            mock_zentra_module = MagicMock()
+            setattr(mock_zentra_module, "zentra", Zentra())
+
+            with patch("importlib.import_module", return_value=mock_zentra_module):
+                with pytest.raises(typer.Exit) as e:
+                    generate.create_components()
+
+            assert e.value.exit_code == GenerateErrorCodes.NO_COMPONENTS
+
+        @staticmethod
+        def test_create_components_success(generate: Generate):
+            os.makedirs(generate.paths.models, exist_ok=True)
+            os.makedirs(generate.paths.local_ui_base, exist_ok=True)
+            with open(generate.paths.config, "w") as f:
+                f.write(
+                    "from zentra.core import Zentra\nfrom zentra.ui.control import Button\n\nzentra = Zentra()\n\nzentra.register([])"
+                )
+
+            mock_zentra_module = MagicMock()
+            setattr(mock_zentra_module, "zentra", Zentra())
+            mock_zentra_module.zentra.register(
+                [Button(name="userBtn", text="Click me!", variant="primary")]
+            )
+
+            with patch("importlib.import_module", return_value=mock_zentra_module):
+                generate.create_components()
+
+
+class TestGenerateController:
+    @pytest.fixture
+    def path_storage(self, tmp_path) -> PathStorage:
+        return PathStorage(
+            config=os.path.join(tmp_path, "test_models", "config_init.py"),
+            models=os.path.join(tmp_path, "test_models"),
+            generated_zentra=os.path.join(tmp_path, "zentra_generated"),
+            local_ui_base=os.path.join(tmp_path, "test_ui_base"),
+            generated_ui_base=os.path.join(tmp_path, "test_generated_base"),
+        )
 
     @pytest.fixture
     def page(self) -> Page:
@@ -271,79 +387,6 @@ class TestGenerateController:
                 "input.tsx",
             ]
             assert len(result) == len(valid)
-
-    class TestCheckConfig:
-        @staticmethod
-        def test_model_folder_exists_error(generate: Generate):
-            with pytest.raises(typer.Exit) as e:
-                generate.init_checks()
-
-            assert e.value.exit_code == CommonErrorCodes.MODELS_DIR_MISSING
-
-        @staticmethod
-        def test_config_file_exists_error(generate: Generate):
-            os.makedirs(generate.paths.models)
-            with pytest.raises(typer.Exit) as e:
-                generate.init_checks()
-
-            assert e.value.exit_code == CommonErrorCodes.CONFIG_MISSING
-
-        @staticmethod
-        def test_config_file_valid_error(generate: Generate):
-            os.makedirs(generate.paths.models)
-            with open(generate.paths.config, "w") as f:
-                f.write("from zentra.core import Zentra\nzentra = Zentra()")
-
-            with pytest.raises(typer.Exit) as e:
-                generate.check_config_valid()
-
-            assert e.value.exit_code == CommonErrorCodes.INVALID_CONFIG
-
-        @staticmethod
-        def test_check_config_valid_success(generate: Generate):
-            os.makedirs(generate.paths.models, exist_ok=True)
-            with open(generate.paths.config, "w") as f:
-                f.write(
-                    "from zentra.core import Zentra\nzentra = Zentra()\nzentra.register()"
-                )
-
-            assert generate.check_config_valid() is None
-
-    class TestCreateComponents:
-        @staticmethod
-        def test_no_components_error(generate: Generate):
-            os.makedirs(generate.paths.models, exist_ok=True)
-            with open(generate.paths.config, "w") as f:
-                f.write(
-                    "from zentra.core import Zentra\nzentra = Zentra()\n\nzentra.register([])"
-                )
-
-            mock_zentra_module = MagicMock()
-            setattr(mock_zentra_module, "zentra", Zentra())
-
-            with patch("importlib.import_module", return_value=mock_zentra_module):
-                with pytest.raises(typer.Exit) as e:
-                    generate.create_components()
-
-            assert e.value.exit_code == GenerateErrorCodes.NO_COMPONENTS
-
-        @staticmethod
-        def test_create_components_success(generate: Generate):
-            os.makedirs(generate.paths.models, exist_ok=True)
-            os.makedirs(generate.paths.local_ui_base, exist_ok=True)
-            with open(generate.paths.config, "w") as f:
-                f.write(
-                    "from zentra.core import Zentra\nfrom zentra.ui.control import Button\n\nzentra = Zentra()\n\nzentra.register([])"
-                )
-
-            mock_zentra_module = MagicMock()
-            setattr(mock_zentra_module, "zentra", Zentra())
-            mock_zentra_module.zentra.register(
-                [Button(name="userBtn", text="Click me!", variant="primary")]
-            )
-
-            with patch("importlib.import_module", return_value=mock_zentra_module):
-                generate.create_components()
 
     class TestCreateFiles:
         @staticmethod

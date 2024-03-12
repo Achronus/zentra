@@ -17,7 +17,6 @@ from cli.conf.constants import (
     PARTY,
     FAIL,
     SetupSuccessCodes,
-    ZentaFilepaths,
 )
 from cli.conf.format import plural_name_formatter
 
@@ -43,9 +42,12 @@ Things to check:
   2. You have [yellow]configured[/yellow] your project with [green]zentra init[/green]  
 """
 
-INVALID_CONFIG_CHECKS = f"""
-Access the config file at [link={CONFIG_URL}]{CONFIG_FILEPATH}[/link].
+CONFIG_URL_STR = f"[link={CONFIG_URL}]{CONFIG_FILEPATH}[/link]"
+ACCESS_CONFIG_STR = f"\nAccess the [yellow]config[/yellow] file at {CONFIG_URL_STR}.\n"
 
+INVALID_CONFIG_CHECKS = (
+    ACCESS_CONFIG_STR
+    + """
 Then, check if:
   1. [magenta]zentra[/magenta] = [yellow]Zentra[/yellow]() is initalised
   2. [magenta]Zentra[/magenta] models are registered with [magenta]zentra[/magenta].[yellow]register[/yellow]() with   
@@ -56,22 +58,30 @@ For example:
   [magenta]zentra[/magenta].[yellow]register[/yellow]([cyan][[/cyan][yellow]Accordion[/yellow](...), [yellow]Button[/yellow](...)[cyan]][/cyan])
   [magenta]zentra[/magenta].[yellow]register[/yellow]([cyan][[/cyan][yellow]Page[/yellow](...), [yellow]Accordion[/yellow](...)[cyan]][/cyan])
 """
+)
 
-VALID_CONFIG_NO_COMPONENTS = f"""
-Access the config file at [link={CONFIG_URL}]{CONFIG_FILEPATH}[/link].
-
+VALID_CONFIG_NO_COMPONENTS = (
+    ACCESS_CONFIG_STR
+    + """
 Then, check if:
   1. You've [magenta]imported[/magenta] your created models
   2. You've [green]added[/green] them to [magenta]zentra[/magenta].[yellow]register[/yellow]()
 """
+)
 
 IMPORT_ERROR_CHECKS = f"""
-Access the config file at [link={CONFIG_URL}]{CONFIG_FILEPATH}[/link].
+Access the config file at {CONFIG_URL_STR}.
 
 Then, check if:
   1. You've [magenta]imported[/magenta] your created models
   2. [magenta]from[/magenta] [green]zentra[/green].[green]core[/green] [magenta]import[/magenta] [green]Zentra[/green] - is present
   3. [magenta]zentra[/magenta] = [yellow]Zentra[/yellow]() - is set
+"""
+
+ALTERNATIVE_CONFIG_RESET = f"""
+Or:
+  1. [red]Delete[/red] the [yellow]config[/yellow] file at {CONFIG_URL_STR}
+  2. Run [green]zentra init[/green] to create a new one
 """
 
 
@@ -96,11 +106,11 @@ SUCCESS_MSG_MAP = {
 COMMON_ERROR_MAP = {
     CommonErrorCodes.TEST_ERROR: "Test",
     CommonErrorCodes.CONFIG_MISSING: error_msg_with_checks(
-        f"{MODELS_FILEPATH} config file missing!",
+        f"{MODELS_FILEPATH} [yellow]config[/yellow] file [red]missing[/red]!",
         checks=MISSING_FILES_CHECKS,
     ),
     CommonErrorCodes.INVALID_CONFIG: error_msg_with_checks(
-        "[red]Invalid[/red] config file detected!",
+        "[red]Invalid[/red] [yellow]config[/yellow] file [green]detected[/green]!",
         checks=INVALID_CONFIG_CHECKS,
     ),
     CommonErrorCodes.ZENTRA_MISSING: error_msg_with_checks(
@@ -131,8 +141,8 @@ SETUP_ERROR_MAP = {
 
 GENERATE_ERROR_MAP = {
     GenerateErrorCodes.NO_COMPONENTS: error_msg_with_checks(
-        f"[red]No components found[/red] in [green]{ZentaFilepaths.MODELS}[/green]!",
-        checks=INVALID_CONFIG_CHECKS,
+        "[red]No components found[/red] in [yellow]config[/yellow] file!",
+        checks=INVALID_CONFIG_CHECKS + ALTERNATIVE_CONFIG_RESET,
     ),
 }
 

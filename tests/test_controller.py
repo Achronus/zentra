@@ -173,15 +173,18 @@ class TestNameStorage:
 
 class TestGenerateController:
     @pytest.fixture
-    def generate(self, tmp_path) -> Generate:
-        return Generate(
-            paths=PathStorage(
-                config=os.path.join(tmp_path, "test_models", "config_init.py"),
-                models=os.path.join(tmp_path, "test_models"),
-                local_ui_base=os.path.join(tmp_path, "test_ui_base"),
-                generated_ui_base=os.path.join(tmp_path, "test_generated_base"),
-            )
+    def path_storage(self, tmp_path) -> PathStorage:
+        return PathStorage(
+            config=os.path.join(tmp_path, "test_models", "config_init.py"),
+            models=os.path.join(tmp_path, "test_models"),
+            generated_zentra=os.path.join(tmp_path, "zentra_generated"),
+            local_ui_base=os.path.join(tmp_path, "test_ui_base"),
+            generated_ui_base=os.path.join(tmp_path, "test_generated_base"),
         )
+
+    @pytest.fixture
+    def generate(self, path_storage: PathStorage) -> Generate:
+        return Generate(paths=path_storage)
 
     @pytest.fixture
     def page(self) -> Page:
@@ -229,14 +232,10 @@ class TestGenerateController:
         return zentra
 
     @pytest.fixture
-    def controller(self, tmp_path, zentra: Zentra) -> GenerateController:
-        return GenerateController(
-            zentra,
-            paths=PathStorage(
-                config=os.path.join(tmp_path, "zentra_init.py"),
-                models=os.path.join(tmp_path, "zentra_models"),
-            ),
-        )
+    def controller(
+        self, path_storage: PathStorage, zentra: Zentra
+    ) -> GenerateController:
+        return GenerateController(zentra, paths=path_storage)
 
     class TestExtractModels:
         @pytest.fixture
@@ -331,6 +330,7 @@ class TestGenerateController:
         @staticmethod
         def test_create_components_success(generate: Generate):
             os.makedirs(generate.paths.models, exist_ok=True)
+            os.makedirs(generate.paths.local_ui_base, exist_ok=True)
             with open(generate.paths.config, "w") as f:
                 f.write(
                     "from zentra.core import Zentra\nfrom zentra.ui.control import Button\n\nzentra = Zentra()\n\nzentra.register([])"
@@ -344,3 +344,35 @@ class TestGenerateController:
 
             with patch("importlib.import_module", return_value=mock_zentra_module):
                 generate.create_components()
+
+    class TestCreateFiles:
+        @staticmethod
+        def test_src_error(controller: GenerateController):
+            with pytest.raises(typer.Exit) as e_info:
+                controller._copy_base_ui()
+
+            assert e_info.value.exit_code == CommonErrorCodes.SRC_DIR_MISSING
+
+        @staticmethod
+        def test_dest_error(controller: GenerateController):
+            os.mkdir(controller.paths.local_ui_base)
+            with pytest.raises(typer.Exit) as e_info:
+                controller._copy_base_ui()
+
+            assert e_info.value.exit_code == GenerateErrorCodes.GENERATE_DIR_MISSING
+
+        @staticmethod
+        def create_files_valid(setup_dirs, controller: GenerateController):
+            src, dest = setup_dirs
+
+            open(os.path.join(src, "file1.txt"), "w").close()
+            open(os.path.join(src, "file2.txt"), "w").close()
+
+            controller.create_files()
+
+            checks = [
+                os.path.exists(os.path.join(dest, "file1.txt")),
+                os.path.exists(os.path.join(dest, "file2.txt")),
+            ]
+
+            assert all(checks)

@@ -10,8 +10,10 @@ from cli.conf.constants import (
     CONFIG_URL,
     ERROR_GUIDE_URL,
     GITHUB_ISSUES_URL,
+    MAGIC,
     MODELS_FILEPATH,
     CommonErrorCodes,
+    GenerateSuccessCodes,
     SetupErrorCodes,
     GenerateErrorCodes,
     PARTY,
@@ -33,6 +35,12 @@ UNKNOWN_ERROR = f"""
 {FAIL} 🥴 Well this is awkward... We didn't account for this! 🥴 {FAIL}
 
 You've encountered something unexpected 🤯. Please report this issue on [bright_blue][link={GITHUB_ISSUES_URL}]GitHub[/link][/bright_blue].
+"""
+
+COMPONENTS_EXIST_MSG = """
+[dark_goldenrod]Next Steps[/dark_goldenrod]
+  1. [yellow]Move[/yellow] your [magenta]zentra/generated[/magenta] components
+  2. Or, [green]add[/green] new ones to [magenta]zentra/models[/magenta]
 """
 
 
@@ -84,21 +92,30 @@ Or:
   2. Run [green]zentra init[/green] to create a new one
 """
 
+BUG_MSG = f"""
+This is a bug, please report this as an issue [bright_blue][link={GITHUB_ISSUES_URL}]on GitHub[/link][/bright_blue].
+"""
+
 
 def error_msg_with_checks(title: str, checks: str) -> str:
     """Formats error messages that have a title and a list of checks."""
     return textwrap.dedent(f"\n{FAIL} {title} {FAIL}\n") + checks
 
 
-def success_msg_with_checks(title: str, checks: str) -> str:
+def success_msg_with_checks(title: str, checks: str, icon: str = PARTY) -> str:
     """Formats success messages that have a title and a list of checks."""
-    return textwrap.dedent(f"\n{PARTY} {title} {PARTY}\n") + checks
+    return textwrap.dedent(f"\n{icon} {title} {icon}\n") + checks
 
 
 SUCCESS_MSG_MAP = {
     SetupSuccessCodes.CONFIGURED: success_msg_with_checks(
         "Application already configured with components!",
         checks="\nUse [green]zentra generate[/green] to create:",
+    ),
+    GenerateSuccessCodes.NO_NEW_COMPONENTS: success_msg_with_checks(
+        "No new [yellow]Components[/yellow] or [yellow]Pages[/yellow] to add!",
+        checks=COMPONENTS_EXIST_MSG,
+        icon=MAGIC,
     ),
 }
 
@@ -121,11 +138,9 @@ COMMON_ERROR_MAP = {
         f"{MODELS_FILEPATH} is missing!",
         checks=MISSING_FILES_CHECKS,
     ),
-    CommonErrorCodes.SRC_DIR_MISSING: f"""
-    {FAIL} [red]Source directory missing[/red]! {FAIL}
-
-    This is a bug, please report this as an issue [bright_blue][link={GITHUB_ISSUES_URL}]on GitHub[/link][/bright_blue].
-    """,
+    CommonErrorCodes.SRC_DIR_MISSING: error_msg_with_checks(
+        title="[red]Source directory missing[/red]!", checks=BUG_MSG
+    ),
 }
 
 SETUP_ERROR_MAP = {
@@ -143,6 +158,10 @@ GENERATE_ERROR_MAP = {
     GenerateErrorCodes.NO_COMPONENTS: error_msg_with_checks(
         "[red]No components found[/red] in [yellow]config[/yellow] file!",
         checks=INVALID_CONFIG_CHECKS + ALTERNATIVE_CONFIG_RESET,
+    ),
+    GenerateErrorCodes.GENERATE_DIR_MISSING: error_msg_with_checks(
+        title="The [magenta]zentra/generated[/magenta] folder is [red]missing[/red]!",
+        checks=BUG_MSG,
     ),
 }
 

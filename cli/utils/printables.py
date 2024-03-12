@@ -1,4 +1,4 @@
-from cli.conf.error import COMPONENTS_EXIST_MSG
+from cli.conf.message import COMPONENTS_EXIST_MSG
 from cli.conf.format import component_count_str
 
 from zentra.core import Zentra

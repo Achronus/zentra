@@ -1,6 +1,6 @@
 import ast
-import os
 import typer
+
 from cli.conf.checks import (
     CheckConfigFileValid,
     check_file_exists,
@@ -8,13 +8,7 @@ from cli.conf.checks import (
     check_zentra_exists,
 )
 
-from cli.conf.constants import (
-    CommonErrorCodes,
-    GenerateErrorCodes,
-    LocalUIComponentFilepaths,
-    ZentaFilepaths,
-    ZentraUIFilepaths,
-)
+from cli.conf.constants import CommonErrorCodes, GenerateErrorCodes
 from cli.conf.extract import get_file_content
 from cli.conf.storage import PathStorage
 from cli.tasks.controllers.generate import GenerateController
@@ -28,13 +22,8 @@ console = Console()
 class Generate:
     """A class for handling the logic for the `zentra generate` command."""
 
-    def __init__(self) -> None:
-        self.paths = PathStorage(
-            config=os.path.join(ZentaFilepaths.MODELS, ZentaFilepaths.SETUP_FILENAME),
-            models=ZentaFilepaths.MODELS,
-            local_ui_base=LocalUIComponentFilepaths.BASE,
-            generated_ui_base=ZentraUIFilepaths.BASE,
-        )
+    def __init__(self, paths: PathStorage) -> None:
+        self.paths = paths
 
     def init_checks(self) -> None:
         """Performs various checks to immediately provide feedback to the user regarding missing files."""
@@ -55,7 +44,7 @@ class Generate:
         if not valid_content:
             raise typer.Exit(code=CommonErrorCodes.INVALID_CONFIG)
 
-    def components(self) -> None:
+    def create_components(self) -> None:
         """Generates the react components based on the `zentra/models` folder."""
         self.check_config_valid()
         zentra = check_zentra_exists()

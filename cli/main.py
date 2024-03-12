@@ -1,6 +1,13 @@
+import os
 import typer
+from cli.conf.constants import (
+    LocalUIComponentFilepaths,
+    ZentaFilepaths,
+    ZentraUIFilepaths,
+)
 
 from cli.conf.error import MessageHandler
+from cli.conf.storage import PathStorage
 from cli.tasks.setup import Setup
 from cli.tasks.generate import Generate
 
@@ -30,9 +37,15 @@ def init_app() -> None:
 def generate_components() -> None:
     """Generates all React components based on the models stored in the 'zentra/models' folder."""
     try:
-        generate = Generate()
+        paths = PathStorage(
+            config=os.path.join(ZentaFilepaths.MODELS, ZentaFilepaths.SETUP_FILENAME),
+            models=ZentaFilepaths.MODELS,
+            local_ui_base=LocalUIComponentFilepaths.BASE,
+            generated_ui_base=ZentraUIFilepaths.BASE,
+        )
+        generate = Generate(paths)
         generate.init_checks()
-        generate.components()
+        generate.create_components()
 
     except typer.Exit as e:
         msg_handler.msg(e)

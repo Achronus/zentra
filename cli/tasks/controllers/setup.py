@@ -1,7 +1,7 @@
 import os
 from cli.conf.constants import CommonErrorCodes
 from cli.conf.move import copy_list_of_files
-from cli.conf.storage import ConfigExistStorage, PathStorage
+from cli.conf.storage import ConfigExistStorage, SetupPathStorage
 from cli.tasks.controllers.base import BaseController, status
 from cli.conf.create import make_path_dirs
 from cli.conf.extract import local_path
@@ -12,11 +12,13 @@ class SetupController(BaseController):
     A controller for handling tasks for configuring Zentra.
 
     Parameters:
-    - paths (storage.PathStorage) - a path storage container with filepaths specific to the controller
+    - paths (storage.SetupPathStorage) - a path storage container with filepaths specific to the controller
     - config_storage (storage.ConfigExistStorage) - a boolean value storage container for config checks
     """
 
-    def __init__(self, paths: PathStorage, config_storage: ConfigExistStorage) -> None:
+    def __init__(
+        self, paths: SetupPathStorage, config_storage: ConfigExistStorage
+    ) -> None:
         self.paths = paths
         self.config_storage = config_storage
 

@@ -3,7 +3,6 @@ import shutil
 
 import typer
 from cli.conf.checks import check_folder_exists
-from cli.conf.constants import CommonErrorCodes
 from cli.conf.logger import file_copy_logger
 
 from rich.console import Console
@@ -47,14 +46,3 @@ def copy_list_of_files(
 
         if os.path.isfile(src_path):
             shutil.copy(src_path, dest_path)
-
-
-def copy_zentra_files(src: str, dest: str, filenames: list[str]) -> None:
-    """Copies a list of `zentra/model` files from one location to another."""
-    copy_list_of_files(
-        src,
-        dest,
-        filenames,
-        CommonErrorCodes.SRC_DIR_MISSING,
-        CommonErrorCodes.ZENTRA_MISSING,
-    )

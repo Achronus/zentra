@@ -3,6 +3,7 @@ import typer
 from cli.conf.constants import (
     LocalUIComponentFilepaths,
     ZentaFilepaths,
+    ZentraGeneratedFilepaths,
     ZentraUIFilepaths,
 )
 
@@ -40,6 +41,7 @@ def generate_components() -> None:
         paths = PathStorage(
             config=os.path.join(ZentaFilepaths.MODELS, ZentaFilepaths.SETUP_FILENAME),
             models=ZentaFilepaths.MODELS,
+            generated_zentra=ZentraGeneratedFilepaths.ZENTRA,
             local_ui_base=LocalUIComponentFilepaths.BASE,
             generated_ui_base=ZentraUIFilepaths.BASE,
         )

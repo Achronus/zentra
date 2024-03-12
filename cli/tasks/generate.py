@@ -1,4 +1,5 @@
 import ast
+import os
 import typer
 
 from cli.conf.checks import (
@@ -8,11 +9,15 @@ from cli.conf.checks import (
     check_zentra_exists,
 )
 
-from cli.conf.constants import CommonErrorCodes, GenerateErrorCodes
+from cli.conf.constants import (
+    CommonErrorCodes,
+    GenerateErrorCodes,
+    GenerateSuccessCodes,
+)
 from cli.conf.extract import get_file_content
 from cli.conf.storage import PathStorage
 from cli.tasks.controllers.generate import GenerateController
-from cli.utils.printables import component_count_panel
+from cli.utils.printables import component_complete_panel, component_count_panel
 
 from rich.console import Console
 
@@ -44,9 +49,18 @@ class Generate:
         if not valid_content:
             raise typer.Exit(code=CommonErrorCodes.INVALID_CONFIG)
 
+    def check_components_exist(self) -> None:
+        """Checks if components have already been generated. Raises a success msg if True."""
+        if os.path.exists(self.paths.generated_zentra) and any(
+            os.listdir(self.paths.generated_zentra)
+        ):
+            raise typer.Exit(code=GenerateSuccessCodes.NO_NEW_COMPONENTS)
+
     def create_components(self) -> None:
         """Generates the react components based on the `zentra/models` folder."""
         self.check_config_valid()
+        self.check_components_exist()
+
         zentra = check_zentra_exists()
 
         if len(zentra.component_names) == 0:
@@ -56,3 +70,5 @@ class Generate:
 
         controller = GenerateController(zentra, self.paths)
         controller.run()
+
+        console.print(component_complete_panel())

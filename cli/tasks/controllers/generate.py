@@ -1,4 +1,11 @@
-from cli.conf.constants import CommonErrorCodes
+import os
+
+import typer
+from cli.conf.constants import (
+    CommonErrorCodes,
+    GenerateErrorCodes,
+    GenerateSuccessCodes,
+)
 from cli.conf.format import name_from_camel_case
 from cli.conf.move import copy_list_of_files
 from cli.conf.storage import ModelStorage, PathStorage
@@ -47,25 +54,25 @@ class GenerateController(BaseController):
             set(formatted_names) - set(self.storage.UT_TO_GENERATE)
         )
 
-    def _copy_zentra_files(self, src: str, dest: str, filenames: list[str]) -> None:
+    def _make_needed_dirs(self) -> None:
+        """Makes the needed directories in the `zentra` folder."""
+        os.makedirs(self.paths.generated_ui_base, exist_ok=True)
+
+    def _copy_base_ui(self) -> None:
         """Copies a list of `zentra/model` files from one location to another."""
         copy_list_of_files(
-            src,
-            dest,
-            filenames,
+            self.paths.local_ui_base,
+            self.paths.generated_ui_base,
             CommonErrorCodes.SRC_DIR_MISSING,
-            CommonErrorCodes.ZENTRA_MISSING,
+            GenerateErrorCodes.GENERATE_DIR_MISSING,
+            self.storage.UI_TO_GENERATE,
         )
 
     @status
     def create_files(self) -> None:
         """Creates the React components based on the extracting models."""
-        # Steps 4 and 5
-        self._copy_zentra_files(
-            self.paths.local_ui_base,
-            self.paths.generated_ui_base,
-            self.storage.UI_TO_GENERATE,
-        )
+        self._make_needed_dirs()
+        self._copy_base_ui()
 
     @status
     def update_template_files(self) -> None:

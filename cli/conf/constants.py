@@ -15,7 +15,8 @@ class CommonErrorCodes(Enum):
 
 
 class SetupSuccessCodes(Enum):
-    CONFIGURED = 11
+    COMPLETE = 10
+    ALREADY_CONFIGURED = 11
 
 
 class SetupErrorCodes(Enum):
@@ -23,8 +24,14 @@ class SetupErrorCodes(Enum):
     IMPORT_ERROR = 13
 
 
+class GenerateSuccessCodes(Enum):
+    COMPLETE = 20
+    NO_NEW_COMPONENTS = 21
+
+
 class GenerateErrorCodes(Enum):
-    NO_COMPONENTS = 20
+    NO_COMPONENTS = 22
+    GENERATE_DIR_MISSING = 23
 
 
 # Custom print emoji's
@@ -82,7 +89,7 @@ class LocalUIComponentFilepaths:
 class LocalUploadthingFilepaths:
     """A storage container for the local Uploadthing component filepaths in the `components/uploadthing` folder."""
 
-    # (cwd)/components/uploadthing
+    # (cwd)/cli/components/uploadthing
     ROOT = LocalCoreComponentFilepaths.UPLOADTHING
     BASE = os.path.join(ROOT, "base")  # uploadthing/base
     TEMPLATES = os.path.join(ROOT, "templates")  # uploadthing/templates
@@ -116,5 +123,4 @@ class ZentraUIFilepaths:
 
 # Util filepaths
 MODELS_FILEPATH = f"[magenta]{local_path(ZentaFilepaths.MODELS)}[/magenta]"
-CONFIG_FILEPATH = f"{MODELS_FILEPATH}[yellow]/{ZentaFilepaths.SETUP_FILENAME}[/yellow]"
 CONFIG_URL = os.path.join(ZentaFilepaths.MODELS, ZentaFilepaths.SETUP_FILENAME)

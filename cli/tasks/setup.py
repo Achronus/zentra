@@ -52,7 +52,7 @@ class Setup:
             if len(zentra.component_names) == 0:
                 raise typer.Exit(code=SetupErrorCodes.NO_COMPONENTS)
             else:
-                raise typer.Exit(code=SetupSuccessCodes.CONFIGURED)
+                raise typer.Exit(code=SetupSuccessCodes.ALREADY_CONFIGURED)
 
         # Create config files
         console.print()
@@ -60,8 +60,7 @@ class Setup:
         controller.run()
 
         # Setup complete
-        console.print()
-        console.print(configuration_complete_panel(link=GETTING_STARTED_URL))
+        raise typer.Exit(code=SetupSuccessCodes.COMPLETE)
 
     def check_config(self) -> None:
         """Checks if the config files are already setup."""

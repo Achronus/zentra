@@ -6,9 +6,9 @@ from rich.panel import Panel
 from cli.conf.checks import check_zentra_exists
 
 from cli.conf.constants import (
-    CONFIG_FILEPATH,
     CONFIG_URL,
     ERROR_GUIDE_URL,
+    GETTING_STARTED_URL,
     GITHUB_ISSUES_URL,
     MAGIC,
     MODELS_FILEPATH,
@@ -50,8 +50,8 @@ Things to check:
   2. You have [yellow]configured[/yellow] your project with [green]zentra init[/green]  
 """
 
-CONFIG_URL_STR = f"[link={CONFIG_URL}]{CONFIG_FILEPATH}[/link]"
-ACCESS_CONFIG_STR = f"\nAccess the [yellow]config[/yellow] file at {CONFIG_URL_STR}.\n"
+CONFIG_URL_STR = f"[yellow][link={CONFIG_URL}]config[/link][/yellow]"
+ACCESS_CONFIG_STR = f"\nAccess the {CONFIG_URL_STR} file.\n"
 
 INVALID_CONFIG_CHECKS = (
     ACCESS_CONFIG_STR
@@ -77,23 +77,33 @@ Then, check if:
 """
 )
 
-IMPORT_ERROR_CHECKS = f"""
-Access the config file at {CONFIG_URL_STR}.
-
+IMPORT_ERROR_CHECKS = (
+    ACCESS_CONFIG_STR
+    + """
 Then, check if:
   1. You've [magenta]imported[/magenta] your created models
   2. [magenta]from[/magenta] [green]zentra[/green].[green]core[/green] [magenta]import[/magenta] [green]Zentra[/green] - is present
   3. [magenta]zentra[/magenta] = [yellow]Zentra[/yellow]() - is set
 """
+)
 
 ALTERNATIVE_CONFIG_RESET = f"""
 Or:
-  1. [red]Delete[/red] the [yellow]config[/yellow] file at {CONFIG_URL_STR}
+  1. [red]Delete[/red] the {CONFIG_URL_STR} file
   2. Run [green]zentra init[/green] to create a new one
 """
 
 BUG_MSG = f"""
 This is a bug, please report this as an issue [bright_blue][link={GITHUB_ISSUES_URL}]on GitHub[/link][/bright_blue].
+"""
+
+SETUP_COMPLETE_MSG = f"""
+[yellow]Next Steps[/yellow]
+  1. Create your models in the {MODELS_FILEPATH} folder
+  2. Then, add your models to the {CONFIG_URL_STR} file
+
+[dark_goldenrod]Need help?[/dark_goldenrod]
+Check our [bright_blue][link={GETTING_STARTED_URL}]Getting Started Guide[/link][/bright_blue]!
 """
 
 
@@ -108,7 +118,11 @@ def success_msg_with_checks(title: str, checks: str, icon: str = PARTY) -> str:
 
 
 SUCCESS_MSG_MAP = {
-    SetupSuccessCodes.CONFIGURED: success_msg_with_checks(
+    SetupSuccessCodes.COMPLETE: success_msg_with_checks(
+        "Application configured successfully!",
+        checks=SETUP_COMPLETE_MSG,
+    ),
+    SetupSuccessCodes.ALREADY_CONFIGURED: success_msg_with_checks(
         "Application already configured with components!",
         checks="\nUse [green]zentra generate[/green] to create:",
     ),
@@ -172,6 +186,8 @@ MSG_MAPPER = {
     **GENERATE_ERROR_MAP,
 }
 
+MSGS_WITH_COUNTS = [SetupSuccessCodes.ALREADY_CONFIGURED]
+
 
 class MessageHandler:
     """Handles all the messages of the CLI."""
@@ -215,7 +231,7 @@ class MessageHandler:
 
         msg_type = e.exit_code.__class__.__name__
 
-        if e.exit_code == SetupSuccessCodes.CONFIGURED:
+        if e.exit_code in MSGS_WITH_COUNTS:
             msg = self.__msg_with_counts(msg)
 
         panel = (

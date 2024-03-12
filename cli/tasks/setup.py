@@ -11,10 +11,8 @@ from cli.conf.checks import (
 )
 from cli.conf.extract import get_file_content
 from cli.conf.storage import ConfigExistStorage, PathStorage
-from cli.utils.printables import configuration_complete_panel
 from .controllers.setup import SetupController
 from cli.conf.constants import (
-    GETTING_STARTED_URL,
     CommonErrorCodes,
     SetupErrorCodes,
     SetupSuccessCodes,

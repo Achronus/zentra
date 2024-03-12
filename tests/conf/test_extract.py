@@ -2,7 +2,11 @@ import os
 import pytest
 
 from cli.conf.extract import extract_component_names, get_filenames_in_subdir
-from cli.zentra_config._demo.agency_details import agency_details
+from zentra.core import Page
+from zentra.ui import FileUpload, Form, FormField
+from zentra.ui.control import Input
+from zentra.ui.notification import AlertDialog
+from zentra.ui.presentation import Card
 
 
 class TestGetFilenamesInSubdir:
@@ -36,7 +40,46 @@ class TestGetFilenamesInSubdir:
 
 
 class TestExtractComponentNames:
-    def test_success(self):
+    @pytest.fixture
+    def agency_details(self) -> Page:
+        return Page(
+            name="AgencyDetails",
+            components=[
+                AlertDialog(
+                    name="agencyAlertDialog",
+                    content=[
+                        Card(
+                            name="agencyInfo",
+                            title="Agency Information",
+                            description="Let's create an agency for your business. You can edit agency settings later from the agency settings tab.",
+                            content=[
+                                Form(
+                                    name="agencyForm",
+                                    fields=[
+                                        FormField(
+                                            name="agencyLogo",
+                                            label="Agency Logo",
+                                            content=FileUpload(name="agencyLogo"),
+                                        ),
+                                        FormField(
+                                            name="name",
+                                            label="Agency Name",
+                                            content=Input(
+                                                name="name",
+                                                label="Agency Name",
+                                                placeholder="Your Agency Name",
+                                            ),
+                                        ),
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ],
+        )
+
+    def test_success(self, agency_details: Page):
         json_data = agency_details.get_schema()
 
         result = extract_component_names(json_data)

@@ -31,38 +31,24 @@ class ConfigExistStorage:
         )
 
 
-class PathStorage:
-    """A storage container for folder paths provided to controllers."""
-
-    def __init__(self, **kwargs) -> None:
-        for key, val in kwargs.items():
-            setattr(self, key, self._validate_path(val))
-
-    def _validate_path(self, path: str) -> str:
-        """Validates kwarg values to ensure they are strings."""
-        if not isinstance(path, str):
-            raise TypeError(f"Invalid path type: {type(path)}. Path must be a string.")
-        return path
-
-
 class CorePaths(BaseModel):
     """
-    A storage container for folder paths specific to Zentra Core paths.
+    A storage container for file and folder paths specific to Zentra Core paths.
 
     Parameters:
     - config (str) - the filepath to the zentra models config file
     - models (str) - the directory path to the zentra models folder
-    - demo (str) - the directory path to the zentra models demo folder
+    - demo (str, optional) - the directory path to the zentra models demo folder. Default is `None`. Note: required for `SetupPathStorage`.
     """
 
     config: str
     models: str
-    demo: str
+    demo: str = None
 
 
-class LocalPaths(BaseModel):
+class LocalZentraConfigPaths(BaseModel):
     """
-    A storage container for folder paths specific to local Zentra paths.
+    A storage container for file and folder paths specific to local Zentra config paths.
 
     Parameters:
     - zentra (str) - the path to the local zentra config folder
@@ -73,28 +59,56 @@ class LocalPaths(BaseModel):
     demo: str
 
 
-class SetupPathStorage(BaseModel):
+class LocalComponentPaths(BaseModel):
     """
-    A storage container for folder paths specific to `zentra init`.
+    A storage container for file and folder paths specific to local component paths.
 
     Parameters:
-    - core (storage.CorePaths) - a CorePaths object containing core filepaths
-    - local (storage.LocalPaths) - a LocalPaths object containing local filepaths
+    - ui_base (str) - the path to the local UI base folder
+    """
+
+    ui_base: str
+
+
+class GenerateComponentPaths(BaseModel):
+    """
+    A storage container for file and folder paths specific to Zentra Generate Component paths.
+
+    Parameters:
+    - zentra (str) - the path to the Zentra folder inside Zentra Generate Components folder
+    - ui_base (str) - the path to the Zentra Generate UI base folder
+    """
+
+    zentra: str
+    ui_base: str
+
+
+class SetupPathStorage(BaseModel):
+    """
+    A storage container for file and folder paths specific to `zentra init`.
+
+    Parameters:
+    - core (storage.CorePaths) - a CorePaths object containing Zentra Core paths
+    - local (storage.LocalZentraConfigPaths) - a LocalZentraConfigPaths object containing local Zentra Config paths
     """
 
     core: CorePaths
-    local: LocalPaths
+    local: LocalZentraConfigPaths
 
 
-class GeneratePathStorage(PathStorage):
-    """A storage container for folder paths specific to `zentra generate`."""
+class GeneratePathStorage(BaseModel):
+    """
+    A storage container for file and folder paths specific to `zentra generate`.
 
-    def __init__(
-        self,
-        config: str,
-        models: str,
-    ) -> None:
-        super().__init__()
+    Parameters:
+    - core (storage.CorePaths) - a CorePaths object containing Zentra Core paths
+    - local (storage.LocalComponentPaths) - a LocalComponentPaths object containing Local Zentra Component paths
+    - generate (storage.GenerateComponentPaths) - a GeneratePaths object containing Zentra Generate Component paths
+    """
+
+    core: CorePaths
+    local: LocalComponentPaths
+    generate: GenerateComponentPaths
 
 
 class ModelStorage(BaseModel):

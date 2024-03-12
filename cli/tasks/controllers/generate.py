@@ -7,7 +7,7 @@ from cli.conf.constants import (
 )
 from cli.conf.format import name_from_camel_case
 from cli.conf.move import copy_list_of_files
-from cli.conf.storage import ModelStorage, PathStorage
+from cli.conf.storage import ModelStorage, GeneratePathStorage
 from cli.tasks.controllers.base import BaseController, status
 
 from zentra.core import Zentra
@@ -19,10 +19,10 @@ class GenerateController(BaseController):
 
     Parameters:
     - zentra (zentra.core.Zentra) - the Zentra application containing components to generate
-    - paths (storage.PathStorage) - a path storage container with filepaths specific to the controller
+    - paths (storage.GeneratePathStorage) - a path storage container with paths specific to the controller
     """
 
-    def __init__(self, zentra: Zentra, paths: PathStorage) -> None:
+    def __init__(self, zentra: Zentra, paths: GeneratePathStorage) -> None:
         react_str = "[cyan]React[/cyan]"
         zentra_str = "[magenta]Zentra[/magenta]"
 
@@ -55,13 +55,13 @@ class GenerateController(BaseController):
 
     def _make_needed_dirs(self) -> None:
         """Makes the needed directories in the `zentra` folder."""
-        os.makedirs(self.paths.generated_ui_base, exist_ok=True)
+        os.makedirs(self.paths.generate.ui_base, exist_ok=True)
 
     def _copy_base_ui(self) -> None:
         """Copies a list of `zentra/model` files from one location to another."""
         copy_list_of_files(
-            self.paths.local_ui_base,
-            self.paths.generated_ui_base,
+            self.paths.local.ui_base,
+            self.paths.generate.ui_base,
             CommonErrorCodes.SRC_DIR_MISSING,
             GenerateErrorCodes.GENERATE_DIR_MISSING,
             self.storage.UI_TO_GENERATE,

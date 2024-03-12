@@ -10,7 +10,12 @@ from cli.conf.checks import (
     check_zentra_exists,
 )
 from cli.conf.extract import get_file_content
-from cli.conf.storage import ConfigExistStorage, CorePaths, LocalPaths, SetupPathStorage
+from cli.conf.storage import (
+    ConfigExistStorage,
+    CorePaths,
+    LocalZentraConfigPaths,
+    SetupPathStorage,
+)
 from .controllers.setup import SetupController
 from cli.conf.constants import (
     CommonErrorCodes,
@@ -38,7 +43,7 @@ class Setup:
                 models=ZentaFilepaths.MODELS,
                 demo=ZentaFilepaths.DEMO_FOLDER,
             ),
-            local=LocalPaths(
+            local=LocalZentraConfigPaths(
                 zentra=ZentraConfigFilepaths.ROOT, demo=ZentraConfigFilepaths.DEMO
             ),
         )

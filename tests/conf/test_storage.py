@@ -1,6 +1,6 @@
 import pytest
 
-from cli.conf.storage import ConfigExistStorage, PathStorage
+from cli.conf.storage import ConfigExistStorage
 
 
 class TestConfigExistStorage:
@@ -17,17 +17,4 @@ class TestConfigExistStorage:
         storage.models_folder_exists = True
         storage.config_file_exists = True
         storage.config_file_valid = True
-        storage.models_registered = True
         assert storage.app_configured()
-
-
-class TestPathStorage:
-    @staticmethod
-    def test_valid():
-        storage = PathStorage(models_folder="/path/to/models")
-        assert storage.models_folder == "/path/to/models"
-
-    @staticmethod
-    def test_invalid_type():
-        with pytest.raises(TypeError):
-            PathStorage(models_folder=123)

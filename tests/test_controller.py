@@ -13,8 +13,10 @@ from cli.conf.format import name_from_camel_case
 from cli.conf.storage import (
     ConfigExistStorage,
     CorePaths,
-    LocalPaths,
-    PathStorage,
+    GenerateComponentPaths,
+    LocalComponentPaths,
+    LocalZentraConfigPaths,
+    GeneratePathStorage,
     SetupPathStorage,
 )
 from cli.tasks.controllers.base import status, BaseController
@@ -84,7 +86,7 @@ class TestSetupController:
                     models=os.path.join(tmp_path, "zentra_models"),
                     demo=os.path.join(tmp_path, "zentra_models_demo"),
                 ),
-                local=LocalPaths(
+                local=LocalZentraConfigPaths(
                     zentra=os.path.join(tmp_path, "zentra_local"),
                     demo=os.path.join(tmp_path, "zentra_local_demo"),
                 ),
@@ -184,17 +186,23 @@ class TestModelStorage:
 
 class TestGenerate:
     @pytest.fixture
-    def path_storage(self, tmp_path) -> PathStorage:
-        return PathStorage(
-            config=os.path.join(tmp_path, "test_models", "config_init.py"),
-            models=os.path.join(tmp_path, "test_models"),
-            generated_zentra=os.path.join(tmp_path, "zentra_generated"),
-            local_ui_base=os.path.join(tmp_path, "test_ui_base"),
-            generated_ui_base=os.path.join(tmp_path, "test_generated_base"),
+    def path_storage(self, tmp_path) -> GeneratePathStorage:
+        return GeneratePathStorage(
+            core=CorePaths(
+                config=os.path.join(tmp_path, "test_models", "config_init.py"),
+                models=os.path.join(tmp_path, "test_models"),
+            ),
+            local=LocalComponentPaths(
+                ui_base=os.path.join(tmp_path, "test_ui_base"),
+            ),
+            generate=GenerateComponentPaths(
+                zentra=os.path.join(tmp_path, "zentra_generated"),
+                ui_base=os.path.join(tmp_path, "test_generated_base"),
+            ),
         )
 
     @pytest.fixture
-    def generate(self, path_storage: PathStorage) -> Generate:
+    def generate(self, path_storage: GeneratePathStorage) -> Generate:
         return Generate(paths=path_storage)
 
     class TestCheckConfig:
@@ -207,7 +215,7 @@ class TestGenerate:
 
         @staticmethod
         def test_config_file_exists_error(generate: Generate):
-            os.makedirs(generate.paths.models)
+            os.makedirs(generate.paths.core.models)
             with pytest.raises(typer.Exit) as e:
                 generate.init_checks()
 
@@ -215,8 +223,8 @@ class TestGenerate:
 
         @staticmethod
         def test_config_file_empty(generate: Generate):
-            os.makedirs(generate.paths.models)
-            with open(generate.paths.config, "w") as f:
+            os.makedirs(generate.paths.core.models)
+            with open(generate.paths.core.config, "w") as f:
                 f.write("")
 
             with pytest.raises(typer.Exit) as e:
@@ -226,8 +234,8 @@ class TestGenerate:
 
         @staticmethod
         def test_config_file_valid_error(generate: Generate):
-            os.makedirs(generate.paths.models)
-            with open(generate.paths.config, "w") as f:
+            os.makedirs(generate.paths.core.models)
+            with open(generate.paths.core.config, "w") as f:
                 f.write("from zentra.core import Zentra\nzentra = Zentra()")
 
             with pytest.raises(typer.Exit) as e:
@@ -237,8 +245,8 @@ class TestGenerate:
 
         @staticmethod
         def test_check_config_valid_success(generate: Generate):
-            os.makedirs(generate.paths.models, exist_ok=True)
-            with open(generate.paths.config, "w") as f:
+            os.makedirs(generate.paths.core.models, exist_ok=True)
+            with open(generate.paths.core.config, "w") as f:
                 f.write(
                     "from zentra.core import Zentra\nzentra = Zentra()\nzentra.register()"
                 )
@@ -248,10 +256,10 @@ class TestGenerate:
     class TestCheckComponentsExist:
         @staticmethod
         def test_no_new_components_raise(generate: Generate):
-            os.makedirs(generate.paths.generated_zentra)
+            os.makedirs(generate.paths.generate.zentra)
 
             with open(
-                os.path.join(generate.paths.generated_zentra, "file1.txt"), "w"
+                os.path.join(generate.paths.generate.zentra, "file1.txt"), "w"
             ) as f:
                 f.write("test")
 
@@ -267,8 +275,8 @@ class TestGenerate:
     class TestCreateComponents:
         @staticmethod
         def test_no_components_error(generate: Generate):
-            os.makedirs(generate.paths.models, exist_ok=True)
-            with open(generate.paths.config, "w") as f:
+            os.makedirs(generate.paths.core.models, exist_ok=True)
+            with open(generate.paths.core.config, "w") as f:
                 f.write(
                     "from zentra.core import Zentra\nzentra = Zentra()\n\nzentra.register([])"
                 )
@@ -284,9 +292,9 @@ class TestGenerate:
 
         @staticmethod
         def test_create_components_success(generate: Generate):
-            os.makedirs(generate.paths.models, exist_ok=True)
-            os.makedirs(generate.paths.local_ui_base, exist_ok=True)
-            with open(generate.paths.config, "w") as f:
+            os.makedirs(generate.paths.core.models, exist_ok=True)
+            os.makedirs(generate.paths.local.ui_base, exist_ok=True)
+            with open(generate.paths.core.config, "w") as f:
                 f.write(
                     "from zentra.core import Zentra\nfrom zentra.ui.control import Button\n\nzentra = Zentra()\n\nzentra.register([])"
                 )
@@ -303,13 +311,19 @@ class TestGenerate:
 
 class TestGenerateController:
     @pytest.fixture
-    def path_storage(self, tmp_path) -> PathStorage:
-        return PathStorage(
-            config=os.path.join(tmp_path, "test_models", "config_init.py"),
-            models=os.path.join(tmp_path, "test_models"),
-            generated_zentra=os.path.join(tmp_path, "zentra_generated"),
-            local_ui_base=os.path.join(tmp_path, "test_ui_base"),
-            generated_ui_base=os.path.join(tmp_path, "test_generated_base"),
+    def path_storage(self, tmp_path) -> GeneratePathStorage:
+        return GeneratePathStorage(
+            core=CorePaths(
+                config=os.path.join(tmp_path, "test_models", "config_init.py"),
+                models=os.path.join(tmp_path, "test_models"),
+            ),
+            local=LocalComponentPaths(
+                ui_base=os.path.join(tmp_path, "test_ui_base"),
+            ),
+            generate=GenerateComponentPaths(
+                zentra=os.path.join(tmp_path, "zentra_generated"),
+                ui_base=os.path.join(tmp_path, "test_generated_base"),
+            ),
         )
 
     @pytest.fixture
@@ -359,7 +373,7 @@ class TestGenerateController:
 
     @pytest.fixture
     def controller(
-        self, path_storage: PathStorage, zentra: Zentra
+        self, path_storage: GeneratePathStorage, zentra: Zentra
     ) -> GenerateController:
         return GenerateController(zentra, paths=path_storage)
 
@@ -408,7 +422,7 @@ class TestGenerateController:
 
         @staticmethod
         def test_dest_error(controller: GenerateController):
-            os.mkdir(controller.paths.local_ui_base)
+            os.mkdir(controller.paths.local.ui_base)
             with pytest.raises(typer.Exit) as e_info:
                 controller._copy_base_ui()
 

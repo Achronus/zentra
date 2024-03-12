@@ -15,7 +15,7 @@ from cli.conf.constants import (
     GenerateSuccessCodes,
 )
 from cli.conf.extract import get_file_content, get_file_content_lines
-from cli.conf.storage import PathStorage
+from cli.conf.storage import GeneratePathStorage
 from cli.tasks.controllers.generate import GenerateController
 from cli.utils.printables import component_complete_panel, component_count_panel
 
@@ -27,24 +27,24 @@ console = Console()
 class Generate:
     """A class for handling the logic for the `zentra generate` command."""
 
-    def __init__(self, paths: PathStorage) -> None:
+    def __init__(self, paths: GeneratePathStorage) -> None:
         self.paths = paths
 
     def init_checks(self) -> None:
         """Performs various checks to immediately provide feedback to the user regarding missing files."""
-        if not check_folder_exists(self.paths.models):
+        if not check_folder_exists(self.paths.core.models):
             raise typer.Exit(code=CommonErrorCodes.MODELS_DIR_MISSING)
 
-        if not check_file_exists(self.paths.config):
+        if not check_file_exists(self.paths.core.config):
             raise typer.Exit(code=CommonErrorCodes.CONFIG_MISSING)
 
-        if len(get_file_content_lines(self.paths.config)) == 0:
+        if len(get_file_content_lines(self.paths.core.config)) == 0:
             raise typer.Exit(code=CommonErrorCodes.CONFIG_EMPTY)
 
     def check_config_valid(self) -> None:
         """Checks if the config file is valid. Raises an error if False."""
         check_config = CheckConfigFileValid()
-        file_content_tree = ast.parse(get_file_content(self.paths.config))
+        file_content_tree = ast.parse(get_file_content(self.paths.core.config))
         check_config.visit(file_content_tree)
 
         valid_content = check_config.is_valid()
@@ -54,8 +54,8 @@ class Generate:
 
     def check_components_exist(self) -> None:
         """Checks if components have already been generated. Raises a success msg if True."""
-        if os.path.exists(self.paths.generated_zentra) and any(
-            os.listdir(self.paths.generated_zentra)
+        if os.path.exists(self.paths.generate.zentra) and any(
+            os.listdir(self.paths.generate.zentra)
         ):
             raise typer.Exit(code=GenerateSuccessCodes.NO_NEW_COMPONENTS)
 

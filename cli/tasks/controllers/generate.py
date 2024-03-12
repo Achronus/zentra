@@ -1,7 +1,7 @@
 from cli.conf.checks import check_models_registered
 from cli.conf.format import name_from_camel_case
 from cli.conf.move import copy_zentra_files
-from cli.conf.storage import NameStorage, PathStorage
+from cli.conf.storage import ModelStorage, PathStorage
 from cli.tasks.controllers.base import BaseController, status
 
 from zentra.core import Zentra
@@ -28,7 +28,7 @@ class GenerateController(BaseController):
 
         super().__init__(tasks)
 
-        self.storage = NameStorage()
+        self.storage = ModelStorage()
         self.paths = paths
         self.zentra = zentra
 

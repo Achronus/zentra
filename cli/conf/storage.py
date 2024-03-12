@@ -45,7 +45,7 @@ class PathStorage:
         return path
 
 
-class NameStorage(BaseModel):
+class ModelStorage(BaseModel):
     """A storage container for Zentra model filenames."""
 
     UI_BASE: list[str] = get_filenames_in_subdir(LocalUIComponentFilepaths.BASE)

@@ -7,7 +7,6 @@ from cli.conf.constants import (
     LocalUploadthingFilepaths,
     ZentaFilepaths,
     ZentraGeneratedFilepaths,
-    ZentraUIFilepaths,
 )
 
 
@@ -108,67 +107,4 @@ class TestLocalUploadthingFilepaths(unittest.TestCase):
         self.assertEqual(
             LocalUploadthingFilepaths.TEMPLATES,
             os.path.join(os.getcwd(), "cli", "components", "uploadthing", "templates"),
-        )
-
-    def test_base_basic_path(self):
-        self.assertEqual(
-            LocalUploadthingFilepaths.BASE_BASIC,
-            os.path.join(
-                os.getcwd(), "cli", "components", "uploadthing", "base", "basic"
-            ),
-        )
-
-    def test_base_nextjs_path(self):
-        self.assertEqual(
-            LocalUploadthingFilepaths.BASE_NEXTJS,
-            os.path.join(
-                os.getcwd(), "cli", "components", "uploadthing", "base", "nextjs"
-            ),
-        )
-
-
-class TestZentraUIFilepaths(unittest.TestCase):
-    def core_path(self) -> str:
-        return os.path.join(os.getcwd(), "zentra", "generated", "components", "zentra")
-
-    def test_root_path(self):
-        self.assertEqual(
-            ZentraUIFilepaths.ROOT,
-            os.path.join(self.core_path(), "ui"),
-        )
-
-    def test_base_path(self):
-        self.assertEqual(
-            ZentraUIFilepaths.BASE,
-            os.path.join(self.core_path(), "ui", "base"),
-        )
-
-    def test_control_path(self):
-        self.assertEqual(
-            ZentraUIFilepaths.CONTROL,
-            os.path.join(self.core_path(), "ui", "control"),
-        )
-
-    def test_modal_path(self):
-        self.assertEqual(
-            ZentraUIFilepaths.MODAL,
-            os.path.join(self.core_path(), "ui", "modal"),
-        )
-
-    def test_navigation_path(self):
-        self.assertEqual(
-            ZentraUIFilepaths.NAVIGATION,
-            os.path.join(self.core_path(), "ui", "navigation"),
-        )
-
-    def test_notification_path(self):
-        self.assertEqual(
-            ZentraUIFilepaths.NOTIFICATION,
-            os.path.join(self.core_path(), "ui", "notification"),
-        )
-
-    def test_presentation_path(self):
-        self.assertEqual(
-            ZentraUIFilepaths.PRESENTATION,
-            os.path.join(self.core_path(), "ui", "presentation"),
         )

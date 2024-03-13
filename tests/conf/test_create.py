@@ -1,5 +1,4 @@
 import os
-import pytest
 
 from cli.conf.create import make_directories
 

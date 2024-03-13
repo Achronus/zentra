@@ -151,9 +151,6 @@ COMMON_ERROR_MAP = {
         f"{MODELS_FILEPATH} is missing!",
         checks=MISSING_FILES_CHECKS,
     ),
-    CommonErrorCodes.SRC_DIR_MISSING: error_msg_with_checks(
-        title="[red]Source directory missing[/red]!", checks=BUG_MSG
-    ),
 }
 
 SETUP_ERROR_MAP = {

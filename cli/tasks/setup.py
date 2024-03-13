@@ -10,12 +10,7 @@ from cli.conf.checks import (
     check_zentra_exists,
 )
 from cli.conf.extract import get_file_content
-from cli.conf.storage import (
-    ConfigExistStorage,
-    CorePaths,
-    LocalZentraConfigPaths,
-    SetupPathStorage,
-)
+from cli.conf.storage import ConfigExistStorage, SetupPathStorage
 from .controllers.setup import SetupController
 from cli.conf.constants import (
     CommonErrorCodes,
@@ -36,15 +31,12 @@ class Setup:
 
     def __init__(self) -> None:
         self.paths = SetupPathStorage(
-            core=CorePaths(
-                config=os.path.join(
-                    ZentaFilepaths.MODELS, ZentaFilepaths.SETUP_FILENAME
-                ),
-                models=ZentaFilepaths.MODELS,
-                demo=ZentaFilepaths.DEMO_FOLDER,
-            ),
-            local=LocalZentraConfigPaths(
-                zentra=ZentraConfigFilepaths.ROOT, demo=ZentraConfigFilepaths.DEMO
+            config=os.path.join(ZentaFilepaths.MODELS, ZentaFilepaths.SETUP_FILENAME),
+            models=ZentaFilepaths.MODELS,
+            local=ZentraConfigFilepaths.ROOT,
+            demo=ZentraConfigFilepaths.DEMO,
+            local_config=os.path.join(
+                ZentraConfigFilepaths.ROOT, ZentaFilepaths.SETUP_FILENAME
             ),
         )
 
@@ -73,16 +65,16 @@ class Setup:
     def check_config(self) -> None:
         """Checks if the config files are already setup."""
         # Check models file exists
-        if check_folder_exists(self.paths.core.models):
+        if check_folder_exists(self.paths.models):
             self.config_storage.models_folder_exists = True
 
         # Check config file exists
-        if check_file_exists(self.paths.core.config):
+        if check_file_exists(self.paths.config):
             self.config_storage.config_file_exists = True
 
             # Check config file content is valid
             check_config = CheckConfigFileValid()
-            file_content_tree = ast.parse(get_file_content(self.paths.core.config))
+            file_content_tree = ast.parse(get_file_content(self.paths.config))
             check_config.visit(file_content_tree)
 
             if check_config.is_valid():

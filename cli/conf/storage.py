@@ -28,73 +28,23 @@ class ConfigExistStorage:
         )
 
 
-class CorePaths(BaseModel):
-    """
-    A storage container for file and folder paths specific to Zentra Core paths.
-
-    Parameters:
-    - config (str) - the filepath to the zentra models config file
-    - models (str) - the directory path to the zentra models folder
-    - demo (str, optional) - the directory path to the zentra models demo folder. Default is `None`. Note: required for `SetupPathStorage`.
-    """
-
-    config: str
-    models: str
-    demo: str = None
-
-
-class LocalZentraConfigPaths(BaseModel):
-    """
-    A storage container for file and folder paths specific to local Zentra config paths.
-
-    Parameters:
-    - zentra (str) - the path to the local zentra config folder
-    - demo (str) - the path to the local zentra config demo folder
-    """
-
-    zentra: str
-    demo: str
-
-
-class LocalComponentPaths(BaseModel):
-    """
-    A storage container for file and folder paths specific to local component paths.
-
-    Parameters:
-    - ui_base (str) - the path to the local UI base folder
-    - ut_base (str) - the path to the Uploadthing base folder
-    """
-
-    ui_base: str
-    ut_base: str
-
-
-class GenerateComponentPaths(BaseModel):
-    """
-    A storage container for file and folder paths specific to Zentra Generate Component paths.
-
-    Parameters:
-    - zentra (str) - the path to the Zentra folder inside Zentra Generate Components folder
-    - ui (str) - the path to the Zentra Generate UI folder
-    - ut (str) - the path to the Zentra Generate Uploadthing folder
-    """
-
-    zentra: str
-    ui: str
-    ut: str
-
-
 class SetupPathStorage(BaseModel):
     """
     A storage container for file and folder paths specific to `zentra init`.
 
     Parameters:
-    - core (storage.CorePaths) - a CorePaths object containing Zentra Core paths
-    - local (storage.LocalZentraConfigPaths) - a LocalZentraConfigPaths object containing local Zentra Config paths
+    - config (str) - the filepath to the zentra models config file
+    - models (str) - the directory path to the zentra models folder
+    - local (str) - the directory path to the local zentra config folder
+    - demo (str) - the directory path to the local zentra config demo folder
+    - local_config (str) - the filepath to the local zentra models config file
     """
 
-    core: CorePaths
-    local: LocalZentraConfigPaths
+    config: str
+    models: str
+    local: str
+    demo: str
+    local_config: str
 
 
 class GeneratePathStorage(BaseModel):

@@ -11,7 +11,6 @@ class CommonErrorCodes(Enum):
     CONFIG_EMPTY = 3
     ZENTRA_MISSING = 4
     MODELS_DIR_MISSING = 5
-    SRC_DIR_MISSING = 6
     UNKNOWN_ERROR = 1000
 
 
@@ -56,7 +55,6 @@ class ZentaFilepaths:
     ROOT = os.path.join(os.getcwd(), FOLDER_NAME)  # (cwd)/zentra
     MODELS = os.path.join(ROOT, "models")  # (cwd)/zentra/models
     GENERATED = os.path.join(ROOT, "generated")  # (cwd)/zentra/generated
-    DEMO_FOLDER = os.path.join(MODELS, "_demo")  # (cwd)/zentra/models/_demo
 
     SETUP_FILENAME = "__init__.py"
 
@@ -78,25 +76,6 @@ class LocalCoreComponentFilepaths:
     UPLOADTHING = os.path.join(ROOT, "uploadthing")  # cli/components/uploadthing
 
 
-class LocalUIComponentFilepaths:
-    """A storage container for the local UI component filepaths in the `components/ui` folder."""
-
-    # (cwd)/cli/components/ui
-    ROOT = LocalCoreComponentFilepaths.UI
-    BASE = os.path.join(ROOT, "base")  # ui/base
-    TEMPLATES = os.path.join(ROOT, "templates")  # ui/templates
-
-
-class LocalUploadthingFilepaths:
-    """A storage container for the local Uploadthing component filepaths in the `components/uploadthing` folder."""
-
-    # (cwd)/cli/components/uploadthing
-    ROOT = LocalCoreComponentFilepaths.UPLOADTHING
-    BASE = os.path.join(ROOT, "base")  # uploadthing/base
-    TEMPLATES = os.path.join(ROOT, "templates")  # uploadthing/templates
-    NEXTJS = os.path.join(ROOT, "nextjs")  # uploadthing/nextjs
-
-
 class ZentraGeneratedFilepaths:
     """A storage container for the core filepaths in the `zentra/generated` folder."""
 
@@ -105,9 +84,6 @@ class ZentraGeneratedFilepaths:
     PAGES = os.path.join(ROOT, "pages")  # generated/pages
     COMPONENTS = os.path.join(ROOT, "components")  # generated/components
     ZENTRA = os.path.join(COMPONENTS, "zentra")  # generated/components/zentra
-
-    UI = os.path.join(ZENTRA, "ui")  # components/zentra/ui
-    UT = os.path.join(ZENTRA, "uploadthing")  # components/zentra/uploadthing
 
 
 # Util filepaths

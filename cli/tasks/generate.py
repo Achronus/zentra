@@ -32,19 +32,19 @@ class Generate:
 
     def init_checks(self) -> None:
         """Performs various checks to immediately provide feedback to the user regarding missing files."""
-        if not check_folder_exists(self.paths.core.models):
+        if not check_folder_exists(self.paths.models):
             raise typer.Exit(code=CommonErrorCodes.MODELS_DIR_MISSING)
 
-        if not check_file_exists(self.paths.core.config):
+        if not check_file_exists(self.paths.config):
             raise typer.Exit(code=CommonErrorCodes.CONFIG_MISSING)
 
-        if len(get_file_content_lines(self.paths.core.config)) == 0:
+        if len(get_file_content_lines(self.paths.config)) == 0:
             raise typer.Exit(code=CommonErrorCodes.CONFIG_EMPTY)
 
     def check_config_valid(self) -> None:
         """Checks if the config file is valid. Raises an error if False."""
         check_config = CheckConfigFileValid()
-        file_content_tree = ast.parse(get_file_content(self.paths.core.config))
+        file_content_tree = ast.parse(get_file_content(self.paths.config))
         check_config.visit(file_content_tree)
 
         valid_content = check_config.is_valid()
@@ -54,15 +54,13 @@ class Generate:
 
     def check_components_exist(self) -> None:
         """Checks if components have already been generated. Raises a success msg if True."""
-        if os.path.exists(self.paths.generate.zentra) and any(
-            os.listdir(self.paths.generate.zentra)
-        ):
+        if os.path.exists(self.paths.generate) and any(os.listdir(self.paths.generate)):
             raise typer.Exit(code=GenerateSuccessCodes.NO_NEW_COMPONENTS)
 
     def create_components(self) -> None:
         """Generates the react components based on the `zentra/models` folder."""
         self.check_config_valid()
-        self.check_components_exist()
+        # self.check_components_exist()
 
         zentra = check_zentra_exists()
 

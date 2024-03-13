@@ -1,19 +1,13 @@
 import os
 import typer
 from cli.conf.constants import (
-    LocalUIComponentFilepaths,
+    LocalCoreComponentFilepaths,
     ZentaFilepaths,
     ZentraGeneratedFilepaths,
-    ZentraUIFilepaths,
 )
 
 from cli.conf.message import MSG_MAPPER, MessageHandler
-from cli.conf.storage import (
-    CorePaths,
-    GenerateComponentPaths,
-    GeneratePathStorage,
-    LocalComponentPaths,
-)
+from cli.conf.storage import GeneratePathStorage
 from cli.tasks.setup import Setup
 from cli.tasks.generate import Generate
 
@@ -44,19 +38,10 @@ def generate_components() -> None:
     """Generates all React components based on the models stored in the 'zentra/models' folder."""
     try:
         paths = GeneratePathStorage(
-            core=CorePaths(
-                config=os.path.join(
-                    ZentaFilepaths.MODELS, ZentaFilepaths.SETUP_FILENAME
-                ),
-                models=ZentaFilepaths.MODELS,
-            ),
-            local=LocalComponentPaths(
-                ui_base=LocalUIComponentFilepaths.BASE,
-            ),
-            generate=GenerateComponentPaths(
-                zentra=ZentraGeneratedFilepaths.ZENTRA,
-                ui_base=ZentraUIFilepaths.BASE,
-            ),
+            config=os.path.join(ZentaFilepaths.MODELS, ZentaFilepaths.SETUP_FILENAME),
+            models=ZentaFilepaths.MODELS,
+            component=LocalCoreComponentFilepaths.ROOT,
+            generate=ZentraGeneratedFilepaths.ZENTRA,
         )
         generate = Generate(paths)
         generate.init_checks()

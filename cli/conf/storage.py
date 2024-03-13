@@ -1,10 +1,7 @@
+from cli.conf.constants import LocalCoreComponentFilepaths
+from cli.conf.extract import get_dirnames, get_filename_dir_pairs
+
 from pydantic import BaseModel
-from cli.conf.constants import LocalUIComponentFilepaths, LocalUploadthingFilepaths
-from cli.conf.extract import get_filenames_in_subdir
-
-
-# TODO: add --nextjs flag
-NEXTJS_PROJECT = False
 
 
 class ConfigExistStorage:
@@ -65,9 +62,11 @@ class LocalComponentPaths(BaseModel):
 
     Parameters:
     - ui_base (str) - the path to the local UI base folder
+    - ut_base (str) - the path to the Uploadthing base folder
     """
 
     ui_base: str
+    ut_base: str
 
 
 class GenerateComponentPaths(BaseModel):
@@ -76,11 +75,13 @@ class GenerateComponentPaths(BaseModel):
 
     Parameters:
     - zentra (str) - the path to the Zentra folder inside Zentra Generate Components folder
-    - ui_base (str) - the path to the Zentra Generate UI base folder
+    - ui (str) - the path to the Zentra Generate UI folder
+    - ut (str) - the path to the Zentra Generate Uploadthing folder
     """
 
     zentra: str
-    ui_base: str
+    ui: str
+    ut: str
 
 
 class SetupPathStorage(BaseModel):
@@ -101,25 +102,24 @@ class GeneratePathStorage(BaseModel):
     A storage container for file and folder paths specific to `zentra generate`.
 
     Parameters:
-    - core (storage.CorePaths) - a CorePaths object containing Zentra Core paths
-    - local (storage.LocalComponentPaths) - a LocalComponentPaths object containing Local Zentra Component paths
-    - generate (storage.GenerateComponentPaths) - a GeneratePaths object containing Zentra Generate Component paths
+    - config (str) - the filepath to the zentra models config file
+    - models (str) - the directory path to the zentra models folder
+    - component (str) - the directory path to the local zentra component folder
+    - zentra (str) - the directory path to the zentra generate component folder
     """
 
-    core: CorePaths
-    local: LocalComponentPaths
-    generate: GenerateComponentPaths
+    config: str
+    models: str
+    component: str
+    generate: str
 
 
 class ModelStorage(BaseModel):
     """A storage container for Zentra model filenames."""
 
-    UI_BASE: list[str] = get_filenames_in_subdir(LocalUIComponentFilepaths.BASE)
-    UI_TO_GENERATE: list[str] = []
-
-    UPLOADTHING: list[str] = get_filenames_in_subdir(
-        LocalUploadthingFilepaths.BASE_NEXTJS
-        if NEXTJS_PROJECT
-        else LocalUploadthingFilepaths.BASE_BASIC
+    base_files: list[tuple[str, str]] = get_filename_dir_pairs(
+        parent_dir=LocalCoreComponentFilepaths.ROOT, sub_dir="base"
     )
-    UT_TO_GENERATE: list[str] = []
+    files_to_generate: list[tuple[str, str]] = []
+    folders_to_generate: list[str] = get_dirnames(LocalCoreComponentFilepaths.ROOT)
+    new_files: list[tuple[str, str]] = []

@@ -12,18 +12,13 @@ from cli.conf.format import name_from_camel_case
 from cli.conf.storage import (
     ConfigExistStorage,
     CorePaths,
-    GenerateComponentPaths,
-    LocalComponentPaths,
     LocalZentraConfigPaths,
     GeneratePathStorage,
     SetupPathStorage,
 )
 from cli.tasks.controllers.base import status, BaseController
 from cli.tasks.controllers.setup import SetupController
-from cli.tasks.controllers.generate import (
-    GenerateController,
-    GenerateExtraModelsController,
-)
+from cli.tasks.controllers.generate import GenerateController
 from cli.tasks.generate import Generate
 
 from zentra.core import Page, Zentra

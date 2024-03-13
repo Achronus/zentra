@@ -1,11 +1,6 @@
 import os
 import shutil
 
-from rich.console import Console
-
-
-console = Console()
-
 
 def transfer_folder_file_pairs(
     folder_file_pairs: list[tuple[str, str]],

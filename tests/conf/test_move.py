@@ -1,86 +1,67 @@
 import os
 import pytest
-import typer
-from cli.conf.constants import CommonErrorCodes
 
-from cli.conf.move import copy_list_of_files
+from cli.conf.move import transfer_folder_file_pairs, copy_file, copy_dir_files
 
 
-class TestCopyListOfFiles:
-    @pytest.fixture
-    def setup_test_folders(self, tmp_path) -> tuple[str, str]:
-        src_dir = os.path.join(tmp_path, "test_src")
-        dest_dir = os.path.join(tmp_path, "test_dest")
-        os.mkdir(src_dir)
-        os.mkdir(dest_dir)
-        return src_dir, dest_dir
+@pytest.fixture
+def setup_test_files(tmp_path) -> tuple[str, str]:
+    src_dir = os.path.join(tmp_path, "test_src")
+    dest_dir = os.path.join(tmp_path, "test_dest")
 
+    src_ui_dir = os.path.join(src_dir, "ui", "base")
+    src_ut_dir = os.path.join(src_dir, "ut", "base")
+
+    dest_ui_dir = os.path.join(dest_dir, "ui")
+    dest_ut_dir = os.path.join(dest_dir, "ut")
+
+    os.mkdir(dest_dir)
+    os.makedirs(src_ui_dir)
+    os.makedirs(src_ut_dir)
+    os.makedirs(dest_ui_dir)
+    os.makedirs(dest_ut_dir)
+
+    src_file1 = os.path.join(src_ui_dir, "file1.txt")
+    with open(src_file1, "w") as f:
+        f.write("test")
+
+    src_file2 = os.path.join(src_ut_dir, "file2.txt")
+    with open(src_file2, "w") as f:
+        f.write("test")
+
+    return src_dir, dest_dir, src_ui_dir
+
+
+class TestTransferFolderFilePairs:
     @staticmethod
-    def test_filesnames_as_none(setup_test_folders):
-        src, dest = setup_test_folders
+    def test_success(setup_test_files):
+        src_dir, dest_dir, _ = setup_test_files
 
-        open(os.path.join(src, "file1.txt"), "w").close()
-        open(os.path.join(src, "file2.txt"), "w").close()
+        folder_file_pairs = [("ui", "file1.txt"), ("ut", "file2.txt")]
+        transfer_folder_file_pairs(folder_file_pairs, src_dir, dest_dir, "base")
 
-        copy_list_of_files(
-            src, dest, CommonErrorCodes.TEST_ERROR, CommonErrorCodes.TEST_ERROR
-        )
+        assert os.path.exists(os.path.join(dest_dir, "ui", "file1.txt"))
+        assert os.path.exists(os.path.join(dest_dir, "ut", "file2.txt"))
 
-        checks = [
-            os.path.exists(os.path.join(dest, "file1.txt")),
-            os.path.exists(os.path.join(dest, "file2.txt")),
-        ]
 
-        assert all(checks)
+def test_copy_file(setup_test_files):
+    _, dest_dir, src_ui_dir = setup_test_files
 
-    @staticmethod
-    def test_specified_filenames(setup_test_folders):
-        src, dest = setup_test_folders
+    src_file = os.path.join(src_ui_dir, "file1.txt")
+    dest_file_path = os.path.join(dest_dir, "file1.txt")
+    copy_file(src_file, dest_dir)
 
-        open(os.path.join(src, "file1.txt"), "w").close()
-        open(os.path.join(src, "file2.txt"), "w").close()
-        open(os.path.join(src, "file3.txt"), "w").close()
+    assert os.path.exists(dest_file_path)
 
-        copy_list_of_files(
-            src,
-            dest,
-            CommonErrorCodes.TEST_ERROR,
-            CommonErrorCodes.TEST_ERROR,
-            filenames=["file1.txt", "file3.txt"],
-        )
+    with open(dest_file_path) as f:
+        assert f.read() == "test"
 
-        checks = [
-            os.path.exists(os.path.join(dest, "file1.txt")),
-            not os.path.exists(os.path.join(dest, "file2.txt")),
-            os.path.exists(os.path.join(dest, "file3.txt")),
-        ]
 
-        assert all(checks)
+def test_copy_dir_files(setup_test_files):
+    src_dir, dest_dir, _ = setup_test_files
 
-    @staticmethod
-    def test_src_invalid(setup_test_folders):
-        _, dest = setup_test_folders
+    copy_dir_files(src_dir, dest_dir)
+    new_dirs = os.listdir(dest_dir)
+    valid_dirs = os.listdir(src_dir)
 
-        with pytest.raises(typer.Exit) as e_info:
-            copy_list_of_files(
-                "random_src",
-                dest,
-                CommonErrorCodes.TEST_ERROR,
-                CommonErrorCodes.TEST_ERROR,
-            )
-
-        assert e_info.value.exit_code == CommonErrorCodes.TEST_ERROR
-
-    @staticmethod
-    def test_dest_invalid(setup_test_folders):
-        src, _ = setup_test_folders
-
-        with pytest.raises(typer.Exit) as e_info:
-            copy_list_of_files(
-                src,
-                "random_dest",
-                CommonErrorCodes.TEST_ERROR,
-                CommonErrorCodes.TEST_ERROR,
-            )
-
-        assert e_info.value.exit_code == CommonErrorCodes.TEST_ERROR
+    assert len(new_dirs) == len(valid_dirs)

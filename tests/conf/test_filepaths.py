@@ -3,9 +3,8 @@ import unittest
 
 from cli.conf.constants import (
     LocalCoreComponentFilepaths,
-    LocalUIComponentFilepaths,
-    LocalUploadthingFilepaths,
     ZentaFilepaths,
+    ZentraConfigFilepaths,
     ZentraGeneratedFilepaths,
 )
 
@@ -29,28 +28,25 @@ class TestZentaFilepaths(unittest.TestCase):
             os.path.join(os.getcwd(), "zentra", "generated"),
         )
 
+    def test_setup_filename(self):
+        self.assertEqual(ZentaFilepaths.SETUP_FILENAME, "__init__.py")
 
-class TestZentraGeneratedFilepaths(unittest.TestCase):
+
+class TestConfigFilepaths(unittest.TestCase):
     def test_root_path(self):
         self.assertEqual(
-            ZentraGeneratedFilepaths.ROOT,
-            os.path.join(os.getcwd(), "zentra", "generated"),
+            ZentraConfigFilepaths.ROOT,
+            os.path.join(os.getcwd(), "cli", "zentra_config"),
         )
 
-    def test_components_path(self):
+    def test_demo_path(self):
         self.assertEqual(
-            ZentraGeneratedFilepaths.COMPONENTS,
-            os.path.join(os.getcwd(), "zentra", "generated", "components"),
-        )
-
-    def test_zentra_path(self):
-        self.assertEqual(
-            ZentraGeneratedFilepaths.ZENTRA,
-            os.path.join(os.getcwd(), "zentra", "generated", "components", "zentra"),
+            ZentraConfigFilepaths.DEMO,
+            os.path.join(os.getcwd(), "cli", "zentra_config", "_demo"),
         )
 
 
-class TestLocalCoreComponentsFilepaths(unittest.TestCase):
+class TestLocalCoreComponentFilepaths(unittest.TestCase):
     def test_root_path(self):
         self.assertEqual(
             LocalCoreComponentFilepaths.ROOT,
@@ -70,41 +66,27 @@ class TestLocalCoreComponentsFilepaths(unittest.TestCase):
         )
 
 
-class TestUIComponentFilepaths(unittest.TestCase):
+class TestZentraGeneratedFilepaths(unittest.TestCase):
     def test_root_path(self):
         self.assertEqual(
-            LocalUIComponentFilepaths.ROOT,
-            os.path.join(os.getcwd(), "cli", "components", "ui"),
+            ZentraGeneratedFilepaths.ROOT,
+            os.path.join(os.getcwd(), "zentra", "generated"),
         )
 
-    def test_base_path(self):
+    def test_pages_path(self):
         self.assertEqual(
-            LocalUIComponentFilepaths.BASE,
-            os.path.join(os.getcwd(), "cli", "components", "ui", "base"),
+            ZentraGeneratedFilepaths.PAGES,
+            os.path.join(os.getcwd(), "zentra", "generated", "pages"),
         )
 
-    def test_templates_path(self):
+    def test_components_path(self):
         self.assertEqual(
-            LocalUIComponentFilepaths.TEMPLATES,
-            os.path.join(os.getcwd(), "cli", "components", "ui", "templates"),
+            ZentraGeneratedFilepaths.COMPONENTS,
+            os.path.join(os.getcwd(), "zentra", "generated", "components"),
         )
 
-
-class TestLocalUploadthingFilepaths(unittest.TestCase):
-    def test_root_path(self):
+    def test_zentra_path(self):
         self.assertEqual(
-            LocalUploadthingFilepaths.ROOT,
-            os.path.join(os.getcwd(), "cli", "components", "uploadthing"),
-        )
-
-    def test_base_path(self):
-        self.assertEqual(
-            LocalUploadthingFilepaths.BASE,
-            os.path.join(os.getcwd(), "cli", "components", "uploadthing", "base"),
-        )
-
-    def test_templates_path(self):
-        self.assertEqual(
-            LocalUploadthingFilepaths.TEMPLATES,
-            os.path.join(os.getcwd(), "cli", "components", "uploadthing", "templates"),
+            ZentraGeneratedFilepaths.ZENTRA,
+            os.path.join(os.getcwd(), "zentra", "generated", "components", "zentra"),
         )

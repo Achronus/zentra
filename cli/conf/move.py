@@ -23,4 +23,6 @@ def copy_file(filepath: str, dest_dir: str) -> None:
 
 def copy_dir_files(filepath: str, dest_dir: str) -> None:
     """Copies a directory and its files to a new location."""
-    shutil.copytree(filepath, dest_dir, dirs_exist_ok=True)
+    dest_path = os.path.join(dest_dir, os.path.basename(filepath))
+    os.makedirs(dest_path, exist_ok=True)
+    shutil.copytree(filepath, dest_path, dirs_exist_ok=True)

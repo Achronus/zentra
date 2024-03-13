@@ -58,4 +58,4 @@ class SetupController(BaseController):
     @status
     def create_demo_files(self) -> None:
         """Creates a demo folder with files to demonstrate how to create Zentra Pages and Components."""
-        copy_dir_files(self.paths.local, self.paths.models)
+        copy_dir_files(self.paths.demo, self.paths.models)

@@ -38,12 +38,16 @@ class GenerateController(BaseController):
         self.paths = paths
         self.zentra = zentra
 
+    def _get_and_format_models(self) -> list[str]:
+        """Retrieves the Zentra model from the app and converts the name into a suitable format for comparison."""
+        return [
+            f"{name_from_camel_case(name)}.tsx" for name in self.zentra.component_names
+        ]
+
     @status
     def extract_models(self) -> None:
         """Extracts the Zentra models and prepares them for file generation."""
-        formatted_names = [
-            f"{name_from_camel_case(name)}.tsx" for name in self.zentra.component_names
-        ]
+        formatted_names = self._get_and_format_models()
 
         filtered_list = extract_file_pairs_from_list(
             self.storage.base_files, formatted_names

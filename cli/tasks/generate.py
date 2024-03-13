@@ -27,6 +27,7 @@ class Generate:
 
     def __init__(self, paths: GeneratePathStorage) -> None:
         self.paths = paths
+        self.controller = None
 
     def init_checks(self) -> None:
         """Performs various checks to immediately provide feedback to the user regarding missing files."""
@@ -62,10 +63,10 @@ class Generate:
         if not check_folder_exists(self.paths.generate):
             console.print(component_count_panel(zentra, text_start="Generating "))
 
-            controller = GenerateController(zentra, self.paths)
-            controller.run()
+            self.controller = GenerateController(zentra, self.paths)
+            self.controller.run()
 
             console.print(component_complete_panel())
         else:
-            controller = GenerateExtraModelsController(zentra, self.paths)
-            controller.run()
+            self.controller = GenerateExtraModelsController(zentra, self.paths)
+            self.controller.run()

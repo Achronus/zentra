@@ -123,3 +123,6 @@ class ModelStorage(BaseModel):
     files_to_generate: list[tuple[str, str]] = []
     folders_to_generate: list[str] = get_dirnames(LocalCoreComponentFilepaths.ROOT)
     new_files: list[tuple[str, str]] = []
+
+    existing_files: list[tuple[str, str]] = []
+    existing_folders: list[str] = []

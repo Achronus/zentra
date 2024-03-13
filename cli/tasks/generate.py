@@ -1,5 +1,4 @@
 import ast
-import os
 import typer
 
 from cli.conf.checks import (
@@ -9,14 +8,13 @@ from cli.conf.checks import (
     check_zentra_exists,
 )
 
-from cli.conf.constants import (
-    CommonErrorCodes,
-    GenerateErrorCodes,
-    GenerateSuccessCodes,
-)
+from cli.conf.constants import CommonErrorCodes, GenerateErrorCodes
 from cli.conf.extract import get_file_content, get_file_content_lines
 from cli.conf.storage import GeneratePathStorage
-from cli.tasks.controllers.generate import GenerateController
+from cli.tasks.controllers.generate import (
+    GenerateController,
+    GenerateExtraModelsController,
+)
 from cli.utils.printables import component_complete_panel, component_count_panel
 
 from rich.console import Console
@@ -52,24 +50,22 @@ class Generate:
         if not valid_content:
             raise typer.Exit(code=CommonErrorCodes.INVALID_CONFIG)
 
-    def check_components_exist(self) -> None:
-        """Checks if components have already been generated. Raises a success msg if True."""
-        if os.path.exists(self.paths.generate) and any(os.listdir(self.paths.generate)):
-            raise typer.Exit(code=GenerateSuccessCodes.NO_NEW_COMPONENTS)
-
     def create_components(self) -> None:
         """Generates the react components based on the `zentra/models` folder."""
         self.check_config_valid()
-        # self.check_components_exist()
 
         zentra = check_zentra_exists()
 
         if len(zentra.component_names) == 0:
             raise typer.Exit(code=GenerateErrorCodes.NO_COMPONENTS)
 
-        console.print(component_count_panel(zentra, text_start="Generating "))
+        if not check_folder_exists(self.paths.generate):
+            console.print(component_count_panel(zentra, text_start="Generating "))
 
-        controller = GenerateController(zentra, self.paths)
-        controller.run()
+            controller = GenerateController(zentra, self.paths)
+            controller.run()
 
-        console.print(component_complete_panel())
+            console.print(component_complete_panel())
+        else:
+            controller = GenerateExtraModelsController(zentra, self.paths)
+            controller.run()

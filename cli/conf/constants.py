@@ -94,9 +94,7 @@ class LocalUploadthingFilepaths:
     ROOT = LocalCoreComponentFilepaths.UPLOADTHING
     BASE = os.path.join(ROOT, "base")  # uploadthing/base
     TEMPLATES = os.path.join(ROOT, "templates")  # uploadthing/templates
-
-    BASE_BASIC = os.path.join(BASE, "basic")  # base/basic
-    BASE_NEXTJS = os.path.join(BASE, "nextjs")  # base/nextjs
+    NEXTJS = os.path.join(ROOT, "nextjs")  # uploadthing/nextjs
 
 
 class ZentraGeneratedFilepaths:
@@ -104,22 +102,12 @@ class ZentraGeneratedFilepaths:
 
     # (cwd)/zentra/generated
     ROOT = ZentaFilepaths.GENERATED
+    PAGES = os.path.join(ROOT, "pages")  # generated/pages
     COMPONENTS = os.path.join(ROOT, "components")  # generated/components
     ZENTRA = os.path.join(COMPONENTS, "zentra")  # generated/components/zentra
 
-
-class ZentraUIFilepaths:
-    """A storage container for filepaths in the `generated/components/zentra/ui` folder."""
-
-    # (cwd)/zentra/generated/components/zentra/ui
-    ROOT = os.path.join(ZentraGeneratedFilepaths.ZENTRA, "ui")
-    BASE = os.path.join(ROOT, "base")  # ui/base
-
-    CONTROL = os.path.join(ROOT, "control")  # ui/control
-    MODAL = os.path.join(ROOT, "modal")  # ui/modal
-    NAVIGATION = os.path.join(ROOT, "navigation")  # ui/navigation
-    NOTIFICATION = os.path.join(ROOT, "notification")  # ui/notification
-    PRESENTATION = os.path.join(ROOT, "presentation")  # ui/presentation
+    UI = os.path.join(ZENTRA, "ui")  # components/zentra/ui
+    UT = os.path.join(ZENTRA, "uploadthing")  # components/zentra/uploadthing
 
 
 # Util filepaths

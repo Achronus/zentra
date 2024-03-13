@@ -3,7 +3,7 @@ from cli.conf.constants import CommonErrorCodes
 from cli.conf.move import copy_list_of_files
 from cli.conf.storage import ConfigExistStorage, SetupPathStorage
 from cli.tasks.controllers.base import BaseController, status
-from cli.conf.create import make_path_dirs
+from cli.conf.create import make_directories
 from cli.conf.extract import local_path
 
 
@@ -40,7 +40,7 @@ class SetupController(BaseController):
     def _make_models_dir(self) -> None:
         """Creates the `zentra/models` directory if needed."""
         if not self.config_storage.models_folder_exists:
-            make_path_dirs(self.paths.core.models)
+            make_directories(self.paths.core.models)
 
     def _make_config_file(self) -> None:
         """Moves the config file from `zentra_config` to `zentra/models` if doesn't exist."""
@@ -62,7 +62,7 @@ class SetupController(BaseController):
     @status
     def create_demo_files(self) -> None:
         """Creates a demo folder with files to demonstrate how to create Zentra Pages and Components."""
-        make_path_dirs(self.paths.core.demo)
+        make_directories(self.paths.core.demo)
         copy_list_of_files(
             self.paths.local.demo,
             self.paths.core.demo,

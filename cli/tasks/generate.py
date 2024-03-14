@@ -11,10 +11,7 @@ from cli.conf.checks import (
 from cli.conf.constants import CommonErrorCodes, GenerateErrorCodes
 from cli.conf.extract import get_file_content, get_file_content_lines
 from cli.conf.storage import GeneratePathStorage
-from cli.tasks.controllers.generate import (
-    GenerateController,
-    GenerateExtraModelsController,
-)
+from cli.tasks.controllers.generate import GenerateController
 from cli.utils.printables import component_complete_panel, component_count_panel
 
 from rich.console import Console
@@ -60,13 +57,8 @@ class Generate:
         if len(zentra.component_names) == 0:
             raise typer.Exit(code=GenerateErrorCodes.NO_COMPONENTS)
 
-        if not check_folder_exists(self.paths.generate):
-            console.print(component_count_panel(zentra, text_start="Generating "))
+        console.print()
+        self.controller = GenerateController(zentra, self.paths)
+        self.controller.run()
 
-            self.controller = GenerateController(zentra, self.paths)
-            self.controller.run()
-
-            console.print(component_complete_panel())
-        else:
-            self.controller = GenerateExtraModelsController(zentra, self.paths)
-            self.controller.run()
+        console.print(component_complete_panel())

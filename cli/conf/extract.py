@@ -7,7 +7,7 @@ def get_dirnames(dirpath: str) -> list[str]:
     return [dir for dir in os.listdir(dirpath)]
 
 
-def get_filename_dir_pairs(parent_dir: str, sub_dir: str) -> list[tuple[str, str]]:
+def get_filename_dir_pairs(parent_dir: str, sub_dir: str = "") -> list[tuple[str, str]]:
     """Retrieves a list of all filenames in a parent directory and its sub-directory. Outputs them as a list of tuples with: `(parent_dir, filename)`.
 
     Example output:
@@ -29,12 +29,15 @@ def get_filename_dir_pairs(parent_dir: str, sub_dir: str) -> list[tuple[str, str
     for root, dirs, files in os.walk(parent_dir):
         if os.path.basename(root) == sub_dir:
             p_dir = os.path.basename(os.path.dirname(root))
-            for file in files:
-                file_tuple = (p_dir, file)
+        else:
+            p_dir = os.path.basename(root)
 
-                if file_tuple not in seen_files:
-                    all_files.append(file_tuple)
-                    seen_files.add(file_tuple)
+        for file in files:
+            file_tuple = (p_dir, file)
+
+            if file_tuple not in seen_files:
+                all_files.append(file_tuple)
+                seen_files.add(file_tuple)
 
     return all_files
 

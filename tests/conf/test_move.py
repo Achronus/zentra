@@ -1,7 +1,12 @@
 import os
 import pytest
 
-from cli.conf.move import transfer_folder_file_pairs, copy_file, copy_dir_files
+from cli.conf.move import (
+    remove_folder_file_pairs,
+    transfer_folder_file_pairs,
+    copy_file,
+    copy_dir_files,
+)
 
 
 @pytest.fixture
@@ -44,6 +49,18 @@ class TestTransferFolderFilePairs:
         assert os.path.exists(os.path.join(dest_dir, "ut", "file2.txt"))
 
 
+class TestRemoveFolderFilePairs:
+    @staticmethod
+    def test_success(setup_test_files):
+        src_dir, dest_dir, _ = setup_test_files
+
+        folder_file_pairs = [("ui", "file1.txt")]
+        transfer_folder_file_pairs(folder_file_pairs, src_dir, dest_dir, "base")
+        remove_folder_file_pairs(folder_file_pairs, dest_dir)
+
+        assert not os.path.exists(os.path.join(dest_dir, "ui"))
+
+
 def test_copy_file(setup_test_files):
     _, dest_dir, src_ui_dir = setup_test_files
 
@@ -61,7 +78,7 @@ def test_copy_dir_files(setup_test_files):
     src_dir, dest_dir, _ = setup_test_files
 
     copy_dir_files(src_dir, dest_dir)
-    new_dirs = os.listdir(dest_dir)
+    new_dirs = os.listdir(os.path.join(dest_dir, os.path.basename(src_dir)))
     valid_dirs = os.listdir(src_dir)
 
     assert len(new_dirs) == len(valid_dirs)

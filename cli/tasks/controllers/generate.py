@@ -73,7 +73,7 @@ class GenerateControllerHelper:
     def _get_model_updates(
         self, old: FolderFilePair, new: FolderFilePair
     ) -> FolderFilePair:
-        """Extracts the difference between folder and filenames to detect Zentra model changes."""
+        """Extracts the difference between two lists of `FolderFilePair`s to detect Zentra model changes."""
         largest, smallest = max(old, new), min(old, new)
         return list(set(largest) - set(smallest))
 
@@ -90,6 +90,13 @@ class GenerateControllerHelper:
                 to_add.append(model)
 
         return to_remove, to_add
+
+    def _check_for_new_components(
+        self, generate_list: FolderFilePair, existing_models: FolderFilePair
+    ) -> None:
+        """Checks for new components based on two lists of `FolderFilePairs`. Raises a success msg if there are none."""
+        if generate_list == existing_models:
+            raise typer.Exit(code=GenerateSuccessCodes.NO_NEW_COMPONENTS)
 
 
 class GenerateController(BaseController, GenerateControllerHelper):
@@ -123,13 +130,12 @@ class GenerateController(BaseController, GenerateControllerHelper):
             self.storage.base_files, formatted_names
         )
         generate_list = self._check_for_uploadthing(generate_list, formatted_names)
-        model_updates = self._get_existing_models()
+        existing_models = self._get_existing_models()
 
-        if generate_list == model_updates:
-            raise typer.Exit(code=GenerateSuccessCodes.NO_NEW_COMPONENTS)
+        self._check_for_new_components(generate_list, existing_models)
 
-        self.storage.existing_models = model_updates
-        model_updates = self._get_model_updates(generate_list, model_updates)
+        self.storage.existing_models = existing_models
+        model_updates = self._get_model_updates(existing_models, generate_list)
 
         self.storage.models_to_remove, self.storage.models_to_generate = (
             self._get_model_changes(model_updates)

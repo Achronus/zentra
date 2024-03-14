@@ -18,6 +18,18 @@ def transfer_folder_file_pairs(
         shutil.copy(src_path, dest_path)
 
 
+def remove_folder_file_pairs(folder_file_pairs: FolderFilePair, dir_path: str) -> None:
+    """Removes a set of `(folder, filename)` pairs from a directory."""
+    for folder, filename in folder_file_pairs:
+        dirpath = os.path.join(dir_path, folder)
+        filepath = os.path.join(dirpath, filename)
+
+        os.remove(filepath)
+
+        if len(os.listdir(dirpath)) == 0:
+            os.removedirs(dirpath)
+
+
 def copy_file(filepath: str, dest_dir: str) -> None:
     """Copies a single file from one directory to another."""
     shutil.copy(filepath, dest_dir)

@@ -1,9 +1,11 @@
 import os
 import shutil
 
+from cli.conf.types import FolderFilePair
+
 
 def transfer_folder_file_pairs(
-    folder_file_pairs: list[tuple[str, str]],
+    folder_file_pairs: FolderFilePair,
     src_dir: str,
     dest_dir: str,
     src_sub_dir: str = "",

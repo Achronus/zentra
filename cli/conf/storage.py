@@ -3,6 +3,8 @@ from cli.conf.extract import get_dirnames, get_filename_dir_pairs
 
 from pydantic import BaseModel
 
+from cli.conf.types import FolderFilePair
+
 
 class ConfigExistStorage:
     """
@@ -67,12 +69,12 @@ class GeneratePathStorage(BaseModel):
 class ModelStorage(BaseModel):
     """A storage container for Zentra model filenames."""
 
-    base_files: list[tuple[str, str]] = get_filename_dir_pairs(
+    base_files: FolderFilePair = get_filename_dir_pairs(
         parent_dir=LocalCoreComponentFilepaths.ROOT, sub_dir="base"
     )
-    files_to_generate: list[tuple[str, str]] = []
+    models_to_generate: FolderFilePair = []
     folders_to_generate: list[str] = get_dirnames(LocalCoreComponentFilepaths.ROOT)
-    new_files: list[tuple[str, str]] = []
+    models_to_remove: FolderFilePair = []
 
-    existing_files: list[tuple[str, str]] = []
+    existing_models: FolderFilePair = []
     existing_folders: list[str] = []

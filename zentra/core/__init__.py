@@ -2,6 +2,7 @@ from typing import Any
 from pydantic import BaseModel, field_validator
 
 from cli.conf.extract import extract_component_names
+from cli.conf.storage import BasicNameStorage
 
 
 class Component(BaseModel):
@@ -62,9 +63,9 @@ class Zentra(BaseModel):
 
     pages: list[Page] = []
     components: list[Component] = []
-    component_names: list[str] = []
+    names: BasicNameStorage = BasicNameStorage()
 
-    @field_validator("pages", "components", "component_names", mode="plain")
+    @field_validator("pages", "components", "names", mode="plain")
     @classmethod
     def prevent_init_editing(cls, value: Any) -> ValueError:
         raise ValueError("Attributes cannot be updated during initialisation.")
@@ -112,4 +113,5 @@ class Zentra(BaseModel):
         for component in self.components:
             page_components.append(component.__class__.__name__)
 
-        self.component_names = list(set(page_components) - set(filter_items))
+        self.names.components = list(set(page_components) - set(filter_items))
+

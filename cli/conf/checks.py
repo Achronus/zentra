@@ -39,7 +39,7 @@ def check_folder_exists(dirpath: str) -> bool:
 
 def check_models_registered(zentra: Zentra) -> bool:
     """Checks if any models are registered to the `Zentra` app."""
-    if len(zentra.component_names) > 0:
+    if len(zentra.names.components) > 0:
         return True
 
     return False

@@ -336,7 +336,7 @@ class TestGenerateController:
         @pytest.fixture
         def names(self, zentra: Zentra) -> list[str]:
             return [
-                f"{name_from_camel_case(name)}.tsx" for name in zentra.component_names
+                f"{name_from_camel_case(name)}.tsx" for name in zentra.names.components
             ]
 
         def test_formatted_names(self, controller: GenerateController):

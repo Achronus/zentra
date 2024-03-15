@@ -49,7 +49,7 @@ class Setup:
         if self.config_storage.app_configured():
             zentra = check_zentra_exists()
 
-            if len(zentra.component_names) == 0:
+            if len(zentra.names.components) == 0:
                 raise typer.Exit(code=SetupErrorCodes.NO_COMPONENTS)
             else:
                 raise typer.Exit(code=SetupSuccessCodes.ALREADY_CONFIGURED)

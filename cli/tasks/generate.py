@@ -51,10 +51,9 @@ class Generate:
     def create_components(self) -> None:
         """Generates the react components based on the `zentra/models` folder."""
         self.check_config_valid()
-
         zentra = check_zentra_exists()
 
-        if len(zentra.component_names) == 0:
+        if len(zentra.names.components) == 0:
             raise typer.Exit(code=GenerateErrorCodes.NO_COMPONENTS)
 
         console.print()

@@ -66,7 +66,14 @@ class GeneratePathStorage(BaseModel):
     generate: str
 
 
-class ModelStorage(BaseModel):
+class BasicNameStorage(BaseModel):
+    """A simple storage container for Zentra page and component names."""
+
+    pages: list[str] = []
+    components: list[str] = []
+
+
+class ModelStorage(BasicNameStorage):
     """A storage container for Zentra model filenames."""
 
     base_files: FolderFilePair = get_filename_dir_pairs(

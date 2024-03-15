@@ -31,11 +31,11 @@ class GenerateControllerHelper:
     def _get_and_format_models(self) -> list[str]:
         """Retrieves the Zentra model from the app and converts the name into a suitable format for comparison."""
         return [
-            f"{name_from_camel_case(name)}.tsx" for name in self.zentra.component_names
+            f"{name_from_camel_case(name)}.tsx" for name in self.zentra.names.components
         ]
 
     def _make_needed_dirs(self) -> None:
-        """Makes the needed directories in the `zentra/generate` folder."""
+        """Makes the needed directories in the Zentra generate folder."""
         for dir in self.storage.folders_to_generate:
             make_directories(os.path.join(self.paths.generate, dir))
 

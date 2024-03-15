@@ -470,3 +470,40 @@ class TestGenerateController:
             ]
 
             assert all(checks), model_updates
+
+    class TestStoreComponents:
+        @staticmethod
+        def test_valid_counts(controller: GenerateController):
+            existing_models = [
+                ("ui", "alert-dialog.tsx"),
+                ("ui", "button.tsx"),
+                ("ui", "card.tsx"),
+                ("ui", "form.tsx"),
+                ("ui", "input.tsx"),
+                ("uploadthing", "core.ts"),
+                ("uploadthing", "route.ts"),
+                ("uploadthing", "uploadthing.ts"),
+            ]
+            controller.storage.existing_components = existing_models
+
+            generate_list = [
+                ("ui", "alert-dialog.tsx"),
+                ("ui", "button.tsx"),
+                ("ui", "card.tsx"),
+                ("ui", "form.tsx"),
+                ("ui", "input.tsx"),
+                ("ui", "accordion.tsx"),
+                ("ui", "tooltip.tsx"),
+            ]
+
+            model_updates = controller._get_model_updates(
+                existing_models, generate_list
+            )
+            controller._store_components(model_updates)
+
+            checks = [
+                controller.storage.component_generate_count == 2,
+                controller.storage.component_remove_count == 1,
+            ]
+
+            assert all(checks), model_updates

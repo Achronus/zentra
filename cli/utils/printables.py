@@ -103,7 +103,7 @@ def generate_complete_panel(storage: ModelStorage) -> Panel:
     {MAGIC} [magenta]Zentra[/magenta] → [bright_cyan]React[/bright_cyan] conversion successful! {MAGIC}
     
     Access them in [magenta]zentra/generated[/magenta].
-    {storage.uploadthing_file_count}
+    
     """)
         + add_str
         + del_str,

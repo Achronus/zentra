@@ -102,6 +102,31 @@ class GenerateControllerHelper:
         if generate_list == existing_models:
             raise typer.Exit(code=GenerateSuccessCodes.NO_NEW_COMPONENTS)
 
+    def _get_uploadthing_count(self, model_updates: FolderFilePair) -> int:
+        """Counts the number of `uploadthing` items in `model_updates`."""
+        count = 0
+        for folder, _ in model_updates:
+            if "uploadthing" in folder:
+                count += 1
+        return count
+
+    def _store_components(self, model_updates: FolderFilePair) -> None:
+        """Stores the `component` attributes into `self.storage`."""
+        ut_count = self._get_uploadthing_count(model_updates) - 1
+        to_del, to_add = self._get_model_changes(model_updates)
+
+        self.storage.components_to_remove = to_del
+        self.storage.components_to_generate = to_add
+
+        add_folders = [folder for folder, _ in to_add]
+        del_folders = [folder for folder, _ in to_del]
+
+        if "uploadthing" in add_folders:
+            self.storage.component_generate_count -= ut_count
+
+        if "uploadthing" in del_folders:
+            self.storage.component_remove_count -= ut_count
+
 
 class GenerateController(BaseController, GenerateControllerHelper):
     """
@@ -140,10 +165,7 @@ class GenerateController(BaseController, GenerateControllerHelper):
 
         self.storage.existing_components = existing_models
         model_updates = self._get_model_updates(existing_models, generate_list)
-
-        self.storage.components_to_remove, self.storage.components_to_generate = (
-            self._get_model_changes(model_updates)
-        )
+        self._store_components(model_updates)
 
     @status
     def update_files(self) -> None:

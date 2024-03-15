@@ -83,7 +83,6 @@ class ModelStorage(BasicNameStorage):
     components_to_generate: FolderFilePair = []
     components_to_remove: FolderFilePair = []
 
-    existing_models: FolderFilePair = []
     existing_components: FolderFilePair = []
     existing_folders: list[str] = []
 

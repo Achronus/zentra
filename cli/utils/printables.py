@@ -34,20 +34,20 @@ class PanelFormatter(BaseModel):
         formatted_name = set_colour(name_to_plural(name.capitalize(), count), "yellow")
         return f"{formatted_symbol} {count} {formatted_name}"
 
-    def page_str(self, pages: list[str]) -> str:
+    def page_str(self, count: int) -> str:
         """Creates a page string for the panel."""
-        return self.format_item("page", len(pages))
+        return self.format_item("page", count)
 
-    def component_str(self, components: list[str]) -> str:
+    def component_str(self, count: int) -> str:
         """Creates a component string for the panel."""
-        return self.format_item("component", len(components))
+        return self.format_item("component", count)
 
     def change_str(self, data: ChangeStrData, heading: str) -> str:
         """Creates a modification string based on the provided data with 'added' and 'removed' items for the panel."""
         change_str = ""
-        for items, size, formatter in data:
+        for size, formatter in data:
             if size > 0:
-                change_str += formatter(items)
+                change_str += formatter(size)
 
         if change_str != "":
             heading_str = (
@@ -84,29 +84,13 @@ def generate_complete_panel(storage: ModelStorage) -> Panel:
     del_formatter = PanelFormatter(storage=storage, action=Action.REMOVE)
 
     add_data = [
-        (
-            storage.components_to_generate,
-            storage.component_generate_count,
-            add_formatter.component_str,
-        ),
-        (
-            storage.pages_to_generate,
-            len(storage.pages_to_generate),
-            add_formatter.page_str,
-        ),
+        (storage.component_generate_count, add_formatter.component_str),
+        (len(storage.pages_to_generate), add_formatter.page_str),
     ]
 
     del_data = [
-        (
-            storage.components_to_remove,
-            storage.component_remove_count,
-            del_formatter.component_str,
-        ),
-        (
-            storage.pages_to_remove,
-            len(storage.pages_to_remove),
-            del_formatter.page_str,
-        ),
+        (storage.component_remove_count, del_formatter.component_str),
+        (len(storage.pages_to_remove), del_formatter.page_str),
     ]
 
     add_str = add_formatter.change_str(add_data, "Added")
@@ -119,7 +103,7 @@ def generate_complete_panel(storage: ModelStorage) -> Panel:
     {MAGIC} [magenta]Zentra[/magenta] → [bright_cyan]React[/bright_cyan] conversion successful! {MAGIC}
     
     Access them in [magenta]zentra/generated[/magenta].
-    
+    {storage.uploadthing_file_count}
     """)
         + add_str
         + del_str,

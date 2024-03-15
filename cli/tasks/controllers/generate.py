@@ -88,8 +88,10 @@ class GenerateControllerHelper:
         for model in model_updates:
             if model in existing_models_set:
                 to_remove.append(model)
+                self.storage.component_remove_count += 1
             else:
                 to_add.append(model)
+                self.storage.component_generate_count += 1
 
         return to_remove, to_add
 

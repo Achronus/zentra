@@ -82,9 +82,10 @@ class ModelStorage(BasicNameStorage):
     folders_to_generate: list[str] = get_dirnames(LocalCoreComponentFilepaths.ROOT)
     components_to_generate: FolderFilePair = []
     components_to_remove: FolderFilePair = []
-
     existing_components: FolderFilePair = []
-    existing_folders: list[str] = []
+
+    component_generate_count: int = 0
+    component_remove_count: int = 0
 
     pages_to_generate: FolderFilePair = []
     pages_to_remove: FolderFilePair = []

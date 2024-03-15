@@ -11,6 +11,7 @@ from cli.conf.checks import (
 )
 from cli.conf.extract import get_file_content
 from cli.conf.storage import ConfigExistStorage, SetupPathStorage
+from cli.utils.printables import setup_complete_panel
 from .controllers.setup import SetupController
 from cli.conf.constants import (
     CommonErrorCodes,
@@ -52,6 +53,7 @@ class Setup:
             if len(zentra.names.components) == 0:
                 raise typer.Exit(code=SetupErrorCodes.NO_COMPONENTS)
             else:
+                console.print(setup_complete_panel())
                 raise typer.Exit(code=SetupSuccessCodes.ALREADY_CONFIGURED)
 
         # Create config files
@@ -59,7 +61,7 @@ class Setup:
         controller = SetupController(self.paths, self.config_storage)
         controller.run()
 
-        # Setup complete
+        console.print(setup_complete_panel())
         raise typer.Exit(code=SetupSuccessCodes.COMPLETE)
 
     def check_config(self) -> None:

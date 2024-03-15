@@ -8,11 +8,15 @@ from cli.conf.checks import (
     check_zentra_exists,
 )
 
-from cli.conf.constants import CommonErrorCodes, GenerateErrorCodes
+from cli.conf.constants import (
+    CommonErrorCodes,
+    GenerateErrorCodes,
+    GenerateSuccessCodes,
+)
 from cli.conf.extract import get_file_content, get_file_content_lines
 from cli.conf.storage import GeneratePathStorage
 from cli.tasks.controllers.generate import GenerateController
-from cli.utils.printables import component_complete_panel, component_count_panel
+from cli.utils.printables import generate_complete_panel
 
 from rich.console import Console
 
@@ -60,4 +64,5 @@ class Generate:
         self.controller = GenerateController(zentra, self.paths)
         self.controller.run()
 
-        console.print(component_complete_panel())
+        console.print(generate_complete_panel(self.controller.storage))
+        raise typer.Exit(GenerateSuccessCodes.COMPLETE)

@@ -4,7 +4,7 @@ import typer
 
 from rich.console import Console
 from rich.panel import Panel
-from cli.conf.checks import check_zentra_exists
+
 
 from cli.conf.constants import (
     CONFIG_URL,
@@ -12,16 +12,14 @@ from cli.conf.constants import (
     GETTING_STARTED_URL,
     GITHUB_ISSUES_URL,
     MAGIC,
+    FAIL,
     MODELS_FILEPATH,
     CommonErrorCodes,
     GenerateSuccessCodes,
     SetupErrorCodes,
     GenerateErrorCodes,
-    PARTY,
-    FAIL,
     SetupSuccessCodes,
 )
-from cli.conf.format import plural_name_formatter
 
 
 MORE_HELP_INFO = f"""
@@ -107,24 +105,18 @@ def error_msg_with_checks(title: str, checks: str) -> str:
     return textwrap.dedent(f"\n{FAIL} {title} {FAIL}\n") + checks
 
 
-def success_msg_with_checks(title: str, checks: str, icon: str = PARTY) -> str:
+def success_msg_with_checks(title: str, checks: str, icon: str = MAGIC) -> str:
     """Formats success messages that have a title and a list of checks."""
     return textwrap.dedent(f"\n{icon} {title} {icon}\n") + checks
 
 
 SUCCESS_MSG_MAP = {
-    SetupSuccessCodes.COMPLETE: success_msg_with_checks(
-        "Application configured successfully!",
-        checks=SETUP_COMPLETE_MSG,
-    ),
-    SetupSuccessCodes.ALREADY_CONFIGURED: success_msg_with_checks(
-        "Application already configured with components!",
-        checks="\nUse [green]zentra generate[/green] to create:",
-    ),
+    SetupSuccessCodes.COMPLETE: "",
+    SetupSuccessCodes.ALREADY_CONFIGURED: "",
+    GenerateSuccessCodes.COMPLETE: "",
     GenerateSuccessCodes.NO_NEW_COMPONENTS: success_msg_with_checks(
         "No new [yellow]Components[/yellow] or [yellow]Pages[/yellow] to add!",
         checks=COMPONENTS_EXIST_MSG,
-        icon=MAGIC,
     ),
 }
 
@@ -182,8 +174,6 @@ MSG_MAPPER = {
     **GENERATE_ERROR_MAP,
 }
 
-MSGS_WITH_COUNTS = [SetupSuccessCodes.ALREADY_CONFIGURED]
-
 
 class MessageHandler:
     """Handles all the messages of the CLI."""
@@ -207,17 +197,10 @@ class MessageHandler:
     @staticmethod
     def __success_msg(msg: str, e: typer.Exit) -> Panel:
         """Handles success messages and returns a panel with their information."""
-        return Panel(msg, expand=False, border_style="bright_green")
-
-    def __msg_with_counts(self, msg: str) -> str:
-        """Adds Zentra page and component counts to a message and returns the updated version."""
-        zentra = check_zentra_exists()
-
-        page_count = len(zentra.pages)
-        component_count = len(zentra.component_names)
-
-        component_str = f"\n  - {page_count} [yellow]{plural_name_formatter('Page', page_count)}[/yellow]\n  - {component_count} [yellow]{plural_name_formatter('Component', component_count)}[/yellow]\n"
-        return msg + component_str
+        if msg != "":
+            return Panel(msg, expand=False, border_style="bright_green")
+        else:
+            return ""
 
     def msg(self, e: typer.Exit) -> None:
         """Assigns a success or error message depending on the code received."""
@@ -227,9 +210,6 @@ class MessageHandler:
             e.exit_code = CommonErrorCodes.UNKNOWN_ERROR
 
         msg_type = e.exit_code.__class__.__name__
-
-        if e.exit_code in MSGS_WITH_COUNTS:
-            msg = self.__msg_with_counts(msg)
 
         panel = (
             self.__error_msg(msg, e)

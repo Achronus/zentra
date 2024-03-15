@@ -95,6 +95,7 @@ class Zentra(BaseModel):
             type_mapping[comp_type].append(component)
 
         self.__set_component_cls_names()
+        self.__set_page_names()
 
     def __get_page_component_names(self) -> list[str]:
         """A helper function for retrieving the page component names."""
@@ -115,3 +116,6 @@ class Zentra(BaseModel):
 
         self.names.components = list(set(page_components) - set(filter_items))
 
+    def __set_page_names(self) -> None:
+        """A helper function for retrieving the page names."""
+        self.names.pages = [page.name for page in self.pages]

@@ -85,3 +85,6 @@ class ModelStorage(BasicNameStorage):
 
     existing_models: FolderFilePair = []
     existing_folders: list[str] = []
+
+    pages_to_generate: FolderFilePair = []
+    pages_to_remove: FolderFilePair = []

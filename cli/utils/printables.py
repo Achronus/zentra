@@ -1,5 +1,5 @@
-import textwrap
 from enum import Enum
+import textwrap
 
 from cli.conf.constants import MAGIC
 from cli.conf.checks import check_zentra_exists
@@ -30,8 +30,12 @@ class PanelFormatter(BaseModel):
 
     def format_item(self, name: str, count: int) -> str:
         """Creates an item string for the panel."""
-        formatted_symbol = set_colour(self.action.value[0], self.action.value[1])
-        formatted_name = set_colour(name_to_plural(name.capitalize(), count), "yellow")
+        symbol, colour = self.action.value
+        formatted_symbol = set_colour(symbol, colour)
+        formatted_name = set_colour(
+            name_to_plural(name.capitalize(), count),
+            colour,
+        )
         return f"{formatted_symbol} {count} {formatted_name}"
 
     def page_str(self, count: int) -> str:
@@ -50,12 +54,29 @@ class PanelFormatter(BaseModel):
                 change_str += formatter(size)
 
         if change_str != "":
-            heading_str = (
-                f"[{self.action.value[1]}]{heading}[/{self.action.value[1]}]\n"
-            )
+            heading_str = f"{set_colour(heading, colour=self.action.value[1])}\n"
             change_str = heading_str + change_str
 
         return change_str
+
+    def list_to_str(
+        self, items: list[str], items_per_line: int = 6, items_coloured: bool = False
+    ) -> str:
+        """Converts a list of `items` into a single readable string separated by commas. Items are passed onto new lines `items_per_line` is reached."""
+        symbol, colour = self.action.value
+        symbol = set_colour(symbol, colour)
+        combined_string = f"  {symbol} "
+
+        # Split items equally across lines up to desired value
+        num_lines = -(-len(items) // items_per_line)
+        items_per_line = -(-len(items) // num_lines)
+
+        for i, item in enumerate(items):
+            start_newline = (i + 1) % items_per_line == 0 and len(items) != 1
+            combined_string += set_colour(item, colour) if items_coloured else item
+            combined_string += f"\n  {symbol} " if start_newline else ", "
+
+        return combined_string.rstrip(", ")
 
 
 def setup_complete_panel() -> Panel:
@@ -64,16 +85,19 @@ def setup_complete_panel() -> Panel:
     storage = zentra.names
     add_formatter = PanelFormatter(storage=storage, action=Action.ADD)
 
+    component_str = add_formatter.list_to_str(storage.components)
+    page_str = add_formatter.list_to_str(storage.pages)
+
     return Panel.fit(
         textwrap.dedent(f"""
     {MAGIC} [magenta]Zentra[/magenta] configured successfully! {MAGIC}
 
     Use [green]zentra generate[/green] to create your models.
 
-    [bright_cyan]Models To Convert[/bright_cyan]
-    {add_formatter.component_str(storage.components)}
-    {add_formatter.page_str(storage.pages)}
-    """),
+    [bright_cyan]Models To Generate[/bright_cyan]
+    """)
+        + f" [yellow]Components[/yellow]\n{component_str}\n\n"
+        + f" [dark_goldenrod]Pages[/dark_goldenrod]\n{page_str}",
         border_style="bright_green",
     )
 

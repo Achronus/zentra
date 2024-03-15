@@ -227,12 +227,19 @@ class TestGenerate:
             assert e.value.exit_code == GenerateErrorCodes.NO_COMPONENTS
 
         @staticmethod
-        def test_first_run(generate: Generate):
+        def test_success(generate: Generate):
             os.makedirs(generate.paths.models, exist_ok=True)
             with open(generate.paths.config, "w") as f:
                 f.write(
                     "from zentra.core import Zentra\nfrom zentra.ui.control import Button\n\nzentra = Zentra()\n\nzentra.register([])"
                 )
+
+            btn_dir_path = os.path.join(generate.paths.component, "ui", "base")
+            btn_path = os.path.join(btn_dir_path, "button.tsx")
+
+            os.makedirs(btn_dir_path)
+            with open(btn_path, "w") as f:
+                f.write("test")
 
             mock_zentra_module = MagicMock()
             setattr(mock_zentra_module, "zentra", Zentra())
@@ -241,10 +248,10 @@ class TestGenerate:
             )
 
             with patch("importlib.import_module", return_value=mock_zentra_module):
-                with pytest.raises(FileNotFoundError):
+                with pytest.raises(typer.Exit) as e:
                     generate.create_components()
 
-            assert type(generate.controller) == GenerateController
+            assert e.value.exit_code == GenerateSuccessCodes.COMPLETE
 
 
 class TestGenerateController:

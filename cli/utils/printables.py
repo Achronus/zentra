@@ -32,7 +32,7 @@ class PanelFormatter(BaseModel):
         """Creates an item string for the panel."""
         formatted_symbol = set_colour(self.action.value[0], self.action.value[1])
         formatted_name = set_colour(name_to_plural(name.capitalize(), count), "yellow")
-        return f"{formatted_symbol} {count} {formatted_name}\n"
+        return f"{formatted_symbol} {count} {formatted_name}"
 
     def page_str(self, pages: list[str]) -> str:
         """Creates a page string for the panel."""
@@ -112,7 +112,7 @@ def generate_complete_panel(storage: ModelStorage) -> Panel:
     add_str = add_formatter.change_str(add_data, "Added")
     del_str = del_formatter.change_str(del_data, "Removed")
 
-    del_str = f"\n{del_str}" if add_str != "" and del_str != "" else del_str
+    del_str = f"\n\n{del_str}" if (add_str != "" and del_str != "") else del_str
 
     return Panel.fit(
         textwrap.dedent(f"""

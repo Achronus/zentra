@@ -74,8 +74,8 @@ class GenerateControllerHelper:
         self, old: FolderFilePair, new: FolderFilePair
     ) -> FolderFilePair:
         """Extracts the difference between two lists of `FolderFilePair`s to detect Zentra model changes."""
-        largest, smallest = max(old, new), min(old, new)
-        return list(set(largest) - set(smallest))
+        same = list(set(old) & set(new))
+        return list(set(old + new) - set(same))
 
     def _get_model_changes(
         self,
@@ -83,8 +83,10 @@ class GenerateControllerHelper:
     ) -> tuple[FolderFilePair, FolderFilePair]:
         """Provides two lists of `FolderFilePair` changes. In the form of: `(to_remove, to_add)`."""
         to_remove, to_add = [], []
+        existing_models_set = set(self.storage.existing_models)
+
         for model in model_updates:
-            if model in self.storage.existing_models:
+            if model in existing_models_set:
                 to_remove.append(model)
             else:
                 to_add.append(model)

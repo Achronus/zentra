@@ -85,8 +85,8 @@ def generate_complete_panel(storage: ModelStorage) -> Panel:
 
     add_data = [
         (
-            storage.models_to_generate,
-            len(storage.models_to_generate),
+            storage.components_to_generate,
+            storage.component_generate_count,
             add_formatter.component_str,
         ),
         (
@@ -98,8 +98,8 @@ def generate_complete_panel(storage: ModelStorage) -> Panel:
 
     del_data = [
         (
-            storage.models_to_remove,
-            len(storage.models_to_remove),
+            storage.components_to_remove,
+            storage.component_remove_count,
             del_formatter.component_str,
         ),
         (

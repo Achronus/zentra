@@ -317,7 +317,7 @@ class TestGenerateController:
 
     @pytest.fixture
     def example_existing_models(self, controller: GenerateController) -> None:
-        controller.storage.existing_models = [
+        controller.storage.existing_components = [
             ("uploadthing", "uploadthing.ts"),
             ("uploadthing", "core.ts"),
             ("uploadthing", "route.ts"),
@@ -325,7 +325,7 @@ class TestGenerateController:
 
     @pytest.fixture
     def example_models_to_remove(self, controller: GenerateController) -> None:
-        controller.storage.models_to_remove = [
+        controller.storage.components_to_remove = [
             ("uploadthing", "uploadthing.ts"),
             ("uploadthing", "core.ts"),
             ("uploadthing", "route.ts"),
@@ -333,7 +333,7 @@ class TestGenerateController:
 
     @pytest.fixture
     def example_models_to_generate(self, controller: GenerateController) -> None:
-        controller.storage.models_to_generate = [
+        controller.storage.components_to_generate = [
             ("uploadthing", "uploadthing.ts"),
             ("uploadthing", "core.ts"),
             ("uploadthing", "route.ts"),
@@ -360,7 +360,7 @@ class TestGenerateController:
 
         def test_files_to_generate(self, controller: GenerateController):
             controller.extract_models()
-            result = controller.storage.models_to_generate
+            result = controller.storage.components_to_generate
             valid = [
                 ("ui", "alert-dialog.tsx"),
                 ("ui", "card.tsx"),
@@ -389,7 +389,7 @@ class TestGenerateController:
             dest = os.path.join(controller.paths.generate, "uploadthing")
             os.makedirs(src, exist_ok=True)
 
-            for _, file in controller.storage.models_to_generate:
+            for _, file in controller.storage.components_to_generate:
                 with open(os.path.join(src, file), "w") as f:
                     f.write("test")
 
@@ -413,7 +413,7 @@ class TestGenerateController:
             os.makedirs(dest1, exist_ok=True)
             os.makedirs(dest2, exist_ok=True)
 
-            for _, file in controller.storage.models_to_remove:
+            for _, file in controller.storage.components_to_remove:
                 with open(os.path.join(dest2, file), "w") as f:
                     f.write("test")
 
@@ -430,8 +430,8 @@ class TestGenerateController:
         ):
             with pytest.raises(typer.Exit) as e:
                 controller._check_for_new_components(
-                    controller.storage.existing_models,
-                    controller.storage.models_to_generate,
+                    controller.storage.existing_components,
+                    controller.storage.components_to_generate,
                 )
 
             assert e.value.exit_code == GenerateSuccessCodes.NO_NEW_COMPONENTS
@@ -449,7 +449,7 @@ class TestGenerateController:
                 ("uploadthing", "route.ts"),
                 ("uploadthing", "uploadthing.ts"),
             ]
-            controller.storage.existing_models = existing_models
+            controller.storage.existing_components = existing_models
 
             generate_list = [
                 ("ui", "alert-dialog.tsx"),

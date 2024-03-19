@@ -73,6 +73,6 @@ class DebugLogger(BaseLogger):
         self.file_handler(log_filepath)
 
 
-task_status_logger = DebugLogger("TaskStatusLogger")
-file_copy_logger = DebugLogger("FileCopyLogger")
-zentra_missing_logger = DebugLogger("ZentraMissingLogger")
+task_status_logger = DebugLogger("TaskStatusLogger", "taskStatus.log")
+file_copy_logger = DebugLogger("FileCopyLogger", "FileCopy.log")
+zentra_missing_logger = DebugLogger("ZentraMissingLogger", "ZentraMissing.log")

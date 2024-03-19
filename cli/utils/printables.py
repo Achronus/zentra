@@ -4,7 +4,7 @@ import textwrap
 
 from cli.conf.constants import MAGIC
 from cli.conf.checks import check_zentra_exists
-from cli.conf.format import set_colour, name_to_plural, to_cc_from_pairs
+from cli.conf.format import list_to_str, set_colour, name_to_plural, to_cc_from_pairs
 from cli.conf.storage import BasicNameStorage, ModelStorage
 
 from pydantic import BaseModel
@@ -43,27 +43,6 @@ class SetupPanelFormatter(BaseModel):
         )
         return f"{count_str} {formatted_name}"
 
-    def list_to_str(
-        self, items: list[str], items_per_line: int = 6, items_coloured: bool = False
-    ) -> str:
-        """Converts a list of `items` into a single readable string separated by commas. Items are passed onto new lines `items_per_line` is reached."""
-        symbol, colour = self.action.value
-        symbol = set_colour(symbol, colour)
-        combined_string = f"  {symbol} "
-
-        if len(items) > 0:
-            # Split items equally across lines up to desired value
-            num_lines = -(-len(items) // items_per_line)
-            items_per_line = -(-len(items) // num_lines)
-
-            for i, item in enumerate(items):
-                start_newline = (i + 1) % items_per_line == 0 and len(items) != 1
-                combined_string += set_colour(item, colour) if items_coloured else item
-                combined_string += f"\n  {symbol} " if start_newline else ", "
-
-            return combined_string.rstrip(", ")
-        return ""
-
 
 class GeneratePanelFormatter(BaseModel):
     """Handles the logic for creating completion panels for `zentra generate`.
@@ -80,36 +59,11 @@ class GeneratePanelFormatter(BaseModel):
     storage: ModelStorage
     data: GenerateDataTuple
 
-    def list_to_str(
-        self,
-        items: list[str],
-        action: Action,
-        items_per_line: int = 6,
-        items_coloured: bool = False,
-    ) -> str:
-        """Converts a list of `items` into a single readable string separated by commas. Items are passed onto new lines `items_per_line` is reached."""
-        symbol, colour = action.value
-        symbol = set_colour(symbol, colour)
-        combined_string = f"  {symbol} "
-
-        if len(items) > 0:
-            # Split items equally across lines up to desired value
-            num_lines = -(-len(items) // items_per_line)
-            items_per_line = -(-len(items) // num_lines)
-
-            for i, item in enumerate(items):
-                start_newline = (i + 1) % items_per_line == 0 and len(items) != 1
-                combined_string += set_colour(item, colour) if items_coloured else item
-                combined_string += f"\n  {symbol} " if start_newline else ", "
-
-            return combined_string.rstrip(", ")
-        return ""
-
     def data_str(self) -> str:
         """Creates a detailed string of information."""
         data_str = ""
         for item, action in zip(self.data, self.actions):
-            data_str += f"{self.list_to_str(item, action)}\n"
+            data_str += f"{list_to_str(item, action)}\n"
         return data_str.rstrip()
 
     def title_str(self, counts: tuple[int, int], colour: str) -> str:
@@ -133,8 +87,8 @@ def setup_complete_panel() -> Panel:
     storage = zentra.names
     add_formatter = SetupPanelFormatter(storage=storage, action=Action.ADD)
 
-    component_str = add_formatter.list_to_str(storage.components)
-    page_str = add_formatter.list_to_str(storage.pages)
+    component_str = list_to_str(storage.components, action=Action.ADD)
+    page_str = list_to_str(storage.pages, action=Action.ADD)
 
     component_title = add_formatter.title_str(
         "component", "yellow", len(storage.components)

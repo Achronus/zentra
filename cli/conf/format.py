@@ -1,3 +1,4 @@
+from enum import Enum
 import re
 
 from cli.conf.types import FolderFilePair
@@ -55,3 +56,27 @@ def to_cc_from_pairs(pairs: FolderFilePair) -> list[str]:
     result = list(set(result))
     result.sort()
     return result
+
+
+def list_to_str(items: list[str], action: Enum, items_per_line: int = 4) -> str:
+    """Converts a list of `items` into a single readable string separated by commas. Items are passed onto new lines when `items_per_line` is reached."""
+    symbol, colour = action.value
+    symbol = set_colour(symbol, colour)
+    combined_string = f"  {symbol} "
+    items.sort()
+
+    if len(items) > 0:
+        # Split items equally across lines up to desired value
+        num_lines = -(-len(items) // items_per_line)
+        items_per_line = -(-len(items) // num_lines)
+
+        for i, item in enumerate(items):
+            end_str = (i + 1) == len(items)
+            start_newline = (i + 1) % items_per_line == 0 and len(items) != 1
+            combined_string += item
+            combined_string += (
+                f"\n  {symbol} " if start_newline and not end_str else ", "
+            )
+
+        return combined_string.rstrip(", ")
+    return ""

@@ -1,15 +1,16 @@
 from enum import Enum
+from functools import partial
 import textwrap
 
 from cli.conf.constants import MAGIC
 from cli.conf.checks import check_zentra_exists
-from cli.conf.format import set_colour, name_to_plural
+from cli.conf.format import set_colour, name_to_plural, to_cc_from_pairs
 from cli.conf.storage import BasicNameStorage, ModelStorage
 
 from pydantic import BaseModel
 from rich.panel import Panel
 
-from cli.conf.types import FolderFilePair
+from cli.conf.types import GenerateDataTuple
 
 
 class Action(Enum):
@@ -17,18 +18,18 @@ class Action(Enum):
     REMOVE = ("-", "red")
 
 
-class PanelFormatter(BaseModel):
-    """Handles the logic for creating complete panels.
+class SetupPanelFormatter(BaseModel):
+    """Handles the logic for creating completion panels for `zentra init`.
 
     Parameters:
-    - storage (storage.BasicNameStorage | storage.ModelStorage) - the storage container with Zentra model names
-    - action (Enum.Action) - an Action Enum value to indicate an addition or subtraction string
+    - storage (storage.BasicNameStorage) - the storage container with Zentra model names
+    - action (Enum.Action) - a single Action Enum item to indicate an addition or subtraction string
     """
 
-    storage: BasicNameStorage | ModelStorage
+    storage: BasicNameStorage
     action: Action
 
-    def title_str_with_count(
+    def title_str(
         self,
         name: str,
         title_colour: str,
@@ -41,27 +42,6 @@ class PanelFormatter(BaseModel):
             title_colour,
         )
         return f"{count_str} {formatted_name}"
-
-    def page_str(self, count: int) -> str:
-        """Creates a page string for the panel."""
-        return self.format_item("page", count)
-
-    def component_str(self, count: int) -> str:
-        """Creates a component string for the panel."""
-        return self.format_item("component", count)
-
-    def change_str(self, data: dict) -> str:
-        """Creates a modification string based on the provided data with 'added' and 'removed' items for the panel."""
-        change_str = ""
-        for size, formatter in data:
-            if size > 0:
-                change_str += formatter(size)
-
-        if change_str != "":
-            heading_str = f"{set_colour(heading, colour=self.action.value[1])}\n"
-            change_str = heading_str + change_str
-
-        return change_str
 
     def list_to_str(
         self, items: list[str], items_per_line: int = 6, items_coloured: bool = False
@@ -85,21 +65,81 @@ class PanelFormatter(BaseModel):
         return ""
 
 
+class GeneratePanelFormatter(BaseModel):
+    """Handles the logic for creating completion panels for `zentra generate`.
+
+    Parameters:
+    - name (str) - a name to associate the formatter used in the title string (e.g., 'component' or 'page')
+    - actions (Enum.Action) - an Action Enum class with an addition and subtraction value
+    - storage (storage.ModelStorage) - the storage container with Zentra model names
+    - data (GenerateDataTuple) - a tuple containing two lists of item information, one for addition and one for subtraction
+    """
+
+    name: str
+    actions: type[Action]
+    storage: ModelStorage
+    data: GenerateDataTuple
+
+    def list_to_str(
+        self,
+        items: list[str],
+        action: Action,
+        items_per_line: int = 6,
+        items_coloured: bool = False,
+    ) -> str:
+        """Converts a list of `items` into a single readable string separated by commas. Items are passed onto new lines `items_per_line` is reached."""
+        symbol, colour = action.value
+        symbol = set_colour(symbol, colour)
+        combined_string = f"  {symbol} "
+
+        if len(items) > 0:
+            # Split items equally across lines up to desired value
+            num_lines = -(-len(items) // items_per_line)
+            items_per_line = -(-len(items) // num_lines)
+
+            for i, item in enumerate(items):
+                start_newline = (i + 1) % items_per_line == 0 and len(items) != 1
+                combined_string += set_colour(item, colour) if items_coloured else item
+                combined_string += f"\n  {symbol} " if start_newline else ", "
+
+            return combined_string.rstrip(", ")
+        return ""
+
+    def data_str(self) -> str:
+        """Creates a detailed string of information."""
+        data_str = ""
+        for item, action in zip(self.data, self.actions):
+            data_str += f"{self.list_to_str(item, action)}\n"
+        return data_str.rstrip()
+
+    def title_str(self, counts: tuple[int, int], colour: str) -> str:
+        """Creates a title string with the item name and its data counts."""
+        count_str = ""
+        headings = ("Added", "Removed")
+        for count, heading, action in zip(counts, headings, self.actions):
+            head_str = f"{count} {heading}"
+            count_str += f"{set_colour(head_str, action.value[1])}, "
+
+        formatted_name = set_colour(
+            name_to_plural(self.name.capitalize(), sum(counts)),
+            colour,
+        )
+        return f"{formatted_name} ({count_str.rstrip(', ')})"
+
+
 def setup_complete_panel() -> Panel:
     """Creates a printable panel after successfully completing `zentra init`."""
     zentra = check_zentra_exists()
     storage = zentra.names
-    add_formatter = PanelFormatter(storage=storage, action=Action.ADD)
+    add_formatter = SetupPanelFormatter(storage=storage, action=Action.ADD)
 
     component_str = add_formatter.list_to_str(storage.components)
     page_str = add_formatter.list_to_str(storage.pages)
 
-    component_title = add_formatter.title_str_with_count(
+    component_title = add_formatter.title_str(
         "component", "yellow", len(storage.components)
     )
-    page_title = add_formatter.title_str_with_count(
-        "page", "dark_goldenrod", len(storage.pages)
-    )
+    page_title = add_formatter.title_str("page", "dark_goldenrod", len(storage.pages))
 
     return Panel.fit(
         textwrap.dedent(f"""
@@ -117,23 +157,35 @@ def setup_complete_panel() -> Panel:
 
 def generate_complete_panel(storage: ModelStorage) -> Panel:
     """Creates a printable panel after successfully completing `zentra generate`."""
-    add_formatter = PanelFormatter(storage=storage, action=Action.ADD)
-    del_formatter = PanelFormatter(storage=storage, action=Action.REMOVE)
+    components = (
+        to_cc_from_pairs(storage.components.generate),
+        to_cc_from_pairs(storage.components.remove),
+    )
+    pages = (
+        to_cc_from_pairs(storage.pages.generate),
+        to_cc_from_pairs(storage.pages.remove),
+    )
 
-    add_data = [
-        (storage.component_generate_count, add_formatter.component_str),
-        (len(storage.pages_to_generate), add_formatter.page_str),
-    ]
+    formatter = partial(GeneratePanelFormatter, actions=Action, storage=storage)
+    comp_formatter = formatter(name="component", data=components)
+    page_formatter = formatter(name="page", data=pages)
 
-    del_data = [
-        (storage.component_remove_count, del_formatter.component_str),
-        (len(storage.pages_to_remove), del_formatter.page_str),
-    ]
+    comp_totals = (
+        storage.components.counts.generate,
+        storage.components.counts.remove,
+    )
+    page_totals = (
+        storage.pages.counts.generate,
+        storage.pages.counts.remove,
+    )
 
-    add_str = add_formatter.change_str(add_data, "Added")
-    del_str = del_formatter.change_str(del_data, "Removed")
+    comp_str = comp_formatter.data_str()
+    page_str = page_formatter.data_str()
 
-    del_str = f"\n\n{del_str}" if (add_str != "" and del_str != "") else del_str
+    component_title = comp_formatter.title_str(comp_totals, "yellow")
+    page_title = page_formatter.title_str(page_totals, "dark_goldenrod")
+
+    page_str = f"\n{page_title}\n{page_str}" if page_str.strip() != "" else ""
 
     return Panel.fit(
         textwrap.dedent(f"""
@@ -141,8 +193,9 @@ def generate_complete_panel(storage: ModelStorage) -> Panel:
     
     Access them in [magenta]zentra/generated[/magenta].
     
+    [bright_cyan]Model Updates[/bright_cyan]
     """)
-        + add_str
-        + del_str,
+        + f"{component_title}\n{comp_str}"
+        + page_str,
         border_style="bright_green",
     )

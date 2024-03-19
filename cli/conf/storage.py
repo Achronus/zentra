@@ -66,6 +66,27 @@ class GeneratePathStorage(BaseModel):
     generate: str
 
 
+class CountStorage(BaseModel):
+    """A simple storage container for Zentra model counts."""
+
+    generate: int = 0
+    remove: int = 0
+
+    def total(self) -> int:
+        """Calculate the storage total."""
+        return self.generate + self.remove
+
+
+class ModelFileStorage(BaseModel):
+    """A storage container for storing Zentra model (library, filename) pairs."""
+
+    generate: FolderFilePair = []
+    remove: FolderFilePair = []
+    existing: FolderFilePair = []
+
+    counts: CountStorage = CountStorage()
+
+
 class BasicNameStorage(BaseModel):
     """A simple storage container for Zentra page and component names."""
 
@@ -73,19 +94,14 @@ class BasicNameStorage(BaseModel):
     components: list[str] = []
 
 
-class ModelStorage(BasicNameStorage):
+class ModelStorage(BaseModel):
     """A storage container for Zentra model filenames."""
 
     base_files: FolderFilePair = get_filename_dir_pairs(
         parent_dir=LocalCoreComponentFilepaths.ROOT, sub_dir="base"
     )
     folders_to_generate: list[str] = get_dirnames(LocalCoreComponentFilepaths.ROOT)
-    components_to_generate: FolderFilePair = []
-    components_to_remove: FolderFilePair = []
-    existing_components: FolderFilePair = []
 
-    component_generate_count: int = 0
-    component_remove_count: int = 0
-
-    pages_to_generate: FolderFilePair = []
-    pages_to_remove: FolderFilePair = []
+    base_names: BasicNameStorage = BasicNameStorage()
+    pages: ModelFileStorage = ModelFileStorage()
+    components: ModelFileStorage = ModelFileStorage()

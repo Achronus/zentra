@@ -316,8 +316,31 @@ class TestGenerateController:
         return GenerateController(zentra, paths=path_storage)
 
     @pytest.fixture
+    def setup_example_models(
+        self, controller: GenerateController
+    ) -> tuple[str, str, str]:
+        src1 = os.path.join(controller.paths.component, "uploadthing", "base")
+        src2 = os.path.join(controller.paths.component, "ui", "base")
+        dest = os.path.join(controller.paths.generate)
+
+        os.makedirs(src1, exist_ok=True)
+        os.makedirs(src2, exist_ok=True)
+        os.makedirs(dest, exist_ok=True)
+
+        controller.extract_models()
+        for folder, file in controller.storage.components.generate:
+            if folder == "uploadthing":
+                with open(os.path.join(src1, file), "w") as f:
+                    f.write("test")
+            elif folder == "ui":
+                with open(os.path.join(src2, file), "w") as f:
+                    f.write("test")
+
+        return src1, src2, dest
+
+    @pytest.fixture
     def example_existing_models(self, controller: GenerateController) -> None:
-        controller.storage.existing_components = [
+        controller.storage.components.existing = [
             ("uploadthing", "uploadthing.ts"),
             ("uploadthing", "core.ts"),
             ("uploadthing", "route.ts"),
@@ -325,7 +348,7 @@ class TestGenerateController:
 
     @pytest.fixture
     def example_models_to_remove(self, controller: GenerateController) -> None:
-        controller.storage.components_to_remove = [
+        controller.storage.components.remove = [
             ("uploadthing", "uploadthing.ts"),
             ("uploadthing", "core.ts"),
             ("uploadthing", "route.ts"),
@@ -333,7 +356,7 @@ class TestGenerateController:
 
     @pytest.fixture
     def example_models_to_generate(self, controller: GenerateController) -> None:
-        controller.storage.components_to_generate = [
+        controller.storage.components.generate = [
             ("uploadthing", "uploadthing.ts"),
             ("uploadthing", "core.ts"),
             ("uploadthing", "route.ts"),
@@ -355,12 +378,14 @@ class TestGenerateController:
                 "input.tsx",
             ]
 
-            result = controller._get_and_format_models()
+            result = controller._get_and_format_models(
+                controller.storage.base_names.components
+            )
             assert len(result) == len(valid_names)
 
         def test_files_to_generate(self, controller: GenerateController):
             controller.extract_models()
-            result = controller.storage.components_to_generate
+            result = controller.storage.components.generate
             valid = [
                 ("ui", "alert-dialog.tsx"),
                 ("ui", "card.tsx"),
@@ -380,18 +405,9 @@ class TestGenerateController:
 
     class TestUpdateFiles:
         @staticmethod
-        def test_generate_succes(
-            example_models_to_generate, controller: GenerateController
-        ):
-            controller.storage.folders_to_generate = ["uploadthing"]
-
-            src = os.path.join(controller.paths.component, "uploadthing", "base")
-            dest = os.path.join(controller.paths.generate, "uploadthing")
-            os.makedirs(src, exist_ok=True)
-
-            for _, file in controller.storage.components_to_generate:
-                with open(os.path.join(src, file), "w") as f:
-                    f.write("test")
+        def test_generate_succes(setup_example_models, controller: GenerateController):
+            _, _, dest = setup_example_models
+            dest = os.path.join(dest, "uploadthing")
 
             controller.update_files()
 
@@ -401,25 +417,25 @@ class TestGenerateController:
                 os.path.exists(os.path.join(dest, "route.ts")),
             ]
 
-            assert all(checks)
+            assert all(checks), controller.storage.components.generate
 
         @staticmethod
-        def test_removal_success(
-            example_models_to_remove, controller: GenerateController
-        ):
-            dest1 = os.path.join(controller.paths.generate, "ui")
-            dest2 = os.path.join(controller.paths.generate, "uploadthing")
+        def test_removal_success(setup_example_models, controller: GenerateController):
+            _, _, dest = setup_example_models
+            dest = os.path.join(dest, "uploadthing")
 
-            os.makedirs(dest1, exist_ok=True)
-            os.makedirs(dest2, exist_ok=True)
+            files_to_remove = [
+                ("uploadthing", "uploadthing.ts"),
+                ("uploadthing", "core.ts"),
+                ("uploadthing", "route.ts"),
+            ]
 
-            for _, file in controller.storage.components_to_remove:
-                with open(os.path.join(dest2, file), "w") as f:
-                    f.write("test")
+            controller.storage.components.remove = files_to_remove
+            controller.storage.components.counts.remove = len(files_to_remove)
 
             controller.update_files()
 
-            assert not os.path.exists(dest2)
+            assert not os.path.exists(dest), controller.storage.components.counts.remove
 
     class TestCheckForNewComponents:
         @staticmethod
@@ -430,8 +446,8 @@ class TestGenerateController:
         ):
             with pytest.raises(typer.Exit) as e:
                 controller._check_for_new_components(
-                    controller.storage.existing_components,
-                    controller.storage.components_to_generate,
+                    controller.storage.components.existing,
+                    controller.storage.components.generate,
                 )
 
             assert e.value.exit_code == GenerateSuccessCodes.NO_NEW_COMPONENTS
@@ -449,7 +465,7 @@ class TestGenerateController:
                 ("uploadthing", "route.ts"),
                 ("uploadthing", "uploadthing.ts"),
             ]
-            controller.storage.existing_components = existing_models
+            controller.storage.components.existing = existing_models
 
             generate_list = [
                 ("ui", "alert-dialog.tsx"),
@@ -484,7 +500,7 @@ class TestGenerateController:
                 ("uploadthing", "route.ts"),
                 ("uploadthing", "uploadthing.ts"),
             ]
-            controller.storage.existing_components = existing_models
+            controller.storage.components.existing = existing_models
 
             generate_list = [
                 ("ui", "alert-dialog.tsx"),
@@ -502,8 +518,8 @@ class TestGenerateController:
             controller._store_components(model_updates)
 
             checks = [
-                controller.storage.component_generate_count == 2,
-                controller.storage.component_remove_count == 1,
+                controller.storage.components.counts.generate == 2,
+                controller.storage.components.counts.remove == 1,
             ]
 
             assert all(checks), model_updates

@@ -28,6 +28,9 @@ class GenerateControllerHelper:
         self.paths = paths
         self.storage = ModelStorage()
 
+        self.storage.base_names.components = zentra.names.components
+        self.storage.base_names.pages = zentra.names.pages
+
     def _get_and_format_models(self, base_names: list[str]) -> list[str]:
         """Retrieves the Zentra model base names and converts them into a suitable format for file processing."""
         return [f"{name_from_camel_case(name)}.tsx" for name in base_names]
@@ -40,7 +43,7 @@ class GenerateControllerHelper:
     def _generate_files(self, sub_dir: str) -> None:
         """Create a list of Zentra model files in the generate folder."""
         transfer_folder_file_pairs(
-            self.storage.components_to_generate,
+            self.storage.components.generate,
             self.paths.component,
             self.paths.generate,
             src_sub_dir=sub_dir,
@@ -48,7 +51,7 @@ class GenerateControllerHelper:
 
     def _remove_files(self) -> None:
         """Removes a list of Zentra models from the generate folder."""
-        remove_folder_file_pairs(self.storage.components_to_remove, self.paths.generate)
+        remove_folder_file_pairs(self.storage.components.remove, self.paths.generate)
 
     def _check_for_uploadthing(
         self, generate_list: FolderFilePair, filenames: list[str]
@@ -81,15 +84,15 @@ class GenerateControllerHelper:
     ) -> tuple[FolderFilePair, FolderFilePair]:
         """Provides two lists of `FolderFilePair` changes. In the form of: `(to_remove, to_add)`."""
         to_remove, to_add = [], []
-        existing_models_set = set(self.storage.existing_components)
+        existing_models_set = set(self.storage.components.existing)
 
         for model in model_updates:
             if model in existing_models_set:
                 to_remove.append(model)
-                self.storage.component_remove_count += 1
+                self.storage.components.counts.remove += 1
             else:
                 to_add.append(model)
-                self.storage.component_generate_count += 1
+                self.storage.components.counts.generate += 1
 
         return to_remove, to_add
 
@@ -116,15 +119,15 @@ class GenerateControllerHelper:
 
     def _store_components(self, model_updates: FolderFilePair) -> None:
         """Stores the `component` attributes into `self.storage`."""
-        self.storage.components_to_remove, self.storage.components_to_generate = (
+        self.storage.components.remove, self.storage.components.generate = (
             self._get_model_changes(model_updates)
         )
 
-        self.storage.component_generate_count = len(
-            self._filter_ut(self.storage.components_to_generate)
+        self.storage.components.counts.generate = len(
+            self._filter_ut(self.storage.components.generate)
         )
-        self.storage.component_remove_count = len(
-            self._filter_ut(self.storage.components_to_remove)
+        self.storage.components.counts.remove = len(
+            self._filter_ut(self.storage.components.remove)
         )
 
 
@@ -153,7 +156,9 @@ class GenerateController(BaseController, GenerateControllerHelper):
     @status
     def extract_models(self) -> None:
         """Extracts the Zentra models and prepares them for file generation."""
-        formatted_names = self._get_and_format_models()
+        formatted_names = self._get_and_format_models(
+            self.storage.base_names.components
+        )
 
         generate_list = extract_file_pairs_from_list(
             self.storage.base_files, formatted_names
@@ -163,18 +168,18 @@ class GenerateController(BaseController, GenerateControllerHelper):
 
         self._check_for_new_components(generate_list, existing_models)
 
-        self.storage.existing_components = existing_models
+        self.storage.components.existing = existing_models
         model_updates = self._get_model_updates(existing_models, generate_list)
         self._store_components(model_updates)
 
     @status
     def update_files(self) -> None:
         """Creates or removes the React components based on the extracted models."""
-        if len(self.storage.components_to_generate) != 0:
+        if self.storage.components.counts.generate != 0:
             self._make_needed_dirs()
             self._generate_files(sub_dir="base")
 
-        if len(self.storage.components_to_remove) != 0:
+        if self.storage.components.counts.remove != 0:
             self._remove_files()
 
     @status

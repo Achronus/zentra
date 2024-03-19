@@ -5,6 +5,7 @@ import textwrap
 from cli.conf.constants import MAGIC
 from cli.conf.checks import check_zentra_exists
 from cli.conf.format import list_to_str, set_colour, name_to_plural, to_cc_from_pairs
+from cli.conf.message import SETUP_COMPLETE_MSG
 from cli.conf.storage import BasicNameStorage, ModelStorage
 
 from pydantic import BaseModel
@@ -79,6 +80,17 @@ class GeneratePanelFormatter(BaseModel):
             colour,
         )
         return f"{formatted_name} ({count_str.rstrip(', ')})"
+
+
+def setup_first_run_panel() -> Panel:
+    """Creates a printable panel after successfully running `zentra init` for the first time."""
+    return Panel.fit(
+        textwrap.dedent(f"""
+    {MAGIC} [magenta]Zentra[/magenta] configured successfully! {MAGIC}
+    """)
+        + SETUP_COMPLETE_MSG,
+        border_style="bright_green",
+    )
 
 
 def setup_complete_panel() -> Panel:

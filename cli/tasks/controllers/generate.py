@@ -28,11 +28,9 @@ class GenerateControllerHelper:
         self.paths = paths
         self.storage = ModelStorage()
 
-    def _get_and_format_models(self) -> list[str]:
-        """Retrieves the Zentra model from the app and converts the name into a suitable format for comparison."""
-        return [
-            f"{name_from_camel_case(name)}.tsx" for name in self.zentra.names.components
-        ]
+    def _get_and_format_models(self, base_names: list[str]) -> list[str]:
+        """Retrieves the Zentra model base names and converts them into a suitable format for file processing."""
+        return [f"{name_from_camel_case(name)}.tsx" for name in base_names]
 
     def _make_needed_dirs(self) -> None:
         """Makes the needed directories in the Zentra generate folder."""

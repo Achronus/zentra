@@ -9,7 +9,7 @@ from cli.conf.storage import BasicNameStorage, ModelStorage
 from pydantic import BaseModel
 from rich.panel import Panel
 
-from cli.conf.types import ChangeStrData
+from cli.conf.types import FolderFilePair
 
 
 class Action(Enum):
@@ -21,22 +21,26 @@ class PanelFormatter(BaseModel):
     """Handles the logic for creating complete panels.
 
     Parameters:
-    - storage (storage.BasicNameStorage) - the storage container with Zentra model names
+    - storage (storage.BasicNameStorage | storage.ModelStorage) - the storage container with Zentra model names
     - action (Enum.Action) - an Action Enum value to indicate an addition or subtraction string
     """
 
-    storage: BasicNameStorage
+    storage: BasicNameStorage | ModelStorage
     action: Action
 
-    def format_item(self, name: str, count: int) -> str:
-        """Creates an item string for the panel."""
-        symbol, colour = self.action.value
-        formatted_symbol = set_colour(symbol, colour)
+    def title_str_with_count(
+        self,
+        name: str,
+        title_colour: str,
+        count: int,
+    ) -> str:
+        """Creates a title string for a set of models with the number of items at the front."""
+        count_str = set_colour(count, self.action.value[1])
         formatted_name = set_colour(
             name_to_plural(name.capitalize(), count),
-            colour,
+            title_colour,
         )
-        return f"{formatted_symbol} {count} {formatted_name}"
+        return f"{count_str} {formatted_name}"
 
     def page_str(self, count: int) -> str:
         """Creates a page string for the panel."""
@@ -46,7 +50,7 @@ class PanelFormatter(BaseModel):
         """Creates a component string for the panel."""
         return self.format_item("component", count)
 
-    def change_str(self, data: ChangeStrData, heading: str) -> str:
+    def change_str(self, data: dict) -> str:
         """Creates a modification string based on the provided data with 'added' and 'removed' items for the panel."""
         change_str = ""
         for size, formatter in data:
@@ -67,16 +71,18 @@ class PanelFormatter(BaseModel):
         symbol = set_colour(symbol, colour)
         combined_string = f"  {symbol} "
 
-        # Split items equally across lines up to desired value
-        num_lines = -(-len(items) // items_per_line)
-        items_per_line = -(-len(items) // num_lines)
+        if len(items) > 0:
+            # Split items equally across lines up to desired value
+            num_lines = -(-len(items) // items_per_line)
+            items_per_line = -(-len(items) // num_lines)
 
-        for i, item in enumerate(items):
-            start_newline = (i + 1) % items_per_line == 0 and len(items) != 1
-            combined_string += set_colour(item, colour) if items_coloured else item
-            combined_string += f"\n  {symbol} " if start_newline else ", "
+            for i, item in enumerate(items):
+                start_newline = (i + 1) % items_per_line == 0 and len(items) != 1
+                combined_string += set_colour(item, colour) if items_coloured else item
+                combined_string += f"\n  {symbol} " if start_newline else ", "
 
-        return combined_string.rstrip(", ")
+            return combined_string.rstrip(", ")
+        return ""
 
 
 def setup_complete_panel() -> Panel:
@@ -88,6 +94,13 @@ def setup_complete_panel() -> Panel:
     component_str = add_formatter.list_to_str(storage.components)
     page_str = add_formatter.list_to_str(storage.pages)
 
+    component_title = add_formatter.title_str_with_count(
+        "component", "yellow", len(storage.components)
+    )
+    page_title = add_formatter.title_str_with_count(
+        "page", "dark_goldenrod", len(storage.pages)
+    )
+
     return Panel.fit(
         textwrap.dedent(f"""
     {MAGIC} [magenta]Zentra[/magenta] configured successfully! {MAGIC}
@@ -96,8 +109,8 @@ def setup_complete_panel() -> Panel:
 
     [bright_cyan]Models To Generate[/bright_cyan]
     """)
-        + f" [yellow]Components[/yellow]\n{component_str}\n\n"
-        + f" [dark_goldenrod]Pages[/dark_goldenrod]\n{page_str}",
+        + f"{component_title}\n{component_str}\n\n"
+        + f"{page_title}\n{page_str}",
         border_style="bright_green",
     )
 

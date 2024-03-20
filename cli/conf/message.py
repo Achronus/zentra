@@ -205,7 +205,11 @@ class MessageHandler:
     def msg(self, e: typer.Exit) -> None:
         """Assigns a success or error message depending on the code received."""
         try:
+            if e.exit_code not in self.msg_mapper.keys():
+                e.exit_code = CommonErrorCodes.UNKNOWN_ERROR
+
             msg = textwrap.dedent(self.msg_mapper.get(e.exit_code, UNKNOWN_ERROR))
+
         except AttributeError:
             e.exit_code = CommonErrorCodes.UNKNOWN_ERROR
 

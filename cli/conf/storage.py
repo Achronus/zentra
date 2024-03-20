@@ -72,10 +72,6 @@ class CountStorage(BaseModel):
     generate: int = 0
     remove: int = 0
 
-    def total(self) -> int:
-        """Calculate the storage total."""
-        return self.generate + self.remove
-
 
 class ModelFileStorage(BaseModel):
     """A storage container for storing Zentra model (library, filename) pairs."""

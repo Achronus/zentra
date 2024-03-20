@@ -279,6 +279,7 @@ class TestGenerateController:
                             content=[
                                 Form(
                                     name="agencyForm",
+                                    layout=[2],
                                     fields=[
                                         FormField(
                                             name="agencyLogo",

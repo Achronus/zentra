@@ -1,0 +1,5 @@
+[run]
+omit = 
+    cli/utils/printables.py
+    cli/conf/message.py
+    tests/*

@@ -1,45 +1,167 @@
-import os
+from enum import Enum
+from functools import partial
+import textwrap
 
-from ..conf.constants import PARTY, PASS, FAIL
+from cli.conf.constants import MAGIC
+from cli.conf.checks import check_zentra_exists
+from cli.conf.format import list_to_str, set_colour, name_to_plural, to_cc_from_pairs
+from cli.conf.message import SETUP_COMPLETE_MSG
+from cli.conf.storage import BasicNameStorage, ModelStorage
 
-from rich.table import Table
+from pydantic import BaseModel
 from rich.panel import Panel
 
-
-def path_exists_table(zentra_path: str, folder_exists: str) -> Table:
-    """Creates a printable table showing the `zentra_path` and if the `folder` exists."""
-    icon = PASS if folder_exists else FAIL
-
-    table = Table()
-    table.add_column("Zentra Path", style="bright_cyan", justify="center")
-    table.add_column("Exists", justify="center")
-    table.add_row(local_path(zentra_path), icon)
-    return table
+from cli.conf.types import GenerateDataTuple
 
 
-def configuration_complete_panel(folder_path: str, link: str) -> Panel:
-    """Creates a printable complete panel related to configuration success."""
-    panel = Panel.fit(
-        f"\nCreate your models in [bright_cyan]{local_path(folder_path)}[/bright_cyan]!\n\nNeed [bright_cyan]help[/bright_cyan] getting started? Check the [bright_cyan][link={link}]docs[/link][/bright_cyan]!\n",
-        title=f"{PARTY} Application configured! {PARTY}",
+class Action(Enum):
+    ADD = ("+", "green")
+    REMOVE = ("-", "red")
+
+
+class SetupPanelFormatter(BaseModel):
+    """Handles the logic for creating completion panels for `zentra init`.
+
+    Parameters:
+    - storage (storage.BasicNameStorage) - the storage container with Zentra model names
+    - action (Enum.Action) - a single Action Enum item to indicate an addition or subtraction string
+    """
+
+    storage: BasicNameStorage
+    action: Action
+
+    def title_str(
+        self,
+        name: str,
+        title_colour: str,
+        count: int,
+    ) -> str:
+        """Creates a title string for a set of models with the number of items at the front."""
+        count_str = set_colour(count, self.action.value[1])
+        formatted_name = set_colour(
+            name_to_plural(name.capitalize(), count),
+            title_colour,
+        )
+        return f"{count_str} {formatted_name}"
+
+
+class GeneratePanelFormatter(BaseModel):
+    """Handles the logic for creating completion panels for `zentra generate`.
+
+    Parameters:
+    - name (str) - a name to associate the formatter used in the title string (e.g., 'component' or 'page')
+    - actions (Enum.Action) - an Action Enum class with an addition and subtraction value
+    - storage (storage.ModelStorage) - the storage container with Zentra model names
+    - data (GenerateDataTuple) - a tuple containing two lists of item information, one for addition and one for subtraction
+    """
+
+    name: str
+    actions: type[Action]
+    storage: ModelStorage
+    data: GenerateDataTuple
+
+    def data_str(self) -> str:
+        """Creates a detailed string of information."""
+        data_str = ""
+        for item, action in zip(self.data, self.actions):
+            data_str += f"{list_to_str(item, action)}\n"
+        return data_str.rstrip()
+
+    def title_str(self, counts: tuple[int, int], colour: str) -> str:
+        """Creates a title string with the item name and its data counts."""
+        count_str = ""
+        headings = ("Added", "Removed")
+        for count, heading, action in zip(counts, headings, self.actions):
+            head_str = f"{count} {heading}"
+            count_str += f"{set_colour(head_str, action.value[1])}, "
+
+        formatted_name = set_colour(
+            name_to_plural(self.name.capitalize(), sum(counts)),
+            colour,
+        )
+        return f"{formatted_name} ({count_str.rstrip(', ')})"
+
+
+def setup_first_run_panel() -> Panel:
+    """Creates a printable panel after successfully running `zentra init` for the first time."""
+    return Panel.fit(
+        textwrap.dedent(f"""
+    {MAGIC} [magenta]Zentra[/magenta] configured successfully! {MAGIC}
+    """)
+        + SETUP_COMPLETE_MSG,
         border_style="bright_green",
-        style="bright_green",
     )
-    return panel
 
 
-def component_complete_panel() -> Panel:
-    """Creates a printable complete panel related to component creation."""
-    panel = Panel.fit(
-        f"\n{PARTY} Components created successfully! {PARTY}",
+def setup_complete_panel() -> Panel:
+    """Creates a printable panel after successfully completing `zentra init`."""
+    zentra = check_zentra_exists()
+    storage = zentra.names
+    add_formatter = SetupPanelFormatter(storage=storage, action=Action.ADD)
+
+    component_str = list_to_str(storage.components, action=Action.ADD)
+    page_str = list_to_str(storage.pages, action=Action.ADD)
+
+    component_title = add_formatter.title_str(
+        "component", "yellow", len(storage.components)
+    )
+    page_title = add_formatter.title_str("page", "dark_goldenrod", len(storage.pages))
+
+    return Panel.fit(
+        textwrap.dedent(f"""
+    {MAGIC} [magenta]Zentra[/magenta] configured successfully! {MAGIC}
+
+    Use [green]zentra generate[/green] to create your models.
+
+    [bright_cyan]Models To Generate[/bright_cyan]
+    """)
+        + f"{component_title}\n{component_str}\n\n"
+        + f"{page_title}\n{page_str}",
         border_style="bright_green",
-        style="bright_green",
     )
-    return panel
 
 
-def local_path(folder_path: str) -> str:
-    """Extracts the last two directories from a `folder_path`."""
-    head, tail = os.path.split(folder_path)
-    root = os.path.basename(head)
-    return "/".join([root, tail])
+def generate_complete_panel(storage: ModelStorage) -> Panel:
+    """Creates a printable panel after successfully completing `zentra generate`."""
+    components = (
+        to_cc_from_pairs(storage.components.generate),
+        to_cc_from_pairs(storage.components.remove),
+    )
+    pages = (
+        to_cc_from_pairs(storage.pages.generate),
+        to_cc_from_pairs(storage.pages.remove),
+    )
+
+    formatter = partial(GeneratePanelFormatter, actions=Action, storage=storage)
+    comp_formatter = formatter(name="component", data=components)
+    page_formatter = formatter(name="page", data=pages)
+
+    comp_totals = (
+        storage.components.counts.generate,
+        storage.components.counts.remove,
+    )
+    page_totals = (
+        storage.pages.counts.generate,
+        storage.pages.counts.remove,
+    )
+
+    comp_str = comp_formatter.data_str()
+    page_str = page_formatter.data_str()
+
+    component_title = comp_formatter.title_str(comp_totals, "yellow")
+    page_title = page_formatter.title_str(page_totals, "dark_goldenrod")
+
+    page_str = f"\n{page_title}\n{page_str}" if page_str.strip() != "" else ""
+
+    return Panel.fit(
+        textwrap.dedent(f"""
+    {MAGIC} [magenta]Zentra[/magenta] → [bright_cyan]React[/bright_cyan] conversion successful! {MAGIC}
+    
+    Access them in [magenta]zentra/generated[/magenta].
+    
+    [bright_cyan]Model Updates[/bright_cyan]
+    """)
+        + f"{component_title}\n{comp_str}"
+        + page_str,
+        border_style="bright_green",
+    )

@@ -4,7 +4,10 @@ from functools import wraps
 from cli.conf.constants import PASS, FAIL
 from cli.conf.logger import task_status_logger
 
-from rich.progress import Progress
+from rich.console import Console
+from rich.progress import Progress, SpinnerColumn, TextColumn
+
+console = Console()
 
 
 def status(func):
@@ -14,10 +17,10 @@ def status(func):
     def wrapper(*args, **kwargs):
         try:
             func(*args, **kwargs)
-            return True
+            return True, None
         except Exception as e:
             task_status_logger.error(f"{type(e).__name__}: {e}")
-            return False
+            return False, e
 
     return wrapper
 
@@ -30,35 +33,36 @@ class BaseController:
 
     :param tasks: (list[tuple[ControllerMethod, str]]) - a list of tuples in the format of (task, desc), where `task` is a class method and `desc` is a descriptive string highlighting what the task does. For example:
     ```python
-    sub_tasks = [
-        (self.create, "Building venv"),
-        (self.update_pip, "Updating PIP")
+    tasks = [
+        (self.create, "Creating my awesome components"),
+        (self.update, "Updating my components")
     ]
     ```
     """
 
     def __init__(self, tasks: list[tuple[ControllerMethod, str]]) -> None:
         self.tasks = tasks
+        self.called_tasks = []
 
-    @staticmethod
-    def update_desc(desc: str) -> str:
-        """Updates task description format."""
-        return f"   {desc}..."
+    def run(self) -> None:
+        """A handler for performing tasks in the controller."""
+        with Progress(
+            SpinnerColumn(),
+            TextColumn("[progress.description]{task.description}"),
+            console=console,
+        ) as progress:
+            for idx, (task, desc) in enumerate(self.tasks, 1):
+                new_desc = f"{idx}. {desc}..."
 
-    def format_tasks(self) -> None:
-        """Formats controller tasks into a standardised format."""
-        updated_tasks = []
-        for task, desc in self.tasks:
-            updated_tasks.append((task, self.update_desc(desc)))
+                task_id = progress.add_task(description=new_desc, total=None)
+                is_successful, error = task()
 
-        self.tasks = updated_tasks
+                self.called_tasks.append((new_desc, is_successful))
+                status = PASS if is_successful else FAIL
 
-    def run(self, progress: Progress) -> None:
-        """A subtask handler for performing subtasks in the controller."""
-        self.format_tasks()
+                progress.update(
+                    task_id, completed=1, description=f"{new_desc} {status}"
+                )
 
-        for task, desc in self.tasks:
-            task_id = progress.add_task(description=desc, total=None)
-            is_successful = task()
-            status = PASS if is_successful else FAIL
-            progress.update(task_id, completed=1, description=f"{desc} {status}")
+                if error is not None:
+                    raise error

@@ -8,27 +8,23 @@ class BaseLogger:
     def __init__(
         self,
         logger_name: str,
-        log_filename: str = "debug.log",
         level: int = logging.DEBUG,
     ) -> None:
         self.logger = logging.getLogger(logger_name)
         self.logger.setLevel(level=level)
 
-        self.log_filename = log_filename
-
     def console_handler(
         self,
         level: int = logging.INFO,
         format: str = "%(name)s: %(levelname)s | %(message)s",
-    ) -> logging.StreamHandler:
+    ) -> None:
         """Configuration for console handlers."""
         handler = logging.StreamHandler()
         handler.setLevel(level=level)
 
         formatter = logging.Formatter(format)
         handler.setFormatter(formatter)
-
-        return handler
+        self.logger.addHandler(handler)
 
     def file_handler(
         self,
@@ -36,14 +32,14 @@ class BaseLogger:
         level: int = logging.DEBUG,
         format: str = "%(asctime)s (%(name)s): %(levelname)s | %(message)s",
         datefmt: str = "%Y-%m-%d %H:%M:%S",
-    ) -> logging.FileHandler:
+    ) -> None:
         """Configuration for file handlers."""
         handler = logging.FileHandler(log_filepath)
         handler.setLevel(level=level)
 
         formatter = logging.Formatter(format, datefmt=datefmt)
         handler.setFormatter(formatter)
-        return handler
+        self.logger.addHandler(handler)
 
     def debug(self, msg: str) -> None:
         """Sends a debug message to the logger."""
@@ -66,16 +62,35 @@ class BaseLogger:
         self.logger.critical(msg)
 
 
-class TaskStatusLogger(BaseLogger):
-    """A logger specific to the task status wrapper."""
+class DebugLogger(BaseLogger):
+    """A logger specific for debugging purposes."""
 
-    def __init__(self, logger_name: str, log_filename: str = "debug.log"):
-        super().__init__(logger_name, log_filename)
+    def __init__(
+        self, logger_name: str, log_filename: str = "debug.log", active: bool = False
+    ):
+        super().__init__(logger_name, level=logging.DEBUG)
 
         log_filepath = os.path.join(os.getcwd(), "cli", "conf", "logs", log_filename)
 
-        self.logger.addHandler(self.console_handler())
-        self.logger.addHandler(self.file_handler(log_filepath))
+        if active:
+            self.file_handler(log_filepath)
 
 
-task_status_logger = TaskStatusLogger("TaskStatusLogger")
+# TODO: change to 'False' when in prod
+LOGGING_ACTIVE = False
+
+task_status_logger = DebugLogger(
+    "TaskStatusLogger",
+    "taskStatus.log",
+    LOGGING_ACTIVE,
+)
+file_copy_logger = DebugLogger(
+    "FileCopyLogger",
+    "FileCopy.log",
+    LOGGING_ACTIVE,
+)
+zentra_missing_logger = DebugLogger(
+    "ZentraMissingLogger",
+    "ZentraMissing.log",
+    LOGGING_ACTIVE,
+)

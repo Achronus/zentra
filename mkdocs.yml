@@ -1,0 +1,44 @@
+site_name: Zentra
+site_description: Turn Pydantic models into React components
+site_url: https://zentra-docs.astrumnexus.com/
+
+theme:
+  name: 'material'
+  palette:
+    scheme: slate
+    primary: black
+    accent: blue
+  features:
+    - navigation.expand
+    - navigation.path
+    - navigation.indexes
+    - toc.follow
+    - navigation.top
+  logo: 'icon.png'
+  favicon: 'icon.png'
+  icon:
+    repo: fontawesome/brands/github
+
+repo_name: astrum-ai/zentra
+repo_url: https://github.com/Astrum-AI/Zentra/
+edit_uri: edit/main/docs
+
+nav:
+  - Getting Started:
+    - Getting Started: starting/index.md
+    - Why use Zentra: starting/why.md
+    - Installation: starting/install.md
+    - Basic Usage: starting/basic_usage.md
+    - Error Handling: starting/errors.md
+  - UI Components:
+    - UI Components: components/ui/index.md
+    - Core: components/ui/core.md
+    - Control: components/ui/control.md
+    - Modal: components/ui/modal.md
+    - Navigation: components/ui/nav.md
+    - Notification: components/ui/notify.md
+    - Presentation: components/ui/present.md
+
+extra:
+  version:
+    provider: mike

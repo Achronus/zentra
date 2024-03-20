@@ -1,19 +1,22 @@
 from pydantic.json_schema import GenerateJsonSchema
 
+from zentra.ui import Form
 
-class ZodJsonSchema(GenerateJsonSchema):
-    def generate(self, schema, mode="validation"):
+
+class ZodSchema(GenerateJsonSchema):
+    """A JSON schema for converting Zentra `Form` models to [Zod](https://zod.dev/)."""
+
+    def generate(self, schema: Form, mode: str = "validation") -> dict:
         json_schema = super().generate(schema, mode=mode)
         formatted_schema = self.format_schema(json_schema)
         return formatted_schema
 
-    @staticmethod
-    def format_schema(json_schema: dict) -> dict:
+    def format_schema(self, json_schema: dict) -> dict:
         """Convert the schema into a simple format where each item is displayed as: {'propName': 'type'}."""
         formatted_schema = {}
 
         for name, info in json_schema.get("properties").items():
-            new_name = ZodJsonSchema.to_camel_case(name)
+            new_name = self.to_camel_case(name)
             formatted_schema[new_name] = info.get("type")
         return formatted_schema
 
@@ -47,6 +50,6 @@ class ZodJsonSchema(GenerateJsonSchema):
 #     country: str
 #     agency_logo: str
 
-# schema = FormSchema.model_json_schema(schema_generator=ZodJsonSchema)
+# schema = FormSchema.model_json_schema(schema_generator=ZodSchema)
 # json_schema = json.dumps(schema, indent=2)
 # print(json_schema)

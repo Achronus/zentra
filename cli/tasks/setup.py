@@ -1,44 +1,86 @@
+import ast
+import os
+
 import typer
 
-from cli.tasks.controllers import run_tasks
-from cli.utils.printables import path_exists_table, configuration_complete_panel
-from .controllers.path import FolderDoesNotExistController
-from cli.conf.constants import ZentaFilepaths, StatusCode, PARTY, DOCS_URL
-from cli.conf.handler.file import FileHandler
+from cli.conf.checks import (
+    CheckConfigFileValid,
+    check_file_exists,
+    check_folder_exists,
+    check_zentra_exists,
+)
+from cli.conf.extract import get_file_content
+from cli.conf.storage import ConfigExistStorage, SetupPathStorage
+from cli.utils.printables import setup_complete_panel, setup_first_run_panel
+from .controllers.setup import SetupController
+from cli.conf.constants import (
+    CommonErrorCodes,
+    SetupErrorCodes,
+    SetupSuccessCodes,
+    ZentaFilepaths,
+    ZentraConfigFilepaths,
+)
 
 from rich.console import Console
 
 
 console = Console()
-root_path_msg = "Configuring [green]zentra[/green] project..."
-
-PATH_NOT_EXIST_TASKS = [
-    (FolderDoesNotExistController, root_path_msg),
-]
 
 
 class Setup:
     """A class for handling the `zentra init` command."""
 
     def __init__(self) -> None:
-        self.folder_path = ZentaFilepaths.MODELS
-        self.fh = FileHandler(self.folder_path)
+        self.paths = SetupPathStorage(
+            config=os.path.join(ZentaFilepaths.MODELS, ZentaFilepaths.SETUP_FILENAME),
+            models=ZentaFilepaths.MODELS,
+            local=ZentraConfigFilepaths.ROOT,
+            demo=ZentraConfigFilepaths.DEMO,
+            local_config=os.path.join(
+                ZentraConfigFilepaths.ROOT, ZentaFilepaths.SETUP_FILENAME
+            ),
+        )
 
-        self.path_exists = self.fh.check_folder_exists()
+        self.config_storage = ConfigExistStorage()
 
     def init_app(self) -> None:
         """Performs configuration to initialise application with Zentra."""
-        console.print(path_exists_table(self.folder_path, self.path_exists))
+        self.check_config()
 
-        if self.path_exists:
-            console.print(
-                f"\n{PARTY} Application already configured with components! Use [green]zentra generate[/green] to create them! {PARTY}\n"
-            )
-            typer.Exit(code=StatusCode.CONFIGURED)
+        if self.config_storage.app_configured():
+            zentra = check_zentra_exists()
+            if len(zentra.names.components) == 0:
+                raise typer.Exit(code=SetupErrorCodes.NO_COMPONENTS)
+            else:
+                console.print(setup_complete_panel())
+                raise typer.Exit(code=SetupSuccessCodes.ALREADY_CONFIGURED)
 
-        else:
-            run_tasks(PATH_NOT_EXIST_TASKS)
+        # Create config files
+        console.print()
+        controller = SetupController(self.paths, self.config_storage)
+        controller.run()
 
-            console.print()
-            console.print(configuration_complete_panel(self.folder_path, link=DOCS_URL))
-            console.print()
+        zentra = check_zentra_exists()
+        if len(zentra.names.components) == 0:
+            console.print(setup_first_run_panel())
+            raise typer.Exit(code=SetupSuccessCodes.COMPLETE)
+
+    def check_config(self) -> None:
+        """Checks if the config files are already setup."""
+        # Check models file exists
+        if check_folder_exists(self.paths.models):
+            self.config_storage.models_folder_exists = True
+
+        # Check config file exists
+        if check_file_exists(self.paths.config):
+            self.config_storage.config_file_exists = True
+
+            # Check config file content is valid
+            check_config = CheckConfigFileValid()
+            file_content_tree = ast.parse(get_file_content(self.paths.config))
+            check_config.visit(file_content_tree)
+
+            if check_config.is_valid():
+                self.config_storage.config_file_valid = True
+            else:
+                raise typer.Exit(code=CommonErrorCodes.INVALID_CONFIG)

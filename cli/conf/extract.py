@@ -28,18 +28,17 @@ def get_filename_dir_pairs(parent_dir: str, sub_dir: str = "") -> list[tuple[str
     all_files = []
     seen_files = set()
 
-    for root, dirs, files in os.walk(parent_dir):
-        if os.path.basename(root) == sub_dir:
-            p_dir = os.path.basename(os.path.dirname(root))
-        else:
-            p_dir = os.path.basename(root)
+    if os.path.exists(parent_dir):
+        search_dirs = [folder for folder in os.listdir(parent_dir)]
 
-        for file in files:
-            file_tuple = (p_dir, file)
+        for folder in search_dirs:
+            search_path = os.path.join(parent_dir, folder, sub_dir)
+            for file in os.listdir(search_path):
+                file_tuple = (folder, file)
 
-            if file_tuple not in seen_files:
-                all_files.append(file_tuple)
-                seen_files.add(file_tuple)
+                if file_tuple not in seen_files:
+                    all_files.append(file_tuple)
+                    seen_files.add(file_tuple)
 
     return all_files
 

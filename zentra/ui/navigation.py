@@ -44,3 +44,12 @@ class Command(Component):
     Parameters:
     - `name` (`str`) - the name of the component
     """
+
+
+class Breadcrumb(Component):
+    """
+    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Breadcrumb component.
+
+    Parameters:
+    - `name` (`str`) - the name of the component
+    """

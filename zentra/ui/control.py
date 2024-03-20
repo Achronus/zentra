@@ -172,3 +172,12 @@ class ToggleGroup(Component):
     Parameters:
     - `name` (`str`) - the name of the component
     """
+
+
+class InputOtp(Component):
+    """
+    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) InputOtp component.
+
+    Parameters:
+    - `name` (`str`) - the name of the component
+    """

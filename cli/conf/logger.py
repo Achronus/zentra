@@ -65,14 +65,32 @@ class BaseLogger:
 class DebugLogger(BaseLogger):
     """A logger specific for debugging purposes."""
 
-    def __init__(self, logger_name: str, log_filename: str = "debug.log"):
+    def __init__(
+        self, logger_name: str, log_filename: str = "debug.log", active: bool = False
+    ):
         super().__init__(logger_name, level=logging.DEBUG)
 
         log_filepath = os.path.join(os.getcwd(), "cli", "conf", "logs", log_filename)
 
-        self.file_handler(log_filepath)
+        if active:
+            self.file_handler(log_filepath)
 
 
-task_status_logger = DebugLogger("TaskStatusLogger", "taskStatus.log")
-file_copy_logger = DebugLogger("FileCopyLogger", "FileCopy.log")
-zentra_missing_logger = DebugLogger("ZentraMissingLogger", "ZentraMissing.log")
+# TODO: change to 'False' when in prod
+LOGGING_ACTIVE = False
+
+task_status_logger = DebugLogger(
+    "TaskStatusLogger",
+    "taskStatus.log",
+    LOGGING_ACTIVE,
+)
+file_copy_logger = DebugLogger(
+    "FileCopyLogger",
+    "FileCopy.log",
+    LOGGING_ACTIVE,
+)
+zentra_missing_logger = DebugLogger(
+    "ZentraMissingLogger",
+    "ZentraMissing.log",
+    LOGGING_ACTIVE,
+)

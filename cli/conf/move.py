@@ -10,7 +10,7 @@ def transfer_folder_file_pairs(
     dest_dir: str,
     src_sub_dir: str = "",
 ) -> None:
-    """Copies a set filenames from one directory to another using a list of `folder, filename)` pairs. Additionally, accepts an optional `src_sub_dir` for more refinement."""
+    """Copies a set of filenames from one directory to another using a list of `folder, filename)` pairs. Additionally, accepts an optional `src_sub_dir` for more refinement."""
     for folder, filename in folder_file_pairs:
         src_path = os.path.join(src_dir, folder, src_sub_dir, filename)
         dest_path = os.path.join(dest_dir, folder, filename)

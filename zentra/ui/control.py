@@ -27,27 +27,57 @@ class Button(Component):
 
 
 class Calendar(Component):
-    """A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Calendar component."""
+    """
+    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Calendar component.
+
+    Parameters:
+    - `name` (`str`) - the name of the component
+    """
 
 
 class Checkbox(Component):
-    """A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Checkbox component."""
+    """
+    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Checkbox component.
+
+    Parameters:
+    - `name` (`str`) - the name of the component
+    """
 
 
 class Collapsible(Component):
-    """A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Collapsible component."""
+    """
+    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Collapsible component.
+
+    Parameters:
+    - `name` (`str`) - the name of the component
+    """
 
 
 class Combobox(Component):
-    """A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Combobox component."""
+    """
+    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Combobox component.
+
+    Parameters:
+    - `name` (`str`) - the name of the component
+    """
 
 
 class DatePicker(Component):
-    """A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) DatePicker component."""
+    """
+    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) DatePicker component.
+
+    Parameters:
+    - `name` (`str`) - the name of the component
+    """
 
 
 class Input(Component):
-    """A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Input component."""
+    """
+    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Input component.
+
+    Parameters:
+    - `name` (`str`) - the name of the component
+    """
 
     label: str
     placeholder: str
@@ -55,40 +85,90 @@ class Input(Component):
 
 
 class Label(Component):
-    """A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Label component."""
+    """
+    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Label component.
+
+    Parameters:
+    - `name` (`str`) - the name of the component
+    """
 
 
 class RadioGroup(Component):
-    """A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) RadioGroup component."""
+    """
+    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) RadioGroup component.
+
+    Parameters:
+    - `name` (`str`) - the name of the component
+    """
 
 
 class ScrollArea(Component):
-    """A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) ScrollArea component."""
+    """
+    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) ScrollArea component.
+
+    Parameters:
+    - `name` (`str`) - the name of the component
+    """
 
 
 class Select(Component):
-    """A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Select component."""
+    """
+    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Select component.
+
+    Parameters:
+    - `name` (`str`) - the name of the component
+    """
 
 
 class Slider(Component):
-    """A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Slider component."""
+    """
+    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Slider component.
+
+    Parameters:
+    - `name` (`str`) - the name of the component
+    """
 
 
 class Switch(Component):
-    """A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Switch component."""
+    """
+    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Switch component.
+
+    Parameters:
+    - `name` (`str`) - the name of the component
+    """
 
 
 class Tabs(Component):
-    """A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Tabs component."""
+    """
+    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Tabs component.
+
+    Parameters:
+    - `name` (`str`) - the name of the component
+    """
 
 
 class Textarea(Component):
-    """A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Textarea component."""
+    """
+    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Textarea component.
+
+    Parameters:
+    - `name` (`str`) - the name of the component
+    """
 
 
 class Toggle(Component):
-    """A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Toggle component."""
+    """
+    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Toggle component.
+
+    Parameters:
+    - `name` (`str`) - the name of the component
+    """
 
 
 class ToggleGroup(Component):
-    """A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) ToggleGroup component."""
+    """
+    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) ToggleGroup component.
+
+    Parameters:
+    - `name` (`str`) - the name of the component
+    """

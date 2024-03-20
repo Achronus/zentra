@@ -41,6 +41,7 @@ agency_details = Page(
                                         name="email",
                                         label="Account Email",
                                         placeholder="Email",
+                                        read_only=True,
                                     ),
                                 ),
                             ],

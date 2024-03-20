@@ -104,7 +104,7 @@ class Zentra(BaseModel):
         for page in self.pages:
             page_components += extract_component_names(page.get_schema())
 
-        return page_components
+        return list(set(page_components))
 
     def __set_component_cls_names(self) -> None:
         """A helper function for storing the component class names."""

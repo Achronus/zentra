@@ -18,6 +18,7 @@ agency_details = Page(
                     content=[
                         Form(
                             name="agencyForm",
+                            layout=[1, 2],
                             fields=[
                                 FormField(
                                     name="agencyLogo",
@@ -31,6 +32,15 @@ agency_details = Page(
                                         name="name",
                                         label="Agency Name",
                                         placeholder="Your Agency Name",
+                                    ),
+                                ),
+                                FormField(
+                                    name="companyEmail",
+                                    label="Agency Email",
+                                    content=Input(
+                                        name="email",
+                                        label="Account Email",
+                                        placeholder="Email",
                                     ),
                                 ),
                             ],

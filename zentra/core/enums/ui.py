@@ -14,3 +14,9 @@ class ButtonVariant(str, Enum):
 class ButtonIconPosition(str, Enum):
     start = "start"
     end = "end"
+
+
+class FormFieldLayout(int, Enum):
+    single = 1
+    duo = 2
+    triple = 3

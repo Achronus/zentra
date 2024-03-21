@@ -141,8 +141,12 @@ class Switch(Component):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Switch component.
 
     Parameters:
-    - `name` (`str`) - the name of the component
+    - `disabled` (`bool, optional`) - a flag for disabling the switch component. Default is `False`
+    - `read_only` (`bool, optional`) - a flag for making the switch read only. Default is `False`. More information on [Read only](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-readonly)
     """
+
+    disabled: bool = False
+    read_only: bool = False
 
 
 class Tabs(Component):

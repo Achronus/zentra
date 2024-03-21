@@ -203,6 +203,7 @@ class Form(Component):
             raise ValueError(
                 f"'sum(layout) != len(fields)' -> '{sum(layout)} != {fields_len}'!\nEither:\n  1. Remove 'FormFields' from 'fields'\n  2. Or, update 'layout' to match 'len(fields)'\n\n"
             )
+        return layout
 
 
 class FileUpload(Component):

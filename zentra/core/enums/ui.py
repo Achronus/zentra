@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import Enum, IntEnum
 
 
 class ButtonVariant(str, Enum):
@@ -16,7 +16,7 @@ class ButtonIconPosition(str, Enum):
     end = "end"
 
 
-class FormFieldLayout(int, Enum):
+class FormFieldLayout(IntEnum):
     single = 1
     duo = 2
     triple = 3

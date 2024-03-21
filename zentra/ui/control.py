@@ -1,3 +1,4 @@
+from pydantic import ConfigDict
 from zentra.core import Component, Icon
 from zentra.core.enums.ui import ButtonVariant, ButtonIconPosition, InputTypes
 
@@ -86,6 +87,8 @@ class Input(Component):
     type: InputTypes
     placeholder: str
     read_only: bool = False
+
+    model_config = ConfigDict(use_enum_values=True)
 
 
 class Label(Component):

@@ -1,6 +1,11 @@
-from pydantic import ValidationInfo, field_validator
+from itertools import accumulate
+import json
+from typing import Any
+
 from zentra.core import Component
 from zentra.core.enums.ui import FormFieldLayout
+
+from pydantic import ConfigDict, ValidationInfo, field_validator
 
 
 class FormField(Component):
@@ -192,6 +197,7 @@ class Form(Component):
 
     fields: list[FormField]
     layout: list[FormFieldLayout]
+    model_config: ConfigDict = ConfigDict(use_enum_values=True)
 
     @field_validator("layout")
     @classmethod
@@ -204,6 +210,52 @@ class Form(Component):
                 f"'sum(layout) != len(fields)' -> '{sum(layout)} != {fields_len}'!\nEither:\n  1. Remove 'FormFields' from 'fields'\n  2. Or, update 'layout' to match 'len(fields)'\n\n"
             )
         return layout
+
+    def __ts_schema(self) -> dict[str, Any]:
+        """Generates a JSON schema for the Form in a TypeScript format."""
+        output = self.model_dump()
+        cumulative_row_sizes = list(accumulate(self.layout))
+
+        for idx, field in enumerate(self.fields):
+            content = {"component": field.content.__class__.__name__}
+            content["attributes"] = field.content.model_dump()
+
+            content["row"] = next(
+                i for i, size in enumerate(cumulative_row_sizes, start=1) if idx < size
+            )
+            output["fields"][idx]["content"] = content
+
+        return output
+
+    def __zod_schema(self) -> dict[str, Any]:
+        """Generates a JSON schema for the Form in a Zod format."""
+        pass
+
+    def schema(self, type: str = "typescript") -> dict[str, Any]:
+        """
+        Generates a JSON schema for the Form.
+
+        Parameters:
+        - `type` (`str, optional`) - the type of schema to generate. Options: `['typescript', 'zod']`. Default is `typescript`
+        """
+        if type == "typescript":
+            return self.__ts_schema()
+        elif type == "zod":
+            return self.__zod_schema()
+        else:
+            raise ValueError(
+                f"Invalid type='{type}'! Must be one of: ['typescript', 'zod']"
+            )
+
+    def json_schema(self, type: str, indent: int = 2) -> str:
+        """
+        Generates an indented JSON schema for the Form.
+
+        Parameters:
+        - `type` (`str`) - the type of schema to generate. Options: `['typescript', 'zod']`
+        - `indent` (`int, optional`) - the indent size (in spaces) for the schema. Default is `2`
+        """
+        return json.dumps(self.schema(type), indent=indent)
 
 
 class FileUpload(Component):

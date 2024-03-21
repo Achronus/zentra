@@ -197,7 +197,8 @@ class Form(Component):
 
     fields: list[FormField]
     layout: list[FormFieldLayout]
-    model_config: ConfigDict = ConfigDict(use_enum_values=True)
+
+    model_config = ConfigDict(use_enum_values=True)
 
     @field_validator("layout")
     @classmethod
@@ -229,7 +230,7 @@ class Form(Component):
 
     def __zod_schema(self) -> dict[str, Any]:
         """Generates a JSON schema for the Form in a Zod format."""
-        pass
+        raise NotImplementedError()
 
     def schema(self, type: str = "typescript") -> dict[str, Any]:
         """
@@ -247,7 +248,7 @@ class Form(Component):
                 f"Invalid type='{type}'! Must be one of: ['typescript', 'zod']"
             )
 
-    def json_schema(self, type: str, indent: int = 2) -> str:
+    def json_schema(self, type: str = "typescript", indent: int = 2) -> str:
         """
         Generates an indented JSON schema for the Form.
 
@@ -255,7 +256,7 @@ class Form(Component):
         - `type` (`str`) - the type of schema to generate. Options: `['typescript', 'zod']`
         - `indent` (`int, optional`) - the indent size (in spaces) for the schema. Default is `2`
         """
-        return json.dumps(self.schema(type), indent=indent)
+        return json.dumps(self.schema(type=type), indent=indent)
 
 
 class FileUpload(Component):

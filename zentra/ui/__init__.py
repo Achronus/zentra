@@ -6,6 +6,7 @@ from zentra.core import Component
 from pydantic import ConfigDict, ValidationInfo, field_validator
 
 from zentra.core.enums.ui import FormFieldLayout
+from zentra.ui.control import Button
 
 
 class FormField(Component):
@@ -90,11 +91,12 @@ class FormField(Component):
 
 class Form(Component):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Form component.
+    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Form component. Submit buttons are automatically created for each form and are not needed in the `fields` attribute.
 
     Parameters:
     - `name` (`str`) - the name of the `Form`
-    - `fields` (`list[list[FormField]]`) - a list of lists containing `FormField` components. Each list of `FormFields` is split into a separate row. Available list sizes include: [1, 2, 3]. Row's cannot have more than 3 items
+    - `fields` (`list[list[FormField] | FormField]`) - a list of `FormField`s as either individual values or inside additional `lists` (`list[FormField]`) to represent rows. Available row sizes include: `[2, 3]`
+    - `btn_text` (`str, optional`) - the text displayed on the `Form` submission button. Default is `Submit`
 
     Examples:
     1. A simple form with three fields, split into two rows.
@@ -102,31 +104,30 @@ class Form(Component):
     Form(
         name="agencyForm",
         fields=[
-        [
             FormField(
                 name="agencyLogo",
                 label="Agency Logo",
                 content=FileUpload(),
             ),
-        ],
-        [
-            FormField(
-                name="name",
-                label="Agency Name",
-                content=Input(
-                    type="text",
-                    placeholder="Your Agency Name",
+            [
+                FormField(
+                    name="name",
+                    label="Agency Name",
+                    content=Input(
+                        type="text",
+                        placeholder="Your Agency Name",
+                    ),
                 ),
-            ),
-            FormField(
-                name="companyEmail",
-                label="Agency Email",
-                content=Input(
-                    type="email",
-                    placeholder="Email",
+                FormField(
+                    name="companyEmail",
+                    label="Agency Email",
+                    content=Input(
+                        type="email",
+                        placeholder="Email",
+                    ),
                 ),
-            ),
-        ],
+            ],
+        ]
     )
     ```
     Into ->
@@ -191,32 +192,37 @@ class Form(Component):
                 )}
                 />
             </div>
+            <Button type="submit" disabled={isLoading}>
+                {isLoading? <Loading/> : 'Submit'}
+            </Button>
         </form>
     </Form>
     ```
     """
 
     name: str
-    fields: list[list[FormField]]
+    fields: list[FormField | list[FormField]]
+    btn_text: str = "Submit"
 
     model_config = ConfigDict(use_enum_values=True)
 
     @field_validator("fields", mode="before")
     @classmethod
     def invalid_row_size(
-        cls, fields: list[list[FormField]], info: ValidationInfo
+        cls, fields: list[list[FormField] | FormField], info: ValidationInfo
     ) -> list[list[FormField]]:
         valid_sizes = [item.value for item in FormFieldLayout]
-        for row in fields:
-            if not isinstance(row, list):
-                raise ValueError(
-                    f"'{type(row)}' is not a 'list'! 'FormFields' must be stored in 'lists' to define the form rows!\n"
-                )
+        for i, row in enumerate(fields):
+            if isinstance(row, list) and len(row) not in valid_sizes:
+                if len(row) == 1:
+                    raise ValueError(
+                        f"for 'list[FormField]' at position: {i}.\n'len(row) == {len(row)}'. Cannot have single valued `FormFields` inside a row, take it outside of the 'list' or add another `FormField`!\n"
+                    )
+                else:
+                    raise ValueError(
+                        f"for 'list[FormField]' at position: {i}.\n'len(row) == {len(row)}'. Row size must be one of '{valid_sizes}'! Check 'FormFields' are assigned correctly.\n"
+                    )
 
-            if len(row) not in valid_sizes:
-                raise ValueError(
-                    f"'len(row) == {len(row)}'. Row size must be one of '{valid_sizes}'! Check 'FormFields' are divided into rows correctly.\n"
-                )
         return fields
 
     def __ts_schema(self) -> dict[str, Any]:

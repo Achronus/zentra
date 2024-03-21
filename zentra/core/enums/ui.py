@@ -17,7 +17,6 @@ class ButtonIconPosition(str, Enum):
 
 
 class FormFieldLayout(IntEnum):
-    SINGLE = 1
     DUO = 2
     TRIPLE = 3
 

@@ -3,6 +3,10 @@ from enum import Enum
 
 from cli.conf.extract import local_path
 
+# Library versions
+NEXTJS_VERSION = "14.1.4"
+SHADCN_UI_VERSION = "0.8.0"
+
 
 class CommonErrorCodes(Enum):
     TEST_ERROR = -1

@@ -20,3 +20,15 @@ class FormFieldLayout(IntEnum):
     SINGLE = 1
     DUO = 2
     TRIPLE = 3
+
+
+class InputTypes(str, Enum):
+    TEXT = "text"
+    EMAIL = "email"
+    PASSWORD = "password"
+    NUMBER = "number"
+    FILE = "file"
+    TEL = "tel"
+    SEARCH = "search"
+    URL = "url"
+    COLOR = "colour"

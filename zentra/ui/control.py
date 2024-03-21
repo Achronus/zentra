@@ -1,5 +1,5 @@
 from zentra.core import Component, Icon
-from zentra.core.enums.ui import ButtonVariant, ButtonIconPosition
+from zentra.core.enums.ui import ButtonVariant, ButtonIconPosition, InputTypes
 
 
 class Button(Component):
@@ -75,12 +75,15 @@ class Input(Component):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Input component.
 
+    Inputs are extremely versatile as expressed in the [HTML Input docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/url). We've limited the attributes to the basics for simplicity. Once components are generated, you can edit them in the respective `.tsx` files with additional attributes if needed.
+
     Parameters:
-    - `type` (`str`) - the type of input field
+    - `type` (`str`) - the type of input field. Options `['text', 'email', 'password', 'number', 'file', 'tel', 'search', 'url', 'color']`
+    - `placeholder` (`str`) - the placeholder text for the input
+    - `read_only` (`bool, optional`) - a flag for setting the input to read only. Default is `False`
     """
 
-    type: str
-    label: str
+    type: InputTypes
     placeholder: str
     read_only: bool = False
 

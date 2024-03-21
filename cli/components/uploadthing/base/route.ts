@@ -1,10 +1,7 @@
-import { createRouteHandler } from 'uploadthing/server';
+import { createRouteHandler } from 'uploadthing/next';
 
-import { uploadFileRouter } from "~/server/uploadthing";
+import { uploadFileRouter } from './core';
 
 export const { GET, POST } = createRouteHandler({
-    router: uploadFileRouter,
-    config: {
-        uploadthingSecret: import.meta.env.UPLOADTHING_SECRET,
-    },
+    router: uploadFileRouter 
 });

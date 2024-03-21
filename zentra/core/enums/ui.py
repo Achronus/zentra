@@ -2,21 +2,21 @@ from enum import Enum, IntEnum
 
 
 class ButtonVariant(str, Enum):
-    none = "none"
-    primary = "primary"
-    secondary = "secondary"
-    destructive = "destructive"
-    outline = "outline"
-    ghost = "ghost"
-    link = "link"
+    NONE = "none"
+    PRIMARY = "primary"
+    SECONDARY = "secondary"
+    DESTRUCTIVE = "destructive"
+    OUTLINE = "outline"
+    GHOST = "ghost"
+    LINK = "link"
 
 
 class ButtonIconPosition(str, Enum):
-    start = "start"
-    end = "end"
+    START = "start"
+    END = "end"
 
 
 class FormFieldLayout(IntEnum):
-    single = 1
-    duo = 2
-    triple = 3
+    SINGLE = 1
+    DUO = 2
+    TRIPLE = 3

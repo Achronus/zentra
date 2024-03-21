@@ -41,7 +41,8 @@ def generate_components() -> None:
             config=os.path.join(ZentaFilepaths.MODELS, ZentaFilepaths.SETUP_FILENAME),
             models=ZentaFilepaths.MODELS,
             component=LocalCoreComponentFilepaths.ROOT,
-            generate=ZentraGeneratedFilepaths.ZENTRA,
+            generate=ZentraGeneratedFilepaths.COMPONENTS,
+            templates=ZentraGeneratedFilepaths.ZENTRA,
         )
         generate = Generate(paths)
         generate.init_checks()

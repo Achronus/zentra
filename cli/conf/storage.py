@@ -57,13 +57,15 @@ class GeneratePathStorage(BaseModel):
     - config (str) - the filepath to the zentra models config file
     - models (str) - the directory path to the zentra models folder
     - component (str) - the directory path to the local zentra component folder
-    - zentra (str) - the directory path to the zentra generate component folder
+    - generate (str) - the directory path to the zentra generate component folder
+    - templates (str) - the directory path to the zentra generate template folder
     """
 
     config: str
     models: str
     component: str
     generate: str
+    templates: str
 
 
 class CountStorage(BaseModel):

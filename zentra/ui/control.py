@@ -142,7 +142,7 @@ class Switch(Component):
 
     Parameters:
     - `disabled` (`bool, optional`) - a flag for disabling the switch component. Default is `False`
-    - `read_only` (`bool, optional`) - a flag for making the switch read only. Default is `False`. More information on [Read only](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-readonly)
+    - `read_only` (`bool, optional`) - a flag for making the switch read only. Default is `False`. Indicates that the element is not editable, but is otherwise operable. More information on [Read only](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-readonly)
     """
 
     disabled: bool = False

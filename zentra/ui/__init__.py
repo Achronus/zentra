@@ -3,9 +3,9 @@ import json
 from typing import Any
 
 from zentra.core import Component
-from zentra.core.enums.ui import FormFieldLayout
-
 from pydantic import ConfigDict, ValidationInfo, field_validator
+
+from zentra.core.enums.ui import FormFieldLayout
 
 
 class FormField(Component):
@@ -94,27 +94,27 @@ class Form(Component):
 
     Parameters:
     - `name` (`str`) - the name of the `Form`
-    - `fields` (`list[FormField]`) - a list of `FormField` components
-    - `layout` (`list[int]`) - a list of `integers` for grouping the fields into rows. Accepted `int` options: `[1, 2, 3]`. `layout` must equate to: `sum(layout) == len(fields)`. `fields` are automatically assigned to their row based on their position in the `fields` list
+    - `fields` (`list[list[FormField]]`) - a list of lists containing `FormField` components. Each list of `FormFields` is split into a separate row. Available list sizes include: [1, 2, 3]. Row's cannot have more than 3 items
 
     Examples:
     1. A simple form with three fields, split into two rows.
     ```python
     Form(
         name="agencyForm",
-        layout=[1, 2],
         fields=[
+        [
             FormField(
                 name="agencyLogo",
                 label="Agency Logo",
-                content=FileUpload(name="agencyLogo"),
+                content=FileUpload(),
             ),
+        ],
+        [
             FormField(
                 name="name",
                 label="Agency Name",
                 content=Input(
-                    name="name",
-                    label="Agency Name",
+                    type="text",
                     placeholder="Your Agency Name",
                 ),
             ),
@@ -122,10 +122,8 @@ class Form(Component):
                 name="companyEmail",
                 label="Agency Email",
                 content=Input(
-                    name="email",
-                    label="Account Email",
+                    type="email",
                     placeholder="Email",
-                    read_only=True,
                 ),
             ),
         ],
@@ -173,6 +171,8 @@ class Form(Component):
                         </FormItem>
                     )}
                 />
+            </div>
+            <div className='flex md:flex-row gap-4'>
                 <FormField
                 control={form.control}
                 name="companyEmail"
@@ -197,22 +197,27 @@ class Form(Component):
     """
 
     name: str
-    fields: list[FormField]
-    layout: list[FormFieldLayout]
+    fields: list[list[FormField]]
 
     model_config = ConfigDict(use_enum_values=True)
 
-    @field_validator("layout")
+    @field_validator("fields", mode="before")
     @classmethod
-    def field_layout_size_must_match(
-        cls, layout: list[FormFieldLayout], info: ValidationInfo
-    ) -> None:
-        fields_len = len(info.data["fields"])
-        if sum(layout) != fields_len:
-            raise ValueError(
-                f"'sum(layout) != len(fields)' -> '{sum(layout)} != {fields_len}'!\nEither:\n  1. Remove 'FormFields' from 'fields'\n  2. Or, update 'layout' to match 'len(fields)'\n\n"
-            )
-        return layout
+    def invalid_row_size(
+        cls, fields: list[list[FormField]], info: ValidationInfo
+    ) -> list[list[FormField]]:
+        valid_sizes = [item.value for item in FormFieldLayout]
+        for row in fields:
+            if not isinstance(row, list):
+                raise ValueError(
+                    f"'{type(row)}' is not a 'list'! 'FormFields' must be stored in 'lists' to define the form rows!\n"
+                )
+
+            if len(row) not in valid_sizes:
+                raise ValueError(
+                    f"'len(row) == {len(row)}'. Row size must be one of '{valid_sizes}'! Check 'FormFields' are divided into rows correctly.\n"
+                )
+        return fields
 
     def __ts_schema(self) -> dict[str, Any]:
         """Generates a JSON schema for the Form in a TypeScript format."""

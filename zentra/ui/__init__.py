@@ -13,7 +13,7 @@ class FormField(Component):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) FormField inside the Form component.
 
     Parameters:
-    - `name` (`str`) - the name of the component
+    - `name` (`str`) - the name of the `FormField`. Used for the [Zod object schema](https://zod.dev/?id=basic-usage)
     - `label` (`str`) - the `FormLabel` text
     - `content` (`zentra.Component`) - the component to add to `FormControl`
     - `disabled` (`bool, optional`) - a flag for enabling the disabled value to `isLoading`. Default is `True`. When `False`, removes `disabled` from `FormField`
@@ -80,6 +80,7 @@ class FormField(Component):
     ```
     """
 
+    name: str
     label: str
     content: Component
     disabled: bool = True
@@ -92,7 +93,7 @@ class Form(Component):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Form component.
 
     Parameters:
-    - `name` (`str`) - the name of the component
+    - `name` (`str`) - the name of the `Form`
     - `fields` (`list[FormField]`) - a list of `FormField` components
     - `layout` (`list[int]`) - a list of `integers` for grouping the fields into rows. Accepted `int` options: `[1, 2, 3]`. `layout` must equate to: `sum(layout) == len(fields)`. `fields` are automatically assigned to their row based on their position in the `fields` list
 
@@ -195,6 +196,7 @@ class Form(Component):
     ```
     """
 
+    name: str
     fields: list[FormField]
     layout: list[FormFieldLayout]
 
@@ -263,7 +265,6 @@ class FileUpload(Component):
     """A Zentra model for the [uploadthing](https://uploadthing.com/) FileUpload fields.
 
     Parameters:
-    - `name` (`str`) - the name of the component
     - `apiEndpoint` (`str, optional`) - the API endpoint to use. Defaults to `media`. API endpoints are stored in `frontend/src/lib/core.ts -> uploadFileRouter`. We advise you leave this as `media` until you update your `frontend` files later. You can find more information about this in the [uploadthing docs](https://docs.uploadthing.com/getting-started/appdir#set-up-a-filerouter)
     """
 

@@ -76,9 +76,10 @@ class Input(Component):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Input component.
 
     Parameters:
-    - `name` (`str`) - the name of the component
+    - `type` (`str`) - the type of input field
     """
 
+    type: str
     label: str
     placeholder: str
     read_only: bool = False

@@ -8,12 +8,7 @@ from cli.conf.storage import BasicNameStorage
 class Component(BaseModel):
     """
     A Zentra model for all React components.
-
-    Parameters:
-    - name (str) - the name of the component.
     """
-
-    name: str
 
 
 class Page(BaseModel):

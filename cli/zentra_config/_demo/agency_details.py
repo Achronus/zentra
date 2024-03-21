@@ -23,13 +23,13 @@ agency_details = Page(
                                 FormField(
                                     name="agencyLogo",
                                     label="Agency Logo",
-                                    content=FileUpload(name="agencyLogo"),
+                                    content=FileUpload(),
                                 ),
                                 FormField(
                                     name="name",
                                     label="Agency Name",
                                     content=Input(
-                                        name="name",
+                                        type="text",
                                         label="Agency Name",
                                         placeholder="Your Agency Name",
                                     ),
@@ -38,7 +38,7 @@ agency_details = Page(
                                     name="companyEmail",
                                     label="Agency Email",
                                     content=Input(
-                                        name="email",
+                                        type="email",
                                         label="Account Email",
                                         placeholder="Email",
                                         read_only=True,

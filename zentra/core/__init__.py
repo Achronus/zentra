@@ -12,7 +12,13 @@ class Component(BaseModel):
 
 
 class Page(BaseModel):
-    """A Zentra model for a single webpage of React components."""
+    """
+    A Zentra model for a single webpage of React components.
+
+    Parameters:
+    - `name` (`str`) - the name of the page
+    - `components` (`list[Component]`) - a list of page components
+    """
 
     name: str
     components: list[Component]

@@ -4,16 +4,24 @@ site_url: https://zentra-docs.astrumnexus.com/
 
 theme:
   name: 'material'
+  custom_dir: 'docs/theme'
+  language: en
   palette:
     scheme: slate
     primary: black
     accent: blue
   features:
-    - navigation.expand
-    - navigation.path
+    - navigation.tabs
     - navigation.indexes
-    - toc.follow
     - navigation.top
+    - navigation.sections
+    - navigation.path
+    - navigation.footer
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
   logo: 'icon.png'
   favicon: 'icon.png'
   icon:
@@ -23,6 +31,12 @@ repo_name: astrum-ai/zentra
 repo_url: https://github.com/Astrum-AI/Zentra/
 edit_uri: edit/main/docs
 
+watch:
+- zentra
+
+extra_css:
+  - 'extra/icons.css'
+
 nav:
   - Getting Started:
     - Getting Started: starting/index.md
@@ -30,15 +44,53 @@ nav:
     - Installation: starting/install.md
     - Basic Usage: starting/basic_usage.md
     - Error Handling: starting/errors.md
-  - UI Components:
-    - UI Components: components/ui/index.md
-    - Core: components/ui/core.md
-    - Control: components/ui/control.md
-    - Modal: components/ui/modal.md
-    - Navigation: components/ui/nav.md
-    - Notification: components/ui/notify.md
-    - Presentation: components/ui/present.md
+  - Components: 
+    - Components: components/index.md
+    - Core: components/core.md
+    - UI: 
+      - UI: components/ui/index.md
+      - Core: components/ui/core.md
+      - Control: components/ui/control.md
+      - Modal: components/ui/modal.md
+      - Navigation: components/ui/nav.md
+      - Notification: components/ui/notify.md
+      - Presentation: components/ui/present.md
 
 extra:
   version:
     provider: mike
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Astrum-AI/Zentra/
+    - icon: fontawesome/brands/docker
+      link: https://hub.docker.com/r/astrum-ai/zentra/
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/pydantic-zentra/
+
+copyright: |
+  Copyright &copy; 2024 <a href="https://github.com/Astrum-AI/" target="_blank" rel="noopener">Astrum AI</a>
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      pygments_lang_class: true
+      auto_title: true
+      linenums: true
+  - pymdownx.tabbed:
+      alternate_style: true
+  - toc:
+      permalink: true
+      title: Page Contents
+
+plugins:
+  - mike:
+      alias_type: symlink
+      canonical_version: latest
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [.]
+          options: 

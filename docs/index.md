@@ -1,4 +1,9 @@
-# Welcome to Zentra
+# Zentra
+
+{{ version }}
+
+A tool for creating NextJS frontend's faster, using Pydantic models.
+
 
 For full documentation visit [mkdocs.org](https://www.mkdocs.org).
 

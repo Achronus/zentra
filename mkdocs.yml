@@ -38,12 +38,16 @@ extra_css:
   - 'extra/icons.css'
 
 nav:
+  - Zentra: index.md
   - Getting Started:
     - Getting Started: starting/index.md
     - Why use Zentra: starting/why.md
     - Installation: starting/install.md
     - Basic Usage: starting/basic_usage.md
-    - Error Handling: starting/errors.md
+  - Commands:
+    - Commands: commands/index.md
+    - zentra init: commands/init.md
+    - zentra generate: commands/generate.md
   - Components: 
     - Components: components/index.md
     - Core: components/core.md
@@ -55,6 +59,11 @@ nav:
       - Navigation: components/ui/nav.md
       - Notification: components/ui/notify.md
       - Presentation: components/ui/present.md
+  - Help:
+    - Help: help/index.md
+    - Encountering Errors: help/errors.md
+    - Reporting Issues: help/report.md
+  - Release Notes: release_notes.md
 
 extra:
   version:

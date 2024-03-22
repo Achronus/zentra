@@ -14,22 +14,22 @@ We've designed our error messages to be as informative as possible so that you c
 
 Each error will come with a code that will help you navigate to a part of this page for details on why the error is happening and how you could potentially solve it. 
 
-Simply use the 'find' (`Ctrl + f` on Windows, Linux and ChromeOS or `cmd + f` on Mac) function in your browser. Then, copy and paste the `error code: [number]` to find it on the page.
+Simply use the find (`Ctrl + f` on Windows, Linux and ChromeOS, or `cmd + f` on Mac) function in your browser. Then, copy and paste the `error code: [number]` to find it on the page.
 
-If you've encountered something extremely mind boggling (trust me, you'll know 😉), please report the issue on the [Zentra GitHub repository](https://github.com/Astrum-AI/Zentra).
+If you've encountered something extremely mind boggling (trust me, you'll know 😉), please follow our [Reporting Issues Guide](report.md).
 
 
 ## List of Errors
 
 ### Common Errors
 
-Errors that are commonly found across all tool commands.
+Errors that can occur across all commands.
 
-### Setup Command Errors
+### Setup Errors
 
-Errors that are found when running the `zentra init` command.
+Errors encountered when running the [`zentra init`](../commands/init.md) command.
 
-### Generate Command Errors
+### Generate Errors
 
-Errors that are found when running the `zentra generate` command. 
+Errors encountered when running the [`zentra generate`](../commands/generate.md) command. 
 

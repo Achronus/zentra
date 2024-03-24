@@ -20,10 +20,96 @@ from cli.tasks.controllers.generate import GenerateController
 from cli.tasks.generate import Generate
 
 from zentra.core import Page, Zentra
-from zentra.ui import FileUpload, Form, FormField
+from zentra.ui import Form, FormField
 from zentra.ui.control import Button, Input
 from zentra.ui.notification import AlertDialog
 from zentra.ui.presentation import Card
+from zentra.uploadthing import FileUpload
+
+
+@pytest.fixture
+def path_storage(tmp_path) -> GeneratePathStorage:
+    return GeneratePathStorage(
+        config=os.path.join(tmp_path, "test_models", "config_init.py"),
+        models=os.path.join(tmp_path, "test_models"),
+        component=os.path.join(tmp_path, "test_local"),
+        generate=os.path.join(tmp_path, "test_generated"),
+        templates=os.path.join(tmp_path, "zentra_templates"),
+    )
+
+
+@pytest.fixture
+def generate(path_storage: GeneratePathStorage) -> Generate:
+    return Generate(paths=path_storage)
+
+
+@pytest.fixture
+def setup_controller(tmp_path) -> SetupController:
+    return SetupController(
+        SetupPathStorage(
+            config=os.path.join(tmp_path, "zentra_models", "zentra_init.py"),
+            models=os.path.join(tmp_path, "zentra_models"),
+            local=os.path.join(tmp_path, "zentra_config"),
+            demo=os.path.join(tmp_path, "zentra_config", "_demo"),
+            local_config=os.path.join(tmp_path, "zentra_config", "zentra_init.py"),
+        ),
+        config_storage=ConfigExistStorage(),
+    )
+
+
+@pytest.fixture
+def generate_controller(
+    path_storage: GeneratePathStorage, zentra: Zentra
+) -> GenerateController:
+    return GenerateController(zentra, paths=path_storage)
+
+
+@pytest.fixture
+def page() -> Page:
+    return Page(
+        name="AgencyDetails",
+        components=[
+            AlertDialog(
+                name="agencyAlertDialog",
+                content=[
+                    Card(
+                        name="agencyInfo",
+                        title="Agency Information",
+                        description="Let's create an agency for your business. You can edit agency settings later from the agency settings tab.",
+                        content=[
+                            Form(
+                                name="agencyForm",
+                                layout=[2],
+                                fields=[
+                                    FormField(
+                                        name="agencyLogo",
+                                        label="Agency Logo",
+                                        content=FileUpload(),
+                                    ),
+                                    FormField(
+                                        name="name",
+                                        label="Agency Name",
+                                        content=Input(
+                                            type="text",
+                                            label="Agency Name",
+                                            placeholder="Your Agency Name",
+                                        ),
+                                    ),
+                                ],
+                            ),
+                        ],
+                    ),
+                ],
+            ),
+        ],
+    )
+
+
+@pytest.fixture
+def zentra(page: Page) -> Zentra:
+    zentra = Zentra()
+    zentra.register([page])
+    return zentra
 
 
 class TestStatus:
@@ -72,94 +158,68 @@ class TestBaseController:
 
 
 class TestSetupController:
-    @pytest.fixture
-    def controller(self, tmp_path) -> SetupController:
-        return SetupController(
-            SetupPathStorage(
-                config=os.path.join(tmp_path, "zentra_models", "zentra_init.py"),
-                models=os.path.join(tmp_path, "zentra_models"),
-                local=os.path.join(tmp_path, "zentra_config"),
-                demo=os.path.join(tmp_path, "zentra_config", "_demo"),
-                local_config=os.path.join(tmp_path, "zentra_config", "zentra_init.py"),
-            ),
-            config_storage=ConfigExistStorage(),
-        )
+    @staticmethod
+    def test_make_models_dir_true(setup_controller: SetupController):
+        setup_controller.config_storage.models_folder_exists = True
+        setup_controller._make_models_dir()
+
+        assert not os.path.exists(setup_controller.paths.models)
 
     @staticmethod
-    def test_make_models_dir_true(controller: SetupController):
-        controller.config_storage.models_folder_exists = True
-        controller._make_models_dir()
+    def test_make_models_dir_false(setup_controller: SetupController):
+        setup_controller.config_storage.models_folder_exists = False
+        setup_controller._make_models_dir()
 
-        assert not os.path.exists(controller.paths.models)
-
-    @staticmethod
-    def test_make_models_dir_false(controller: SetupController):
-        controller.config_storage.models_folder_exists = False
-        controller._make_models_dir()
-
-        assert os.path.exists(controller.paths.models)
+        assert os.path.exists(setup_controller.paths.models)
 
     @staticmethod
-    def test_make_config_file_true(controller: SetupController):
-        controller.config_storage.config_file_exists = True
-        controller._make_config_file()
+    def test_make_config_file_true(setup_controller: SetupController):
+        setup_controller.config_storage.config_file_exists = True
+        setup_controller._make_config_file()
 
-        assert not os.path.exists(controller.paths.config)
+        assert not os.path.exists(setup_controller.paths.config)
 
     @staticmethod
-    def test_make_config_file_false(controller: SetupController):
-        os.makedirs(controller.paths.local, exist_ok=True)
-        os.makedirs(controller.paths.models, exist_ok=True)
+    def test_make_config_file_false(setup_controller: SetupController):
+        os.makedirs(setup_controller.paths.local, exist_ok=True)
+        os.makedirs(setup_controller.paths.models, exist_ok=True)
 
-        with open(controller.paths.local_config, "w") as f:
+        with open(setup_controller.paths.local_config, "w") as f:
             f.write("test")
 
-        controller.config_storage.config_file_exists = False
-        controller._make_config_file()
+        setup_controller.config_storage.config_file_exists = False
+        setup_controller._make_config_file()
 
-        assert os.path.exists(controller.paths.config)
+        assert os.path.exists(setup_controller.paths.config)
 
     @staticmethod
-    def test_create_missing_files(controller: SetupController):
+    def test_create_missing_files(setup_controller: SetupController):
         try:
-            controller.create_missing_files()
+            setup_controller.create_missing_files()
         except typer.Exit:
             assert False
 
     @staticmethod
-    def test_create_demo_files(controller: SetupController):
-        test_file = os.path.join(controller.paths.demo, "file1.txt")
-        new_test_filepath = os.path.join(controller.paths.demo, test_file)
+    def test_create_demo_files(setup_controller: SetupController):
+        test_file = os.path.join(setup_controller.paths.demo, "file1.txt")
+        new_test_filepath = os.path.join(setup_controller.paths.demo, test_file)
 
-        os.makedirs(controller.paths.demo, exist_ok=True)
+        os.makedirs(setup_controller.paths.demo, exist_ok=True)
 
         with open(test_file, "w") as f:
             f.write("test")
 
-        controller.config_storage.config_file_exists = False
-        controller.create_demo_files()
+        setup_controller.config_storage.config_file_exists = False
+        setup_controller.create_demo_files()
 
         checks = [
-            os.path.exists(controller.paths.demo),
+            os.path.exists(setup_controller.paths.demo),
             os.path.exists(new_test_filepath),
         ]
         assert all(checks)
 
 
 class TestGenerate:
-    @pytest.fixture
-    def path_storage(self, tmp_path) -> GeneratePathStorage:
-        return GeneratePathStorage(
-            config=os.path.join(tmp_path, "test_models", "config_init.py"),
-            models=os.path.join(tmp_path, "test_models"),
-            component=os.path.join(tmp_path, "test_component"),
-            generate=os.path.join(tmp_path, "zentra_generated"),
-        )
-
-    @pytest.fixture
-    def generate(self, path_storage: GeneratePathStorage) -> Generate:
-        return Generate(paths=path_storage)
-
     class TestCheckConfig:
         @staticmethod
         def test_model_folder_exists_error(generate: Generate):
@@ -256,80 +316,19 @@ class TestGenerate:
 
 class TestGenerateController:
     @pytest.fixture
-    def path_storage(self, tmp_path) -> GeneratePathStorage:
-        return GeneratePathStorage(
-            config=os.path.join(tmp_path, "test_models", "config_init.py"),
-            models=os.path.join(tmp_path, "test_models"),
-            component=os.path.join(tmp_path, "test_local"),
-            generate=os.path.join(tmp_path, "test_generated"),
-        )
-
-    @pytest.fixture
-    def page(self) -> Page:
-        return Page(
-            name="AgencyDetails",
-            components=[
-                AlertDialog(
-                    name="agencyAlertDialog",
-                    content=[
-                        Card(
-                            name="agencyInfo",
-                            title="Agency Information",
-                            description="Let's create an agency for your business. You can edit agency settings later from the agency settings tab.",
-                            content=[
-                                Form(
-                                    name="agencyForm",
-                                    layout=[2],
-                                    fields=[
-                                        FormField(
-                                            name="agencyLogo",
-                                            label="Agency Logo",
-                                            content=FileUpload(name="agencyLogo"),
-                                        ),
-                                        FormField(
-                                            name="name",
-                                            label="Agency Name",
-                                            content=Input(
-                                                name="name",
-                                                label="Agency Name",
-                                                placeholder="Your Agency Name",
-                                            ),
-                                        ),
-                                    ],
-                                ),
-                            ],
-                        ),
-                    ],
-                ),
-            ],
-        )
-
-    @pytest.fixture
-    def zentra(self, page: Page) -> Zentra:
-        zentra = Zentra()
-        zentra.register([page])
-        return zentra
-
-    @pytest.fixture
-    def controller(
-        self, path_storage: GeneratePathStorage, zentra: Zentra
-    ) -> GenerateController:
-        return GenerateController(zentra, paths=path_storage)
-
-    @pytest.fixture
     def setup_example_models(
-        self, controller: GenerateController
+        self, generate_controller: GenerateController
     ) -> tuple[str, str, str]:
-        src1 = os.path.join(controller.paths.component, "uploadthing", "base")
-        src2 = os.path.join(controller.paths.component, "ui", "base")
-        dest = os.path.join(controller.paths.generate)
+        src1 = os.path.join(generate_controller.paths.component, "uploadthing", "base")
+        src2 = os.path.join(generate_controller.paths.component, "ui", "base")
+        dest = os.path.join(generate_controller.paths.generate)
 
         os.makedirs(src1, exist_ok=True)
         os.makedirs(src2, exist_ok=True)
         os.makedirs(dest, exist_ok=True)
 
-        controller.extract_models()
-        for folder, file in controller.storage.components.generate:
+        generate_controller.extract_models()
+        for folder, file in generate_controller.storage.components.generate:
             if folder == "uploadthing":
                 with open(os.path.join(src1, file), "w") as f:
                     f.write("test")
@@ -340,24 +339,26 @@ class TestGenerateController:
         return src1, src2, dest
 
     @pytest.fixture
-    def example_existing_models(self, controller: GenerateController) -> None:
-        controller.storage.components.existing = [
+    def example_existing_models(self, generate_controller: GenerateController) -> None:
+        generate_controller.storage.components.existing = [
             ("uploadthing", "uploadthing.ts"),
             ("uploadthing", "core.ts"),
             ("uploadthing", "route.ts"),
         ]
 
     @pytest.fixture
-    def example_models_to_remove(self, controller: GenerateController) -> None:
-        controller.storage.components.remove = [
+    def example_models_to_remove(self, generate_controller: GenerateController) -> None:
+        generate_controller.storage.components.remove = [
             ("uploadthing", "uploadthing.ts"),
             ("uploadthing", "core.ts"),
             ("uploadthing", "route.ts"),
         ]
 
     @pytest.fixture
-    def example_models_to_generate(self, controller: GenerateController) -> None:
-        controller.storage.components.generate = [
+    def example_models_to_generate(
+        self, generate_controller: GenerateController
+    ) -> None:
+        generate_controller.storage.components.generate = [
             ("uploadthing", "uploadthing.ts"),
             ("uploadthing", "core.ts"),
             ("uploadthing", "route.ts"),
@@ -370,7 +371,7 @@ class TestGenerateController:
                 f"{name_from_camel_case(name)}.tsx" for name in zentra.names.components
             ]
 
-        def test_formatted_names(self, controller: GenerateController):
+        def test_formatted_names(self, generate_controller: GenerateController):
             valid_names = [
                 "alert-dialog.tsx",
                 "form.tsx",
@@ -379,14 +380,14 @@ class TestGenerateController:
                 "input.tsx",
             ]
 
-            result = controller._get_and_format_models(
-                controller.storage.base_names.components
+            result = generate_controller._get_and_format_models(
+                generate_controller.storage.base_names.components
             )
             assert len(result) == len(valid_names)
 
-        def test_files_to_generate(self, controller: GenerateController):
-            controller.extract_models()
-            result = controller.storage.components.generate
+        def test_files_to_generate(self, generate_controller: GenerateController):
+            generate_controller.extract_models()
+            result = generate_controller.storage.components.generate
             valid = [
                 ("ui", "alert-dialog.tsx"),
                 ("ui", "card.tsx"),
@@ -398,19 +399,21 @@ class TestGenerateController:
             ]
             assert len(result) == len(valid)
 
-        def test_folders_to_generate(self, controller: GenerateController):
-            controller.extract_models()
-            result = controller.storage.folders_to_generate
+        def test_folders_to_generate(self, generate_controller: GenerateController):
+            generate_controller.extract_models()
+            result = generate_controller.storage.folders_to_generate
             valid = ["ui", "uploadthing"]
             assert len(result) == len(valid)
 
     class TestUpdateFiles:
         @staticmethod
-        def test_generate_succes(setup_example_models, controller: GenerateController):
+        def test_generate_succes(
+            setup_example_models, generate_controller: GenerateController
+        ):
             _, _, dest = setup_example_models
             dest = os.path.join(dest, "uploadthing")
 
-            controller.update_files()
+            generate_controller.update_files()
 
             checks = [
                 os.path.exists(os.path.join(dest, "uploadthing.ts")),
@@ -418,10 +421,12 @@ class TestGenerateController:
                 os.path.exists(os.path.join(dest, "route.ts")),
             ]
 
-            assert all(checks), controller.storage.components.generate
+            assert all(checks), generate_controller.storage.components.generate
 
         @staticmethod
-        def test_removal_success(setup_example_models, controller: GenerateController):
+        def test_removal_success(
+            setup_example_models, generate_controller: GenerateController
+        ):
             _, _, dest = setup_example_models
             dest = os.path.join(dest, "uploadthing")
 
@@ -431,31 +436,33 @@ class TestGenerateController:
                 ("uploadthing", "route.ts"),
             ]
 
-            controller.storage.components.remove = files_to_remove
-            controller.storage.components.counts.remove = len(files_to_remove)
+            generate_controller.storage.components.remove = files_to_remove
+            generate_controller.storage.components.counts.remove = len(files_to_remove)
 
-            controller.update_files()
+            generate_controller.update_files()
 
-            assert not os.path.exists(dest), controller.storage.components.counts.remove
+            assert not os.path.exists(
+                dest
+            ), generate_controller.storage.components.counts.remove
 
     class TestCheckForNewComponents:
         @staticmethod
         def test_valid_raise(
             example_models_to_generate,
             example_existing_models,
-            controller: GenerateController,
+            generate_controller: GenerateController,
         ):
             with pytest.raises(typer.Exit) as e:
-                controller._check_for_new_components(
-                    controller.storage.components.existing,
-                    controller.storage.components.generate,
+                generate_controller._check_for_new_components(
+                    generate_controller.storage.components.existing,
+                    generate_controller.storage.components.generate,
                 )
 
             assert e.value.exit_code == GenerateSuccessCodes.NO_NEW_COMPONENTS
 
     class TestGetModelChanges:
         @staticmethod
-        def test_valid_lists(controller: GenerateController):
+        def test_valid_lists(generate_controller: GenerateController):
             existing_models = [
                 ("ui", "alert-dialog.tsx"),
                 ("ui", "button.tsx"),
@@ -466,7 +473,7 @@ class TestGenerateController:
                 ("uploadthing", "route.ts"),
                 ("uploadthing", "uploadthing.ts"),
             ]
-            controller.storage.components.existing = existing_models
+            generate_controller.storage.components.existing = existing_models
 
             generate_list = [
                 ("ui", "alert-dialog.tsx"),
@@ -476,10 +483,10 @@ class TestGenerateController:
                 ("ui", "input.tsx"),
             ]
 
-            model_updates = controller._get_model_updates(
+            model_updates = generate_controller._get_model_updates(
                 existing_models, generate_list
             )
-            to_remove, to_add = controller._get_model_changes(model_updates)
+            to_remove, to_add = generate_controller._get_model_changes(model_updates)
 
             checks = [
                 len(to_remove) == 3,
@@ -490,7 +497,7 @@ class TestGenerateController:
 
     class TestStoreComponents:
         @staticmethod
-        def test_valid_counts(controller: GenerateController):
+        def test_valid_counts(generate_controller: GenerateController):
             existing_models = [
                 ("ui", "alert-dialog.tsx"),
                 ("ui", "button.tsx"),
@@ -501,7 +508,7 @@ class TestGenerateController:
                 ("uploadthing", "route.ts"),
                 ("uploadthing", "uploadthing.ts"),
             ]
-            controller.storage.components.existing = existing_models
+            generate_controller.storage.components.existing = existing_models
 
             generate_list = [
                 ("ui", "alert-dialog.tsx"),
@@ -513,14 +520,14 @@ class TestGenerateController:
                 ("ui", "tooltip.tsx"),
             ]
 
-            model_updates = controller._get_model_updates(
+            model_updates = generate_controller._get_model_updates(
                 existing_models, generate_list
             )
-            controller._store_components(model_updates)
+            generate_controller._store_components(model_updates)
 
             checks = [
-                controller.storage.components.counts.generate == 2,
-                controller.storage.components.counts.remove == 1,
+                generate_controller.storage.components.counts.generate == 2,
+                generate_controller.storage.components.counts.remove == 1,
             ]
 
             assert all(checks), model_updates

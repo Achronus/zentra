@@ -1,7 +1,8 @@
 import pytest
 
-from zentra.ui import FileUpload, Form, FormField
+from zentra.ui import Form, FormField
 from zentra.ui.control import Input
+from zentra.uploadthing import FileUpload
 
 
 class TestFormValidator:
@@ -13,13 +14,13 @@ class TestFormValidator:
                 FormField(
                     name="agencyLogo",
                     label="Agency Logo",
-                    content=FileUpload(name="agencyLogo"),
+                    content=FileUpload(),
                 ),
                 FormField(
                     name="name",
                     label="Agency Name",
                     content=Input(
-                        name="name",
+                        type="text",
                         label="Agency Name",
                         placeholder="Your Agency Name",
                     ),
@@ -28,7 +29,7 @@ class TestFormValidator:
                     name="companyEmail",
                     label="Agency Email",
                     content=Input(
-                        name="email",
+                        type="email",
                         label="Account Email",
                         placeholder="Email",
                         read_only=True,
@@ -37,16 +38,18 @@ class TestFormValidator:
             ],
         )
 
-    def test_fail(self):
+    def test_invalid_single_row(self):
         with pytest.raises(ValueError):
             Form(
                 name="testForm",
                 layout=[2],
                 fields=[
-                    FormField(
-                        name="agencyLogo",
-                        label="Agency Logo",
-                        content=FileUpload(name="agencyLogo"),
-                    ),
+                    [
+                        FormField(
+                            name="agencyLogo",
+                            label="Agency Logo",
+                            content=FileUpload(),
+                        ),
+                    ]
                 ],
             )

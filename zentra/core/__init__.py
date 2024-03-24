@@ -10,6 +10,14 @@ class Component(BaseModel):
     A Zentra model for all React components.
     """
 
+    def attr_str(self) -> str:
+        """Creates an attribute string based on provided values. Used for JSX conversion."""
+        raise NotImplementedError()
+
+    def content_str(self) -> str:
+        """Creates a content string based on provided values. Used for JSX conversion."""
+        raise NotImplementedError()
+
 
 class Page(BaseModel):
     """

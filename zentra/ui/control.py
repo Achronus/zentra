@@ -1,30 +1,95 @@
 from pydantic import ConfigDict
 from zentra.core import Component, Icon
-from zentra.core.enums.ui import ButtonVariant, ButtonIconPosition, InputTypes
+from zentra.core.enums.ui import (
+    ButtonSize,
+    ButtonVariant,
+    ButtonIconPosition,
+    IconButtonSize,
+    InputTypes,
+)
 
 
 class Button(Component):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Button component.
+    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Button component focusing on text.
 
     Parameters:
-    - `name` (`str`) - the name of the component
-    - `text` (`str, optional`) - the text displayed inside the button. `None` by default. When `None` removes it from `Button`
+    - `text` (`str`) - the text displayed inside the button
     - `url` (`str, optional`) - the URL the button links to. `None` by default. When `None` removes it from `Button`
-    - `variant` (`str, optional`) - the style of the button. Valid options: `['none', 'primary', 'secondary', 'destructive', 'outline', 'ghost', 'link']`. `none` by default.
-    - `icon` (`Icon, optional`) - the [Radix UI Icon](https://www.radix-ui.com/icons) to add inside the button. `None` by default. When `None` removes it from `Button`
-    - `icon_position` (`str, optional`) - the position of the icon inside the button. When set to `start`, icon appears before the text. When `end`, it appears after the text. `start` by default. Valid options: `['start', 'end']`
-    - `icon_only` (`bool, optional`) - converts the button to an icon only button. Ignores text parameter. `False` by default
+    - `variant` (`str, optional`) - the style of the button. Valid options: `['default', 'secondary', 'destructive', 'outline', 'ghost', 'link']`. `default` by default
+    - `size` (`str, optional`) - the size of the button. Valid options: `['default', 'sm', 'lg']`. `default` by default
     - `disabled` (`bool, optional`) - adds the disabled property, preventing it from being clicked. `False` by default
     """
 
-    text: str = None
+    text: str
     url: str = None
-    variant: ButtonVariant = "none"
-    icon: Icon = None
+    variant: ButtonVariant = "default"
+    size: ButtonSize = "default"
+    disabled: bool = False
+
+    def attr_str(self) -> str:
+        attributes = []
+
+        if self.disabled:
+            attributes.append("disabled")
+
+        if self.url is not None:
+            attributes.append(f'href="{self.url}"')
+
+        if self.variant != "default":
+            attributes.append(f'variant="{self.variant}"')
+
+        if self.size != "default":
+            attributes.append(f'size="{self.size}"')
+
+        return " ".join(attributes)
+
+    def content_str(self) -> str:
+        return self.text if self.text is not None else ""
+
+
+class IconButton(Component):
+    """
+    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Button component with a [Radix UI Icon](https://www.radix-ui.com/icons).
+
+    Parameters:
+    - `icon` (`Icon`) - the [Radix UI Icon](https://www.radix-ui.com/icons) to add inside the button
+    - `icon_position` (`str, optional`) - the position of the icon inside the button. When set to `start`, icon appears before the text. When `end`, it appears after the text. `start` by default. Valid options: `['start', 'end']`
+    - `icon_only` (`bool, optional`) - converts the button to an icon only button. Ignores text parameter. `False` by default
+    - `text` (`str, optional`) - the text displayed inside the button. `None` by default. When `None` removes it from `Button`
+    - `url` (`str, optional`) - the URL the button links to. `None` by default. When `None` removes it from `Button`
+    - `variant` (`str, optional`) - the style of the button. Valid options: `['default', 'secondary', 'destructive', 'outline', 'ghost', 'link']`. `default` by default
+    - `size` (`str, optional`) - the size of the button. Valid options: `['default', 'sm', 'lg', 'icon']`. `icon` by default
+    - `disabled` (`bool, optional`) - adds the disabled property, preventing it from being clicked. `False` by default
+    """
+
+    icon: Icon
     icon_position: ButtonIconPosition = "start"
     icon_only: bool = False
+    text: str = None
+    url: str = None
+    variant: ButtonVariant = "default"
+    size: IconButtonSize = "icon"
     disabled: bool = False
+
+    def attr_str(self) -> str:
+        btn = Button(self.text, self.url, self.variant, self.size, self.disabled)
+        return btn.attr_str()
+
+    def content_str(self) -> str:
+        contents = []
+
+        if self.text is not None and not self.icon_only:
+            contents.append(self.text)
+
+        if self.icon is not None:
+            icon_html = f'<{self.icon.name} className="mr-2 h-4 w-4"/>'
+            if self.icon_position == "start":
+                contents.insert(0, icon_html)
+            else:
+                contents.append(icon_html)
+
+        return " ".join(contents)
 
 
 class Calendar(Component):

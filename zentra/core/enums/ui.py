@@ -2,13 +2,25 @@ from enum import Enum, IntEnum
 
 
 class ButtonVariant(str, Enum):
-    NONE = "none"
-    PRIMARY = "primary"
+    DEFAULT = "default"
     SECONDARY = "secondary"
     DESTRUCTIVE = "destructive"
     OUTLINE = "outline"
     GHOST = "ghost"
     LINK = "link"
+
+
+class ButtonSize(str, Enum):
+    DEFAULT = "default"
+    SM = "sm"
+    LG = "lg"
+
+
+class IconButtonSize(str, Enum):
+    DEFAULT = "default"
+    SM = "sm"
+    LG = "lg"
+    ICON = "icon"
 
 
 class ButtonIconPosition(str, Enum):

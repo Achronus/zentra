@@ -303,9 +303,7 @@ class TestGenerate:
 
             mock_zentra_module = MagicMock()
             setattr(mock_zentra_module, "zentra", Zentra())
-            mock_zentra_module.zentra.register(
-                [Button(name="userBtn", text="Click me!", variant="primary")]
-            )
+            mock_zentra_module.zentra.register([Button(text="Click me!")])
 
             with patch("importlib.import_module", return_value=mock_zentra_module):
                 with pytest.raises(typer.Exit) as e:

@@ -1,4 +1,3 @@
-from itertools import accumulate
 import json
 from typing import Any
 
@@ -224,48 +223,15 @@ class Form(Component):
 
         return fields
 
-    def __ts_schema(self) -> dict[str, Any]:
-        """Generates a JSON schema for the Form in a TypeScript format."""
-        output = self.model_dump()
-        cumulative_row_sizes = list(accumulate(self.layout))
-
-        for idx, field in enumerate(self.fields):
-            content = {"component": field.content.__class__.__name__}
-            content["attributes"] = field.content.model_dump()
-
-            content["row"] = next(
-                i for i, size in enumerate(cumulative_row_sizes, start=1) if idx < size
-            )
-            output["fields"][idx]["content"] = content
-
-        return output
-
-    def __zod_schema(self) -> dict[str, Any]:
-        """Generates a JSON schema for the Form in a Zod format."""
+    def zod_schema(self) -> dict[str, Any]:
+        """Generates a Zod JSON schema for the Form in a Zod format."""
         raise NotImplementedError()
 
-    def schema(self, type: str = "typescript") -> dict[str, Any]:
+    def zod_json_schema(self, indent: int = 2) -> str:
         """
-        Generates a JSON schema for the Form.
+        Generates an indented Zod JSON schema for the Form.
 
         Parameters:
-        - `type` (`str, optional`) - the type of schema to generate. Options: `['typescript', 'zod']`. Default is `typescript`
-        """
-        if type == "typescript":
-            return self.__ts_schema()
-        elif type == "zod":
-            return self.__zod_schema()
-        else:
-            raise ValueError(
-                f"Invalid type='{type}'! Must be one of: ['typescript', 'zod']"
-            )
-
-    def json_schema(self, type: str = "typescript", indent: int = 2) -> str:
-        """
-        Generates an indented JSON schema for the Form.
-
-        Parameters:
-        - `type` (`str`) - the type of schema to generate. Options: `['typescript', 'zod']`
         - `indent` (`int, optional`) - the indent size (in spaces) for the schema. Default is `2`
         """
-        return json.dumps(self.schema(type=type), indent=indent)
+        return json.dumps(self.zod_schema(), indent=indent)

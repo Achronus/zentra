@@ -28,21 +28,13 @@ class Button(Component):
     disabled: bool = False
 
     def attr_str(self) -> str:
-        attributes = []
-
-        if self.disabled:
-            attributes.append("disabled")
-
-        if self.url is not None:
-            attributes.append(f'href="{self.url}"')
-
-        if self.variant != "default":
-            attributes.append(f'variant="{self.variant}"')
-
-        if self.size != "default":
-            attributes.append(f'size="{self.size}"')
-
-        return " ".join(attributes)
+        attr_map = [
+            (self.disabled, "disabled"),
+            (self.url, f'href="{self.url}"'),
+            (self.variant != ButtonVariant.DEFAULT, f'variant="{self.variant}"'),
+            (self.size != ButtonSize.DEFAULT, f'size="{self.size}"'),
+        ]
+        return Component.attr_map_to_str(attr_map=attr_map)
 
     def content_str(self) -> str:
         return self.text if self.text is not None else ""
@@ -73,7 +65,13 @@ class IconButton(Component):
     disabled: bool = False
 
     def attr_str(self) -> str:
-        btn = Button(self.text, self.url, self.variant, self.size, self.disabled)
+        btn = Button(
+            text=self.text,
+            url=self.url,
+            variant=self.variant,
+            size=self.size,
+            disabled=self.disabled,
+        )
         return btn.attr_str()
 
     def content_str(self) -> str:

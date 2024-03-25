@@ -1,8 +1,9 @@
 from typing import Any
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, ConfigDict, field_validator
 
 from cli.conf.extract import extract_component_names
 from cli.conf.storage import BasicNameStorage
+from cli.conf.types import AttributeMapping
 
 
 class Component(BaseModel):
@@ -10,13 +11,21 @@ class Component(BaseModel):
     A Zentra model for all React components.
     """
 
+    model_config = ConfigDict(use_enum_values=True)
+
     def attr_str(self) -> str:
-        """Creates an attribute string based on provided values. Used for JSX conversion."""
+        """Creates an attribute string based on conditional logic. Used for JSX conversion."""
         raise NotImplementedError()
 
     def content_str(self) -> str:
-        """Creates a content string based on provided values. Used for JSX conversion."""
+        """Creates a content string based on conditional logic. Used for JSX conversion."""
         raise NotImplementedError()
+
+    @classmethod
+    def attr_map_to_str(cls, attr_map: AttributeMapping) -> str:
+        """Creates an attribute string based on a provided `(condition, result)` mapping. Alternative to `attr_str`. Used for JSX conversion."""
+        attributes = [result for condition, result in attr_map if condition]
+        return " ".join(attributes)
 
 
 class Page(BaseModel):

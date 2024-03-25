@@ -49,10 +49,10 @@ class GeneratePanelFormatter(BaseModel):
     """Handles the logic for creating completion panels for `zentra generate`.
 
     Parameters:
-    - name (str) - a name to associate the formatter used in the title string (e.g., 'component' or 'page')
-    - actions (Enum.Action) - an Action Enum class with an addition and subtraction value
-    - storage (storage.ModelStorage) - the storage container with Zentra model names
-    - data (GenerateDataTuple) - a tuple containing two lists of item information, one for addition and one for subtraction
+    - `name` (`str`) - a name to associate the formatter used in the title string (e.g., 'component' or 'page')
+    - `actions` (`Enum.Action`) - an Action Enum class with an addition and subtraction value
+    - `storage` (`storage.ModelStorage`) - the storage container with Zentra model names
+    - `data` (`GenerateDataTuple`) - a tuple containing two `lists` of item information: `(list[items_to_add], list[items_to_remove])`
     """
 
     name: str

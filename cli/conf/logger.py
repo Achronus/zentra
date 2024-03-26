@@ -72,7 +72,7 @@ class DebugLogger(BaseLogger):
 
         log_filepath = os.path.join(os.getcwd(), "cli", "conf", "logs", log_filename)
 
-        if active:
+        if active:  # pragma: no cover
             self.file_handler(log_filepath)
 
 

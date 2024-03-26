@@ -2,6 +2,18 @@ import pytest
 from zentra.core import Zentra, Page, Component
 
 
+class TestComponent:
+    @staticmethod
+    def test_attr_str_raise():
+        with pytest.raises(NotImplementedError):
+            Component().attr_str()
+
+    @staticmethod
+    def test_content_str_raise():
+        with pytest.raises(NotImplementedError):
+            Component().content_str()
+
+
 class TestZentra:
     @pytest.fixture
     def zentra(self) -> Zentra:

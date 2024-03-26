@@ -5,7 +5,7 @@ from zentra.ui.control import Input
 from zentra.uploadthing import FileUpload
 
 
-class TestFormValidator:
+class TestForm:
     def test_success(self):
         Form(
             name="testForm",
@@ -45,6 +45,37 @@ class TestFormValidator:
                 layout=[2],
                 fields=[
                     [
+                        FormField(
+                            name="agencyLogo",
+                            label="Agency Logo",
+                            content=FileUpload(),
+                        ),
+                    ]
+                ],
+            )
+
+    def test_invalid_row_size(self):
+        with pytest.raises(ValueError):
+            Form(
+                name="testForm",
+                layout=[2],
+                fields=[
+                    [
+                        FormField(
+                            name="agencyLogo",
+                            label="Agency Logo",
+                            content=FileUpload(),
+                        ),
+                        FormField(
+                            name="agencyLogo",
+                            label="Agency Logo",
+                            content=FileUpload(),
+                        ),
+                        FormField(
+                            name="agencyLogo",
+                            label="Agency Logo",
+                            content=FileUpload(),
+                        ),
                         FormField(
                             name="agencyLogo",
                             label="Agency Logo",

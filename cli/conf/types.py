@@ -5,4 +5,4 @@ FolderFilePair = list[tuple[str, str]]
 GenerateDataTuple = tuple[list[str], list[str]]
 
 # (condition, result)
-AttributeMapping = list[tuple[bool, str]]
+ConditionResultMapping = list[tuple[bool, str]]

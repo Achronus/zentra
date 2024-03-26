@@ -1,4 +1,4 @@
-from pydantic import ConfigDict
+from pydantic import Field, HttpUrl
 from zentra.core import Component, Icon
 from zentra.core.enums.ui import (
     ButtonSize,
@@ -21,8 +21,8 @@ class Button(Component):
     - `disabled` (`bool, optional`) - adds the disabled property, preventing it from being clicked. `False` by default
     """
 
-    text: str
-    url: str = None
+    text: str = Field(min_length=1)
+    url: HttpUrl = None
     variant: ButtonVariant = "default"
     size: ButtonSize = "default"
     disabled: bool = False
@@ -34,10 +34,10 @@ class Button(Component):
             (self.variant != ButtonVariant.DEFAULT, f'variant="{self.variant}"'),
             (self.size != ButtonSize.DEFAULT, f'size="{self.size}"'),
         ]
-        return Component.map_to_str(attr_map=attr_map)
+        return " " + Component.map_to_str(attr_map)
 
     def content_str(self) -> str:
-        return self.text if self.text else ""
+        return self.text
 
 
 class IconButton(Component):
@@ -57,20 +57,19 @@ class IconButton(Component):
     icon: Icon
     icon_position: ButtonIconPosition = "start"
     text: str = None
-    url: str = None
+    url: HttpUrl = Field(default=None)
     variant: ButtonVariant = "default"
     size: IconButtonSize = "icon"
     disabled: bool = False
 
     def attr_str(self) -> str:
-        btn = Button(
-            text=self.text,
-            url=self.url,
-            variant=self.variant,
-            size=self.size,
-            disabled=self.disabled,
-        )
-        return btn.attr_str()
+        attr_map = [
+            (self.disabled, "disabled"),
+            (self.url, f'href="{self.url}"'),
+            (self.variant != ButtonVariant.DEFAULT, f'variant="{self.variant}"'),
+            (self.size != IconButtonSize.DEFAULT, f'size="{self.size}"'),
+        ]
+        return " " + Component.map_to_str(attr_map)
 
     def content_str(self) -> str:
         contents = []
@@ -148,8 +147,6 @@ class Input(Component):
     type: InputTypes
     placeholder: str
     read_only: bool = False
-
-    model_config = ConfigDict(use_enum_values=True)
 
 
 class Label(Component):

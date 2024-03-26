@@ -34,10 +34,10 @@ class Button(Component):
             (self.variant != ButtonVariant.DEFAULT, f'variant="{self.variant}"'),
             (self.size != ButtonSize.DEFAULT, f'size="{self.size}"'),
         ]
-        return Component.attr_map_to_str(attr_map=attr_map)
+        return Component.map_to_str(attr_map=attr_map)
 
     def content_str(self) -> str:
-        return self.text if self.text is not None else ""
+        return self.text if self.text else ""
 
 
 class IconButton(Component):
@@ -47,7 +47,6 @@ class IconButton(Component):
     Parameters:
     - `icon` (`Icon`) - the [Radix UI Icon](https://www.radix-ui.com/icons) to add inside the button
     - `icon_position` (`str, optional`) - the position of the icon inside the button. When set to `start`, icon appears before the text. When `end`, it appears after the text. `start` by default. Valid options: `['start', 'end']`
-    - `icon_only` (`bool, optional`) - converts the button to an icon only button. Ignores text parameter. `False` by default
     - `text` (`str, optional`) - the text displayed inside the button. `None` by default. When `None` removes it from `Button`
     - `url` (`str, optional`) - the URL the button links to. `None` by default. When `None` removes it from `Button`
     - `variant` (`str, optional`) - the style of the button. Valid options: `['default', 'secondary', 'destructive', 'outline', 'ghost', 'link']`. `default` by default
@@ -57,7 +56,6 @@ class IconButton(Component):
 
     icon: Icon
     icon_position: ButtonIconPosition = "start"
-    icon_only: bool = False
     text: str = None
     url: str = None
     variant: ButtonVariant = "default"
@@ -77,10 +75,10 @@ class IconButton(Component):
     def content_str(self) -> str:
         contents = []
 
-        if self.text is not None and not self.icon_only:
+        if self.text:
             contents.append(self.text)
 
-        if self.icon is not None:
+        if self.icon:
             icon_html = f'<{self.icon.name} className="mr-2 h-4 w-4"/>'
             if self.icon_position == "start":
                 contents.insert(0, icon_html)

@@ -21,6 +21,10 @@ class Component(BaseModel):
         """Creates a content string based on conditional logic. Used for JSX conversion."""
         raise NotImplementedError()
 
+    def unique_logic_str(self) -> str:
+        """Creates a JSX string containing the unique logic associated to the component added to the component before the `return`."""
+        raise NotImplementedError()
+
     @classmethod
     def map_to_str(cls, map: ConditionResultMapping) -> str:
         """Creates a string based on a provided `(condition, result)` mapping. Usable inside `attr_str()` or `content_str()`. Used for JSX conversion."""

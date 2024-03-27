@@ -13,6 +13,11 @@ class TestComponent:
         with pytest.raises(NotImplementedError):
             Component().content_str()
 
+    @staticmethod
+    def test_unique_logic_str_raise():
+        with pytest.raises(NotImplementedError):
+            Component().unique_logic_str()
+
 
 class TestZentra:
     @pytest.fixture

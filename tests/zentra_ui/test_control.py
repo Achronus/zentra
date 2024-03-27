@@ -8,6 +8,7 @@ from pydantic import ValidationError
 from tests.mappings.helper import builder
 from tests.mappings.ui_attributes import BTN_VALID_ATTRS, ICON_BTN_VALID_ATTRS
 from tests.mappings.ui_content import ICON_BTN_VALID_CONTENT
+from tests.mappings.ui_simple import CHECKBOX_VALID_VALS, COLLAPSIBLE_VALID_VALS
 from zentra.core import Icon
 from zentra.core.enums.ui import (
     ButtonIconPosition,
@@ -15,7 +16,7 @@ from zentra.core.enums.ui import (
     ButtonVariant,
     IconButtonSize,
 )
-from zentra.ui.control import Button, Calendar, Checkbox, IconButton
+from zentra.ui.control import Button, Calendar, Checkbox, Collapsible, IconButton
 
 
 @pytest.fixture
@@ -294,6 +295,63 @@ class TestCheckbox:
     @staticmethod
     def test_complete_jsx_valid(checkbox_with_disabled: Checkbox):
         result: str = builder(checkbox_with_disabled).component_str
-        valid = """<div className="flex items-top space-x-2"><Checkbox id="terms" disabled /><div className="grid gap-1.5 leading-none"><label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Accept the terms and conditions.</label><p className="text-sm text-muted-foreground">Pretty please!</p></div></div>"""
+        valid = CHECKBOX_VALID_VALS["full_jsx"]
+
+        assert result == valid, (result, valid)
+
+
+class TestCollapsible:
+    @pytest.fixture
+    def collapsible(self) -> Collapsible:
+        return Collapsible(
+            title="Starred repositories", items=["Astrum-AI/Zentra", "Not Zentra"]
+        )
+
+    @staticmethod
+    def test_logic_str(collapsible: Collapsible):
+        result = collapsible.unique_logic_str()
+        builder_result: str = builder(collapsible).unique_logic_str
+        valid = COLLAPSIBLE_VALID_VALS["unique_logic"]
+
+        checks = all(
+            [
+                result == valid,
+                builder_result == valid,
+            ]
+        )
+        assert checks, (builder_result, result, valid)
+
+    @staticmethod
+    def test_attr_str(collapsible: Collapsible):
+        result = collapsible.attr_str()
+        builder_result: str = builder(collapsible).attr_str
+        valid = COLLAPSIBLE_VALID_VALS["attributes"]
+
+        checks = all(
+            [
+                result == valid,
+                builder_result.lstrip() == valid,
+            ]
+        )
+        assert checks, (builder_result, result, valid)
+
+    @staticmethod
+    def test_content_str(collapsible: Collapsible):
+        result = collapsible.content_str()
+        builder_result: str = builder(collapsible).content_str
+        valid = COLLAPSIBLE_VALID_VALS["content"]
+
+        checks = all(
+            [
+                result == valid,
+                builder_result == valid,
+            ]
+        )
+        assert checks, (builder_result, result, valid)
+
+    @staticmethod
+    def test_complete_jsx_valid(collapsible: Collapsible):
+        result: str = builder(collapsible).component_str
+        valid = COLLAPSIBLE_VALID_VALS["full_jsx"]
 
         assert result == valid, (result, valid)

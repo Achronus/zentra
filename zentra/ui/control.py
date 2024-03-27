@@ -147,8 +147,23 @@ class Collapsible(Component):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Collapsible component.
 
     Parameters:
-    - `name` (`str`) - the name of the component
+    - `title` (`str`) - the main heading of the collapsible
+    - `items` (`list[str]`) - a list of strings representing the text to add into each collapsible block. Requires a `minimum` of `1` item
     """
+
+    title: str
+    items: list[str] = Field(min_length=1)
+
+    def unique_logic_str(self) -> str:
+        return CollapsibleJSX.unique_logic()
+
+    def attr_str(self) -> str:
+        return CollapsibleJSX.attributes()
+
+    def content_str(self) -> str:
+        title = CollapsibleJSX.title(self.title)
+        items_str = CollapsibleJSX.items(self.items)
+        return title + items_str
 
 
 class Combobox(Component):

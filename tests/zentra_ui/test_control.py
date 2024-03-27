@@ -237,7 +237,7 @@ class TestCheckbox:
         result = basic_checkbox.attr_str()
         builder_result: str = builder(basic_checkbox).attr_str
 
-        valid = 'id="terms"'
+        valid = CHECKBOX_VALID_VALS["attributes"]["required"]
 
         checks = all(
             [
@@ -252,7 +252,7 @@ class TestCheckbox:
         result = checkbox_with_disabled.attr_str()
         builder_result: str = builder(checkbox_with_disabled).attr_str
 
-        valid = 'id="terms" disabled'
+        valid = CHECKBOX_VALID_VALS["attributes"]["with_disabled"]
 
         checks = all(
             [
@@ -267,7 +267,7 @@ class TestCheckbox:
         result = basic_checkbox.below_content_str()
         builder_result: str = builder(basic_checkbox).below_content_str
 
-        valid = '<div className="grid gap-1.5 leading-none"><label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Accept the terms and conditions.</label></div>'
+        valid = CHECKBOX_VALID_VALS["below_content"]["required"]
 
         checks = all(
             [
@@ -282,7 +282,7 @@ class TestCheckbox:
         result = checkbox_with_disabled.below_content_str()
         builder_result: str = builder(checkbox_with_disabled).below_content_str
 
-        valid = '<div className="grid gap-1.5 leading-none"><label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Accept the terms and conditions.</label><p className="text-sm text-muted-foreground">Pretty please!</p></div>'
+        valid = CHECKBOX_VALID_VALS["below_content"]["with_optionals"]
 
         checks = all(
             [

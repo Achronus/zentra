@@ -1,3 +1,67 @@
+from pydantic import HttpUrl
+
+from zentra.core import Component, Icon
+from zentra.core.enums.ui import (
+    ButtonIconPosition,
+    ButtonSize,
+    ButtonVariant,
+    IconButtonSize,
+)
+
+
+class ButtonJSX:
+    """A JSX storage container for the Zentra Button model."""
+
+    @classmethod
+    def attributes(
+        cls, url: HttpUrl, variant: ButtonVariant, size: ButtonSize, disabled: bool
+    ) -> str:
+        """Generates a string of JSX containing the attributes of the component's root."""
+        attr_map = [
+            (disabled, "disabled"),
+            (url, f'href="{url}"'),
+            (variant != ButtonVariant.DEFAULT, f'variant="{variant}"'),
+            (size != ButtonSize.DEFAULT, f'size="{size}"'),
+        ]
+        return Component.map_to_str(attr_map)
+
+
+class IconButtonJSX:
+    """A JSX storage container for the Zentra IconButton model."""
+
+    @classmethod
+    def attributes(
+        cls, url: HttpUrl, variant: ButtonVariant, size: IconButtonSize, disabled: bool
+    ) -> str:
+        """Generates a string of JSX containing the attributes of the component's root."""
+        attr_map = [
+            (disabled, "disabled"),
+            (url, f'href="{url}"'),
+            (variant != ButtonVariant.DEFAULT, f'variant="{variant}"'),
+            (size != IconButtonSize.DEFAULT, f'size="{size}"'),
+        ]
+        return Component.map_to_str(attr_map)
+
+    @classmethod
+    def main_content(
+        cls, text: str, icon: Icon, icon_position: ButtonIconPosition
+    ) -> str:
+        """Generates a string of JSX with the main content of the component."""
+        contents = []
+
+        if text:
+            contents.append(text)
+
+        if icon:
+            icon_html = f'<{icon.name} className="mr-2 h-4 w-4"/>'
+            if icon_position == "start":
+                contents.insert(0, icon_html)
+            else:
+                contents.append(icon_html)
+
+        return " ".join(contents)
+
+
 class CalendarJSX:
     """A JSX storage container for the Zentra Calendar model."""
 
@@ -14,6 +78,11 @@ class CalendarJSX:
 
 class CheckboxJSX:
     """A JSX storage container for the Zentra Checkbox model."""
+
+    @classmethod
+    def attributes(cls, id: str, disabled: bool) -> str:
+        """Generates a string of JSX containing the attributes of the component's root."""
+        return f'id="{id}"{" disabled" if disabled else ""}'
 
     @classmethod
     def main_content(cls, id: str, label: str) -> str:

@@ -1,6 +1,12 @@
 from pydantic import Field, HttpUrl
 
-from cli.templates.ui import CalendarJSX, CheckboxJSX, CollapsibleJSX
+from cli.templates.ui import (
+    ButtonJSX,
+    IconButtonJSX,
+    CalendarJSX,
+    CheckboxJSX,
+    CollapsibleJSX,
+)
 
 from zentra.core import Component, Icon
 from zentra.core.enums.ui import (
@@ -31,13 +37,9 @@ class Button(Component):
     disabled: bool = False
 
     def attr_str(self) -> str:
-        attr_map = [
-            (self.disabled, "disabled"),
-            (self.url, f'href="{self.url}"'),
-            (self.variant != ButtonVariant.DEFAULT, f'variant="{self.variant}"'),
-            (self.size != ButtonSize.DEFAULT, f'size="{self.size}"'),
-        ]
-        return Component.map_to_str(attr_map)
+        return ButtonJSX.attributes(
+            url=self.url, variant=self.variant, size=self.size, disabled=self.disabled
+        )
 
     def content_str(self) -> str:
         return self.text
@@ -66,28 +68,14 @@ class IconButton(Component):
     disabled: bool = False
 
     def attr_str(self) -> str:
-        attr_map = [
-            (self.disabled, "disabled"),
-            (self.url, f'href="{self.url}"'),
-            (self.variant != ButtonVariant.DEFAULT, f'variant="{self.variant}"'),
-            (self.size != IconButtonSize.DEFAULT, f'size="{self.size}"'),
-        ]
-        return Component.map_to_str(attr_map)
+        return IconButtonJSX.attributes(
+            url=self.url, variant=self.variant, size=self.size, disabled=self.disabled
+        )
 
     def content_str(self) -> str:
-        contents = []
-
-        if self.text:
-            contents.append(self.text)
-
-        if self.icon:
-            icon_html = f'<{self.icon.name} className="mr-2 h-4 w-4"/>'
-            if self.icon_position == "start":
-                contents.insert(0, icon_html)
-            else:
-                contents.append(icon_html)
-
-        return " ".join(contents)
+        return IconButtonJSX.main_content(
+            text=self.text, icon=self.icon, icon_position=self.icon_position
+        )
 
 
 class Calendar(Component):
@@ -119,13 +107,13 @@ class Checkbox(Component):
     disabled: bool = False
 
     def attr_str(self) -> str:
-        return f'id="{self.id}"{" disabled" if self.disabled else ""}'
+        return CheckboxJSX.attributes(id=self.id, disabled=self.disabled)
 
     def below_content_str(self) -> str:
-        content = CheckboxJSX.main_content(self.id, self.label)
+        content = CheckboxJSX.main_content(id=self.id, label=self.label)
 
         if self.more_info:
-            content += CheckboxJSX.more_info(self.more_info)
+            content += CheckboxJSX.more_info(info=self.more_info)
 
         content += "</div>"
         return content

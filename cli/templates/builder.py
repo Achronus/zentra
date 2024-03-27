@@ -13,39 +13,44 @@ class ComponentJSXBuilder:
 
         self.import_statement = ""
         self.component_str = ""
+        self.unique_logic_str = ""
+
+        self.classname = self.component.__class__.__name__
+
+        self.no_content = False
+        self.no_unique_logic = False
 
         self.build()
 
     def __repr__(self) -> str:
         """Create a readable developer string representation of the object when using the `print()` function."""
-        class_name = self.__class__.__name__
         attributes = ", ".join(
             f"{key}={value!r}" for key, value in self.__dict__.items()
         )
-        return f"{class_name}({attributes})"
+        return f"{self.classname}({attributes})"
 
     def build(self) -> None:
         """Builds the component string based on the component values."""
-        self.set_name()
         self.set_import()
         self.set_attrs()
         self.set_content()
+        self.set_unique_logic()
 
-        self.component_str = self.component_str.replace("**attrs**", self.attr_str)
-        self.component_str = self.component_str.replace("**content**", self.content_str)
+        self.set_component_str()
 
     def set_import(self) -> None:
         """Sets the component import statement."""
-        classname = self.component.__class__.__name__
-        filename = name_from_camel_case(classname)
+        filename = name_from_camel_case(self.classname)
         self.import_statement = (
-            f'import { {classname} } from "../ui/{filename}"'.replace("'", " ")
+            f'import { {self.classname} } from "../ui/{filename}"'.replace("'", " ")
         )
 
-    def set_name(self) -> None:
-        """Creates the outer shell of the component."""
-        name = self.component.__class__.__name__
-        self.component_str = f"<{name}**attrs**>**content**</{name}>"
+    def set_component_str(self) -> None:
+        """Combines the outer shell of the component with its attributes and content."""
+        if self.no_content:
+            self.component_str = f"<{self.classname}{self.attr_str}/>"
+        else:
+            self.component_str = f"<{self.classname}{self.attr_str}>{self.content_str}</{self.classname}>"
 
     def set_attrs(self) -> None:
         """Populates the `attr_str` based on the component values."""
@@ -53,4 +58,14 @@ class ComponentJSXBuilder:
 
     def set_content(self) -> None:
         """Populates the `content_str` based on the component values."""
-        self.content_str = self.component.content_str()
+        try:
+            self.content_str = self.component.content_str()
+        except NotImplementedError:
+            self.no_content = True
+
+    def set_unique_logic(self) -> None:
+        """Populates the `unique_logic_str` based on the component values."""
+        try:
+            self.unique_logic_str = self.component.unique_logic_str()
+        except NotImplementedError:
+            self.no_unique_logic = True

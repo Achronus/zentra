@@ -90,10 +90,13 @@ class IconButton(Component):
 class Calendar(Component):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Calendar component.
-
-    Parameters:
-    - `name` (`str`) - the name of the component
     """
+
+    def unique_logic_str(self) -> str:
+        return "const [date, setDate] = useState(new Date());"
+
+    def attr_str(self) -> str:
+        return 'mode="single" selected={date} onSelect={setDate} className="rounded-md border"'
 
 
 class Checkbox(Component):

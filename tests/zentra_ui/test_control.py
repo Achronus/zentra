@@ -15,7 +15,7 @@ from zentra.core.enums.ui import (
     ButtonVariant,
     IconButtonSize,
 )
-from zentra.ui.control import Button, IconButton
+from zentra.ui.control import Button, Calendar, IconButton
 
 
 @pytest.fixture
@@ -179,3 +179,39 @@ class TestIconButton:
     def test_invalid_url():
         with pytest.raises(ValidationError):
             IconButton(icon=Icon(name="test"), url="not a url")
+
+
+class TestCalendar:
+    @pytest.fixture
+    def calendar(self) -> Calendar:
+        return Calendar()
+
+    @staticmethod
+    def test_attr_str_valid(calendar: Calendar):
+        result = calendar.attr_str()
+        builder_result = builder(calendar).attr_str
+
+        valid = 'mode="single" selected={date} onSelect={setDate} className="rounded-md border"'
+
+        checks = all(
+            [
+                result == valid,
+                builder_result.lstrip() == valid,
+            ]
+        )
+        assert checks
+
+    @staticmethod
+    def test_unique_logic_str_valid(calendar: Calendar):
+        result = calendar.unique_logic_str()
+        builder_result = builder(calendar).unique_logic_str
+
+        valid = "const [date, setDate] = useState(new Date());"
+
+        checks = all(
+            [
+                result == valid,
+                builder_result == valid,
+            ]
+        )
+        assert checks

@@ -135,10 +135,10 @@ class MultiCheckbox(Component):
     A Zentra model for multiple [shadcn/ui](https://ui.shadcn.com/) Checkbox components.
 
     Parameters:
-    - `items` (`list[Checkbox]`) - a list of Checkbox components
+    - `items` (`list[Checkbox]`) - a list of Checkbox components. Requires a `minimum` of `2` items
     """
 
-    items: list[Checkbox]
+    items: list[Checkbox] = Field(min_length=2)
 
 
 class Collapsible(Component):

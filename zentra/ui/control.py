@@ -34,7 +34,7 @@ class Button(Component):
             (self.variant != ButtonVariant.DEFAULT, f'variant="{self.variant}"'),
             (self.size != ButtonSize.DEFAULT, f'size="{self.size}"'),
         ]
-        return " " + Component.map_to_str(attr_map)
+        return Component.map_to_str(attr_map)
 
     def content_str(self) -> str:
         return self.text
@@ -69,7 +69,7 @@ class IconButton(Component):
             (self.variant != ButtonVariant.DEFAULT, f'variant="{self.variant}"'),
             (self.size != IconButtonSize.DEFAULT, f'size="{self.size}"'),
         ]
-        return " " + Component.map_to_str(attr_map)
+        return Component.map_to_str(attr_map)
 
     def content_str(self) -> str:
         contents = []

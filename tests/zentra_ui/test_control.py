@@ -56,10 +56,15 @@ class TestButton:
             attr_str = btn.attr_str()
             result = builder(btn).attr_str
 
-            if (attr_str == BTN_VALID_ATTRS[idx]) and (attr_str == result):
+            if (attr_str == BTN_VALID_ATTRS[idx]) and (attr_str == result.lstrip()):
                 valid_total += 1
+            else:
+                test_fail_example = attr_str
+                test_fail_result = result
 
-        assert valid_total == desired_total, f"{valid_total}/{desired_total}"
+        assert (
+            valid_total == desired_total
+        ), f"({valid_total}/{desired_total}) ({test_fail_example}, {test_fail_result})"
 
     @staticmethod
     def test_content_str_valid():
@@ -127,7 +132,9 @@ class TestIconButton:
             attr_str = btn.attr_str()
             result = builder(btn).attr_str
 
-            if (attr_str == ICON_BTN_VALID_ATTRS[idx]) and (attr_str == result):
+            if (attr_str == ICON_BTN_VALID_ATTRS[idx]) and (
+                attr_str == result.lstrip()
+            ):
                 valid_total += 1
 
         assert valid_total == desired_total, f"{valid_total}/{desired_total}"

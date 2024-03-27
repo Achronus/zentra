@@ -49,7 +49,7 @@ class ComponentJSXBuilder:
 
     def set_attrs(self) -> None:
         """Populates the `attr_str` based on the component values."""
-        self.attr_str = self.component.attr_str()
+        self.attr_str = " " + self.component.attr_str()
 
     def set_content(self) -> None:
         """Populates the `content_str` based on the component values."""

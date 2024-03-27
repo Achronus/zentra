@@ -1,4 +1,7 @@
 from pydantic import Field, HttpUrl
+
+from cli.templates.ui import CalendarJSX, CheckboxJSX, CollapsibleJSX
+
 from zentra.core import Component, Icon
 from zentra.core.enums.ui import (
     ButtonSize,
@@ -93,10 +96,10 @@ class Calendar(Component):
     """
 
     def unique_logic_str(self) -> str:
-        return "const [date, setDate] = useState(new Date());"
+        return CalendarJSX.unique_logic()
 
     def attr_str(self) -> str:
-        return 'mode="single" selected={date} onSelect={setDate} className="rounded-md border"'
+        return CalendarJSX.attributes()
 
 
 class Checkbox(Component):
@@ -119,12 +122,10 @@ class Checkbox(Component):
         return f'id="{self.id}"{" disabled" if self.disabled else ""}'
 
     def below_content_str(self) -> str:
-        content = f'<div className="grid gap-1.5 leading-none"><label htmlFor="{self.id}" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">{self.label}</label>'
+        content = CheckboxJSX.main_content(self.id, self.label)
 
         if self.more_info:
-            content += (
-                f'<p className="text-sm text-muted-foreground">{self.more_info}</p>'
-            )
+            content += CheckboxJSX.more_info(self.more_info)
 
         content += "</div>"
         return content

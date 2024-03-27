@@ -15,7 +15,7 @@ from zentra.core.enums.ui import (
     ButtonVariant,
     IconButtonSize,
 )
-from zentra.ui.control import Button, Calendar, IconButton
+from zentra.ui.control import Button, Calendar, Checkbox, IconButton
 
 
 @pytest.fixture
@@ -189,7 +189,7 @@ class TestCalendar:
     @staticmethod
     def test_attr_str_valid(calendar: Calendar):
         result = calendar.attr_str()
-        builder_result = builder(calendar).attr_str
+        builder_result: str = builder(calendar).attr_str
 
         valid = 'mode="single" selected={date} onSelect={setDate} className="rounded-md border"'
 
@@ -215,3 +215,85 @@ class TestCalendar:
             ]
         )
         assert checks
+
+
+class TestCheckbox:
+    @pytest.fixture
+    def basic_checkbox(self) -> Checkbox:
+        return Checkbox(id="terms", label="Accept the terms and conditions.")
+
+    @pytest.fixture
+    def checkbox_with_disabled(self) -> Checkbox:
+        return Checkbox(
+            id="terms",
+            label="Accept the terms and conditions.",
+            disabled=True,
+            more_info="Pretty please!",
+        )
+
+    @staticmethod
+    def test_attr_str_required(basic_checkbox: Checkbox):
+        result = basic_checkbox.attr_str()
+        builder_result: str = builder(basic_checkbox).attr_str
+
+        valid = 'id="terms"'
+
+        checks = all(
+            [
+                result == valid,
+                builder_result.lstrip() == valid,
+            ]
+        )
+        assert checks, (builder_result, result, valid)
+
+    @staticmethod
+    def test_attr_str_with_disabled(checkbox_with_disabled: Checkbox):
+        result = checkbox_with_disabled.attr_str()
+        builder_result: str = builder(checkbox_with_disabled).attr_str
+
+        valid = 'id="terms" disabled'
+
+        checks = all(
+            [
+                result == valid,
+                builder_result.lstrip() == valid,
+            ]
+        )
+        assert checks, (builder_result, result, valid)
+
+    @staticmethod
+    def test_below_content_str_required(basic_checkbox: Checkbox):
+        result = basic_checkbox.below_content_str()
+        builder_result: str = builder(basic_checkbox).below_content_str
+
+        valid = '<div className="grid gap-1.5 leading-none"><label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Accept the terms and conditions.</label></div>'
+
+        checks = all(
+            [
+                result == valid,
+                builder_result == valid,
+            ]
+        )
+        assert checks, (builder_result, result, valid)
+
+    @staticmethod
+    def test_below_content_str_with_optionals(checkbox_with_disabled: Checkbox):
+        result = checkbox_with_disabled.below_content_str()
+        builder_result: str = builder(checkbox_with_disabled).below_content_str
+
+        valid = '<div className="grid gap-1.5 leading-none"><label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Accept the terms and conditions.</label><p className="text-sm text-muted-foreground">Pretty please!</p></div>'
+
+        checks = all(
+            [
+                result == valid,
+                builder_result == valid,
+            ]
+        )
+        assert checks, (builder_result, result, valid)
+
+    @staticmethod
+    def test_complete_jsx_valid(checkbox_with_disabled: Checkbox):
+        result: str = builder(checkbox_with_disabled).component_str
+        valid = """<div className="flex items-top space-x-2"><Checkbox id="terms" disabled /><div className="grid gap-1.5 leading-none"><label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Accept the terms and conditions.</label><p className="text-sm text-muted-foreground">Pretty please!</p></div></div>"""
+
+        assert result == valid, (result, valid)

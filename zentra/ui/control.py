@@ -104,8 +104,41 @@ class Checkbox(Component):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Checkbox component.
 
     Parameters:
-    - `name` (`str`) - the name of the component
+    - `id` (`str`) - the identifier for the component
+    - `label` (`str`) - the text associated to the checkbox
+    - `more_info` (`str, optional`) - additional information to add under the checkbox. `None` by default. When `None` removes it from `Checkbox`
+    - `disabled` (`bool, optional`) - adds the disabled property, preventing it from being selected. `False` by default
     """
+
+    id: str
+    label: str
+    more_info: str = None
+    disabled: bool = False
+
+    def attr_str(self) -> str:
+        return f'id="{self.id}"{" disabled" if self.disabled else ""}'
+
+    def below_content_str(self) -> str:
+        content = f'<div className="grid gap-1.5 leading-none"><label htmlFor="{self.id}" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">{self.label}</label>'
+
+        if self.more_info:
+            content += (
+                f'<p className="text-sm text-muted-foreground">{self.more_info}</p>'
+            )
+
+        content += "</div>"
+        return content
+
+
+class MultiCheckbox(Component):
+    """
+    A Zentra model for multiple [shadcn/ui](https://ui.shadcn.com/) Checkbox components.
+
+    Parameters:
+    - `items` (`list[Checkbox]`) - a list of Checkbox components
+    """
+
+    items: list[Checkbox]
 
 
 class Collapsible(Component):

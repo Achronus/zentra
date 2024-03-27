@@ -3,9 +3,9 @@ from zentra.core import Component
 
 
 # Dictionary of components with containers around them
-# (classname, css_styles)
+# (classname, attributes)
 COMPONENTS_TO_WRAP = {
-    "Checkbox": "flex items-top space-x-2",
+    "Checkbox": 'className="flex items-top space-x-2"',
 }
 
 
@@ -62,7 +62,9 @@ class ComponentJSXBuilder:
             self.component_str += self.below_content_str
 
         if self.classname in COMPONENTS_TO_WRAP.keys():
-            self.component_str = f'<div className="{COMPONENTS_TO_WRAP[self.classname]}">{self.component_str}</div>'
+            self.component_str = (
+                f"<div {COMPONENTS_TO_WRAP[self.classname]}>{self.component_str}</div>"
+            )
 
     def set_attrs(self) -> None:
         """Populates the `attr_str` based on the component values."""

@@ -13,17 +13,21 @@ class Component(BaseModel):
 
     model_config = ConfigDict(use_enum_values=True)
 
-    def attr_str(self) -> str:
+    def attr_str(self) -> str | None:
         """Creates an attribute string based on conditional logic. Used for JSX conversion."""
-        raise NotImplementedError()
+        return None
 
-    def content_str(self) -> str:
+    def content_str(self) -> str | None:
         """Creates a content string based on conditional logic. Used for JSX conversion."""
-        raise NotImplementedError()
+        return None
 
-    def unique_logic_str(self) -> str:
+    def unique_logic_str(self) -> str | None:
         """Creates a JSX string containing the unique logic associated to the component added to the component before the `return`."""
-        raise NotImplementedError()
+        return None
+
+    def below_content_str(self) -> str | None:
+        """Creates a JSX string containing content below the component. Often used in substitute of `content_str()`."""
+        return None
 
     @classmethod
     def map_to_str(cls, map: ConditionResultMapping) -> str:

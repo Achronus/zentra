@@ -1,3 +1,8 @@
+CALENDAR_VALID_VALS = {
+    "attributes": 'mode="single" selected={testDate} onSelect={testSetDate} className="rounded-md border"',
+    "unique_logic": "const [testDate, testSetDate] = useState(new Date());",
+}
+
 CHECKBOX_VALID_VALS = {
     "attributes": {
         "required": 'id="terms"',
@@ -11,8 +16,8 @@ CHECKBOX_VALID_VALS = {
 }
 
 COLLAPSIBLE_VALID_VALS = {
-    "attributes": 'open={collapsibleIsOpen} onOpenChange={setCollapsibleIsOpen} className="w-[350px] space-y-2"',
-    "unique_logic": "const [collapsibleIsOpen, setCollapsibleIsOpen] = useState(false);",
+    "attributes": 'open={testIsOpen} onOpenChange={testSetIsOpen} className="w-[350px] space-y-2"',
+    "unique_logic": "const [testIsOpen, testSetIsOpen] = useState(false);",
     "content": '<div className="flex items-center justify-between space-x-4 px-4"><h4 className="text-sm font-semibold">Starred repositories</h4><CollapsibleTrigger asChild><Button variant="ghost" size="sm" className="w-9 p-0"><ChevronsUpDown className="h-4 w-4" /><span className="sr-only">Toggle</span></Button></CollapsibleTrigger></div><div className="rounded-md border px-4 py-3 font-mono text-sm">Astrum-AI/Zentra</div><CollapsibleContent className="space-y-2"><div className="rounded-md border px-4 py-3 font-mono text-sm">Astrum-AI/Zentra</div><div className="rounded-md border px-4 py-3 font-mono text-sm">Not Zentra</div></CollapsibleContent>',
-    "full_jsx": '<Collapsible open={collapsibleIsOpen} onOpenChange={setCollapsibleIsOpen} className="w-[350px] space-y-2"><div className="flex items-center justify-between space-x-4 px-4"><h4 className="text-sm font-semibold">Starred repositories</h4><CollapsibleTrigger asChild><Button variant="ghost" size="sm" className="w-9 p-0"><ChevronsUpDown className="h-4 w-4" /><span className="sr-only">Toggle</span></Button></CollapsibleTrigger></div><div className="rounded-md border px-4 py-3 font-mono text-sm">Astrum-AI/Zentra</div><CollapsibleContent className="space-y-2"><div className="rounded-md border px-4 py-3 font-mono text-sm">Astrum-AI/Zentra</div><div className="rounded-md border px-4 py-3 font-mono text-sm">Not Zentra</div></CollapsibleContent></Collapsible>',
+    "full_jsx": '<Collapsible open={testIsOpen} onOpenChange={testSetIsOpen} className="w-[350px] space-y-2"><div className="flex items-center justify-between space-x-4 px-4"><h4 className="text-sm font-semibold">Starred repositories</h4><CollapsibleTrigger asChild><Button variant="ghost" size="sm" className="w-9 p-0"><ChevronsUpDown className="h-4 w-4" /><span className="sr-only">Toggle</span></Button></CollapsibleTrigger></div><div className="rounded-md border px-4 py-3 font-mono text-sm">Astrum-AI/Zentra</div><CollapsibleContent className="space-y-2"><div className="rounded-md border px-4 py-3 font-mono text-sm">Astrum-AI/Zentra</div><div className="rounded-md border px-4 py-3 font-mono text-sm">Not Zentra</div></CollapsibleContent></Collapsible>',
 }

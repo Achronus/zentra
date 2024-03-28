@@ -84,12 +84,22 @@ class CalendarJSX(JSXContainer):
     """A JSX storage container for the Zentra Calendar model."""
 
     @classmethod
-    def unique_logic(cls) -> str:
-        return "const [date, setDate] = useState(new Date());"
+    def state_names(cls, id: str) -> tuple[str, str]:
+        """A helper function for assigning the `get` and `set` names for the `useState()` hook."""
+        return (
+            f"{id}Date",
+            f"{id}SetDate",
+        )
 
     @classmethod
-    def attributes(cls) -> str:
-        return 'mode="single" selected={date} onSelect={setDate} className="rounded-md border"'
+    def unique_logic(cls, id: str) -> str:
+        get_name, set_name = cls.state_names(id)
+        return f"const [{get_name}, {set_name}] = useState(new Date());"
+
+    @classmethod
+    def attributes(cls, id: str) -> str:
+        get_name, set_name = cls.state_names(id)
+        return f'mode="single" selected={{{get_name}}} onSelect={{{set_name}}} className="rounded-md border"'
 
 
 class CheckboxJSX(JSXContainer):
@@ -113,12 +123,22 @@ class CollapsibleJSX(JSXContainer):
     """A JSX storage container for the Zentra Collapsible model."""
 
     @classmethod
-    def unique_logic(cls) -> str:
-        return "const [collapsibleIsOpen, setCollapsibleIsOpen] = useState(false);"
+    def state_names(cls, id: str) -> tuple[str, str]:
+        """A helper function for assigning the `get` and `set` names for the `useState()` hook."""
+        return (
+            f"{id}IsOpen",
+            f"{id}SetIsOpen",
+        )
 
     @classmethod
-    def attributes(cls) -> str:
-        return 'open={collapsibleIsOpen} onOpenChange={setCollapsibleIsOpen} className="w-[350px] space-y-2"'
+    def unique_logic(cls, id: str) -> str:
+        get_name, set_name = cls.state_names(id)
+        return f"const [{get_name}, {set_name}] = useState(false);"
+
+    @classmethod
+    def attributes(cls, id: str) -> str:
+        get_name, set_name = cls.state_names(id)
+        return f'open={{{get_name}}} onOpenChange={{{set_name}}} className="w-[350px] space-y-2"'
 
     @classmethod
     def title(cls, title: str) -> str:

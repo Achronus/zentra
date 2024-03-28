@@ -1,4 +1,6 @@
-from pydantic import Field, HttpUrl
+import re
+from pydantic import Field, HttpUrl, field_validator
+from pydantic_core import PydanticCustomError
 
 from cli.templates.ui import (
     ButtonJSX,
@@ -16,6 +18,11 @@ from zentra.core.enums.ui import (
     IconButtonSize,
     InputTypes,
 )
+
+
+def has_valid_pattern(*, pattern: str, value: str) -> bool:
+    match = re.match(pattern, value)
+    return bool(match)
 
 
 class Button(Component):
@@ -81,13 +88,34 @@ class IconButton(Component):
 class Calendar(Component):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Calendar component.
+
+    Parameters:
+    - `id` (`str`) - an identifier for the component. Prepended to `get` and `set` for the `useState()` hook. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
+
+    Example:
+    1. `id='monthly'` ->
+        `const [monthlyDate, monthlySetDate] = useState(new Date());"`
+    2. `id='yearlyCalendar'` ->
+        `const [yearlyCalendarDate, yearlyCalendarSetDate] = useState(new Date());"`
     """
 
+    id: str = Field(min_length=1, max_length=15)
+
+    @field_validator("id")
+    def validate_id(cls, id: str) -> str:
+        if not has_valid_pattern(pattern=r"^[a-z]+(?:[A-Z][a-z]*)*$", value=id):
+            raise PydanticCustomError(
+                "string_pattern_mismatch",
+                "must be lowercase or camelCase",
+                dict(wrong_value=id, pattern="^[a-z]+(?:[A-Z][a-z]*)*$"),
+            )
+        return id
+
     def unique_logic_str(self) -> str:
-        return CalendarJSX.unique_logic()
+        return CalendarJSX.unique_logic(id=self.id)
 
     def attr_str(self) -> str:
-        return CalendarJSX.attributes()
+        return CalendarJSX.attributes(id=self.id)
 
 
 class Checkbox(Component):
@@ -95,16 +123,26 @@ class Checkbox(Component):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Checkbox component.
 
     Parameters:
-    - `id` (`str`) - the identifier for the component
+    - `id` (`str`) - an identifier for the component. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
     - `label` (`str`) - the text associated to the checkbox
     - `more_info` (`str, optional`) - additional information to add under the checkbox. `None` by default. When `None` removes it from `Checkbox`
     - `disabled` (`bool, optional`) - adds the disabled property, preventing it from being selected. `False` by default
     """
 
-    id: str
-    label: str
+    id: str = Field(min_length=1, max_length=15)
+    label: str = Field(min_length=1)
     more_info: str = None
     disabled: bool = False
+
+    @field_validator("id")
+    def validate_id(cls, id: str) -> str:
+        if not has_valid_pattern(pattern=r"^[a-z]+(?:[A-Z][a-z]*)*$", value=id):
+            raise PydanticCustomError(
+                "string_pattern_mismatch",
+                "must be lowercase or camelCase",
+                dict(wrong_value=id, pattern="^[a-z]+(?:[A-Z][a-z]*)*$"),
+            )
+        return id
 
     def attr_str(self) -> str:
         return CheckboxJSX.attributes(id=self.id, disabled=self.disabled)
@@ -129,24 +167,38 @@ class MultiCheckbox(Component):
 
     items: list[Checkbox] = Field(min_length=2)
 
+    # TODO: add logic specific to `Forms`
+
 
 class Collapsible(Component):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Collapsible component.
 
     Parameters:
+    - `id` (`str`) - an identifier for the component. Prepended to `get` and `set` for the `useState()` hook. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
     - `title` (`str`) - the main heading of the collapsible
     - `items` (`list[str]`) - a list of strings representing the text to add into each collapsible block. Requires a `minimum` of `1` item
     """
 
-    title: str
+    id: str = Field(min_length=1, max_length=15)
+    title: str = Field(min_length=1)
     items: list[str] = Field(min_length=1)
 
+    @field_validator("id")
+    def validate_id(cls, id: str) -> str:
+        if not has_valid_pattern(pattern=r"^[a-z]+(?:[A-Z][a-z]*)*$", value=id):
+            raise PydanticCustomError(
+                "string_pattern_mismatch",
+                "must be lowercase or camelCase",
+                dict(wrong_value=id, pattern="^[a-z]+(?:[A-Z][a-z]*)*$"),
+            )
+        return id
+
     def unique_logic_str(self) -> str:
-        return CollapsibleJSX.unique_logic()
+        return CollapsibleJSX.unique_logic(id=self.id)
 
     def attr_str(self) -> str:
-        return CollapsibleJSX.attributes()
+        return CollapsibleJSX.attributes(id=self.id)
 
     def content_str(self) -> str:
         title = CollapsibleJSX.title(self.title)
@@ -162,6 +214,8 @@ class Combobox(Component):
     - `name` (`str`) - the name of the component
     """
 
+    # TODO: come back once 'popover' and 'command' created
+
 
 class DatePicker(Component):
     """
@@ -170,6 +224,8 @@ class DatePicker(Component):
     Parameters:
     - `name` (`str`) - the name of the component
     """
+
+    # TODO: come back once 'popover' created
 
 
 class Input(Component):

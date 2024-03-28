@@ -8,7 +8,11 @@ from pydantic import ValidationError
 from tests.mappings.helper import builder
 from tests.mappings.ui_attributes import BTN_VALID_ATTRS, ICON_BTN_VALID_ATTRS
 from tests.mappings.ui_content import ICON_BTN_VALID_CONTENT
-from tests.mappings.ui_simple import CHECKBOX_VALID_VALS, COLLAPSIBLE_VALID_VALS
+from tests.mappings.ui_simple import (
+    CALENDAR_VALID_VALS,
+    CHECKBOX_VALID_VALS,
+    COLLAPSIBLE_VALID_VALS,
+)
 from zentra.core import Icon
 from zentra.core.enums.ui import (
     ButtonIconPosition,
@@ -185,14 +189,14 @@ class TestIconButton:
 class TestCalendar:
     @pytest.fixture
     def calendar(self) -> Calendar:
-        return Calendar()
+        return Calendar(id="test")
 
     @staticmethod
     def test_attr_str_valid(calendar: Calendar):
         result = calendar.attr_str()
         builder_result: str = builder(calendar).attr_str
 
-        valid = 'mode="single" selected={date} onSelect={setDate} className="rounded-md border"'
+        valid = CALENDAR_VALID_VALS["attributes"]
 
         checks = all(
             [
@@ -200,14 +204,14 @@ class TestCalendar:
                 builder_result.lstrip() == valid,
             ]
         )
-        assert checks
+        assert checks, (result, valid)
 
     @staticmethod
     def test_unique_logic_str_valid(calendar: Calendar):
         result = calendar.unique_logic_str()
         builder_result = builder(calendar).unique_logic_str
 
-        valid = "const [date, setDate] = useState(new Date());"
+        valid = CALENDAR_VALID_VALS["unique_logic"]
 
         checks = all(
             [
@@ -215,7 +219,31 @@ class TestCalendar:
                 builder_result == valid,
             ]
         )
-        assert checks
+        assert checks, (result, valid)
+
+    @staticmethod
+    def test_id_validation_whitespace():
+        with pytest.raises(ValidationError):
+            Calendar(id="invalid id")
+
+    @staticmethod
+    def test_id_validation_dashes():
+        with pytest.raises(ValidationError):
+            Calendar(id="invalid-id")
+
+    @staticmethod
+    def test_id_validation_uppercase():
+        with pytest.raises(ValidationError):
+            Calendar(id="INVALID")
+
+    @staticmethod
+    def test_id_validation_capitalise():
+        with pytest.raises(ValidationError):
+            Calendar(id="Wrong")
+
+    @staticmethod
+    def test_id_validation_camelcase():
+        Calendar(id="testCorrect")
 
 
 class TestCheckbox:
@@ -299,12 +327,38 @@ class TestCheckbox:
 
         assert result == valid, (result, valid)
 
+    @staticmethod
+    def test_id_validation_whitespace():
+        with pytest.raises(ValidationError):
+            Checkbox(id="invalid id", label="test")
+
+    @staticmethod
+    def test_id_validation_dashes():
+        with pytest.raises(ValidationError):
+            Checkbox(id="invalid-id", label="test")
+
+    @staticmethod
+    def test_id_validation_uppercase():
+        with pytest.raises(ValidationError):
+            Checkbox(id="INVALID", label="test")
+
+    @staticmethod
+    def test_id_validation_capitalise():
+        with pytest.raises(ValidationError):
+            Checkbox(id="Wrong", label="test")
+
+    @staticmethod
+    def test_id_validation_camelcase():
+        Checkbox(id="testCorrect", label="test")
+
 
 class TestCollapsible:
     @pytest.fixture
     def collapsible(self) -> Collapsible:
         return Collapsible(
-            title="Starred repositories", items=["Astrum-AI/Zentra", "Not Zentra"]
+            id="test",
+            title="Starred repositories",
+            items=["Astrum-AI/Zentra", "Not Zentra"],
         )
 
     @staticmethod
@@ -355,3 +409,47 @@ class TestCollapsible:
         valid = COLLAPSIBLE_VALID_VALS["full_jsx"]
 
         assert result == valid, (result, valid)
+
+    @staticmethod
+    def test_id_validation_whitespace():
+        with pytest.raises(ValidationError):
+            Collapsible(
+                id="invalid id",
+                title="Starred repositories",
+                items=["Astrum-AI/Zentra", "Not Zentra"],
+            )
+
+    @staticmethod
+    def test_id_validation_dashes():
+        with pytest.raises(ValidationError):
+            Collapsible(
+                id="invalid-id",
+                title="Starred repositories",
+                items=["Astrum-AI/Zentra", "Not Zentra"],
+            )
+
+    @staticmethod
+    def test_id_validation_uppercase():
+        with pytest.raises(ValidationError):
+            Collapsible(
+                id="INVALID",
+                title="Starred repositories",
+                items=["Astrum-AI/Zentra", "Not Zentra"],
+            )
+
+    @staticmethod
+    def test_id_validation_capitalise():
+        with pytest.raises(ValidationError):
+            Collapsible(
+                id="Wrong",
+                title="Starred repositories",
+                items=["Astrum-AI/Zentra", "Not Zentra"],
+            )
+
+    @staticmethod
+    def test_id_validation_camelcase():
+        Collapsible(
+            id="testCorrect",
+            title="Starred repositories",
+            items=["Astrum-AI/Zentra", "Not Zentra"],
+        )

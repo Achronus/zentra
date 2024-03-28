@@ -156,3 +156,12 @@ class CollapsibleJSX(JSXContainer):
 
         items_str += "</CollapsibleContent>"
         return items_str
+
+
+class InputJSX(JSXContainer):
+    """A JSX storage container for the Zentra Input model."""
+
+    @classmethod
+    def attributes(cls, id: str, type: str, placeholder: str, disabled: bool) -> str:
+        """Generates a string of JSX containing the attributes of the component's root."""
+        return f'id="{id}" type="{type}" placeholder="{placeholder}"{' disabled' if disabled else ''}'

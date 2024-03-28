@@ -12,6 +12,7 @@ from tests.mappings.ui_simple import (
     CALENDAR_VALID_VALS,
     CHECKBOX_VALID_VALS,
     COLLAPSIBLE_VALID_VALS,
+    INPUT_VALID_VALS,
 )
 from zentra.core import Icon
 from zentra.core.enums.ui import (
@@ -20,7 +21,7 @@ from zentra.core.enums.ui import (
     ButtonVariant,
     IconButtonSize,
 )
-from zentra.ui.control import Button, Calendar, Checkbox, Collapsible, IconButton
+from zentra.ui.control import Button, Calendar, Checkbox, Collapsible, IconButton, Input
 
 
 @pytest.fixture
@@ -220,6 +221,13 @@ class TestCalendar:
             ]
         )
         assert checks, (result, valid)
+
+    @staticmethod
+    def test_complete_jsx_valid(calendar: Calendar):
+        result: str = builder(calendar).component_str
+        valid = CALENDAR_VALID_VALS["full_jsx"]
+
+        assert result == valid, (result, valid)
 
     @staticmethod
     def test_id_validation_whitespace():
@@ -453,3 +461,74 @@ class TestCollapsible:
             title="Starred repositories",
             items=["Astrum-AI/Zentra", "Not Zentra"],
         )
+
+
+class TestInput:
+    @pytest.fixture
+    def basic_input(self) -> Input:
+        return Input(id="name", type="text", placeholder="Name")
+
+    @pytest.fixture
+    def input_with_disabled(self) -> Input:
+        return Input(id="name", type="text", placeholder="Name", disabled=True)
+
+    @staticmethod
+    def test_attr_str_required(basic_input: Input):
+        result = basic_input.attr_str()
+        builder_result: str = builder(basic_input).attr_str
+
+        valid = INPUT_VALID_VALS["attributes"]["required"]
+
+        checks = all(
+            [
+                result == valid,
+                builder_result.lstrip() == valid,
+            ]
+        )
+        assert checks, (builder_result, result, valid)
+
+    @staticmethod
+    def test_attr_str_with_disabled(input_with_disabled: Input):
+        result = input_with_disabled.attr_str()
+        builder_result: str = builder(input_with_disabled).attr_str
+
+        valid = INPUT_VALID_VALS["attributes"]["with_disabled"]
+
+        checks = all(
+            [
+                result == valid,
+                builder_result.lstrip() == valid,
+            ]
+        )
+        assert checks, (builder_result, result, valid)
+
+    @staticmethod
+    def test_complete_jsx_valid(input_with_disabled: Input):
+        result: str = builder(input_with_disabled).component_str
+        valid = INPUT_VALID_VALS["full_jsx"]
+
+        assert result == valid, (result, valid)
+
+    @staticmethod
+    def test_id_validation_whitespace():
+        with pytest.raises(ValidationError):
+            Input(id="name input", type="text", placeholder="Name", disabled=True)
+
+    @staticmethod
+    def test_id_validation_dashes():
+        with pytest.raises(ValidationError):
+            Input(id="name-input", type="text", placeholder="Name", disabled=True)
+
+    @staticmethod
+    def test_id_validation_uppercase():
+        with pytest.raises(ValidationError):
+            Input(id="NAME", type="text", placeholder="Name", disabled=True)
+
+    @staticmethod
+    def test_id_validation_capitalise():
+        with pytest.raises(ValidationError):
+            Input(id="Name", type="text", placeholder="Name", disabled=True)
+
+    @staticmethod
+    def test_id_validation_camelcase():
+        Input(id="agencyName", type="text", placeholder="Name", disabled=True)

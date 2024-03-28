@@ -8,6 +8,7 @@ from cli.templates.ui import (
     CalendarJSX,
     CheckboxJSX,
     CollapsibleJSX,
+    InputJSX,
 )
 
 from zentra.core import Component, Icon
@@ -235,14 +236,43 @@ class Input(Component):
     Inputs are extremely versatile as expressed in the [HTML Input docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/url). We've limited the attributes to the basics for simplicity. Once components are generated, you can edit them in the respective `.tsx` files with additional attributes if needed.
 
     Parameters:
+    - `id` (`str`) - an identifier for the component. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
     - `type` (`str`) - the type of input field. Options `['text', 'email', 'password', 'number', 'file', 'tel', 'search', 'url', 'color']`
     - `placeholder` (`str`) - the placeholder text for the input
-    - `read_only` (`bool, optional`) - a flag for setting the input to read only. Default is `False`
+    - `disabled` (`bool, optional`) - adds the disabled property, preventing it from being selected. `False` by default
     """
 
+    id: str = Field(min_length=1, max_length=15)
     type: InputTypes
     placeholder: str
-    read_only: bool = False
+    disabled: bool = False
+
+    @field_validator("id")
+    def validate_id(cls, id: str) -> str:
+        if not has_valid_pattern(pattern=r"^[a-z]+(?:[A-Z][a-z]*)*$", value=id):
+            raise PydanticCustomError(
+                "string_pattern_mismatch",
+                "must be lowercase or camelCase",
+                dict(wrong_value=id, pattern="^[a-z]+(?:[A-Z][a-z]*)*$"),
+            )
+        return id
+
+    def attr_str(self) -> str:
+        return InputJSX.attributes(
+            id=self.id,
+            type=self.type,
+            placeholder=self.placeholder,
+            disabled=self.disabled,
+        )
+
+
+class InputOTP(Component):
+    """
+    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) InputOTP component.
+
+    Parameters:
+    - `name` (`str`) - the name of the component
+    """
 
 
 class Label(Component):
@@ -333,15 +363,6 @@ class Toggle(Component):
 class ToggleGroup(Component):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) ToggleGroup component.
-
-    Parameters:
-    - `name` (`str`) - the name of the component
-    """
-
-
-class InputOtp(Component):
-    """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) InputOtp component.
 
     Parameters:
     - `name` (`str`) - the name of the component

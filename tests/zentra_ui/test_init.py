@@ -21,6 +21,7 @@ class TestForm:
                     name="name",
                     label="Agency Name",
                     content=Input(
+                        id="agencyName",
                         type="text",
                         label="Agency Name",
                         placeholder="Your Agency Name",
@@ -30,6 +31,7 @@ class TestForm:
                     name="companyEmail",
                     label="Agency Email",
                     content=Input(
+                        id="email",
                         type="email",
                         label="Account Email",
                         placeholder="Email",

@@ -36,6 +36,7 @@ class TestExtractComponentNames:
                                             name="name",
                                             label="Agency Name",
                                             content=Input(
+                                                id="agencyName",
                                                 type="text",
                                                 label="Agency Name",
                                                 placeholder="Your Agency Name",

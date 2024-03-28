@@ -1,3 +1,4 @@
+from pydantic import ValidationError
 import pytest
 from zentra.core import Zentra, Page, Component
 
@@ -30,7 +31,7 @@ class TestZentra:
         assert zentra.components == []
 
     def test_init_fail(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValidationError):
             Zentra(pages=["test"])
 
     def test_page_registration(self, zentra: Zentra):

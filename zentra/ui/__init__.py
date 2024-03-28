@@ -1,8 +1,10 @@
 import json
 from typing import Any
 
+from pydantic_core import PydanticCustomError
+
 from zentra.core import Component
-from pydantic import ConfigDict, ValidationInfo, field_validator
+from pydantic import ConfigDict, field_validator
 
 from zentra.core.enums.ui import FormFieldLayout
 
@@ -205,20 +207,23 @@ class Form(Component):
     model_config = ConfigDict(use_enum_values=True)
 
     @field_validator("fields", mode="before")
-    @classmethod
-    def invalid_row_size(
-        cls, fields: list[list[FormField] | FormField], info: ValidationInfo
+    def validate_fields(
+        cls, fields: list[list[FormField] | FormField]
     ) -> list[list[FormField]]:
         valid_sizes = [item.value for item in FormFieldLayout]
         for i, row in enumerate(fields):
             if isinstance(row, list) and len(row) not in valid_sizes:
                 if len(row) == 1:
-                    raise ValueError(
-                        f"for 'list[FormField]' at position: {i}.\n'len(row) == {len(row)}'. Cannot have single valued `FormFields` inside a row, take it outside of the 'list' or add another `FormField`!\n"
+                    raise PydanticCustomError(
+                        "single_valued_row",
+                        f"idx: {i} -> Cannot have a single 'FormField' inside a row. Remove from 'list' or add another 'FormField'\n",
+                        dict(idx=i, row=row, size=len(row)),
                     )
                 else:
-                    raise ValueError(
-                        f"for 'list[FormField]' at position: {i}.\n'len(row) == {len(row)}'. Row size must be one of '{valid_sizes}'! Check 'FormFields' are assigned correctly.\n"
+                    raise PydanticCustomError(
+                        "invalid_row_size",
+                        f"idx: {i} -> Row size ({len(row)}) too large, must be either: '{valid_sizes}'\n",
+                        dict(idx=i, row=row, size=len(row)),
                     )
 
         return fields

@@ -1,5 +1,6 @@
 from typing import Any
-from pydantic import BaseModel, ConfigDict, field_validator
+from pydantic import BaseModel, ConfigDict, ValidationInfo, field_validator
+from pydantic_core import PydanticCustomError
 
 from cli.conf.extract import extract_component_names
 from cli.conf.storage import BasicNameStorage
@@ -92,9 +93,14 @@ class Zentra(BaseModel):
     names: BasicNameStorage = BasicNameStorage()
 
     @field_validator("pages", "components", "names", mode="plain")
-    @classmethod
-    def prevent_init_editing(cls, value: Any) -> ValueError:
-        raise ValueError("Attributes cannot be updated during initialisation.")
+    def prevent_init_editing(
+        cls, value: Any, info: ValidationInfo
+    ) -> PydanticCustomError:
+        raise PydanticCustomError(
+            "init_disabled",
+            f"custom initalisation disabled for '{info.field_name}'. Remove '{info.field_name}' argument",
+            dict(field_name=info.field_name, wrong_value=value),
+        )
 
     def __set_type(
         self, component: BaseModel, valid_types: tuple[BaseModel, ...]

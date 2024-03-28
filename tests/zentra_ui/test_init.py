@@ -1,3 +1,4 @@
+from pydantic import ValidationError
 import pytest
 
 from zentra.ui import Form, FormField
@@ -39,7 +40,7 @@ class TestForm:
         )
 
     def test_invalid_single_row(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValidationError):
             Form(
                 name="testForm",
                 layout=[2],
@@ -55,7 +56,7 @@ class TestForm:
             )
 
     def test_invalid_row_size(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValidationError):
             Form(
                 name="testForm",
                 layout=[2],

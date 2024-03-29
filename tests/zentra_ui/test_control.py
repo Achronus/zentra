@@ -14,6 +14,7 @@ from tests.mappings.ui_simple import (
     COLLAPSIBLE_VALID_VALS,
     INPUT_VALID_VALS,
     INPUTOTP_VALID_VALS,
+    LABEL_VALID_VALS,
 )
 from zentra.core import Icon
 from zentra.core.enums.ui import (
@@ -30,6 +31,7 @@ from zentra.ui.control import (
     IconButton,
     Input,
     InputOTP,
+    Label,
 )
 
 
@@ -682,3 +684,69 @@ class TestInputOTP:
     def test_pattern_validation_error():
         with pytest.raises(ValidationError):
             InputOTP(num_inputs=6, num_groups=2, pattern=r"[.*")
+
+
+class TestLabel:
+    @pytest.fixture
+    def label(self) -> Label:
+        return Label(id="terms", text="Accept terms and conditions.")
+
+    @staticmethod
+    def test_attr_str(label: Label):
+        result = label.attr_str()
+        builder_result: str = builder(label).attr_str
+
+        valid = LABEL_VALID_VALS["attributes"]
+
+        checks = all(
+            [
+                result == valid,
+                builder_result.lstrip() == valid,
+            ]
+        )
+        assert checks, (builder_result, result, valid)
+
+    @staticmethod
+    def test_content_str(label: Label):
+        result = label.content_str()
+        builder_result: str = builder(label).content_str
+        valid = LABEL_VALID_VALS["content"]
+
+        checks = all(
+            [
+                result == valid,
+                builder_result == valid,
+            ]
+        )
+        assert checks, (builder_result, result, valid)
+
+    @staticmethod
+    def test_complete_jsx_valid(label: Label):
+        result: str = builder(label).component_str
+        valid = LABEL_VALID_VALS["full_jsx"]
+
+        assert result == valid, (result, valid)
+
+    @staticmethod
+    def test_id_validation_whitespace():
+        with pytest.raises(ValidationError):
+            Label(id="terms conditions", text="Accept terms and conditions.")
+
+    @staticmethod
+    def test_id_validation_dashes():
+        with pytest.raises(ValidationError):
+            Label(id="terms-conditions", text="Accept terms and conditions.")
+
+    @staticmethod
+    def test_id_validation_uppercase():
+        with pytest.raises(ValidationError):
+            Label(id="TERMS", text="Accept terms and conditions.")
+
+    @staticmethod
+    def test_id_validation_capitalise():
+        with pytest.raises(ValidationError):
+            Label(id="Terms", text="Accept terms and conditions.")
+
+    @staticmethod
+    def test_id_validation_camelcase():
+        Label(id="termsConditions", text="Accept terms and conditions.")

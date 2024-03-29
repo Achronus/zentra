@@ -10,6 +10,7 @@ from cli.templates.ui import (
     CollapsibleJSX,
     InputJSX,
     InputOTPJSX,
+    LabelJSX,
 )
 
 from zentra.core import Component, Icon
@@ -401,8 +402,28 @@ class Label(Component):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Label component.
 
     Parameters:
-    - `name` (`str`) - the name of the component
+    - `id` (`str`) - an identifier for the component. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
+    - `text` (`str`) - the descriptive text to put into the label
     """
+
+    id: str = Field(min_length=1, max_length=15)
+    text: str = Field(min_length=1)
+
+    @field_validator("id")
+    def validate_id(cls, id: str) -> str:
+        if not has_valid_pattern(pattern=r"^[a-z]+(?:[A-Z][a-z]*)*$", value=id):
+            raise PydanticCustomError(
+                "string_pattern_mismatch",
+                "must be lowercase or camelCase",
+                dict(wrong_value=id, pattern="^[a-z]+(?:[A-Z][a-z]*)*$"),
+            )
+        return id
+
+    def attr_str(self) -> str:
+        return LabelJSX.attributes(id=self.id)
+
+    def content_str(self) -> str:
+        return LabelJSX.main_content(text=self.text)
 
 
 class RadioGroup(Component):

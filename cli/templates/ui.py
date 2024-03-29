@@ -223,3 +223,15 @@ class InputOTPJSX(JSXContainer):
             p_val = cls.get_pattern_key(pattern)
             return f'import { {p_val} } from "input-otp"'.replace("'", " ")
         return None
+
+
+class LabelJSX(JSXContainer):
+    """A JSX storage container for the Zentra Label model."""
+
+    @classmethod
+    def attributes(cls, id: str) -> str:
+        return f'htmlForm="{id}"'
+
+    @classmethod
+    def main_content(cls, text: str) -> str:
+        return text

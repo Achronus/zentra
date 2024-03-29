@@ -1,3 +1,4 @@
+import re
 from pydantic import HttpUrl
 
 from zentra.core import Component, Icon
@@ -6,6 +7,7 @@ from zentra.core.enums.ui import (
     ButtonSize,
     ButtonVariant,
     IconButtonSize,
+    InputOTPPatterns,
 )
 
 
@@ -25,6 +27,11 @@ class JSXContainer:
     @classmethod
     def main_content(cls) -> str:
         """Generates a string of JSX with the main content of the component."""
+        return None
+
+    @classmethod
+    def extra_imports(cls) -> str:
+        """Generates a string of JSX with extra imports required by the component."""
         return None
 
 
@@ -165,3 +172,54 @@ class InputJSX(JSXContainer):
     def attributes(cls, id: str, type: str, placeholder: str, disabled: bool) -> str:
         """Generates a string of JSX containing the attributes of the component's root."""
         return f'id="{id}" type="{type}" placeholder="{placeholder}"{' disabled' if disabled else ''}'
+
+
+class InputOTPJSX(JSXContainer):
+    """A JSX storage container for the Zentra InputOTP model."""
+
+    @classmethod
+    def get_pattern_key(cls, pattern: str) -> str:
+        """A helper function for retrieving a patterns key name."""
+        for key, value in InputOTPPatterns.__members__.items():
+            if value == pattern:
+                return key
+
+    @classmethod
+    def assign_pattern(cls, pattern: str) -> str | None:
+        """A helper function for assigning the correct pattern value."""
+        if pattern in InputOTPPatterns:
+            return f"pattern={{{cls.get_pattern_key(pattern)}}}"
+        elif pattern:
+            return f'pattern="{re.compile(pattern).pattern}"'
+
+        return None
+
+    @classmethod
+    def attributes(cls, num_inputs: int, pattern: str) -> str:
+        p_val = cls.assign_pattern(pattern)
+        return f'maxLength={{{num_inputs}}}{f' {p_val}' if pattern else ''}'
+
+    @classmethod
+    def main_content(cls, num_inputs: int, num_groups: int) -> str:
+        content = ""
+        slot_group_size = num_inputs // num_groups
+        slot_idx = 0
+
+        for g_idx in range(num_groups):
+            content += "<InputOTPGroup>"
+            for _ in range(slot_group_size):
+                content += f"<InputOTPSlot index={{{slot_idx}}} />"
+                slot_idx += 1
+            content += "</InputOTPGroup>"
+
+            if num_groups > 1 and g_idx + 1 != num_groups:
+                content += "<InputOTPSeparator />"
+
+        return content
+
+    @classmethod
+    def extra_imports(cls, pattern: str) -> str | None:
+        if pattern in InputOTPPatterns:
+            p_val = cls.get_pattern_key(pattern)
+            return f'import { {p_val} } from "input-otp"'.replace("'", " ")
+        return None

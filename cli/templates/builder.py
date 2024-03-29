@@ -19,6 +19,7 @@ class ComponentJSXBuilder:
         self.content_str = None
         self.unique_logic_str = None
         self.below_content_str = None
+        self.extra_imports_str = None
 
         self.import_statement = ""
         self.component_str = ""
@@ -36,20 +37,24 @@ class ComponentJSXBuilder:
 
     def build(self) -> None:
         """Builds the component string based on the component values."""
-        self.set_import()
         self.set_attrs()
         self.set_content()
         self.set_unique_logic()
         self.set_below_content()
+        self.set_extra_imports()
 
+        self.set_import()
         self.set_component_str()
 
     def set_import(self) -> None:
-        """Sets the component import statement."""
+        """Sets the component import statements."""
         filename = name_from_camel_case(self.classname)
         self.import_statement = (
             f'import { {self.classname} } from "../ui/{filename}"'.replace("'", " ")
         )
+
+        if self.extra_imports_str:
+            self.import_statement += f"\n{self.extra_imports_str}"
 
     def set_component_str(self) -> None:
         """Combines the outer shell of the component with its attributes and content."""
@@ -81,3 +86,7 @@ class ComponentJSXBuilder:
     def set_below_content(self) -> None:
         """Populates the `below_content_str` based on the component values."""
         self.below_content_str = self.component.below_content_str()
+
+    def set_extra_imports(self) -> None:
+        """Populates the `extra_imports_str` based on the component values."""
+        self.extra_imports_str = self.component.extra_imports_str()

@@ -30,3 +30,19 @@ INPUT_VALID_VALS = {
     },
     "full_jsx": '<Input id="name" type="text" placeholder="Name" disabled />',
 }
+
+
+INPUTOTP_VALID_VALS = {
+    "attributes": {
+        "required": "maxLength={6}",
+        "with_official_pattern": "maxLength={6} pattern={REGEXP_ONLY_DIGITS_AND_CHARS}",
+        "with_custom_pattern": 'maxLength={6} pattern="([\^$.|?*+()\[\]{}])"',
+    },
+    "content": {
+        "one_group": "<InputOTPGroup><InputOTPSlot index={0} /><InputOTPSlot index={1} /><InputOTPSlot index={2} /><InputOTPSlot index={3} /><InputOTPSlot index={4} /><InputOTPSlot index={5} /></InputOTPGroup>",
+        "two_groups": "<InputOTPGroup><InputOTPSlot index={0} /><InputOTPSlot index={1} /><InputOTPSlot index={2} /></InputOTPGroup><InputOTPSeparator /><InputOTPGroup><InputOTPSlot index={3} /><InputOTPSlot index={4} /><InputOTPSlot index={5} /></InputOTPGroup>",
+        "three_groups": "<InputOTPGroup><InputOTPSlot index={0} /><InputOTPSlot index={1} /></InputOTPGroup><InputOTPSeparator /><InputOTPGroup><InputOTPSlot index={2} /><InputOTPSlot index={3} /></InputOTPGroup><InputOTPSeparator /><InputOTPGroup><InputOTPSlot index={4} /><InputOTPSlot index={5} /></InputOTPGroup>",
+    },
+    "extra_imports": 'import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp"',
+    "full_jsx": "<InputOTP maxLength={6} pattern={REGEXP_ONLY_DIGITS_AND_CHARS}><InputOTPGroup><InputOTPSlot index={0} /><InputOTPSlot index={1} /><InputOTPSlot index={2} /></InputOTPGroup><InputOTPSeparator /><InputOTPGroup><InputOTPSlot index={3} /><InputOTPSlot index={4} /><InputOTPSlot index={5} /></InputOTPGroup></InputOTP>",
+}

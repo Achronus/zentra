@@ -1,5 +1,5 @@
 import re
-from pydantic import Field, HttpUrl, field_validator
+from pydantic import Field, HttpUrl, ValidationInfo, field_validator
 from pydantic_core import PydanticCustomError
 
 from cli.templates.ui import (
@@ -9,6 +9,7 @@ from cli.templates.ui import (
     CheckboxJSX,
     CollapsibleJSX,
     InputJSX,
+    InputOTPJSX,
 )
 
 from zentra.core import Component, Icon
@@ -17,6 +18,7 @@ from zentra.core.enums.ui import (
     ButtonVariant,
     ButtonIconPosition,
     IconButtonSize,
+    InputOTPPatterns,
     InputTypes,
 )
 
@@ -271,8 +273,127 @@ class InputOTP(Component):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) InputOTP component.
 
     Parameters:
-    - `name` (`str`) - the name of the component
+    - `num_inputs` (`int`) - the length of the OTP. E.g., 6 = 6 input slots. Must be a minimum of `1`
+    - `num_groups` (`int, optional`) - the number of slot groups. E.g., `InputOTP(num_inputs=6, num_groups=2)` -> 2 groups of 3 input slots. `1` by default
+    - `pattern` (`str, optional`) - a regex pattern to limit the OTP input values. Options include: `['digits_only', 'chars_only', 'digits_n_chars_only']` ([official patterns](https://github.com/guilhermerodz/input-otp/blob/master/packages/input-otp/src/regexp.ts)) or a `custom` variant. `None` by default
+
+    Examples:
+    1. A basic OTP without a pattern.
+    ```python
+    input = InputOTP(num_inputs=6, num_groups=2)
+    ```
+    into ->
+    ```jsx
+    import { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator } from '../ui/input-otp'
+
+    <InputOTP maxLength={6}>
+        <InputOTPGroup>
+            <InputOTPSlot index={0} />
+            <InputOTPSlot index={1} />
+            <InputOTPSlot index={2} />
+        </InputOTPGroup>
+        <InputOTPSeparator />
+        <InputOTPGroup>
+            <InputOTPSlot index={3} />
+            <InputOTPSlot index={4} />
+            <InputOTPSlot index={5} />
+        </InputOTPGroup>
+    </InputOTP>
+    ```
+
+    2. A basic OTP with an official pattern and single group.
+    ```python
+    input = InputOTP(num_inputs=6, pattern='digits_only')
+    ```
+    into ->
+    ```jsx
+    import { InputOTP, InputOTPGroup, InputOTPSlot } from '../ui/input-otp'
+    import { REGEXP_ONLY_DIGITS } from "input-otp"
+
+    <InputOTP
+        maxLength={6}
+        pattern={REGEXP_ONLY_DIGITS}
+    >
+        <InputOTPGroup>
+            <InputOTPSlot index={0} />
+            <InputOTPSlot index={1} />
+            <InputOTPSlot index={2} />
+            <InputOTPSlot index={3} />
+            <InputOTPSlot index={4} />
+            <InputOTPSlot index={5} />
+        </InputOTPGroup>
+    </InputOTP>
+    ```
+
+    3. An OTP with a custom pattern and 3 groups.
+    ```python
+    input = InputOTP(num_inputs=6, num_groups=3, pattern=r"([\^$.|?*+()\[\]{}])")
+    ```
+    into ->
+    ```jsx
+    import { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator } from '../ui/input-otp'
+
+    <InputOTP
+        maxLength={6}
+        pattern="([\^$.|?*+()\[\]{}])"
+    >
+        <InputOTPGroup>
+            <InputOTPSlot index={0} />
+            <InputOTPSlot index={1} />
+        </InputOTPGroup>
+        <InputOTPSeparator />
+        <InputOTPGroup>
+            <InputOTPSlot index={2} />
+            <InputOTPSlot index={3} />
+        </InputOTPGroup>
+        <InputOTPSeparator />
+        <InputOTPGroup>
+            <InputOTPSlot index={4} />
+            <InputOTPSlot index={5} />
+        </InputOTPGroup>
+    </InputOTP>
+    ```
     """
+
+    num_inputs: int = Field(ge=1)
+    num_groups: int = Field(default=1, ge=1)
+    pattern: InputOTPPatterns | str = None
+
+    @field_validator("num_groups")
+    def validate_num_groups(num_groups: int, info: ValidationInfo) -> int:
+        num_inputs = info.data.get("num_inputs")
+        if num_groups > num_inputs:
+            raise PydanticCustomError(
+                "size_out_of_bounds",
+                f"cannot have more groups ({num_groups}) than input slots ({num_inputs})\n",
+                dict(wrong_value=num_groups, input_size=num_inputs),
+            )
+        return num_groups
+
+    @field_validator("pattern")
+    def validate_pattern(pattern: str) -> str:
+        if pattern not in InputOTPPatterns:
+            try:
+                re.compile(pattern)
+            except re.error:
+                official_patterns = [pattern.value for pattern in InputOTPPatterns]
+                raise PydanticCustomError(
+                    "invalid_regex_pattern",
+                    f"must be an official pattern option ({official_patterns}) or a valid regex string\n",
+                    dict(wrong_value=pattern, official_patterns=official_patterns),
+                )
+        return pattern
+
+    def attr_str(self) -> str:
+        return InputOTPJSX.attributes(num_inputs=self.num_inputs, pattern=self.pattern)
+
+    def content_str(self) -> str:
+        return InputOTPJSX.main_content(
+            num_inputs=self.num_inputs, num_groups=self.num_groups
+        )
+
+    def extra_imports_str(self) -> str | None:
+        return InputOTPJSX.extra_imports(pattern=self.pattern)
 
 
 class Label(Component):

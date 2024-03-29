@@ -13,6 +13,7 @@ from tests.mappings.ui_simple import (
     CHECKBOX_VALID_VALS,
     COLLAPSIBLE_VALID_VALS,
     INPUT_VALID_VALS,
+    INPUTOTP_VALID_VALS,
 )
 from zentra.core import Icon
 from zentra.core.enums.ui import (
@@ -21,7 +22,15 @@ from zentra.core.enums.ui import (
     ButtonVariant,
     IconButtonSize,
 )
-from zentra.ui.control import Button, Calendar, Checkbox, Collapsible, IconButton, Input
+from zentra.ui.control import (
+    Button,
+    Calendar,
+    Checkbox,
+    Collapsible,
+    IconButton,
+    Input,
+    InputOTP,
+)
 
 
 @pytest.fixture
@@ -532,3 +541,144 @@ class TestInput:
     @staticmethod
     def test_id_validation_camelcase():
         Input(id="agencyName", type="text", placeholder="Name", disabled=True)
+
+
+class TestInputOTP:
+    @pytest.fixture
+    def basic_input(self) -> InputOTP:
+        return InputOTP(num_inputs=6, num_groups=2)
+
+    @pytest.fixture
+    def input_with_pattern(self) -> InputOTP:
+        return InputOTP(num_inputs=6, num_groups=2, pattern="digits_n_chars_only")
+
+    @staticmethod
+    def test_attr_str_required(basic_input: InputOTP):
+        result = basic_input.attr_str()
+        builder_result: str = builder(basic_input).attr_str
+
+        valid = INPUTOTP_VALID_VALS["attributes"]["required"]
+
+        checks = all(
+            [
+                result == valid,
+                builder_result.lstrip() == valid,
+            ]
+        )
+        assert checks, (builder_result, result, valid)
+
+    @staticmethod
+    def test_attr_str_with_official_pattern(input_with_pattern: InputOTP):
+        result = input_with_pattern.attr_str()
+        builder_result: str = builder(input_with_pattern).attr_str
+
+        valid = INPUTOTP_VALID_VALS["attributes"]["with_official_pattern"]
+
+        checks = all(
+            [
+                result == valid,
+                builder_result.lstrip() == valid,
+            ]
+        )
+        assert checks, (builder_result, result, valid)
+
+    @staticmethod
+    def test_attr_str_with_custom_pattern():
+        input_with_pattern = InputOTP(
+            num_inputs=6, num_groups=2, pattern=r"([\^$.|?*+()\[\]{}])"
+        )
+        result = input_with_pattern.attr_str()
+        builder_result: str = builder(input_with_pattern).attr_str
+
+        valid = INPUTOTP_VALID_VALS["attributes"]["with_custom_pattern"]
+
+        checks = all(
+            [
+                result == valid,
+                builder_result.lstrip() == valid,
+            ]
+        )
+        assert checks, (builder_result, result, valid)
+
+    @staticmethod
+    def test_content_str_one_group():
+        input = InputOTP(num_inputs=6)
+        result = input.content_str()
+        builder_result: str = builder(input).content_str
+        valid = INPUTOTP_VALID_VALS["content"]["one_group"]
+
+        checks = all(
+            [
+                result == valid,
+                builder_result == valid,
+            ]
+        )
+        assert checks, (builder_result, result, valid)
+
+    @staticmethod
+    def test_content_str_two_groups(basic_input: InputOTP):
+        result = basic_input.content_str()
+        builder_result: str = builder(basic_input).content_str
+        valid = INPUTOTP_VALID_VALS["content"]["two_groups"]
+
+        checks = all(
+            [
+                result == valid,
+                builder_result == valid,
+            ]
+        )
+        assert checks, (builder_result, result, valid)
+
+    @staticmethod
+    def test_content_str_three_groups():
+        input = InputOTP(num_inputs=6, num_groups=3)
+        result = input.content_str()
+        builder_result: str = builder(input).content_str
+        valid = INPUTOTP_VALID_VALS["content"]["three_groups"]
+
+        checks = all(
+            [
+                result == valid,
+                builder_result == valid,
+            ]
+        )
+        assert checks, (builder_result, result, valid)
+
+    @staticmethod
+    def test_extra_imports_str_with_pattern(input_with_pattern: InputOTP):
+        result = input_with_pattern.extra_imports_str()
+        builder_result: str = builder(input_with_pattern).extra_imports_str
+        valid = INPUTOTP_VALID_VALS["extra_imports"]
+
+        checks = all(
+            [
+                result == valid,
+                builder_result == valid,
+            ]
+        )
+        assert checks, (builder_result, result, valid)
+
+    @staticmethod
+    def test_extra_imports_str_none(basic_input: InputOTP):
+        result = basic_input.extra_imports_str()
+        builder_result: str = builder(basic_input).extra_imports_str
+
+        checks = all([result is None, builder_result is None])
+        assert checks
+
+    @staticmethod
+    def test_complete_jsx_valid(input_with_pattern: InputOTP):
+        result: str = builder(input_with_pattern).component_str
+        valid = INPUTOTP_VALID_VALS["full_jsx"]
+
+        assert result == valid, (result, valid)
+
+    @staticmethod
+    def test_num_groups_validation_error():
+        with pytest.raises(ValidationError):
+            InputOTP(num_inputs=3, num_groups=4)
+
+    @staticmethod
+    def test_pattern_validation_error():
+        with pytest.raises(ValidationError):
+            InputOTP(num_inputs=6, num_groups=2, pattern=r"[.*")

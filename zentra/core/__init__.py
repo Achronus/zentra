@@ -30,6 +30,10 @@ class Component(BaseModel):
         """Creates a JSX string containing content below the component. Often used in substitute of `content_str()`."""
         return None
 
+    def extra_imports_str(self) -> str | None:
+        """Creates a JSX string containing extra import statements required for the component. Adds them to the top of the JSX file with the others."""
+        return None
+
     @classmethod
     def map_to_str(cls, map: ConditionResultMapping) -> str:
         """Creates a string based on a provided `(condition, result)` mapping. Usable inside `attr_str()` or `content_str()`. Used for JSX conversion."""

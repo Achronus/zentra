@@ -21,5 +21,9 @@ class TestJSXContainer:
         assert root.main_content() is None
 
     @staticmethod
-    def test_extra_imports(root: JSXContainer):
-        assert root.extra_imports() is None
+    def test_extra_parts(root: JSXContainer):
+        assert root.extra_parts() is None
+
+    @staticmethod
+    def test_imports(root: JSXContainer):
+        assert root.imports(core="test") == "test"

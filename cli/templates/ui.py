@@ -30,9 +30,14 @@ class JSXContainer:
         return None
 
     @classmethod
-    def extra_imports(cls) -> str:
-        """Generates a string of JSX with extra imports required by the component."""
+    def extra_parts(cls) -> str:
+        """Generates a string used inside the 'core' import string, defining the name of the sub-component pieces needed for the full component."""
         return None
+
+    @classmethod
+    def imports(cls, core: str) -> str:
+        """Generates a string of JSX with imports required by the component."""
+        return core
 
 
 class ButtonJSX(JSXContainer):
@@ -49,6 +54,10 @@ class ButtonJSX(JSXContainer):
             (size != ButtonSize.DEFAULT, f'size="{size}"'),
         ]
         return Component.map_to_str(attr_map)
+
+    @classmethod
+    def main_content(cls, text: str) -> str:
+        return text
 
 
 class IconButtonJSX(JSXContainer):
@@ -164,6 +173,15 @@ class CollapsibleJSX(JSXContainer):
         items_str += "</CollapsibleContent>"
         return items_str
 
+    @classmethod
+    def extra_parts(cls) -> str:
+        return ", CollapsibleContent, CollapsibleTrigger "
+
+    @classmethod
+    def imports(cls, core: str) -> str:
+        additional = 'import { Button } from "../ui/button"\nimport { ChevronsUpDown } from "lucide-react"'
+        return core + additional
+
 
 class InputJSX(JSXContainer):
     """A JSX storage container for the Zentra Input model."""
@@ -218,11 +236,19 @@ class InputOTPJSX(JSXContainer):
         return content
 
     @classmethod
-    def extra_imports(cls, pattern: str) -> str | None:
+    def extra_parts(cls, num_groups: int) -> str:
+        if num_groups > 1:
+            return ", InputOTPGroup, InputOTPSeparator, InputOTPSlot "
+
+        return ", InputOTPGroup, InputOTPSlot "
+
+    @classmethod
+    def imports(cls, core: str, pattern: str) -> str:
         if pattern in InputOTPPatterns:
             p_val = cls.get_pattern_key(pattern)
-            return f'import { {p_val} } from "input-otp"'.replace("'", " ")
-        return None
+            additional = f'import { {p_val} } from "input-otp"'.replace("'", " ")
+            return core + additional
+        return core
 
 
 class LabelJSX(JSXContainer):

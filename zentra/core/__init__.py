@@ -1,8 +1,9 @@
 from typing import Any
-from pydantic import BaseModel, ConfigDict, ValidationInfo, field_validator
+from pydantic import BaseModel, ConfigDict, PrivateAttr, ValidationInfo, field_validator
 from pydantic_core import PydanticCustomError
 
 from cli.conf.extract import extract_component_names
+from cli.conf.format import name_from_camel_case
 from cli.conf.storage import BasicNameStorage
 from cli.conf.types import ConditionResultMapping
 
@@ -12,7 +13,21 @@ class Component(BaseModel):
     A Zentra model for all React components.
     """
 
+    _c_name = PrivateAttr(default=None)
     model_config = ConfigDict(use_enum_values=True)
+
+    @property
+    def core_import_str(self) -> str:
+        """Stores the core import statement for the component."""
+        filename = name_from_camel_case(self.c_name)
+        return f'import {{ {self.c_name}**extra_parts**}} from "../ui/{filename}"\n'.replace(
+            "'", " "
+        )
+
+    @property
+    def c_name(self) -> str:
+        """Stores the classname for the JSX builder."""
+        return self._c_name if self._c_name else self.__class__.__name__
 
     def attr_str(self) -> str | None:
         """Creates an attribute string based on conditional logic. Used for JSX conversion."""
@@ -30,9 +45,21 @@ class Component(BaseModel):
         """Creates a JSX string containing content below the component. Often used in substitute of `content_str()`."""
         return None
 
-    def extra_imports_str(self) -> str | None:
-        """Creates a JSX string containing extra import statements required for the component. Adds them to the top of the JSX file with the others."""
-        return None
+    def import_str(self, extra_parts: str = None) -> str:
+        """Creates a JSX string containing the import statements required for the component. Adds them to the top of the JSX file with the others.
+
+        By default, returns the `core_import_str` property with an optional parameter `extra_parts` as `None`. When updating `extra_parts`, structure your overloaded function as follows:
+
+        ```python
+        def import_str(self) -> str:
+            extra_parts = "..."  # Populate string
+            core = super().import_str(extra_parts)
+            return JSXContainer.imports(core=core)
+        ```
+        """
+        return self.core_import_str.replace(
+            "**extra_parts**", extra_parts if extra_parts else " "
+        )
 
     @classmethod
     def map_to_str(cls, map: ConditionResultMapping) -> str:

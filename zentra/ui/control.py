@@ -1,5 +1,5 @@
 import re
-from pydantic import Field, HttpUrl, ValidationInfo, field_validator
+from pydantic import Field, HttpUrl, PrivateAttr, ValidationInfo, field_validator
 from pydantic_core import PydanticCustomError
 
 from cli.templates.ui import (
@@ -53,7 +53,7 @@ class Button(Component):
         )
 
     def content_str(self) -> str:
-        return self.text
+        return ButtonJSX.main_content(text=self.text)
 
 
 class IconButton(Component):
@@ -77,6 +77,8 @@ class IconButton(Component):
     variant: ButtonVariant = "default"
     size: IconButtonSize = "icon"
     disabled: bool = False
+
+    _c_name = PrivateAttr(default="Button")
 
     def attr_str(self) -> str:
         return IconButtonJSX.attributes(
@@ -171,6 +173,8 @@ class MultiCheckbox(Component):
 
     items: list[Checkbox] = Field(min_length=2)
 
+    _c_name = PrivateAttr(default="Checkbox")
+
     # TODO: add logic specific to `Forms`
 
 
@@ -208,6 +212,11 @@ class Collapsible(Component):
         title = CollapsibleJSX.title(self.title)
         items_str = CollapsibleJSX.items(self.items)
         return title + items_str
+
+    def import_str(self) -> str:
+        extra_parts = CollapsibleJSX.extra_parts()
+        core = super().import_str(extra_parts)
+        return CollapsibleJSX.imports(core=core)
 
 
 class Combobox(Component):
@@ -393,8 +402,10 @@ class InputOTP(Component):
             num_inputs=self.num_inputs, num_groups=self.num_groups
         )
 
-    def extra_imports_str(self) -> str | None:
-        return InputOTPJSX.extra_imports(pattern=self.pattern)
+    def import_str(self) -> str:
+        extra_parts = InputOTPJSX.extra_parts(num_groups=self.num_groups)
+        core = super().import_str(extra_parts)
+        return InputOTPJSX.imports(core=core, pattern=self.pattern)
 
 
 class Label(Component):

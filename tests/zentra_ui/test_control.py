@@ -8,6 +8,7 @@ from pydantic import ValidationError
 from tests.mappings.helper import builder
 from tests.mappings.ui_attributes import BTN_VALID_ATTRS, ICON_BTN_VALID_ATTRS
 from tests.mappings.ui_content import ICON_BTN_VALID_CONTENT
+from tests.mappings.ui_imports import VALID_IMPORTS
 from tests.mappings.ui_simple import (
     CALENDAR_VALID_VALS,
     CHECKBOX_VALID_VALS,
@@ -91,6 +92,20 @@ class TestButton:
         result = builder(btn).content_str
 
         assert content_str == result, (result, content_str)
+
+    @staticmethod
+    def test_import_str_valid():
+        btn = Button(text="test")
+
+        content_str = btn.import_str()
+        result = builder(btn).import_statements
+        valid = VALID_IMPORTS["button"]
+
+        assert all([content_str == valid, result == valid]), (
+            content_str,
+            valid,
+            result,
+        )
 
     @staticmethod
     def test_text_empty_str():
@@ -178,6 +193,20 @@ class TestIconButton:
         assert valid_total == desired_total, f"{valid_total}/{desired_total}"
 
     @staticmethod
+    def test_import_str_valid():
+        btn = IconButton(icon=Icon(name="test"))
+
+        content_str = btn.import_str()
+        result = builder(btn).import_statements
+        valid = VALID_IMPORTS["icon_button"]
+
+        assert all([content_str == valid, result == valid]), (
+            content_str,
+            valid,
+            result,
+        )
+
+    @staticmethod
     def test_icon_empty():
         with pytest.raises(ValidationError):
             IconButton(icon="")
@@ -239,6 +268,12 @@ class TestCalendar:
         valid = CALENDAR_VALID_VALS["full_jsx"]
 
         assert result == valid, (result, valid)
+
+    @staticmethod
+    def test_import_str_valid(calendar: Calendar):
+        result = builder(calendar).import_statements
+        valid = VALID_IMPORTS["calendar"]
+        assert result == valid, (valid, result)
 
     @staticmethod
     def test_id_validation_whitespace():
@@ -347,6 +382,12 @@ class TestCheckbox:
         assert result == valid, (result, valid)
 
     @staticmethod
+    def test_import_str_valid(basic_checkbox: Checkbox):
+        result = builder(basic_checkbox).import_statements
+        valid = VALID_IMPORTS["checkbox"]
+        assert result == valid, (valid, result)
+
+    @staticmethod
     def test_id_validation_whitespace():
         with pytest.raises(ValidationError):
             Checkbox(id="invalid id", label="test")
@@ -428,6 +469,12 @@ class TestCollapsible:
         valid = COLLAPSIBLE_VALID_VALS["full_jsx"]
 
         assert result == valid, (result, valid)
+
+    @staticmethod
+    def test_import_str_valid(collapsible: Collapsible):
+        result = builder(collapsible).import_statements
+        valid = VALID_IMPORTS["collapsible"]
+        assert result == valid, (valid, result)
 
     @staticmethod
     def test_id_validation_whitespace():
@@ -519,6 +566,12 @@ class TestInput:
         valid = INPUT_VALID_VALS["full_jsx"]
 
         assert result == valid, (result, valid)
+
+    @staticmethod
+    def test_import_str_valid(basic_input: Input):
+        result = builder(basic_input).import_statements
+        valid = VALID_IMPORTS["input"]
+        assert result == valid, (valid, result)
 
     @staticmethod
     def test_id_validation_whitespace():
@@ -647,33 +700,37 @@ class TestInputOTP:
         assert checks, (builder_result, result, valid)
 
     @staticmethod
-    def test_extra_imports_str_with_pattern(input_with_pattern: InputOTP):
-        result = input_with_pattern.extra_imports_str()
-        builder_result: str = builder(input_with_pattern).extra_imports_str
-        valid = INPUTOTP_VALID_VALS["extra_imports"]
-
-        checks = all(
-            [
-                result == valid,
-                builder_result == valid,
-            ]
-        )
-        assert checks, (builder_result, result, valid)
-
-    @staticmethod
-    def test_extra_imports_str_none(basic_input: InputOTP):
-        result = basic_input.extra_imports_str()
-        builder_result: str = builder(basic_input).extra_imports_str
-
-        checks = all([result is None, builder_result is None])
-        assert checks
-
-    @staticmethod
     def test_complete_jsx_valid(input_with_pattern: InputOTP):
         result: str = builder(input_with_pattern).component_str
         valid = INPUTOTP_VALID_VALS["full_jsx"]
 
         assert result == valid, (result, valid)
+
+    @staticmethod
+    def test_import_str_required():
+        input = InputOTP(num_inputs=6, num_groups=1)
+        result = builder(input).import_statements
+        valid = VALID_IMPORTS["input_otp"]["required"]
+        assert result == valid, (valid, result)
+
+    @staticmethod
+    def test_import_str_with_official_pattern():
+        input = InputOTP(num_inputs=6, num_groups=1, pattern="digits_only")
+        result = builder(input).import_statements
+        valid = VALID_IMPORTS["input_otp"]["with_pattern"]
+        assert result == valid, (valid, result)
+
+    @staticmethod
+    def test_import_str_with_seperator(basic_input: InputOTP):
+        result = builder(basic_input).import_statements
+        valid = VALID_IMPORTS["input_otp"]["with_sep"]
+        assert result == valid, (valid, result)
+
+    @staticmethod
+    def test_import_str_with_all(input_with_pattern: InputOTP):
+        result = builder(input_with_pattern).import_statements
+        valid = VALID_IMPORTS["input_otp"]["all"]
+        assert result == valid, (valid, result)
 
     @staticmethod
     def test_num_groups_validation_error():
@@ -726,6 +783,12 @@ class TestLabel:
         valid = LABEL_VALID_VALS["full_jsx"]
 
         assert result == valid, (result, valid)
+
+    @staticmethod
+    def test_import_str(label: Label):
+        result = builder(label).import_statements
+        valid = VALID_IMPORTS["label"]
+        assert result == valid, (valid, result)
 
     @staticmethod
     def test_id_validation_whitespace():

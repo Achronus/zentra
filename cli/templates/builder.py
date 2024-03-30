@@ -1,4 +1,3 @@
-from cli.conf.format import name_from_camel_case
 from zentra.core import Component
 
 
@@ -7,6 +6,13 @@ from zentra.core import Component
 COMPONENTS_TO_WRAP = {
     "Checkbox": 'className="flex items-top space-x-2"',
 }
+
+# Components that have a "use client" import at the top of their file
+USE_CLIENT_COMPONENTS = [
+    "Calendar",
+    "Checkbox",
+    "Collapsible",
+]
 
 
 class ComponentJSXBuilder:
@@ -19,16 +25,15 @@ class ComponentJSXBuilder:
         self.content_str = None
         self.unique_logic_str = None
         self.below_content_str = None
-        self.extra_imports_str = None
 
-        self.import_statement = ""
+        self.import_statements = ""
         self.component_str = ""
 
-        self.classname = self.component.__class__.__name__
+        self.classname = self.component.c_name
 
         self.build()
 
-    def __repr__(self) -> str:
+    def __repr__(self) -> str:  # pragma: no cover
         """Create a readable developer string representation of the object when using the `print()` function."""
         attributes = ", ".join(
             f"{key}={value!r}" for key, value in self.__dict__.items()
@@ -41,20 +46,16 @@ class ComponentJSXBuilder:
         self.set_content()
         self.set_unique_logic()
         self.set_below_content()
-        self.set_extra_imports()
 
-        self.set_import()
+        self.set_imports()
         self.set_component_str()
 
-    def set_import(self) -> None:
+    def set_imports(self) -> None:
         """Sets the component import statements."""
-        filename = name_from_camel_case(self.classname)
-        self.import_statement = (
-            f'import { {self.classname} } from "../ui/{filename}"'.replace("'", " ")
-        )
+        if self.classname in USE_CLIENT_COMPONENTS:
+            self.import_statements += '"use_client"\n\n'
 
-        if self.extra_imports_str:
-            self.import_statement += f"\n{self.extra_imports_str}"
+        self.import_statements += self.component.import_str()
 
     def set_component_str(self) -> None:
         """Combines the outer shell of the component with its attributes and content."""
@@ -86,7 +87,3 @@ class ComponentJSXBuilder:
     def set_below_content(self) -> None:
         """Populates the `below_content_str` based on the component values."""
         self.below_content_str = self.component.below_content_str()
-
-    def set_extra_imports(self) -> None:
-        """Populates the `extra_imports_str` based on the component values."""
-        self.extra_imports_str = self.component.extra_imports_str()

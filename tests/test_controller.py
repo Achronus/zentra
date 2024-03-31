@@ -304,7 +304,9 @@ class TestGenerate:
 
             mock_zentra_module = MagicMock()
             setattr(mock_zentra_module, "zentra", Zentra())
-            mock_zentra_module.zentra.register([Button(text="Click me!")])
+            mock_zentra_module.zentra.register(
+                [Page(name="ButtonPage", components=[Button(text="Click me!")])]
+            )
 
             with patch("importlib.import_module", return_value=mock_zentra_module):
                 with pytest.raises(typer.Exit) as e:
@@ -367,22 +369,23 @@ class TestGenerateController:
         @pytest.fixture
         def names(self, zentra: Zentra) -> list[str]:
             return [
-                f"{name_from_camel_case(name)}.tsx" for name in zentra.names.components
+                f"{name_from_camel_case(name)}.tsx"
+                for name in zentra.name_storage.components
             ]
 
         def test_formatted_names(self, generate_controller: GenerateController):
             valid_names = [
                 "alert-dialog.tsx",
-                "form.tsx",
                 "card.tsx",
                 "file-upload.tsx",
+                "form.tsx",
                 "input.tsx",
             ]
 
             result = generate_controller._get_and_format_models(
                 generate_controller.storage.base_names.components
             )
-            assert len(result) == len(valid_names)
+            assert len(result) == len(valid_names), result
 
         def test_files_to_generate(self, generate_controller: GenerateController):
             generate_controller.extract_models()
@@ -392,9 +395,7 @@ class TestGenerateController:
                 ("ui", "card.tsx"),
                 ("ui", "form.tsx"),
                 ("ui", "input.tsx"),
-                ("uploadthing", "core.ts"),
-                ("uploadthing", "route.ts"),
-                ("uploadthing", "uploadthing.ts"),
+                ("uploadthing", "file-upload.tsx"),
             ]
             assert len(result) == len(valid)
 
@@ -406,7 +407,7 @@ class TestGenerateController:
 
     class TestUpdateFiles:
         @staticmethod
-        def test_generate_succes(
+        def test_generate_success(
             setup_example_models, generate_controller: GenerateController
         ):
             _, _, dest = setup_example_models
@@ -415,12 +416,10 @@ class TestGenerateController:
             generate_controller.update_files()
 
             checks = [
-                os.path.exists(os.path.join(dest, "uploadthing.ts")),
-                os.path.exists(os.path.join(dest, "core.ts")),
-                os.path.exists(os.path.join(dest, "route.ts")),
+                os.path.exists(os.path.join(dest, "file-upload.tsx")),
             ]
 
-            assert all(checks), generate_controller.storage.components.generate
+            assert all(checks), checks
 
         @staticmethod
         def test_removal_success(
@@ -430,9 +429,7 @@ class TestGenerateController:
             dest = os.path.join(dest, "uploadthing")
 
             files_to_remove = [
-                ("uploadthing", "uploadthing.ts"),
-                ("uploadthing", "core.ts"),
-                ("uploadthing", "route.ts"),
+                ("uploadthing", "file_upload.tsx"),
             ]
 
             generate_controller.storage.components.remove = files_to_remove
@@ -440,9 +437,7 @@ class TestGenerateController:
 
             generate_controller.update_files()
 
-            assert not os.path.exists(
-                dest
-            ), generate_controller.storage.components.counts.remove
+            assert not os.path.exists(dest), os.path.exists(dest)
 
     class TestCheckForNewComponents:
         @staticmethod

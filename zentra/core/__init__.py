@@ -124,9 +124,9 @@ class Zentra(BaseModel):
 
     pages: list[Page] = []
     components: list[Component] = []
-    names: BasicNameStorage = BasicNameStorage()
+    name_storage: BasicNameStorage = BasicNameStorage()
 
-    @field_validator("pages", "components", "names", mode="plain")
+    @field_validator("pages", "components", "name_storage", mode="plain")
     def prevent_init_editing(
         cls, value: Any, info: ValidationInfo
     ) -> PydanticCustomError:
@@ -169,10 +169,10 @@ class Zentra(BaseModel):
         component_names = list(set(component_names) - set(filter_list))
         component_names.sort()
 
-        self.names.components = component_names
-        self.names.pages = [page.name for page in pages]
-        self.names.filenames = [
-            f"{name_from_camel_case(name)}.tsx" for name in self.names.components
+        self.name_storage.components = component_names
+        self.name_storage.pages = [page.name for page in pages]
+        self.name_storage.filenames = [
+            f"{name_from_camel_case(name)}.tsx" for name in self.name_storage.components
         ]
 
     @staticmethod

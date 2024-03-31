@@ -148,7 +148,7 @@ class TestZentra:
             zentra.register(invalid_input)
 
     def test_storage_valid(self, zentra_registered: Zentra):
-        storage = zentra_registered.names
+        storage = zentra_registered.name_storage
 
         checks = [
             storage.pages == ["AgencyDetails"],

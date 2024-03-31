@@ -1,7 +1,6 @@
 from itertools import chain
 import os
 
-from cli.conf.storage import ComponentDetails
 from cli.conf.types import FolderFilePair
 
 
@@ -42,66 +41,6 @@ def get_filename_dir_pairs(parent_dir: str, sub_dir: str = "") -> list[tuple[str
                     seen_files.add(file_tuple)
 
     return all_files
-
-
-def extract_component_details(
-    parent_dir: str, sub_dir: str = ""
-) -> list[ComponentDetails]:
-    """Retrieves a list of component information for all filenames in a parent directory and its sub-directory and stores them in a `ComponentDetails` object."""
-    all_components = []
-    seen_files = set()
-
-    def extract_components(file_content: str) -> list[str]:
-        start_idx = file_content.find("export {") + len("export {")
-        end_idx = file_content.find("}", start_idx)
-        if start_idx != -1 and end_idx != -1:
-            components = (
-                file_content[start_idx:end_idx].replace(" ", "").replace("\n", "")
-            )
-        return components.lstrip("{").rstrip(",").split(",")
-
-    def filter_components(components: list[str]) -> str:
-        filtered = [
-            item
-            for item in components
-            if not item.endswith("Variants")
-            and not item.startswith("type")
-            and not item.endswith("Style")
-            and not item.startswith("use")
-        ]
-
-        return filtered
-
-    def set_components(file_content: str) -> list[str]:
-        components = extract_components(file_content)
-        return filter_components(components)
-
-    if os.path.exists(parent_dir):
-        search_dirs = [folder for folder in os.listdir(parent_dir)]
-
-        for folder in search_dirs:
-            search_path = os.path.join(parent_dir, folder, sub_dir)
-            for file in os.listdir(search_path):
-                if ".tsx" in file:
-                    file_tuple = (folder, file)
-
-                    if file_tuple not in seen_files:
-                        filepath = os.path.join(search_path, file)
-                        with open(filepath, "r") as f:
-                            file_content = f.read()
-
-                        components = set_components(file_content)
-                        component = ComponentDetails(
-                            library=folder,
-                            filename=file,
-                            component_name=components[0],
-                            child_component_names=components[1:],
-                        )
-
-                        all_components.append(component)
-                        seen_files.add(file_tuple)
-
-    return all_components
 
 
 def extract_file_pairs_from_list(

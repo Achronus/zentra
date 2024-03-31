@@ -1,8 +1,8 @@
 from typing import Any
+
 from pydantic import BaseModel, ConfigDict, PrivateAttr, ValidationInfo, field_validator
 from pydantic_core import PydanticCustomError
 
-from cli.conf.extract import extract_component_names
 from cli.conf.format import name_from_camel_case
 from cli.conf.storage import BasicNameStorage
 from cli.conf.types import ConditionResultMapping
@@ -85,6 +85,9 @@ class Page(BaseModel):
         if node is None:
             node = self
 
+        if isinstance(node, list):
+            return [self.get_schema(item) for item in node]
+
         formatted_schema = {
             "type": node.__class__.__name__,
             "attrs": node.model_dump(),
@@ -157,28 +160,42 @@ class Zentra(BaseModel):
             comp_type = self.__set_type(component, valid_types)
             type_mapping[comp_type].append(component)
 
-        self.__set_component_cls_names()
-        self.__set_page_names()
+        self.fill_storage(pages=self.pages)
 
-    def __get_page_component_names(self) -> list[str]:
+    def fill_storage(self, pages: list[Page]) -> None:
+        """Populates page and component names into name storage."""
+        filter_list = ["FormField"]
+        component_names = self.__extract_component_names(pages)
+        component_names = list(set(component_names) - set(filter_list))
+        component_names.sort()
+
+        self.names.components = component_names
+        self.names.pages = [page.name for page in pages]
+        self.names.filenames = [
+            f"{name_from_camel_case(name)}.tsx" for name in self.names.components
+        ]
+
+    @staticmethod
+    def __extract_component_names(pages: list[Page]) -> list[str]:
         """A helper function for retrieving the page component names."""
-        page_components = []
+        component_names = set()
 
-        for page in self.pages:
-            page_components += extract_component_names(page.get_schema())
+        def recursive_extract(component):
+            if isinstance(component, list):
+                for item in component:
+                    recursive_extract(item)
+            else:
+                component_names.add(component.__class__.__name__)
 
-        return list(set(page_components))
+            for attr in ["content", "fields"]:
+                if hasattr(component, attr):
+                    next_node = getattr(component, attr)
+                    recursive_extract(next_node)
 
-    def __set_component_cls_names(self) -> None:
-        """A helper function for storing the component class names."""
-        filter_items = ["Page", "FormField"]
-        page_components = self.__get_page_component_names()
+        for page in pages:
+            for component in page.components:
+                recursive_extract(component)
 
-        for component in self.components:
-            page_components.append(component.__class__.__name__)
-
-        self.names.components = list(set(page_components) - set(filter_items))
-
-    def __set_page_names(self) -> None:
-        """A helper function for retrieving the page names."""
-        self.names.pages = [page.name for page in self.pages]
+        component_names = list(component_names)
+        component_names.sort()
+        return component_names

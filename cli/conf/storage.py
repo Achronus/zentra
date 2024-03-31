@@ -99,6 +99,7 @@ class BasicNameStorage(BaseModel):
 
     pages: list[str] = []
     components: list[str] = []
+    filenames: list[str] = []
 
 
 class ModelStorage(BaseModel):
@@ -112,3 +113,5 @@ class ModelStorage(BaseModel):
     base_names: BasicNameStorage = BasicNameStorage()
     pages: ModelFileStorage = ModelFileStorage()
     components: ModelFileStorage = ModelFileStorage()
+
+    initalised_models: list[ComponentDetails] = []

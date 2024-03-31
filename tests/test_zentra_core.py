@@ -1,6 +1,11 @@
 from pydantic import ValidationError
 import pytest
 from zentra.core import Zentra, Page, Component
+from zentra.ui import Form, FormField
+from zentra.ui.control import Input
+from zentra.ui.notification import AlertDialog
+from zentra.ui.presentation import Card
+from zentra.uploadthing import FileUpload
 
 
 class TestComponent:
@@ -25,6 +30,67 @@ class TestZentra:
     @pytest.fixture
     def zentra(self) -> Zentra:
         return Zentra()
+
+    @pytest.fixture
+    def form_fields(self) -> list[FormField | list[FormField]]:
+        return [
+            FormField(
+                name="agencyLogo",
+                label="Agency Logo",
+                content=FileUpload(),
+            ),
+            [
+                FormField(
+                    name="name",
+                    label="Agency Name",
+                    content=Input(
+                        id="agencyName",
+                        type="text",
+                        placeholder="Your Agency Name",
+                    ),
+                ),
+                FormField(
+                    name="companyEmail",
+                    label="Agency Email",
+                    content=Input(
+                        id="email",
+                        type="email",
+                        placeholder="Email",
+                    ),
+                ),
+            ],
+        ]
+
+    @pytest.fixture
+    def page(self, form_fields) -> Page:
+        return Page(
+            name="AgencyDetails",
+            components=[
+                AlertDialog(
+                    name="agencyAlertDialog",
+                    content=[
+                        Card(
+                            name="agencyInfo",
+                            title="Agency Information",
+                            description="Let's create an agency for your business. You can edit agency settings later from the agency settings tab.",
+                            content=[
+                                Form(
+                                    name="agencyForm",
+                                    fields=form_fields,
+                                    btn_text="Save Agency Information",
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ],
+        )
+
+    @pytest.fixture
+    def zentra_registered(self, page: Page) -> Zentra:
+        zentra = Zentra()
+        zentra.register([page])
+        return zentra
 
     def test_init(self, zentra: Zentra):
         assert zentra.pages == []
@@ -80,3 +146,21 @@ class TestZentra:
         invalid_input = "InvalidInput"
         with pytest.raises(ValueError):
             zentra.register(invalid_input)
+
+    def test_storage_valid(self, zentra_registered: Zentra):
+        storage = zentra_registered.names
+
+        checks = [
+            storage.pages == ["AgencyDetails"],
+            storage.components
+            == ["AlertDialog", "Card", "FileUpload", "Form", "Input"],
+            storage.filenames
+            == [
+                "alert-dialog.tsx",
+                "card.tsx",
+                "file-upload.tsx",
+                "form.tsx",
+                "input.tsx",
+            ],
+        ]
+        assert all(checks), checks

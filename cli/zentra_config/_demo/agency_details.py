@@ -16,18 +16,18 @@ form_fields = [
         FormField(
             name="name",
             label="Agency Name",
-            content=Input(type="text", placeholder="Your Agency Name"),
+            content=Input(id="agencyName", type="text", placeholder="Your Agency Name"),
         ),
         FormField(
             name="companyEmail",
             label="Agency Email",
-            content=Input(type="email", placeholder="Email"),
+            content=Input(id="email", type="email", placeholder="Email"),
         ),
     ],
     FormField(
         name="companyPhone",
         label="Agency Phone Number",
-        content=Input(type="tel", placeholder="Phone"),
+        content=Input(id="phone", type="tel", placeholder="Phone"),
     ),
     FormField(
         name="whiteLabel",
@@ -39,23 +39,23 @@ form_fields = [
     FormField(
         name="address",
         label="Address",
-        content=Input(type="text", placeholder="123 st..."),
+        content=Input(id="address", type="text", placeholder="123 st..."),
     ),
     [
         FormField(
             name="city",
             label="City",
-            content=Input(type="text", placeholder="City"),
+            content=Input(id="city", type="text", placeholder="City"),
         ),
         FormField(
             name="state",
             label="State",
-            content=Input(type="text", placeholder="State"),
+            content=Input(id="state", type="text", placeholder="State"),
         ),
         FormField(
             name="zipCode",
             label="Zipcode",
-            content=Input(type="text", placeholder="Zipcode"),
+            content=Input(id="zipcode", type="text", placeholder="Zipcode"),
         ),
     ],
 ]

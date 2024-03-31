@@ -4,6 +4,7 @@ from cli.conf.extract import get_dirnames, get_filename_dir_pairs
 from pydantic import BaseModel
 
 from cli.conf.types import FolderFilePair
+from cli.templates.retrieval import FilenameStorage
 
 
 class ConfigExistStorage:
@@ -82,6 +83,14 @@ class ComponentDetails(BaseModel):
     filename: str
     component_name: str
     child_component_names: list[str]
+
+
+class FileStorage(BaseModel):
+    """A storage container for file and directory names."""
+
+    root_dirs: list[str]
+    ui: FilenameStorage
+    ut: FilenameStorage
 
 
 class ModelFileStorage(BaseModel):

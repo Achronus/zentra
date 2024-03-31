@@ -13,6 +13,7 @@ zentra = "cli.main:app"
 python = "^3.12"
 typer = { extras = ["all"], version = "^0.9.0" }
 pydantic = "2.6.2"
+beautifulsoup4 = "^4.12.3"
 
 
 [tool.poetry.group.dev.dependencies]

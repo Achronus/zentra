@@ -7,6 +7,12 @@ from cli.conf.extract import local_path
 NEXTJS_VERSION = "14.1.4"
 SHADCN_UI_VERSION = "0.8.0"
 
+# TODO: replace with 'main' branch
+# Request package URLs
+GITHUB_ROOT = "https://github.com/Astrum-AI/Zentra"
+BRANCH = "ui-components"  # "main"
+GITHUB_COMPONENTS_DIR = f"{GITHUB_ROOT}/tree/{BRANCH}/components"
+
 
 class CommonErrorCodes(Enum):
     TEST_ERROR = -1

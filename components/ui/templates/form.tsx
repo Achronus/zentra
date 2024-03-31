@@ -1,14 +1,12 @@
 "use client"
 
-// IMPORTS START
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
 import {z} from 'zod'
 
-import { Form, **FORM_IMPORTS** } from '@/components/zentra/ui/form'
+import { ZentraFormField } from '@/components/zentra/ui/form-field'
 
 type CustomForm = {
   **FORM_FIELDS**
@@ -24,7 +22,26 @@ const FormSchema = z.object({
   **SCHEMA_VALS_HERE**
 });
 
-const **FORM_NAME** = ({ data }: Props) => {
+
+const layout1 = ({ data }: Props) => {
+  return (
+
+  );
+};
+
+const layout2 = ({ data }: Props) => {
+  return (
+
+  );
+};
+
+const layout3 = ({ data }: Props) => {
+  return (
+
+  );
+};
+
+const ZentraForm = ({ data }: Props) => {
   const form = useForm<z.infer<typeof FormSchema>({
     mode: "onChange",
     resolver: zodResolver(FormSchema),
@@ -65,4 +82,4 @@ const **FORM_NAME** = ({ data }: Props) => {
   )
 };
 
-export default **FORM_NAME**;
+export default ZentraForm;

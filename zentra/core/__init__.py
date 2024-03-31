@@ -7,6 +7,8 @@ from cli.conf.format import name_from_camel_case
 from cli.conf.storage import BasicNameStorage
 from cli.conf.types import ConditionResultMapping
 
+COMPONENT_FILTER_LIST = ["FormField"]
+
 
 class Component(BaseModel):
     """
@@ -164,10 +166,9 @@ class Zentra(BaseModel):
 
     def fill_storage(self, pages: list[Page]) -> None:
         """Populates page and component names into name storage."""
-        filter_list = ["FormField"]
-        component_names = self.__extract_component_names(pages)
-        component_names = list(set(component_names) - set(filter_list))
-        component_names.sort()
+        component_names = self.__extract_component_names(
+            pages=pages, filter_list=COMPONENT_FILTER_LIST
+        )
 
         self.name_storage.components = component_names
         self.name_storage.pages = [page.name for page in pages]
@@ -176,7 +177,9 @@ class Zentra(BaseModel):
         ]
 
     @staticmethod
-    def __extract_component_names(pages: list[Page]) -> list[str]:
+    def __extract_component_names(
+        pages: list[Page], filter_list: list[str] = []
+    ) -> list[str]:
         """A helper function for retrieving the page component names."""
         component_names = set()
 
@@ -185,7 +188,9 @@ class Zentra(BaseModel):
                 for item in component:
                     recursive_extract(item)
             else:
-                component_names.add(component.__class__.__name__)
+                name = component.__class__.__name__
+                if name not in filter_list:
+                    component_names.add(name)
 
             for attr in ["content", "fields"]:
                 if hasattr(component, attr):

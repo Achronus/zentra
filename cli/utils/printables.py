@@ -96,7 +96,7 @@ def setup_first_run_panel() -> Panel:
 def setup_complete_panel() -> Panel:
     """Creates a printable panel after successfully completing `zentra init`."""
     zentra = check_zentra_exists()
-    storage = zentra.names
+    storage = zentra.name_storage
     add_formatter = SetupPanelFormatter(storage=storage, action=Action.ADD)
 
     component_str = list_to_str(storage.components, action=Action.ADD)

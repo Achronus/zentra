@@ -57,7 +57,7 @@ class Generate:
         self.check_config_valid()
         zentra = check_zentra_exists()
 
-        if len(zentra.names.components) == 0:
+        if len(zentra.name_storage.components) == 0:
             raise typer.Exit(code=GenerateErrorCodes.NO_COMPONENTS)
 
         console.print()

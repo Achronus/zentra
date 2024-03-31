@@ -49,7 +49,7 @@ class Setup:
 
         if self.config_storage.app_configured():
             zentra = check_zentra_exists()
-            if len(zentra.names.components) == 0:
+            if len(zentra.name_storage.components) == 0:
                 raise typer.Exit(code=SetupErrorCodes.NO_COMPONENTS)
             else:
                 console.print(setup_complete_panel())
@@ -61,7 +61,7 @@ class Setup:
         controller.run()
 
         zentra = check_zentra_exists()
-        if len(zentra.names.components) == 0:
+        if len(zentra.name_storage.components) == 0:
             console.print(setup_first_run_panel())
             raise typer.Exit(code=SetupSuccessCodes.COMPLETE)
 

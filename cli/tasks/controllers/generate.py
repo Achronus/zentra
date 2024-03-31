@@ -28,8 +28,8 @@ class GenerateControllerHelper:
         self.paths = paths
         self.storage = ModelStorage()
 
-        self.storage.base_names.components = zentra.names.components
-        self.storage.base_names.pages = zentra.names.pages
+        self.storage.base_names.components = zentra.name_storage.components
+        self.storage.base_names.pages = zentra.name_storage.pages
 
     def _get_and_format_models(self, base_names: list[str]) -> list[str]:
         """Retrieves the Zentra model base names and converts them into a suitable format for file processing."""
@@ -156,6 +156,7 @@ class GenerateController(BaseController, GenerateControllerHelper):
     @status
     def extract_models(self) -> None:
         """Extracts the Zentra models and prepares them for file generation."""
+
         formatted_names = self._get_and_format_models(
             self.storage.base_names.components
         )

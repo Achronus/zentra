@@ -135,8 +135,8 @@ class Zentra(BaseModel):
         retriever = ComponentRetriever(url=GITHUB_COMPONENTS_DIR)
         items = {
             "root_dirs": retriever.root_dirs,
-            "ui": retriever.ui,
-            "ut": retriever.uploadthing,
+            "ui": retriever.storage.ui,
+            "ut": retriever.storage.uploadthing,
         }
         return FileStorage(**items)
 

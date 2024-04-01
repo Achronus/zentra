@@ -1,6 +1,96 @@
 import os
-from cli.conf.storage import ComponentDetails
+from cli.conf.extract import get_filename_dir_pairs
+from cli.conf.storage import BasicNameStorage, ComponentDetails, CountStorage
 from cli.conf.types import FolderFilePair
+from cli.templates.retrieval import ComponentStorage
+
+
+class ModelExtractor:
+    """
+    Handles the functionality for extracting models from GitHub and preparing them
+    for file generation.
+
+    Parameters:
+    - `url` (`string`) - the GitHub URL housing the component files
+    """
+
+    def __init__(self, url: str) -> None:
+        self.url = url
+        self.filenames: ComponentStorage = None
+
+    def component_base_names(self) -> FolderFilePair:
+        """Returns a list of `(library_name, filename)` pairs extracted from `ComponentStorage`."""
+        base_names = []
+        for lib_name, values in self.filenames.__dict__.items():
+            for filename in values.base:
+                base_names.append((lib_name, filename))
+
+        return base_names
+
+    def folders(self) -> list[str]:
+        """Returns a list of `library_name` folders."""
+        return [lib_name for lib_name in self.filenames.__dict__.keys()]
+
+
+class LocalExtractor:
+    """
+    Handles the functionality for extracting information from `zentra/models`.
+
+    Parameters:
+    - `generate_path` (`string`) - the path to the Zentra generate folder
+    - `name_storage` (`storage.BasicNameStorage`) - the Zentra application name storage containing the user model filenames
+    """
+
+    def __init__(self, generate_path: str, name_storage: BasicNameStorage) -> None:
+        self.generate_path = generate_path
+        self.name_storage = name_storage
+
+        self.model_counts = CountStorage()
+
+    def find_difference(
+        self, pair_one: FolderFilePair, pair_two: FolderFilePair
+    ) -> FolderFilePair:
+        """Identifies the differences between two lists of pairs of Zentra models."""
+        same = list(set(pair_one) & set(pair_two))
+        return list(set(pair_one + pair_two) - set(same))
+
+    def user_models(self) -> list[str]:
+        """Retrieves the Zentra model filenames from `zentra/models`."""
+        return self.name_storage.filenames
+
+    def existing_models(self) -> FolderFilePair:
+        """Retrieves the existing Zentra model filenames from the Zentra generate folder."""
+        return get_filename_dir_pairs(parent_dir=self.generate_path)
+
+    def format_user_models(
+        self, pairs: FolderFilePair, targets: list[str]
+    ) -> FolderFilePair:
+        """
+        Reformats the user defined Zentra models into a list of `(library_name, filename)` pairs.
+
+        Parameters:
+        - `pairs` (`FolderFilePair`) - a list of all `(library_name, filename)` component pairs
+        - `targets` (`list[str]`) - a list of file or folder names to extract from the file list. Can be a single item.
+        """
+        return [item for item in pairs if item[1] in targets]
+
+    def model_changes(
+        self, existing: FolderFilePair, user_model_pairs: FolderFilePair
+    ) -> tuple[FolderFilePair, FolderFilePair]:
+        """Provides two lists of `FolderFilePair` changes. In the form of: `(to_remove, to_add)`."""
+        to_remove, to_add = [], []
+        existing_models_set = set(existing)
+
+        model_updates = self.find_difference(existing, user_model_pairs)
+        for model in model_updates:
+            if model in existing_models_set:
+                to_remove.append(model)
+                self.model_counts.remove += 1
+            else:
+                to_add.append(model)
+                self.model_counts.generate += 1
+
+        return to_remove, to_add
 
 
 def extract_component_details(

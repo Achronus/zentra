@@ -1,6 +1,3 @@
-from cli.conf.constants import LocalCoreComponentFilepaths
-from cli.conf.extract import get_dirnames, get_filename_dir_pairs
-
 from pydantic import BaseModel
 
 from cli.conf.types import FolderFilePair
@@ -110,13 +107,7 @@ class BasicNameStorage(BaseModel):
 class ModelStorage(BaseModel):
     """A storage container for Zentra model filenames."""
 
-    base_files: FolderFilePair = get_filename_dir_pairs(
-        parent_dir=LocalCoreComponentFilepaths.ROOT, sub_dir="base"
-    )
-    folders_to_generate: list[str] = get_dirnames(LocalCoreComponentFilepaths.ROOT)
-
-    base_names: BasicNameStorage = BasicNameStorage()
-    pages: ModelFileStorage = ModelFileStorage()
-    components: ModelFileStorage = ModelFileStorage()
+    pages: ModelFileStorage = None
+    components: ModelFileStorage = None
 
     initalised_models: list[ComponentDetails] = []

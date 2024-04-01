@@ -9,7 +9,7 @@ def get_dirnames(dirpath: str) -> list[str]:
     return [dir for dir in os.listdir(dirpath)]
 
 
-def get_filename_dir_pairs(parent_dir: str, sub_dir: str = "") -> list[tuple[str, str]]:
+def get_filename_dir_pairs(parent_dir: str, sub_dir: str = "") -> FolderFilePair:
     """Retrieves a list of all filenames in a parent directory and its sub-directory. Outputs them as a list of tuples with: `(parent_dir, filename)`.
 
     Example output:

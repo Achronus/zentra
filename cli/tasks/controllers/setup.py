@@ -1,9 +1,10 @@
 import os
-from cli.conf.move import copy_dir_files, copy_file
+
 from cli.conf.storage import ConfigExistStorage, SetupPathStorage
 from cli.tasks.controllers.base import BaseController, status
-from cli.conf.create import make_directories
+from cli.conf.create import make_directories, make_file, make_code_files_from_url
 from cli.conf.extract import local_path
+from cli.templates.retrieval import CodeRetriever, ZentraSetupRetriever
 
 
 class SetupController(BaseController):
@@ -11,15 +12,19 @@ class SetupController(BaseController):
     A controller for handling tasks for configuring Zentra.
 
     Parameters:
-    - paths (storage.SetupPathStorage) - a path storage container with filepaths specific to the controller
-    - config_storage (storage.ConfigExistStorage) - a boolean value storage container for config checks
+    - `url` (`string`) - a GitHub URL housing the setup files
+    - `paths` (`storage.SetupPathStorage`) - a path storage container with filepaths specific to the controller
+    - `config_exists` (`storage.ConfigExistStorage`) - a boolean value storage container for config checks
     """
 
     def __init__(
-        self, paths: SetupPathStorage, config_storage: ConfigExistStorage
+        self, url: str, paths: SetupPathStorage, config_exists: ConfigExistStorage
     ) -> None:
+        self.url = url
         self.paths = paths
-        self.config_storage = config_storage
+        self.config_exists = config_exists
+
+        self.config_storage = None
 
         demo_folder_str = (
             f"{local_path(self.paths.models)}/{os.path.basename(self.paths.demo)}"
@@ -28,8 +33,12 @@ class SetupController(BaseController):
 
         tasks = [
             (
+                self.retrieve_assets,
+                "Retrieving [yellow]config[/yellow] filepaths from [yellow]GitHub[/yellow]",
+            ),
+            (
                 self.create_missing_files,
-                "Creating [yellow]configuration[/yellow] files",
+                "Creating [yellow]config[/yellow] files",
             ),
             (
                 self.create_demo_files,
@@ -41,13 +50,25 @@ class SetupController(BaseController):
 
     def _make_models_dir(self) -> None:
         """Creates the `zentra/models` directory if needed."""
-        if not self.config_storage.models_folder_exists:
+        if not self.config_exists.models_folder_exists:
             make_directories(self.paths.models)
 
     def _make_config_file(self) -> None:
-        """Moves the config file from `zentra_config` to `zentra/models` if doesn't exist."""
-        if not self.config_storage.config_file_exists:
-            copy_file(self.paths.local_config, self.paths.models)
+        """Creates the setup file in `zentra/models` if it doesn't exist."""
+        if not self.config_exists.config_file_exists:
+            config_url = f"{self.url}/{self.config_storage.config}"
+            local_filepath = os.path.join(self.paths.models, self.config_storage.config)
+
+            retriever = CodeRetriever(url=config_url)
+            make_file(local_filepath, retriever.extract())
+
+    @status
+    def retrieve_assets(self) -> None:
+        """Retrieves the filenames and filepaths for the configuration files."""
+        retriever = ZentraSetupRetriever(url=self.url)
+        retriever.extract()
+
+        self.config_storage = retriever.storage
 
     @status
     def create_missing_files(self) -> None:
@@ -58,4 +79,8 @@ class SetupController(BaseController):
     @status
     def create_demo_files(self) -> None:
         """Creates a demo folder with files to demonstrate how to create Zentra Pages and Components."""
-        copy_dir_files(self.paths.demo, self.paths.models)
+        make_code_files_from_url(
+            url=f"{self.url}/{self.config_storage.demo_dir_path}",
+            filenames=self.config_storage.demo_filenames,
+            dest_path=self.paths.demo,
+        )

@@ -69,6 +69,8 @@ class ZentaFilepaths:
     MODELS = os.path.join(ROOT, "models")  # (cwd)/zentra/models
     GENERATED = os.path.join(ROOT, "generated")  # (cwd)/zentra/generated
 
+    DEMO = os.path.join(MODELS, "_demo")  # (cwd)/zentra/models/_demo
+
     SETUP_FILENAME = "__init__.py"
 
 

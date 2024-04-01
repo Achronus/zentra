@@ -14,6 +14,7 @@ from cli.conf.storage import ConfigExistStorage, SetupPathStorage
 from cli.utils.printables import setup_complete_panel, setup_first_run_panel
 from .controllers.setup import SetupController
 from cli.conf.constants import (
+    GITHUB_INIT_ASSETS_DIR,
     CommonErrorCodes,
     SetupErrorCodes,
     SetupSuccessCodes,
@@ -34,20 +35,16 @@ class Setup:
         self.paths = SetupPathStorage(
             config=os.path.join(ZentaFilepaths.MODELS, ZentaFilepaths.SETUP_FILENAME),
             models=ZentaFilepaths.MODELS,
-            local=ZentraConfigFilepaths.ROOT,
-            demo=ZentraConfigFilepaths.DEMO,
-            local_config=os.path.join(
-                ZentraConfigFilepaths.ROOT, ZentaFilepaths.SETUP_FILENAME
-            ),
+            demo=ZentaFilepaths.DEMO,
         )
 
-        self.config_storage = ConfigExistStorage()
+        self.config_exists = ConfigExistStorage()
 
     def init_app(self) -> None:
         """Performs configuration to initialise application with Zentra."""
         self.check_config()
 
-        if self.config_storage.app_configured():
+        if self.config_exists.app_configured():
             zentra = check_zentra_exists()
             if len(zentra.name_storage.components) == 0:
                 raise typer.Exit(code=SetupErrorCodes.NO_COMPONENTS)
@@ -57,7 +54,11 @@ class Setup:
 
         # Create config files
         console.print()
-        controller = SetupController(self.paths, self.config_storage)
+        controller = SetupController(
+            url=GITHUB_INIT_ASSETS_DIR,
+            paths=self.paths,
+            config_exists=self.config_exists,
+        )
         controller.run()
 
         zentra = check_zentra_exists()
@@ -69,11 +70,11 @@ class Setup:
         """Checks if the config files are already setup."""
         # Check models file exists
         if check_folder_exists(self.paths.models):
-            self.config_storage.models_folder_exists = True
+            self.config_exists.models_folder_exists = True
 
         # Check config file exists
         if check_file_exists(self.paths.config):
-            self.config_storage.config_file_exists = True
+            self.config_exists.config_file_exists = True
 
             # Check config file content is valid
             check_config = CheckConfigFileValid()
@@ -81,6 +82,6 @@ class Setup:
             check_config.visit(file_content_tree)
 
             if check_config.is_valid():
-                self.config_storage.config_file_valid = True
+                self.config_exists.config_file_valid = True
             else:
                 raise typer.Exit(code=CommonErrorCodes.INVALID_CONFIG)

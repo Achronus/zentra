@@ -28,13 +28,6 @@ class GithubContentRetriever:
 
     def __init__(self, url: str) -> None:
         self.url = url
-        self.root_dirs: list[str] = self.set_dirnames(url=self.url)
-
-        self.ui: FilenameStorage = None
-        self.uploadthing: FilenameStorage = None
-
-        self.cache = {}
-        self.fill_storage()
 
     def get_content(self, url: str) -> dict:
         """Retrieves the list of file and folders displayed on a Github page. Returns it as a dictionary of JSON data."""
@@ -49,6 +42,20 @@ class GithubContentRetriever:
         3. the `contentType` (`directory` or `file`)
         """
         return self.get_content(url=url)["payload"]["tree"]["items"]
+
+
+class ComponentRetriever(GithubContentRetriever):
+    """A retriever for extracting the component directory and filenames from Github."""
+
+    def __init__(self, url: str) -> None:
+        super().__init__(url)
+        self.root_dirs: list[str] = self.set_dirnames(url=self.url)
+
+        self.ui: FilenameStorage = None
+        self.uploadthing: FilenameStorage = None
+
+        self.cache = {}
+        self.fill_storage()
 
     def set_dirnames(self, url: str) -> list[str]:
         """Retrieves the directory names from a URL and returns them as a list."""

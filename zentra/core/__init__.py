@@ -7,7 +7,7 @@ from cli.conf.constants import GITHUB_COMPONENTS_DIR
 from cli.conf.format import name_from_camel_case
 from cli.conf.storage import BasicNameStorage, FileStorage
 from cli.conf.types import ConditionResultMapping
-from cli.templates.retrieval import GithubContentRetriever
+from cli.templates.retrieval import ComponentRetriever
 
 COMPONENT_FILTER_LIST = ["FormField"]
 
@@ -132,7 +132,7 @@ class Zentra(BaseModel):
 
     @property
     def file_storage(self) -> FileStorage:
-        retriever = GithubContentRetriever(url=GITHUB_COMPONENTS_DIR)
+        retriever = ComponentRetriever(url=GITHUB_COMPONENTS_DIR)
         items = {
             "root_dirs": retriever.root_dirs,
             "ui": retriever.ui,

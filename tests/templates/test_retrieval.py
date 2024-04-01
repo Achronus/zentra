@@ -24,17 +24,18 @@ class TestComponentRetriever:
     def test_extract(retriever: ComponentRetriever):
         retriever.extract()
 
+        ui = retriever.storage.ui
         ui_checks = [
-            retriever.ui.base == COMPONENT_GITHUB_VALID["ui_storage"]["base"],
-            retriever.ui.templates == COMPONENT_GITHUB_VALID["ui_storage"]["templates"],
-            retriever.ui.lib == COMPONENT_GITHUB_VALID["ui_storage"]["lib"],
+            ui.base == COMPONENT_GITHUB_VALID["ui_storage"]["base"],
+            ui.templates == COMPONENT_GITHUB_VALID["ui_storage"]["templates"],
+            ui.lib == COMPONENT_GITHUB_VALID["ui_storage"]["lib"],
         ]
 
+        ut = retriever.storage.uploadthing
         ut_checks = [
-            retriever.uploadthing.base == COMPONENT_GITHUB_VALID["ut_storage"]["base"],
-            retriever.uploadthing.templates
-            == COMPONENT_GITHUB_VALID["ut_storage"]["templates"],
-            retriever.uploadthing.lib == COMPONENT_GITHUB_VALID["ut_storage"]["lib"],
+            ut.base == COMPONENT_GITHUB_VALID["ut_storage"]["base"],
+            ut.templates == COMPONENT_GITHUB_VALID["ut_storage"]["templates"],
+            ut.lib == COMPONENT_GITHUB_VALID["ut_storage"]["lib"],
         ]
         checks = ui_checks + ut_checks
         assert all(checks)
@@ -48,9 +49,10 @@ class TestZentraSetupRetriever:
     def test_extract(retriever: ZentraSetupRetriever):
         retriever.extract()
 
+        files = retriever.storage
         checks = [
-            retriever.config == ZENTRA_INIT_VALID["config"],
-            retriever.demo_dir_path == ZENTRA_INIT_VALID["demo_dir_path"],
-            retriever.demo_filenames == ZENTRA_INIT_VALID["demo_filenames"],
+            files.config == ZENTRA_INIT_VALID["config"],
+            files.demo_dir_path == ZENTRA_INIT_VALID["demo_dir_path"],
+            files.demo_filenames == ZENTRA_INIT_VALID["demo_filenames"],
         ]
         assert all(checks)

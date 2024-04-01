@@ -13,6 +13,21 @@ class FilenameStorage(BaseModel):
     lib: list[str] = None
 
 
+class ComponentStorage(BaseModel):
+    """A storage container for all library filenames."""
+
+    ui: FilenameStorage
+    uploadthing: FilenameStorage
+
+
+class InitFilesStorage(BaseModel):
+    """A storage container for the `zentra init` files."""
+
+    config: str
+    demo_dir_path: str
+    demo_filenames: list[str]
+
+
 def create_soup(url: str) -> BeautifulSoup:
     """Creates a BeautifulSoup object from a given URL."""
     response = requests.get(url)
@@ -57,9 +72,7 @@ class ComponentRetriever(GithubContentRetriever):
     def __init__(self, url: str) -> None:
         super().__init__(url)
         self.root_dirs: list[str] = self.set_dirnames(url=self.url)
-
-        self.ui: FilenameStorage = None
-        self.uploadthing: FilenameStorage = None
+        self.storage: ComponentStorage = None
 
         self.cache = {}
 
@@ -102,14 +115,17 @@ class ComponentRetriever(GithubContentRetriever):
 
     def extract(self) -> None:
         """Populates the `FilenameStorage` containers."""
+        components = {}
         file_dict = self.extract_names()
-        for library, values in file_dict.items():
-            if hasattr(self, library):
-                input_kwargs = {}
-                for subdir, files in values.items():
-                    input_kwargs[subdir] = files["files"]
 
-                setattr(self, library, FilenameStorage(**input_kwargs))
+        for library, values in file_dict.items():
+            input_kwargs = {}
+            for subdir, files in values.items():
+                input_kwargs[subdir] = files["files"]
+
+            components[library] = FilenameStorage(**input_kwargs)
+
+        self.storage = ComponentStorage(**components)
 
 
 class ZentraSetupRetriever(GithubContentRetriever):
@@ -118,24 +134,28 @@ class ZentraSetupRetriever(GithubContentRetriever):
     def __init__(self, url: str) -> None:
         super().__init__(url)
 
-        self.config: str = None
-        self.demo_dir_path: str = None
-        self.demo_filenames: list[str] = []
+        self.storage: InitFilesStorage = None
 
     def extract(self) -> None:
         """Extracts the filenames from Github and stores them in the retriever."""
+        init_files = {}
         file_folder_list = self.file_n_folders(url=self.url)
 
         # Handle root
         for item in file_folder_list:
             if item["contentType"] == "file":
-                self.config = item["name"]
+                init_files["config"] = item["name"]
 
             # Handle demo dir
             if item["contentType"] == "directory":
                 new_url = f"{self.url}/{item['name']}"
                 demo_file_folder_list = self.file_n_folders(url=new_url)
-                self.demo_dir_path = item["name"]
+                init_files["demo_dir_path"] = item["name"]
 
+                demo_filenames = []
                 for file in demo_file_folder_list:
-                    self.demo_filenames.append(file["name"])
+                    demo_filenames.append(file["name"])
+
+                init_files["demo_filenames"] = demo_filenames
+
+        self.storage = InitFilesStorage(**init_files)

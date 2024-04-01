@@ -87,7 +87,7 @@ Then, check if:
 )
 
 BUG_MSG = f"""
-This is a bug, please report this as an issue [bright_blue][link={GITHUB_ISSUES_URL}]on GitHub[/link][/bright_blue].
+This is a [yellow]bug[/yellow], please report this as an issue [bright_blue][link={GITHUB_ISSUES_URL}]on GitHub[/link][/bright_blue].
 """
 
 SETUP_COMPLETE_MSG = f"""

@@ -1,13 +1,13 @@
 import json
 import requests
 
-from cli.conf.constants import FAIL, CommonErrorCodes, console
-from cli.conf.message import BUG_MSG
+from cli.conf.constants import CommonErrorCodes, console
 
 import typer
 from bs4 import BeautifulSoup
 from pydantic import BaseModel
-from rich.panel import Panel
+
+from cli.utils.err_panels import request_failed_panel
 
 
 class FilenameStorage(BaseModel):
@@ -41,13 +41,7 @@ def create_soup(url: str) -> BeautifulSoup:
         return BeautifulSoup(response.text, "html.parser")
     else:
         console.print()
-        console.print(
-            Panel(
-                f"\n{FAIL} [red]Failed to fetch file contents[/red] {FAIL}\n\nStatus code: [red]{response.status_code}[/red]\nFile URL: [magenta]{url}[/magenta].\n{BUG_MSG}\n[cyan]Error code[/cyan]: {CommonErrorCodes.REQUEST_FAILED.value}",
-                expand=False,
-                border_style="bright_red",
-            )
-        )
+        console.print(request_failed_panel(status_code=response.status_code, url=url))
         raise typer.Exit(code=CommonErrorCodes.REQUEST_FAILED)
 
 

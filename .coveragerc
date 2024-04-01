@@ -1,5 +1,6 @@
 [run]
 omit = 
     cli/utils/printables.py
+    cli/utils/err_panels.py
     cli/conf/message.py
     tests/*

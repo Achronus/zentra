@@ -11,7 +11,10 @@ SHADCN_UI_VERSION = "0.8.0"
 # Request package URLs
 GITHUB_ROOT = "https://github.com/Astrum-AI/Zentra"
 BRANCH = "ui-components"  # "main"
-GITHUB_COMPONENTS_DIR = f"{GITHUB_ROOT}/tree/{BRANCH}/components"
+GITHUB_URL_CORE = f"{GITHUB_ROOT}/tree/{BRANCH}"
+
+GITHUB_COMPONENTS_DIR = f"{GITHUB_URL_CORE}/components"
+GITHUB_INIT_ASSETS_DIR = f"{GITHUB_URL_CORE}/init"
 
 
 class CommonErrorCodes(Enum):

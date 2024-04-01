@@ -1,8 +1,16 @@
 import pytest
 
 from cli.conf.constants import GITHUB_COMPONENTS_DIR, GITHUB_INIT_ASSETS_DIR
-from cli.templates.retrieval import ComponentRetriever, ZentraSetupRetriever
-from tests.mappings.retrieval import COMPONENT_GITHUB_VALID, ZENTRA_INIT_VALID
+from cli.templates.retrieval import (
+    CodeRetriever,
+    ComponentRetriever,
+    ZentraSetupRetriever,
+)
+from tests.mappings.retrieval import (
+    COMPONENT_GITHUB_VALID,
+    ZENTRA_INIT_CODE_VALID,
+    ZENTRA_INIT_VALID,
+)
 
 
 class TestComponentRetriever:
@@ -46,6 +54,7 @@ class TestZentraSetupRetriever:
     def retriever(self) -> ZentraSetupRetriever:
         return ZentraSetupRetriever(url=GITHUB_INIT_ASSETS_DIR)
 
+    @staticmethod
     def test_extract(retriever: ZentraSetupRetriever):
         retriever.extract()
 
@@ -56,3 +65,20 @@ class TestZentraSetupRetriever:
             files.demo_filenames == ZENTRA_INIT_VALID["demo_filenames"],
         ]
         assert all(checks)
+
+
+class TestCodeRetriever:
+    @pytest.fixture
+    def retriever(self) -> CodeRetriever:
+        URL = "https://github.com/Astrum-AI/Zentra/blob/ui-components/init/__init__.py"
+        return CodeRetriever(url=URL)
+
+    @staticmethod
+    def test_code(retriever: CodeRetriever):
+        result = retriever.code(retriever.url)
+        assert result == ZENTRA_INIT_CODE_VALID["rawlines"]
+
+    @staticmethod
+    def test_extract(retriever: CodeRetriever):
+        result = retriever.extract()
+        assert result == ZENTRA_INIT_CODE_VALID["full_file"]

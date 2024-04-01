@@ -159,3 +159,19 @@ class ZentraSetupRetriever(GithubContentRetriever):
                 init_files["demo_filenames"] = demo_filenames
 
         self.storage = InitFilesStorage(**init_files)
+
+
+class CodeRetriever(GithubContentRetriever):
+    """A retriever for obtaining the raw code inside a file found on Github."""
+
+    def __init__(self, url: str) -> None:
+        super().__init__(url)
+
+    def code(self, url: str) -> list[str]:
+        """Retrieves a list of strings for each line of code in a given file URL."""
+        return self.get_content(url=url)["payload"]["blob"]["rawLines"]
+
+    def extract(self) -> str:
+        """Extracts the code from a URL and returns it as a string."""
+        code_lines = self.code(url=self.url)
+        return "\n".join(code_lines)

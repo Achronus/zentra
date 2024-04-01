@@ -81,4 +81,4 @@ class TestCodeRetriever:
     @staticmethod
     def test_extract(retriever: CodeRetriever):
         result = retriever.extract()
-        assert result == ZENTRA_INIT_CODE_VALID["full_file"]
+        assert result == ZENTRA_INIT_CODE_VALID["full_file"], result

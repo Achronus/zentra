@@ -43,6 +43,13 @@ class GithubContentRetriever:
         """
         return self.get_content(url=url)["payload"]["tree"]["items"]
 
+    def __repr__(self) -> str:  # pragma: no cover
+        """Create a readable developer string representation of the object when using the `print()` function."""
+        attributes = ", ".join(
+            f"{key}={value!r}" for key, value in self.__dict__.items()
+        )
+        return f"{self.__class__.__name__}({attributes})"
+
 
 class ComponentRetriever(GithubContentRetriever):
     """A retriever for extracting the component directory and filenames from Github."""
@@ -55,7 +62,6 @@ class ComponentRetriever(GithubContentRetriever):
         self.uploadthing: FilenameStorage = None
 
         self.cache = {}
-        self.fill_storage()
 
     def set_dirnames(self, url: str) -> list[str]:
         """Retrieves the directory names from a URL and returns them as a list."""
@@ -94,7 +100,7 @@ class ComponentRetriever(GithubContentRetriever):
         self.cache[url] = file_dict
         return file_dict
 
-    def fill_storage(self) -> None:
+    def extract(self) -> None:
         """Populates the `FilenameStorage` containers."""
         file_dict = self.extract_names()
         for library, values in file_dict.items():
@@ -104,3 +110,32 @@ class ComponentRetriever(GithubContentRetriever):
                     input_kwargs[subdir] = files["files"]
 
                 setattr(self, library, FilenameStorage(**input_kwargs))
+
+
+class ZentraSetupRetriever(GithubContentRetriever):
+    """A retriever for obtaining the setup filepaths for the `zentra init` command from Github."""
+
+    def __init__(self, url: str) -> None:
+        super().__init__(url)
+
+        self.config: str = None
+        self.demo_dir_path: str = None
+        self.demo_filenames: list[str] = []
+
+    def extract(self) -> None:
+        """Extracts the filenames from Github and stores them in the retriever."""
+        file_folder_list = self.file_n_folders(url=self.url)
+
+        # Handle root
+        for item in file_folder_list:
+            if item["contentType"] == "file":
+                self.config = item["name"]
+
+            # Handle demo dir
+            if item["contentType"] == "directory":
+                new_url = f"{self.url}/{item['name']}"
+                demo_file_folder_list = self.file_n_folders(url=new_url)
+                self.demo_dir_path = item["name"]
+
+                for file in demo_file_folder_list:
+                    self.demo_filenames.append(file["name"])

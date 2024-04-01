@@ -123,6 +123,7 @@ SUCCESS_MSG_MAP = {
 
 COMMON_ERROR_MAP = {
     CommonErrorCodes.TEST_ERROR: "Test",
+    CommonErrorCodes.REQUEST_FAILED: "",
     CommonErrorCodes.CONFIG_MISSING: error_msg_with_checks(
         f"{MODELS_FILEPATH} [yellow]config[/yellow] file [red]missing[/red]!",
         checks=MISSING_FILES_CHECKS,
@@ -197,10 +198,7 @@ class MessageHandler:
     @staticmethod
     def __success_msg(msg: str, e: typer.Exit) -> Panel:
         """Handles success messages and returns a panel with their information."""
-        if msg != "":
-            return Panel(msg, expand=False, border_style="bright_green")
-        else:
-            return ""
+        return Panel(msg, expand=False, border_style="bright_green")
 
     def msg(self, e: typer.Exit) -> None:
         """Assigns a success or error message depending on the code received."""
@@ -215,10 +213,10 @@ class MessageHandler:
 
         msg_type = e.exit_code.__class__.__name__
 
-        panel = (
-            self.__error_msg(msg, e)
-            if "Error" in msg_type
-            else self.__success_msg(msg, e)
-        )
-
-        self.console.print(panel)
+        if msg != "":
+            panel = (
+                self.__error_msg(msg, e)
+                if "Error" in msg_type
+                else self.__success_msg(msg, e)
+            )
+            self.console.print(panel)

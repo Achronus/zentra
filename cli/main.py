@@ -6,19 +6,19 @@ from cli.conf.constants import (
     ZentraGeneratedFilepaths,
 )
 
+from cli.conf.constants import console
 from cli.conf.message import MSG_MAPPER, MessageHandler
 from cli.conf.storage import GeneratePathStorage
 from cli.tasks.setup import Setup
 from cli.tasks.generate import Generate
 
-from rich.console import Console
-
 
 app = typer.Typer(
-    help="Configure your project to work with Zentra using 'zentra init' or create your React components with 'zentra generate' based on your models in the zentra folder."
+    help="Configure your project to work with Zentra using 'zentra init' or create your React components with 'zentra generate' based on your models in the zentra folder.",
+    pretty_exceptions_enable=True,
 )
 
-console = Console()
+
 msg_handler = MessageHandler(console, MSG_MAPPER)
 
 

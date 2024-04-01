@@ -2,6 +2,10 @@ import os
 from enum import Enum
 
 from cli.conf.extract import local_path
+from rich.console import Console
+
+
+console = Console()
 
 # Library versions
 NEXTJS_VERSION = "14.1.4"
@@ -24,6 +28,7 @@ class CommonErrorCodes(Enum):
     CONFIG_EMPTY = 3
     ZENTRA_MISSING = 4
     MODELS_DIR_MISSING = 5
+    REQUEST_FAILED = 900
     UNKNOWN_ERROR = 1000
 
 

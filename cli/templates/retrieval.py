@@ -1,8 +1,13 @@
 import json
-
-from pydantic import BaseModel
 import requests
+
+from cli.conf.constants import FAIL, CommonErrorCodes, console
+from cli.conf.message import BUG_MSG
+
+import typer
 from bs4 import BeautifulSoup
+from pydantic import BaseModel
+from rich.panel import Panel
 
 
 class FilenameStorage(BaseModel):
@@ -35,7 +40,15 @@ def create_soup(url: str) -> BeautifulSoup:
     if response.status_code == 200:
         return BeautifulSoup(response.text, "html.parser")
     else:
-        raise ConnectionError(f"Failed to fetch '{url}' contents.")
+        console.print()
+        console.print(
+            Panel(
+                f"\n{FAIL} [red]Failed to fetch file contents[/red] {FAIL}\n\nStatus code: [red]{response.status_code}[/red]\nFile URL: [magenta]{url}[/magenta].\n{BUG_MSG}\n[cyan]Error code[/cyan]: {CommonErrorCodes.REQUEST_FAILED.value}",
+                expand=False,
+                border_style="bright_red",
+            )
+        )
+        raise typer.Exit(code=CommonErrorCodes.REQUEST_FAILED)
 
 
 class GithubContentRetriever:

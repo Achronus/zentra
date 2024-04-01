@@ -19,7 +19,6 @@ from cli.conf.constants import (
     SetupErrorCodes,
     SetupSuccessCodes,
     ZentaFilepaths,
-    ZentraConfigFilepaths,
 )
 
 from rich.console import Console

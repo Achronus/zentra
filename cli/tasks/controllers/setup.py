@@ -4,7 +4,11 @@ from cli.conf.storage import ConfigExistStorage, SetupPathStorage
 from cli.tasks.controllers.base import BaseController, status
 from cli.conf.create import make_directories, make_file, make_code_files_from_url
 from cli.conf.extract import local_path
-from cli.templates.retrieval import CodeRetriever, ZentraSetupRetriever
+from cli.templates.retrieval import (
+    CodeRetriever,
+    InitFilesStorage,
+    ZentraSetupRetriever,
+)
 
 
 class SetupController(BaseController):
@@ -24,7 +28,7 @@ class SetupController(BaseController):
         self.paths = paths
         self.config_exists = config_exists
 
-        self.config_storage = None
+        self.config_storage: InitFilesStorage = None
 
         demo_folder_str = (
             f"{local_path(self.paths.models)}/{os.path.basename(self.paths.demo)}"
@@ -57,10 +61,8 @@ class SetupController(BaseController):
         """Creates the setup file in `zentra/models` if it doesn't exist."""
         if not self.config_exists.config_file_exists:
             config_url = f"{self.url}/{self.config_storage.config}"
-            local_filepath = os.path.join(self.paths.models, self.config_storage.config)
-
             retriever = CodeRetriever(url=config_url)
-            make_file(local_filepath, retriever.extract())
+            make_file(self.paths.config, retriever.extract())
 
     @status
     def retrieve_assets(self) -> None:

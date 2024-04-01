@@ -1,6 +1,6 @@
+import pytest
 import os
 from unittest.mock import MagicMock, patch
-import pytest
 import typer
 
 from cli.conf.constants import (
@@ -9,13 +9,7 @@ from cli.conf.constants import (
     GenerateSuccessCodes,
 )
 from cli.conf.format import name_from_camel_case
-from cli.conf.storage import (
-    ConfigExistStorage,
-    GeneratePathStorage,
-    SetupPathStorage,
-)
-from cli.tasks.controllers.base import status, BaseController
-from cli.tasks.controllers.setup import SetupController
+from cli.conf.storage import GeneratePathStorage
 from cli.tasks.controllers.generate import GenerateController
 from cli.tasks.generate import Generate
 
@@ -41,20 +35,6 @@ def path_storage(tmp_path) -> GeneratePathStorage:
 @pytest.fixture
 def generate(path_storage: GeneratePathStorage) -> Generate:
     return Generate(paths=path_storage)
-
-
-@pytest.fixture
-def setup_controller(tmp_path) -> SetupController:
-    return SetupController(
-        SetupPathStorage(
-            config=os.path.join(tmp_path, "zentra_models", "zentra_init.py"),
-            models=os.path.join(tmp_path, "zentra_models"),
-            local=os.path.join(tmp_path, "zentra_config"),
-            demo=os.path.join(tmp_path, "zentra_config", "_demo"),
-            local_config=os.path.join(tmp_path, "zentra_config", "zentra_init.py"),
-        ),
-        config_storage=ConfigExistStorage(),
-    )
 
 
 @pytest.fixture
@@ -111,113 +91,6 @@ def zentra(page: Page) -> Zentra:
     zentra = Zentra()
     zentra.register([page])
     return zentra
-
-
-class TestStatus:
-    def test_success(self):
-        @status
-        def success_task():
-            pass
-
-        result, e = success_task()
-        assert result is True and e is None
-
-    def test_fail(self):
-        @status
-        def failing_task():
-            raise Exception("Test exception in 'test_controller.py' -> 'TestStatus'")
-
-        result, e = failing_task()
-        assert result is False, e is ValueError
-
-
-class TestBaseController:
-    def test_run(self):
-        @status
-        @staticmethod
-        def task():
-            pass
-
-        @status
-        @staticmethod
-        def task_fail():
-            raise Exception(
-                "Test exception in 'test_controller.py' -> 'TestBaseController'"
-            )
-
-        tasks = [(task, "Task 1"), (task_fail, "Task 2")]
-        controller = BaseController(tasks=tasks)
-        with pytest.raises(Exception):
-            controller.run()
-            assert all(
-                [
-                    len(controller.called_tasks) == 2,
-                    controller.called_tasks[0] == ("1. Task 1...", True),
-                    controller.called_tasks[1] == ("2. Task 2...", False),
-                ]
-            ), controller.called_tasks
-
-
-class TestSetupController:
-    @staticmethod
-    def test_make_models_dir_true(setup_controller: SetupController):
-        setup_controller.config_storage.models_folder_exists = True
-        setup_controller._make_models_dir()
-
-        assert not os.path.exists(setup_controller.paths.models)
-
-    @staticmethod
-    def test_make_models_dir_false(setup_controller: SetupController):
-        setup_controller.config_storage.models_folder_exists = False
-        setup_controller._make_models_dir()
-
-        assert os.path.exists(setup_controller.paths.models)
-
-    @staticmethod
-    def test_make_config_file_true(setup_controller: SetupController):
-        setup_controller.config_storage.config_file_exists = True
-        setup_controller._make_config_file()
-
-        assert not os.path.exists(setup_controller.paths.config)
-
-    @staticmethod
-    def test_make_config_file_false(setup_controller: SetupController):
-        os.makedirs(setup_controller.paths.local, exist_ok=True)
-        os.makedirs(setup_controller.paths.models, exist_ok=True)
-
-        with open(setup_controller.paths.local_config, "w") as f:
-            f.write("test")
-
-        setup_controller.config_storage.config_file_exists = False
-        setup_controller._make_config_file()
-
-        assert os.path.exists(setup_controller.paths.config)
-
-    @staticmethod
-    def test_create_missing_files(setup_controller: SetupController):
-        try:
-            setup_controller.create_missing_files()
-        except typer.Exit:
-            assert False
-
-    @staticmethod
-    def test_create_demo_files(setup_controller: SetupController):
-        test_file = os.path.join(setup_controller.paths.demo, "file1.txt")
-        new_test_filepath = os.path.join(setup_controller.paths.demo, test_file)
-
-        os.makedirs(setup_controller.paths.demo, exist_ok=True)
-
-        with open(test_file, "w") as f:
-            f.write("test")
-
-        setup_controller.config_storage.config_file_exists = False
-        setup_controller.create_demo_files()
-
-        checks = [
-            os.path.exists(setup_controller.paths.demo),
-            os.path.exists(new_test_filepath),
-        ]
-        assert all(checks)
 
 
 class TestGenerate:

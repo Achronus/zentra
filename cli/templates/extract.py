@@ -37,7 +37,7 @@ class LocalExtractor:
     def model_changes(
         self, existing: LibraryNamePairs, user_model_pairs: LibraryNamePairs
     ) -> tuple[LibraryNamePairs, LibraryNamePairs]:
-        """Provides two lists of `FolderFilePair` changes. In the form of: `(to_remove, to_add)`."""
+        """Provides two lists of `FolderFilePair` changes. In the form of: `(to_add, to_remove)`."""
         to_remove, to_add = [], []
         existing_models_set = set(existing)
 
@@ -50,7 +50,7 @@ class LocalExtractor:
                 to_add.append(model)
                 self.model_counts.generate += 1
 
-        return to_remove, to_add
+        return to_add, to_remove
 
 
 def extract_component_details(

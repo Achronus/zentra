@@ -24,33 +24,53 @@ class LocalBuilder:
     Handles functionality for creating files and directories in the Zentra generate folder.
 
     Parameters:
-    - `generate_path` (`string`) - path to the Zentra generate folder
-    - `folders_to_generate` (`list[string]`) - a list of folder names to create
+    - `url` (`string`) - a GitHub URL housing the component files
+    - `paths` (`storage.GeneratePathStorage`) - a path storage container with paths specific to the controller
+    - `components` (`ModelFileStorage`) - a container filled with the Zentra model pairs to `generate` and `remove`
     """
 
-    def __init__(self, generate_path: str, folders_to_generate: list[str]) -> None:
-        self.path = generate_path
-        self.folders_to_generate = folders_to_generate
+    def __init__(
+        self, url: str, paths: GeneratePathStorage, components: ModelFileStorage
+    ) -> None:
+        self.url = url
+        self.paths = paths
+        self.components = components
+
+        self.retriever = CodeRetriever(url=url)
+
+    def folders(self, pairs: LibraryNamePairs) -> list[str]:
+        """Returns a list of `library_name` folders from a list of `LibraryNamePairs`."""
+        return list(set(item[0] for item in pairs))
 
     def make_dirs(self) -> None:
-        """Makes the needed directories."""
-        for dir in self.folders_to_generate:
-            make_directories(os.path.join(self.path, dir))
+        """Creates the needed directories inside the generate folder."""
+        for dir in self.folders(self.components.generate):
+            make_directories(os.path.join(self.paths.generate, dir))
 
-    def create_base_files(self, models: LibraryNamePairs, sub_dir: str) -> None:
-        """Creates the base files for Zentra model that need to be generated in the generate folder."""
-        # TODO: replace with 'code_from_files'
-        transfer_folder_file_pairs(
-            self.storage.components.generate,
-            self.paths.component,
-            self.path,
-            src_sub_dir=sub_dir,
-        )
+    def create_base_files(self, file_type: ComponentFileType) -> None:
+        """
+        Creates the base files for Zentra models that need to be generated in the generate folder.
+
+        Parameter:
+        - `file_type` (`string`) - the type of file to extract. Options: ['base', 'templates', 'lib']
+        """
+        for folder, filename in self.components.generate:
+            url = f"{self.url}/{folder}/{file_type}"
+            make_code_file_from_url(
+                url=url,
+                filename=filename,
+                dest_path=self.paths.generate,
+            )
+
+            if folder == LibraryType.UPLOADTHING.value:
+                pass
 
     def remove_models(self) -> None:
         """Removes a list of Zentra models from the generate folder."""
-        # TODO: update parameters
-        remove_folder_file_pairs(self.storage.components.remove, self.paths.generate)
+        remove_files(pairs=self.components.remove, dir_path=self.paths.generate)
+
+        if LibraryType.UPLOADTHING.value in self.folders(self.components.remove):
+            pass
 
 
 class GenerateController(BaseController):
@@ -72,7 +92,8 @@ class GenerateController(BaseController):
         )
 
         self.local_builder = LocalBuilder(
-            generate_path=paths.generate,
+            url=url,
+            paths=paths,
             components=None,
         )
 
@@ -83,9 +104,9 @@ class GenerateController(BaseController):
             (self.detect_models, f"Detecting {zentra_str} models"),
             (
                 self.retrieve_assets,
-                "Retrieving [yellow]component[/yellow] assets from [yellow]GitHub[/yellow]",
+                "Retrieving core [yellow]component[/yellow] assets from [yellow]GitHub[/yellow]",
             ),
-            (self.update_files, f"Handling {react_str} component files"),
+            (self.remove_models, f"Removing unused {zentra_str} models"),
             (self.update_template_files, f"Configuring {react_str} components"),
         ]
 
@@ -106,6 +127,7 @@ class GenerateController(BaseController):
         }
 
         self.storage.components = ModelFileStorage(**changes)
+        self.local_builder.components = self.storage.components
 
     @status
     def detect_models(self) -> None:
@@ -116,24 +138,27 @@ class GenerateController(BaseController):
         if user_model_pairs == existing_models:
             raise typer.Exit(code=GenerateSuccessCodes.NO_NEW_COMPONENTS)
 
-        to_generate, to_remove = self.local_extractor.model_changes(
+        to_add, to_remove = self.local_extractor.model_changes(
             existing_models,
             user_model_pairs,
         )
 
         self.store_models(
             existing=existing_models,
-            add=to_generate,
+            add=to_add,
             remove=to_remove,
         )
 
     @status
-    def update_files(self) -> None:
-        """Creates or removes the React components based on the extracted models."""
+    def retrieve_assets(self) -> None:
+        """Retrieves the core component assets from GitHub and stores them in the Zentra generate folder."""
         if self.storage.components.counts.generate != 0:
             self.local_builder.make_dirs()
             self.local_builder.create_base_files(sub_dir="base")
 
+    @status
+    def remove_models(self) -> None:
+        """Removes the React component files that are no longer used from the Zentra generate folder."""
         if self.storage.components.counts.remove != 0:
             self.local_builder.remove_models()
 
@@ -141,4 +166,3 @@ class GenerateController(BaseController):
     def update_template_files(self) -> None:
         """Updates the React components based on the Zentra model attributes."""
         pass
-        # Steps 6 to 8

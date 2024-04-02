@@ -22,6 +22,7 @@ from zentra.core.enums.ui import (
     InputOTPPatterns,
     InputTypes,
 )
+from zentra.ui import ShadcnUi
 
 
 def has_valid_pattern(*, pattern: str, value: str) -> bool:
@@ -29,7 +30,7 @@ def has_valid_pattern(*, pattern: str, value: str) -> bool:
     return bool(match)
 
 
-class Button(Component):
+class Button(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Button component focusing on text.
 
@@ -56,7 +57,7 @@ class Button(Component):
         return ButtonJSX.main_content(text=self.text)
 
 
-class IconButton(Component):
+class IconButton(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Button component with a [Radix UI Icon](https://www.radix-ui.com/icons).
 
@@ -91,7 +92,7 @@ class IconButton(Component):
         )
 
 
-class Calendar(Component):
+class Calendar(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Calendar component.
 
@@ -124,7 +125,7 @@ class Calendar(Component):
         return CalendarJSX.attributes(id=self.id)
 
 
-class Checkbox(Component):
+class Checkbox(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Checkbox component.
 
@@ -163,7 +164,7 @@ class Checkbox(Component):
         return content
 
 
-class MultiCheckbox(Component):
+class MultiCheckbox(Component, ShadcnUi):
     """
     A Zentra model for multiple [shadcn/ui](https://ui.shadcn.com/) Checkbox components.
 
@@ -178,7 +179,7 @@ class MultiCheckbox(Component):
     # TODO: add logic specific to `Forms`
 
 
-class Collapsible(Component):
+class Collapsible(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Collapsible component.
 
@@ -219,7 +220,7 @@ class Collapsible(Component):
         return CollapsibleJSX.imports(core=core)
 
 
-class Combobox(Component):
+class Combobox(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Combobox component.
 
@@ -230,7 +231,7 @@ class Combobox(Component):
     # TODO: come back once 'popover' and 'command' created
 
 
-class DatePicker(Component):
+class DatePicker(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) DatePicker component.
 
@@ -241,7 +242,7 @@ class DatePicker(Component):
     # TODO: come back once 'popover' created
 
 
-class Input(Component):
+class Input(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Input component.
 
@@ -278,7 +279,7 @@ class Input(Component):
         )
 
 
-class InputOTP(Component):
+class InputOTP(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) InputOTP component.
 
@@ -408,7 +409,7 @@ class InputOTP(Component):
         return InputOTPJSX.imports(core=core, pattern=self.pattern)
 
 
-class Label(Component):
+class Label(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Label component.
 
@@ -437,7 +438,7 @@ class Label(Component):
         return LabelJSX.main_content(text=self.text)
 
 
-class RadioGroup(Component):
+class RadioGroup(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) RadioGroup component.
 
@@ -446,7 +447,7 @@ class RadioGroup(Component):
     """
 
 
-class ScrollArea(Component):
+class ScrollArea(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) ScrollArea component.
 
@@ -455,7 +456,7 @@ class ScrollArea(Component):
     """
 
 
-class Select(Component):
+class Select(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Select component.
 
@@ -464,7 +465,7 @@ class Select(Component):
     """
 
 
-class Slider(Component):
+class Slider(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Slider component.
 
@@ -473,7 +474,7 @@ class Slider(Component):
     """
 
 
-class Switch(Component):
+class Switch(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Switch component.
 
@@ -486,7 +487,7 @@ class Switch(Component):
     read_only: bool = False
 
 
-class Tabs(Component):
+class Tabs(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Tabs component.
 
@@ -495,7 +496,7 @@ class Tabs(Component):
     """
 
 
-class Textarea(Component):
+class Textarea(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Textarea component.
 
@@ -504,7 +505,7 @@ class Textarea(Component):
     """
 
 
-class Toggle(Component):
+class Toggle(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Toggle component.
 
@@ -513,7 +514,7 @@ class Toggle(Component):
     """
 
 
-class ToggleGroup(Component):
+class ToggleGroup(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) ToggleGroup component.
 

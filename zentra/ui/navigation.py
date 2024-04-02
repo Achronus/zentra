@@ -1,7 +1,8 @@
 from zentra.core import Component
+from zentra.ui import ShadcnUi
 
 
-class Menubar(Component):
+class Menubar(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Menubar component.
 
@@ -10,7 +11,7 @@ class Menubar(Component):
     """
 
 
-class NavMenu(Component):
+class NavMenu(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) NavMenu component.
 
@@ -19,7 +20,7 @@ class NavMenu(Component):
     """
 
 
-class DropdownMenu(Component):
+class DropdownMenu(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) DropdownMenu component.
 
@@ -28,7 +29,7 @@ class DropdownMenu(Component):
     """
 
 
-class ContextMenu(Component):
+class ContextMenu(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) ContextMenu component.
 
@@ -37,7 +38,7 @@ class ContextMenu(Component):
     """
 
 
-class Command(Component):
+class Command(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Command component.
 
@@ -46,7 +47,7 @@ class Command(Component):
     """
 
 
-class Breadcrumb(Component):
+class Breadcrumb(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Breadcrumb component.
 

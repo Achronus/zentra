@@ -1,6 +1,11 @@
 from enum import Enum, IntEnum
 
 
+class LibraryType(str, Enum):
+    SHADCNUI = "ui"
+    UPLOADTHING = "uploadthing"
+
+
 class ButtonVariant(str, Enum):
     DEFAULT = "default"
     SECONDARY = "secondary"

@@ -6,10 +6,18 @@ from pydantic_core import PydanticCustomError
 from zentra.core import Component
 from pydantic import ConfigDict, field_validator
 
-from zentra.core.enums.ui import FormFieldLayout
+from zentra.core.enums.ui import FormFieldLayout, LibraryType
 
 
-class FormField(Component):
+class ShadcnUi:
+    """A Zentra model for all [shadcn/ui](https://ui.shadcn.com/) components."""
+
+    @property
+    def library(self) -> str:
+        return LibraryType.SHADCNUI.value
+
+
+class FormField(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) FormField inside the Form component.
 
@@ -89,7 +97,7 @@ class FormField(Component):
     message: bool = True
 
 
-class Form(Component):
+class Form(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Form component. Submit buttons are automatically created for each form and are not needed in the `fields` attribute.
 

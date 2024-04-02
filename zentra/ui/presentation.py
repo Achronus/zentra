@@ -1,7 +1,8 @@
 from zentra.core import Component
+from zentra.ui import ShadcnUi
 
 
-class Accordion(Component):
+class Accordion(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Accordion component.
 
@@ -10,7 +11,7 @@ class Accordion(Component):
     """
 
 
-class AspectRatio(Component):
+class AspectRatio(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) AspectRatio component.
 
@@ -19,7 +20,7 @@ class AspectRatio(Component):
     """
 
 
-class Avatar(Component):
+class Avatar(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Avatar component.
 
@@ -28,7 +29,7 @@ class Avatar(Component):
     """
 
 
-class Badge(Component):
+class Badge(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Badge component.
 
@@ -37,7 +38,7 @@ class Badge(Component):
     """
 
 
-class Card(Component):
+class Card(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Card component.
 
@@ -51,7 +52,7 @@ class Card(Component):
     footer: list[Component] = None
 
 
-class Carousel(Component):
+class Carousel(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Carousel component.
 
@@ -60,7 +61,7 @@ class Carousel(Component):
     """
 
 
-class DataTable(Component):
+class DataTable(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) DataTable component.
 
@@ -69,7 +70,7 @@ class DataTable(Component):
     """
 
 
-class HoverCard(Component):
+class HoverCard(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) HoverCard component.
 
@@ -78,7 +79,7 @@ class HoverCard(Component):
     """
 
 
-class Progress(Component):
+class Progress(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Progress component.
 
@@ -87,7 +88,7 @@ class Progress(Component):
     """
 
 
-class Resizeable(Component):
+class Resizeable(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Resizeable component.
 
@@ -96,7 +97,7 @@ class Resizeable(Component):
     """
 
 
-class Separator(Component):
+class Separator(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Separator component.
 
@@ -105,7 +106,7 @@ class Separator(Component):
     """
 
 
-class Skeleton(Component):
+class Skeleton(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Skeleton component.
 
@@ -114,7 +115,7 @@ class Skeleton(Component):
     """
 
 
-class Table(Component):
+class Table(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Table component.
 

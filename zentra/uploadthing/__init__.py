@@ -1,7 +1,16 @@
 from zentra.core import Component
+from zentra.core.enums.ui import LibraryType
 
 
-class FileUpload(Component):
+class Uploadthing:
+    """A Zentra model for all [uploadthing](https://uploadthing.com/) components."""
+
+    @property
+    def library(self) -> str:
+        return LibraryType.UPLOADTHING.value
+
+
+class FileUpload(Component, Uploadthing):
     """A Zentra model for the [uploadthing](https://uploadthing.com/) FileUpload fields.
 
     Parameters:

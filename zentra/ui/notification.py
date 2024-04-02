@@ -1,7 +1,8 @@
 from zentra.core import Component
+from zentra.ui import ShadcnUi
 
 
-class Alert(Component):
+class Alert(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Alert component.
 
@@ -10,7 +11,7 @@ class Alert(Component):
     """
 
 
-class AlertDialog(Component):
+class AlertDialog(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) AlertDialog component.
 
@@ -25,7 +26,7 @@ class AlertDialog(Component):
     trigger: list[Component] | str = None
 
 
-class Sonner(Component):
+class Sonner(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Sonner component.
 
@@ -34,7 +35,7 @@ class Sonner(Component):
     """
 
 
-class Toast(Component):
+class Toast(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Toast component.
 
@@ -43,7 +44,7 @@ class Toast(Component):
     """
 
 
-class Tooltip(Component):
+class Tooltip(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Tooltip component.
 

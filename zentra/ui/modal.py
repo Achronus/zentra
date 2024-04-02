@@ -1,7 +1,8 @@
 from zentra.core import Component
+from zentra.ui import ShadcnUi
 
 
-class Dialog(Component):
+class Dialog(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Dialog component.
 
@@ -10,7 +11,7 @@ class Dialog(Component):
     """
 
 
-class Popover(Component):
+class Popover(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Popover component.
 
@@ -19,7 +20,7 @@ class Popover(Component):
     """
 
 
-class Sheet(Component):
+class Sheet(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Sheet component.
 
@@ -28,7 +29,7 @@ class Sheet(Component):
     """
 
 
-class Drawer(Component):
+class Drawer(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Drawer component.
 

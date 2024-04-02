@@ -83,9 +83,7 @@ def test_to_cc_from_pairs():
         ("ui", "card.tsx"),
         ("ui", "form.tsx"),
         ("ui", "input.tsx"),
-        ("uploadthing", "core.ts"),
-        ("uploadthing", "route.ts"),
-        ("uploadthing", "uploadthing.ts"),
+        ("uploadthing", "file-upload.tsx"),
     ]
     result = to_cc_from_pairs(pairs)
 

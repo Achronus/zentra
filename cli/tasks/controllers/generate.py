@@ -158,14 +158,14 @@ class GenerateController(BaseController):
     @status
     def retrieve_assets(self) -> None:
         """Retrieves the core component assets from GitHub and stores them in the Zentra generate folder."""
-        if self.storage.components.counts.generate != 0:
+        if self.storage.components.counts.generate > 0:
             self.local_builder.make_dirs()
             self.local_builder.create_base_files(file_type="base")
 
     @status
     def remove_models(self) -> None:
         """Removes the React component files that are no longer used from the Zentra generate folder."""
-        if self.storage.components.counts.remove != 0:
+        if self.storage.components.counts.remove > 0:
             self.local_builder.remove_models()
 
     @status

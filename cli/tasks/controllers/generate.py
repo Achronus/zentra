@@ -3,19 +3,19 @@ import os
 import typer
 
 from cli.conf.constants import GenerateSuccessCodes
-from cli.conf.create import make_directories
+from cli.conf.create import make_code_file_from_url, make_directories
 from cli.conf.extract import extract_file_pairs_from_list
-from cli.conf.move import remove_folder_file_pairs, transfer_folder_file_pairs
+from cli.conf.move import remove_folder_file_pairs
 from cli.conf.storage import ModelFileStorage, ModelStorage, GeneratePathStorage
 from cli.conf.types import LibraryNamePairs
 from cli.tasks.controllers.base import BaseController, status
 
+from cli.templates import ComponentFileType
 from cli.templates.extract import (
     LocalExtractor,
-    ModelExtractor,
     extract_component_details,
 )
-from cli.templates.retrieval import ComponentRetriever
+from cli.templates.retrieval import CodeRetriever
 from zentra.core import Zentra
 
 
@@ -114,25 +114,24 @@ class GenerateController(BaseController):
         self.url = url
 
         self.storage: ModelStorage = ModelStorage()
-        self.model_extractor = ModelExtractor(url=url)
         self.local_extractor = LocalExtractor(
             generate_path=paths.generate, name_storage=zentra.name_storage
         )
 
         self.local_builder = LocalBuilder(
             generate_path=paths.generate,
-            folders_to_generate=None,
+            components=None,
         )
 
         react_str = "[cyan]React[/cyan]"
         zentra_str = "[magenta]Zentra[/magenta]"
 
         tasks = [
+            (self.detect_models, f"Detecting {zentra_str} models"),
             (
                 self.retrieve_assets,
-                "Retrieving [yellow]component[/yellow] filepaths from [yellow]GitHub[/yellow]",
+                "Retrieving [yellow]component[/yellow] assets from [yellow]GitHub[/yellow]",
             ),
-            (self.extract_models, f"Extracting {zentra_str} models"),
             (self.update_files, f"Handling {react_str} component files"),
             (self.update_template_files, f"Configuring {react_str} components"),
         ]
@@ -156,24 +155,9 @@ class GenerateController(BaseController):
         self.storage.components = ModelFileStorage(**changes)
 
     @status
-    def retrieve_assets(self) -> None:
-        """Retrieves the component asset filenames from Github and stores them in the controller."""
-        retriever = ComponentRetriever(url=self.url)
-        retriever.extract()
-
-        self.model_extractor.filenames = retriever.storage
-        self.local_builder.folders_to_generate = self.model_extractor.folders()
-
-    @status
-    def extract_models(self) -> None:
-        """Extracts the Zentra models and prepares them for file generation."""
-        base_names = self.model_extractor.component_base_names()
-        user_models = self.local_extractor.user_models()
-
-        user_model_pairs = self.local_extractor.format_user_models(
-            pairs=base_names, targets=user_models
-        )
-
+    def detect_models(self) -> None:
+        """Detects the user defined Zentra models and prepares them for file generation."""
+        user_model_pairs = self.local_extractor.user_models()
         existing_models = self.local_extractor.existing_models()
 
         if user_model_pairs == existing_models:

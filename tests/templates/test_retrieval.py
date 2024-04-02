@@ -1,8 +1,16 @@
 import pytest
+import typer
 
-from cli.conf.constants import GITHUB_INIT_ASSETS_DIR
-from cli.templates.retrieval import CodeRetriever, ZentraSetupRetriever
+from cli.conf.constants import GITHUB_INIT_ASSETS_DIR, CommonErrorCodes
+from cli.templates.retrieval import CodeRetriever, ZentraSetupRetriever, create_soup
 from tests.mappings.retrieval import ZENTRA_INIT_CODE_VALID, ZENTRA_INIT_VALID
+
+
+def test_create_soup_fail():
+    with pytest.raises(typer.Exit) as e:
+        create_soup("https://github.com/randomtest")
+
+    assert e.value.exit_code == CommonErrorCodes.REQUEST_FAILED
 
 
 class TestZentraSetupRetriever:

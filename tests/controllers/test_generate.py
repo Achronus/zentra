@@ -218,7 +218,14 @@ class TestGenerateController:
             assert result == valid, result
 
         def test_existing_models(self, generate_controller: GenerateController):
-            valid = []
+            dest_dir = os.path.join(generate_controller.paths.generate, "ui")
+            file1 = os.path.join(dest_dir, "accordion.tsx")
+            os.makedirs(dest_dir)
+
+            with open(file1, "w") as f:
+                f.write("test")
+
+            valid = [("ui", "accordion.tsx")]
             result = generate_controller.local_extractor.existing_models()
             assert result == valid, result
 
@@ -323,36 +330,40 @@ class TestGenerateController:
                 **valid_dict
             )
 
-    # class TestRetrieveAssets:
-    #     @staticmethod
-    #     def test_generate_success(
-    #         setup_example_models, generate_controller: GenerateController
-    #     ):
-    #         _, _, dest = setup_example_models
-    #         dest = os.path.join(dest, "uploadthing")
+    class TestRetrieveAssets:
+        @staticmethod
+        def test_asset_retrieval_basic(generate_controller: GenerateController):
+            generate_controller.storage.components.counts.generate = 1
+            generate_controller.local_builder.components.generate = [
+                ("ui", "accordion.tsx")
+            ]
+            dirpath = os.path.join(generate_controller.paths.generate, "ui")
+            generate_controller.retrieve_assets()
 
-    #         generate_controller.retrieve_assets()
+            assert os.path.exists(os.path.join(dirpath, "accordion.tsx"))
 
-    #         checks = [
-    #             os.path.exists(os.path.join(dest, "file-upload.tsx")),
-    #         ]
+        @staticmethod
+        def test_count_zero(generate_controller: GenerateController):
+            generate_controller.retrieve_assets()
 
-    #         assert all(checks), checks
+    class TestRemoveModels:
+        @staticmethod
+        def test_model_removal_basic(generate_controller: GenerateController):
+            generate_controller.storage.components.counts.remove = 1
+            generate_controller.local_builder.components.remove = [
+                ("ui", "accordion.tsx")
+            ]
+            dirpath = os.path.join(generate_controller.paths.generate, "ui")
+            file1 = os.path.join(dirpath, "accordion.tsx")
+            os.makedirs(dirpath)
 
-    #     @staticmethod
-    #     def test_removal_success(
-    #         setup_example_models, generate_controller: GenerateController
-    #     ):
-    #         _, _, dest = setup_example_models
-    #         dest = os.path.join(dest, "uploadthing")
+            with open(file1, "w") as f:
+                f.write("test")
 
-    #         files_to_remove = [
-    #             ("uploadthing", "file_upload.tsx"),
-    #         ]
+            generate_controller.remove_models()
 
-    #         generate_controller.storage.components.remove = files_to_remove
-    #         generate_controller.storage.components.counts.remove = len(files_to_remove)
+            assert not os.path.exists(os.path.join(dirpath, "accordion.tsx"))
 
-    #         generate_controller.retrieve_assets()
-
-    #         assert not os.path.exists(dest), os.path.exists(dest)
+        @staticmethod
+        def test_count_zero(generate_controller: GenerateController):
+            generate_controller.remove_models()

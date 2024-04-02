@@ -59,7 +59,7 @@ class LocalBuilder:
             make_code_file_from_url(
                 url=url,
                 filename=filename,
-                dest_path=self.paths.generate,
+                dest_path=os.path.join(self.paths.generate, folder),
             )
 
             if folder == LibraryType.UPLOADTHING.value:
@@ -85,6 +85,7 @@ class GenerateController(BaseController):
 
     def __init__(self, url: str, zentra: Zentra, paths: GeneratePathStorage) -> None:
         self.url = url
+        self.paths = paths
 
         self.storage: ModelStorage = ModelStorage()
         self.local_extractor = LocalExtractor(
@@ -94,7 +95,7 @@ class GenerateController(BaseController):
         self.local_builder = LocalBuilder(
             url=url,
             paths=paths,
-            components=None,
+            components=ModelFileStorage(),
         )
 
         react_str = "[cyan]React[/cyan]"

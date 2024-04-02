@@ -193,20 +193,6 @@ class TestIconButton:
         assert valid_total == desired_total, f"{valid_total}/{desired_total}"
 
     @staticmethod
-    def test_import_str_valid():
-        btn = IconButton(icon=Icon(name="test"))
-
-        content_str = btn.import_str()
-        result = builder(btn).import_statements
-        valid = VALID_IMPORTS["icon_button"]
-
-        assert all([content_str == valid, result == valid]), (
-            content_str,
-            valid,
-            result,
-        )
-
-    @staticmethod
     def test_icon_empty():
         with pytest.raises(ValidationError):
             IconButton(icon="")

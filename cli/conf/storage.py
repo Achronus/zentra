@@ -99,6 +99,6 @@ class ModelStorage(BaseModel):
     """A storage container for Zentra model filenames."""
 
     pages: ModelFileStorage = ModelFileStorage()
-    components: ModelFileStorage = None
+    components: ModelFileStorage = ModelFileStorage()
 
     initalised_models: list[ComponentDetails] = []

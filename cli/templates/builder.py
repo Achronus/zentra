@@ -29,7 +29,7 @@ class ComponentJSXBuilder:
         self.import_statements = ""
         self.component_str = ""
 
-        self.classname = self.component.c_name
+        self.classname = self.component.classname
 
         self.build()
 

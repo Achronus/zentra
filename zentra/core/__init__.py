@@ -17,21 +17,21 @@ class Component(BaseModel):
     A Zentra model for all React components.
     """
 
-    _c_name = PrivateAttr(default=None)
+    _classname = PrivateAttr(default=None)
     model_config = ConfigDict(use_enum_values=True)
 
     @property
     def core_import_str(self) -> str:
         """Stores the core import statement for the component."""
-        filename = name_from_camel_case(self.c_name)
-        return f'import {{ {self.c_name}**extra_parts**}} from "../ui/{filename}"\n'.replace(
+        filename = name_from_camel_case(self.classname)
+        return f'import {{ {self.classname}**extra_parts**}} from "../ui/{filename}"\n'.replace(
             "'", " "
         )
 
     @property
-    def c_name(self) -> str:
+    def classname(self) -> str:
         """Stores the classname for the JSX builder."""
-        return self._c_name if self._c_name else self.__class__.__name__
+        return self._classname if self._classname else self.__class__.__name__
 
     def attr_str(self) -> str | None:
         """Creates an attribute string based on conditional logic. Used for JSX conversion."""

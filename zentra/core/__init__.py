@@ -6,7 +6,7 @@ from pydantic_core import PydanticCustomError
 from cli.conf.constants import GITHUB_COMPONENTS_DIR
 from cli.conf.format import name_from_camel_case
 from cli.conf.storage import BasicNameStorage, FileStorage
-from cli.conf.types import ConditionResultMapping
+from cli.conf.types import ConditionResultMapping, LibraryNamePairs
 from cli.templates.retrieval import ComponentRetriever
 
 COMPONENT_FILTER_LIST = ["FormField"]
@@ -178,21 +178,29 @@ class Zentra(BaseModel):
 
     def fill_storage(self, pages: list[Page]) -> None:
         """Populates page and component names into name storage."""
-        component_names = self.__extract_component_names(
+        component_pairs = self.__extract_component_names(
             pages=pages, filter_list=COMPONENT_FILTER_LIST
         )
+        component_names = [name for _, name in component_pairs]
 
         self.name_storage.components = component_names
         self.name_storage.pages = [page.name for page in pages]
         self.name_storage.filenames = [
-            f"{name_from_camel_case(name)}.tsx" for name in component_names
+            (folder, f"{name_from_camel_case(name)}.tsx")
+            for folder, name in component_pairs
         ]
 
     @staticmethod
     def __extract_component_names(
         pages: list[Page], filter_list: list[str] = []
-    ) -> list[str]:
-        """A helper function for retrieving the page component names."""
+    ) -> LibraryNamePairs:
+        """
+        A helper function for retrieving the component names and their associated library name.
+
+
+        Returns:
+        `[(libray_name, component_name), ...]`
+        """
         component_names = set()
 
         def recursive_extract(component):
@@ -202,7 +210,8 @@ class Zentra(BaseModel):
             else:
                 name = component.__class__.__name__
                 if name not in filter_list:
-                    component_names.add(name)
+                    library_name = component.library
+                    component_names.add((library_name, name))
 
             for attr in ["content", "fields"]:
                 if hasattr(component, attr):

@@ -1,10 +1,6 @@
 import os
 import typer
-from cli.conf.constants import (
-    LocalCoreComponentFilepaths,
-    ZentaFilepaths,
-    ZentraGeneratedFilepaths,
-)
+from cli.conf.constants import ZentaFilepaths, ZentraGeneratedFilepaths
 
 from cli.conf.constants import console
 from cli.conf.message import MSG_MAPPER, MessageHandler
@@ -40,9 +36,9 @@ def generate_components() -> None:
         paths = GeneratePathStorage(
             config=os.path.join(ZentaFilepaths.MODELS, ZentaFilepaths.SETUP_FILENAME),
             models=ZentaFilepaths.MODELS,
-            component=LocalCoreComponentFilepaths.ROOT,
             generate=ZentraGeneratedFilepaths.COMPONENTS,
             templates=ZentraGeneratedFilepaths.ZENTRA,
+            lib=ZentraGeneratedFilepaths.LIB,
         )
         generate = Generate(paths)
         generate.init_checks()

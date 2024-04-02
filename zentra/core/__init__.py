@@ -3,11 +3,9 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, PrivateAttr, ValidationInfo, field_validator
 from pydantic_core import PydanticCustomError
 
-from cli.conf.constants import GITHUB_COMPONENTS_DIR
 from cli.conf.format import name_from_camel_case
-from cli.conf.storage import BasicNameStorage, FileStorage
+from cli.conf.storage import BasicNameStorage
 from cli.conf.types import ConditionResultMapping, LibraryNamePairs
-from cli.templates.retrieval import ComponentRetriever
 
 COMPONENT_FILTER_LIST = ["FormField"]
 
@@ -129,16 +127,6 @@ class Zentra(BaseModel):
     pages: list[Page] = []
     components: list[Component] = []
     name_storage: BasicNameStorage = BasicNameStorage()
-
-    @property
-    def file_storage(self) -> FileStorage:
-        retriever = ComponentRetriever(url=GITHUB_COMPONENTS_DIR)
-        items = {
-            "root_dirs": retriever.root_dirs,
-            "ui": retriever.storage.ui,
-            "ut": retriever.storage.uploadthing,
-        }
-        return FileStorage(**items)
 
     @field_validator("pages", "components", "name_storage", mode="plain")
     def prevent_init_editing(

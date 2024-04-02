@@ -201,7 +201,7 @@ class TestGenerateController:
         os.makedirs(src2, exist_ok=True)
         os.makedirs(dest, exist_ok=True)
 
-        generate_controller.extract_models()
+        generate_controller.detect_models()
         for folder, file in generate_controller.storage.components.generate:
             if folder == "uploadthing":
                 with open(os.path.join(src1, file), "w") as f:
@@ -261,7 +261,7 @@ class TestGenerateController:
             assert len(result) == len(valid_names), result
 
         def test_files_to_generate(self, generate_controller: GenerateController):
-            generate_controller.extract_models()
+            generate_controller.detect_models()
             result = generate_controller.storage.components.generate
             valid = [
                 ("ui", "alert-dialog.tsx"),
@@ -273,7 +273,7 @@ class TestGenerateController:
             assert len(result) == len(valid)
 
         def test_folders_to_generate(self, generate_controller: GenerateController):
-            generate_controller.extract_models()
+            generate_controller.detect_models()
             result = generate_controller.storage.folders_to_generate
             valid = ["ui", "uploadthing"]
             assert len(result) == len(valid)

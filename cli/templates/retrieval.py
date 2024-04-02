@@ -18,13 +18,6 @@ class FilenameStorage(BaseModel):
     lib: list[str] = None
 
 
-class ComponentStorage(BaseModel):
-    """A storage container for all library filenames."""
-
-    ui: FilenameStorage
-    uploadthing: FilenameStorage
-
-
 class InitFilesStorage(BaseModel):
     """A storage container for the `zentra init` files."""
 
@@ -71,68 +64,6 @@ class GithubContentRetriever:
             f"{key}={value!r}" for key, value in self.__dict__.items()
         )
         return f"{self.__class__.__name__}({attributes})"
-
-
-class ComponentRetriever(GithubContentRetriever):
-    """A retriever for extracting the component directory and filenames from Github."""
-
-    def __init__(self, url: str) -> None:
-        super().__init__(url)
-        self.root_dirs: list[str] = self.set_dirnames(url=self.url)
-        self.storage: ComponentStorage = None
-
-        self.cache = {}
-
-    def set_dirnames(self, url: str) -> list[str]:
-        """Retrieves the directory names from a URL and returns them as a list."""
-        dirnames = []
-        file_folder_list = self.file_n_folders(url=url)
-
-        for item in file_folder_list:
-            if item["contentType"] == "directory":
-                dirnames.append(item["name"])
-
-        return dirnames
-
-    def extract_names(self, url: str = None) -> dict:
-        """Recursively extracts file and directory names."""
-        if url is None:
-            url = self.url
-
-        if url in self.cache:
-            return self.cache[url]
-
-        file_dict = {}
-        file_folder_list = self.file_n_folders(url=url)
-
-        for item in file_folder_list:
-            if item["contentType"] == "directory":
-                subdir_url = f"{url}/{item['name']}"
-                subdir_file_dict = self.extract_names(url=subdir_url)
-
-                file_dict[item["name"]] = subdir_file_dict
-
-            elif item["contentType"] == "file":
-                if "files" not in file_dict:
-                    file_dict["files"] = []
-                file_dict["files"].append(item["name"])
-
-        self.cache[url] = file_dict
-        return file_dict
-
-    def extract(self) -> None:
-        """Populates the `FilenameStorage` containers."""
-        components = {}
-        file_dict = self.extract_names()
-
-        for library, values in file_dict.items():
-            input_kwargs = {}
-            for subdir, files in values.items():
-                input_kwargs[subdir] = files["files"]
-
-            components[library] = FilenameStorage(**input_kwargs)
-
-        self.storage = ComponentStorage(**components)
 
 
 class ZentraSetupRetriever(GithubContentRetriever):

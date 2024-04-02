@@ -47,11 +47,8 @@ def to_cc_from_pairs(pairs: LibraryNamePairs) -> list[str]:
     result = []
     formatted_pairs = format_item_list(pairs)
 
-    for folder, file in formatted_pairs:
-        if folder == "uploadthing":
-            result.append("FileUpload")
-        else:
-            result.append(file)
+    for _, file in formatted_pairs:
+        result.append(file)
 
     result = list(set(result))
     result.sort()

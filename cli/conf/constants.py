@@ -79,23 +79,6 @@ class ZentaFilepaths:
     SETUP_FILENAME = "__init__.py"
 
 
-class ZentraConfigFilepaths:
-    """A storage container for the core filepaths in the `zentra_config` folder."""
-
-    # (cwd)/cli/zentra_config
-    ROOT = os.path.join(os.getcwd(), "cli", "zentra_config")
-    DEMO = os.path.join(ROOT, "_demo")  # /zentra_config/_demo
-
-
-class LocalCoreComponentFilepaths:
-    """A storage container for the local core component filepaths in the `components` folder."""
-
-    # (cwd)/cli/components
-    ROOT = os.path.join(os.getcwd(), "cli", "components")
-    UI = os.path.join(ROOT, "ui")  # cli/components/ui
-    UPLOADTHING = os.path.join(ROOT, "uploadthing")  # cli/components/uploadthing
-
-
 class ZentraGeneratedFilepaths:
     """A storage container for the core filepaths in the `zentra/generated` folder."""
 
@@ -103,6 +86,8 @@ class ZentraGeneratedFilepaths:
     ROOT = ZentaFilepaths.GENERATED
     PAGES = os.path.join(ROOT, "pages")  # generated/pages
     COMPONENTS = os.path.join(ROOT, "components")  # generated/components
+    LIB = os.path.join(ROOT, "lib")  # generated/lib
+
     ZENTRA = os.path.join(COMPONENTS, "zentra")  # generated/components/zentra
 
 

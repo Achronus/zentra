@@ -1,12 +1,6 @@
-from itertools import chain
 import os
 
 from cli.conf.types import LibraryNamePairs
-
-
-def get_dirnames(dirpath: str) -> list[str]:
-    """Retrieves a list of directory names from a given directory path."""
-    return [dir for dir in os.listdir(dirpath)]
 
 
 def get_filename_dir_pairs(parent_dir: str, sub_dir: str = "") -> LibraryNamePairs:
@@ -41,41 +35,6 @@ def get_filename_dir_pairs(parent_dir: str, sub_dir: str = "") -> LibraryNamePai
                     seen_files.add(file_tuple)
 
     return all_files
-
-
-def extract_file_pairs_from_list(
-    file_list: LibraryNamePairs, target_files: list[str], idx: int = 1
-) -> LibraryNamePairs:
-    """Retrieves a set of tuple pairs from a given file list based on a list of filenames.
-
-    Parameters:
-    - `file_list` (`FolderFilePair`) - a list of `(folder, filename)` pairs, where the folder name is the component library (e.g., 'ui' or 'uploadthing') and the filename is its react files (e.g., 'accordion.tsx')
-    - `target_files` (`list[str]`) - a list of file or folder names to extract from the file list. Can be a single item.
-    - `idx` (`int`, `optional`) - the tuple index to target. If `0` targets the folder name, and if `1` targets the filename. Defaults to `1`
-    """
-    filtered_list = []
-    for item in file_list:
-        if item[idx] in target_files:
-            filtered_list.append(item)
-    return filtered_list
-
-
-def extract_component_names(page_schema: dict[str, str]) -> list[str]:
-    """Recursively extracts the `Component` names from a `Page` schema."""
-    component_type = [page_schema.get("type")]
-
-    nested_types = [
-        extract_component_names(item)
-        for value in page_schema.values()
-        if isinstance(value, list)
-        for item in value
-        if isinstance(item, dict)
-    ]
-
-    # Compress to single list
-    flattened_types = list(chain.from_iterable(nested_types))
-
-    return component_type + flattened_types
 
 
 def get_file_content(filepath: str) -> str:

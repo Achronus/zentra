@@ -4,8 +4,7 @@ import typer
 
 from cli.conf.constants import GenerateSuccessCodes
 from cli.conf.create import make_code_file_from_url, make_directories
-from cli.conf.extract import extract_file_pairs_from_list
-from cli.conf.move import remove_folder_file_pairs
+from cli.conf.cleanup import remove_files
 from cli.conf.storage import ModelFileStorage, ModelStorage, GeneratePathStorage
 from cli.conf.types import LibraryNamePairs
 from cli.tasks.controllers.base import BaseController, status
@@ -17,53 +16,7 @@ from cli.templates.extract import (
 )
 from cli.templates.retrieval import CodeRetriever
 from zentra.core import Zentra
-
-
-class GenerateControllerHelper:
-    """
-    A class for helper functions used across multiple GenerateControllers.
-
-    Parameters:
-    - zentra (zentra.core.Zentra) - the Zentra application containing components to generate
-    - paths (storage.GeneratePathStorage) - a path storage container with paths specific to the controller
-    """
-
-    def __init__(self, zentra: Zentra, paths: GeneratePathStorage):
-        self.zentra = zentra
-        self.paths = paths
-
-        self.storage: ModelStorage = None
-
-        # self.storage.base_names.components = zentra.name_storage.components
-        # self.storage.base_names.pages = zentra.name_storage.pages
-
-    def _check_for_uploadthing(
-        self, generate_list: LibraryNamePairs, filenames: list[str]
-    ) -> LibraryNamePairs:
-        """Checks for uploadthings `FileUpload` in a list of Zentra model filenames. If it exists, we extract the required filenames and add them to the `generate_list`. If it doesn't, we return the `generate_list` as is."""
-        if "file-upload.tsx" in filenames:
-            uploadthing_files = extract_file_pairs_from_list(
-                self.storage.base_files, ["uploadthing"], idx=0
-            )
-            generate_list += uploadthing_files
-        else:
-            self.storage.folders_to_generate.remove("uploadthing")
-
-        return generate_list
-
-    def _filter_ut(self, components: FolderFilePair) -> FolderFilePair:
-        """A helper function for calculating the correct number of components, factoring in that `uploadthing` has multiple files."""
-        filtered = []
-        ut_found = False
-
-        for model in components:
-            if model[0] == "uploadthing":
-                if not ut_found:
-                    filtered.append(model)
-                    ut_found = True
-            else:
-                filtered.append(model)
-        return filtered
+from zentra.core.enums.ui import LibraryType
 
 
 class LocalBuilder:

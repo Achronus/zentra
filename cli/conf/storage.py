@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 
 from cli.conf.types import LibraryNamePairs
-from cli.templates.retrieval import FilenameStorage
 
 
 class ConfigExistStorage:
@@ -33,9 +32,9 @@ class SetupPathStorage(BaseModel):
     A storage container for file and folder paths specific to `zentra init`.
 
     Parameters:
-    - config (str) - the filepath to the zentra models config file
-    - models (str) - the directory path to the zentra models folder
-    - demo (str) - the directory path to the zentra models demo folder
+    - `config` (`string`) - the filepath to the Zentra models config file
+    - `models` (`string`) - the directory path to the Zentra models folder
+    - `demo` (`string`) - the directory path to the Zentra models demo folder
     """
 
     config: str
@@ -48,18 +47,18 @@ class GeneratePathStorage(BaseModel):
     A storage container for file and folder paths specific to `zentra generate`.
 
     Parameters:
-    - config (str) - the filepath to the zentra models config file
-    - models (str) - the directory path to the zentra models folder
-    - component (str) - the directory path to the local zentra component folder
-    - generate (str) - the directory path to the zentra generate component folder
-    - templates (str) - the directory path to the zentra generate template folder
+    - `config` (`string`) - the filepath to the Zentra models config file
+    - `models` (`string`) - the directory path to the Zentra models folder
+    - `generate` (`string`) - the directory path to the Zentra generate component folder
+    - `templates` (`string`) - the directory path to the Zentra generate template folder
+    - `lib` (`string`) - the directory path to the Zentra generate lib folder
     """
 
     config: str
     models: str
-    component: str
     generate: str
     templates: str
+    lib: str
 
 
 class CountStorage(BaseModel):
@@ -78,16 +77,8 @@ class ComponentDetails(BaseModel):
     child_component_names: list[str]
 
 
-class FileStorage(BaseModel):
-    """A storage container for file and directory names."""
-
-    root_dirs: list[str]
-    ui: FilenameStorage
-    ut: FilenameStorage
-
-
 class ModelFileStorage(BaseModel):
-    """A storage container for storing Zentra model (library, filename) pairs."""
+    """A storage container for storing Zentra model `(library, filename)` pairs."""
 
     generate: LibraryNamePairs = []
     remove: LibraryNamePairs = []

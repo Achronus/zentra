@@ -104,13 +104,13 @@ class TestZentra:
         page1 = Page(
             name="Page1",
             components=[
-                Component(name="Component1"),
+                Input(id="test1", type="text", placeholder="Component1"),
             ],
         )
         page2 = Page(
             name="Page2",
             components=[
-                Component(name="Component2"),
+                Input(id="test2", type="text", placeholder="Component2"),
             ],
         )
         page_map = [page1, page2]
@@ -132,10 +132,10 @@ class TestZentra:
         page = Page(
             name="Page1",
             components=[
-                Component(name="Component1"),
+                Input(id="test", type="text", placeholder="Component1"),
             ],
         )
-        component = Component(name="Component1")
+        component = Input(id="test", type="text", placeholder="Component1")
         mixed_list = [page, component]
         zentra.register(mixed_list)
 
@@ -150,17 +150,24 @@ class TestZentra:
     def test_storage_valid(self, zentra_registered: Zentra):
         storage = zentra_registered.name_storage
 
+        storage.components.sort()
+        storage.filenames.sort()
+
+        valid_components = ["AlertDialog", "Card", "FileUpload", "Form", "Input"]
+        valid_filenames = [
+            ("ui", "alert-dialog.tsx"),
+            ("ui", "card.tsx"),
+            ("uploadthing", "file-upload.tsx"),
+            ("ui", "form.tsx"),
+            ("ui", "input.tsx"),
+        ]
+
+        valid_components.sort()
+        valid_filenames.sort()
+
         checks = [
             storage.pages == ["AgencyDetails"],
-            storage.components
-            == ["AlertDialog", "Card", "FileUpload", "Form", "Input"],
-            storage.filenames
-            == [
-                "alert-dialog.tsx",
-                "card.tsx",
-                "file-upload.tsx",
-                "form.tsx",
-                "input.tsx",
-            ],
+            storage.components == valid_components,
+            storage.filenames == valid_filenames,
         ]
         assert all(checks), checks

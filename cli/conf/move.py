@@ -1,11 +1,11 @@
 import os
 import shutil
 
-from cli.conf.types import FolderFilePair
+from cli.conf.types import LibraryNamePairs
 
 
 def transfer_folder_file_pairs(
-    folder_file_pairs: FolderFilePair,
+    folder_file_pairs: LibraryNamePairs,
     src_dir: str,
     dest_dir: str,
     src_sub_dir: str = "",
@@ -18,7 +18,9 @@ def transfer_folder_file_pairs(
         shutil.copy(src_path, dest_path)
 
 
-def remove_folder_file_pairs(folder_file_pairs: FolderFilePair, dir_path: str) -> None:
+def remove_folder_file_pairs(
+    folder_file_pairs: LibraryNamePairs, dir_path: str
+) -> None:
     """Removes a set of `(folder, filename)` pairs from a directory."""
     for folder, filename in folder_file_pairs:
         dirpath = os.path.join(dir_path, folder)

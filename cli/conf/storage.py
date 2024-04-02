@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from cli.conf.types import FolderFilePair
+from cli.conf.types import LibraryNamePairs
 from cli.templates.retrieval import FilenameStorage
 
 
@@ -89,9 +89,9 @@ class FileStorage(BaseModel):
 class ModelFileStorage(BaseModel):
     """A storage container for storing Zentra model (library, filename) pairs."""
 
-    generate: FolderFilePair = []
-    remove: FolderFilePair = []
-    existing: FolderFilePair = []
+    generate: LibraryNamePairs = []
+    remove: LibraryNamePairs = []
+    existing: LibraryNamePairs = []
 
     counts: CountStorage = CountStorage()
 
@@ -101,7 +101,7 @@ class BasicNameStorage(BaseModel):
 
     pages: list[str] = []
     components: list[str] = []
-    filenames: list[str] = []
+    filenames: LibraryNamePairs = []
 
 
 class ModelStorage(BaseModel):

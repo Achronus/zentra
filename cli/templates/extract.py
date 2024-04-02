@@ -1,7 +1,7 @@
 import os
 from cli.conf.extract import get_filename_dir_pairs
 from cli.conf.storage import BasicNameStorage, ComponentDetails, CountStorage
-from cli.conf.types import FolderFilePair
+from cli.conf.types import LibraryNamePairs
 from cli.templates.retrieval import ComponentStorage
 
 
@@ -18,7 +18,7 @@ class ModelExtractor:
         self.url = url
         self.filenames: ComponentStorage = None
 
-    def component_base_names(self) -> FolderFilePair:
+    def component_base_names(self) -> LibraryNamePairs:
         """Returns a list of `(library_name, filename)` pairs extracted from `ComponentStorage`."""
         base_names = []
         for lib_name, values in self.filenames.__dict__.items():
@@ -48,8 +48,8 @@ class LocalExtractor:
         self.model_counts = CountStorage()
 
     def find_difference(
-        self, pair_one: FolderFilePair, pair_two: FolderFilePair
-    ) -> FolderFilePair:
+        self, pair_one: LibraryNamePairs, pair_two: LibraryNamePairs
+    ) -> LibraryNamePairs:
         """Identifies the differences between two lists of pairs of Zentra models."""
         same = list(set(pair_one) & set(pair_two))
         return list(set(pair_one + pair_two) - set(same))
@@ -58,13 +58,13 @@ class LocalExtractor:
         """Retrieves the Zentra model filenames from `zentra/models`."""
         return self.name_storage.filenames
 
-    def existing_models(self) -> FolderFilePair:
+    def existing_models(self) -> LibraryNamePairs:
         """Retrieves the existing Zentra model filenames from the Zentra generate folder."""
         return get_filename_dir_pairs(parent_dir=self.generate_path)
 
     def format_user_models(
-        self, pairs: FolderFilePair, targets: list[str]
-    ) -> FolderFilePair:
+        self, pairs: LibraryNamePairs, targets: list[str]
+    ) -> LibraryNamePairs:
         """
         Reformats the user defined Zentra models into a list of `(library_name, filename)` pairs.
 
@@ -75,8 +75,8 @@ class LocalExtractor:
         return [item for item in pairs if item[1] in targets]
 
     def model_changes(
-        self, existing: FolderFilePair, user_model_pairs: FolderFilePair
-    ) -> tuple[FolderFilePair, FolderFilePair]:
+        self, existing: LibraryNamePairs, user_model_pairs: LibraryNamePairs
+    ) -> tuple[LibraryNamePairs, LibraryNamePairs]:
         """Provides two lists of `FolderFilePair` changes. In the form of: `(to_remove, to_add)`."""
         to_remove, to_add = [], []
         existing_models_set = set(existing)
@@ -94,7 +94,7 @@ class LocalExtractor:
 
 
 def extract_component_details(
-    component_pairs: FolderFilePair, root_dir: str, sub_dir: str
+    component_pairs: LibraryNamePairs, root_dir: str, sub_dir: str
 ) -> list[ComponentDetails]:
     """Retrieves a list of component information for the provided (folder, filename) pairs from the root component directory and a provided sub-directory.Stores them in a `ComponentDetails` object."""
     all_components = []

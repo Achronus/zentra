@@ -7,7 +7,7 @@ from cli.conf.create import make_directories
 from cli.conf.extract import extract_file_pairs_from_list
 from cli.conf.move import remove_folder_file_pairs, transfer_folder_file_pairs
 from cli.conf.storage import ModelFileStorage, ModelStorage, GeneratePathStorage
-from cli.conf.types import FolderFilePair
+from cli.conf.types import LibraryNamePairs
 from cli.tasks.controllers.base import BaseController, status
 
 from cli.templates.extract import (
@@ -38,8 +38,8 @@ class GenerateControllerHelper:
         # self.storage.base_names.pages = zentra.name_storage.pages
 
     def _check_for_uploadthing(
-        self, generate_list: FolderFilePair, filenames: list[str]
-    ) -> FolderFilePair:
+        self, generate_list: LibraryNamePairs, filenames: list[str]
+    ) -> LibraryNamePairs:
         """Checks for uploadthings `FileUpload` in a list of Zentra model filenames. If it exists, we extract the required filenames and add them to the `generate_list`. If it doesn't, we return the `generate_list` as is."""
         if "file-upload.tsx" in filenames:
             uploadthing_files = extract_file_pairs_from_list(
@@ -84,8 +84,8 @@ class LocalBuilder:
         for dir in self.folders_to_generate:
             make_directories(os.path.join(self.path, dir))
 
-    def create_base_files(self, sub_dir: str) -> None:
-        """Create a list of Zentra model files in the generate folder."""
+    def create_base_files(self, models: LibraryNamePairs, sub_dir: str) -> None:
+        """Creates the base files for Zentra model that need to be generated in the generate folder."""
         # TODO: replace with 'code_from_files'
         transfer_folder_file_pairs(
             self.storage.components.generate,
@@ -140,7 +140,10 @@ class GenerateController(BaseController):
         BaseController.__init__(self, tasks)
 
     def store_models(
-        self, existing: FolderFilePair, add: FolderFilePair, remove: FolderFilePair
+        self,
+        existing: LibraryNamePairs,
+        add: LibraryNamePairs,
+        remove: LibraryNamePairs,
     ) -> None:
         """Stores Zentra model changes in `ModelStorage`."""
         changes = {

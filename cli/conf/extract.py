@@ -1,7 +1,7 @@
 from itertools import chain
 import os
 
-from cli.conf.types import FolderFilePair
+from cli.conf.types import LibraryNamePairs
 
 
 def get_dirnames(dirpath: str) -> list[str]:
@@ -9,7 +9,7 @@ def get_dirnames(dirpath: str) -> list[str]:
     return [dir for dir in os.listdir(dirpath)]
 
 
-def get_filename_dir_pairs(parent_dir: str, sub_dir: str = "") -> FolderFilePair:
+def get_filename_dir_pairs(parent_dir: str, sub_dir: str = "") -> LibraryNamePairs:
     """Retrieves a list of all filenames in a parent directory and its sub-directory. Outputs them as a list of tuples with: `(parent_dir, filename)`.
 
     Example output:
@@ -44,8 +44,8 @@ def get_filename_dir_pairs(parent_dir: str, sub_dir: str = "") -> FolderFilePair
 
 
 def extract_file_pairs_from_list(
-    file_list: FolderFilePair, target_files: list[str], idx: int = 1
-) -> FolderFilePair:
+    file_list: LibraryNamePairs, target_files: list[str], idx: int = 1
+) -> LibraryNamePairs:
     """Retrieves a set of tuple pairs from a given file list based on a list of filenames.
 
     Parameters:

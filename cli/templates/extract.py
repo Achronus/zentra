@@ -35,13 +35,13 @@ class LocalExtractor:
         return get_filename_dir_pairs(parent_dir=self.generate_path)
 
     def model_changes(
-        self, existing: LibraryNamePairs, user_model_pairs: LibraryNamePairs
+        self, existing: LibraryNamePairs, user_models: LibraryNamePairs
     ) -> tuple[LibraryNamePairs, LibraryNamePairs]:
         """Provides two lists of `FolderFilePair` changes. In the form of: `(to_add, to_remove)`."""
         to_remove, to_add = [], []
         existing_models_set = set(existing)
 
-        model_updates = self.find_difference(existing, user_model_pairs)
+        model_updates = self.find_difference(existing, user_models)
         for model in model_updates:
             if model in existing_models_set:
                 to_remove.append(model)

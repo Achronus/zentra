@@ -132,7 +132,7 @@ class GenerateController(BaseController):
     @status
     def detect_models(self) -> None:
         """Detects the user defined Zentra models and prepares them for file generation."""
-        user_model_pairs = self.local_extractor.user_models()
+        user_models = self.local_extractor.user_models()
         existing_models = self.local_extractor.existing_models()
 
         if user_model_pairs == existing_models:
@@ -140,7 +140,7 @@ class GenerateController(BaseController):
 
         to_add, to_remove = self.local_extractor.model_changes(
             existing_models,
-            user_model_pairs,
+            user_models,
         )
 
         self.store_models(
@@ -154,7 +154,7 @@ class GenerateController(BaseController):
         """Retrieves the core component assets from GitHub and stores them in the Zentra generate folder."""
         if self.storage.components.counts.generate != 0:
             self.local_builder.make_dirs()
-            self.local_builder.create_base_files(sub_dir="base")
+            self.local_builder.create_base_files(file_type="base")
 
     @status
     def remove_models(self) -> None:

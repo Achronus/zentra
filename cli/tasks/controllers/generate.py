@@ -129,14 +129,20 @@ class GenerateController(BaseController):
         self.storage.components = ModelFileStorage(**changes)
         self.local_builder.components = self.storage.components
 
+    def no_new_components_check(
+        self, user_models: LibraryNamePairs, existing: LibraryNamePairs
+    ) -> None:
+        """Raises an error if there are no new components to create."""
+        if user_models == existing:
+            raise typer.Exit(code=GenerateSuccessCodes.NO_NEW_COMPONENTS)
+
     @status
     def detect_models(self) -> None:
         """Detects the user defined Zentra models and prepares them for file generation."""
         user_models = self.local_extractor.user_models()
         existing_models = self.local_extractor.existing_models()
 
-        if user_model_pairs == existing_models:
-            raise typer.Exit(code=GenerateSuccessCodes.NO_NEW_COMPONENTS)
+        self.no_new_components_check(user_models, existing_models)
 
         to_add, to_remove = self.local_extractor.model_changes(
             existing_models,

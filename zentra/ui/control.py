@@ -13,7 +13,7 @@ from cli.templates.ui import (
     LabelJSX,
 )
 
-from zentra.core import Component, Icon
+from zentra.core import LOWER_CAMELCASE_WITH_DIGITS, Component, Icon
 from zentra.core.enums.ui import (
     ButtonSize,
     ButtonVariant,
@@ -110,11 +110,11 @@ class Calendar(Component, ShadcnUi):
 
     @field_validator("id")
     def validate_id(cls, id: str) -> str:
-        if not has_valid_pattern(pattern=r"^[a-z]+(?:[A-Z][a-z]*)*$", value=id):
+        if not has_valid_pattern(pattern=LOWER_CAMELCASE_WITH_DIGITS, value=id):
             raise PydanticCustomError(
                 "string_pattern_mismatch",
                 "must be lowercase or camelCase",
-                dict(wrong_value=id, pattern="^[a-z]+(?:[A-Z][a-z]*)*$"),
+                dict(wrong_value=id, pattern=LOWER_CAMELCASE_WITH_DIGITS),
             )
         return id
 
@@ -143,11 +143,11 @@ class Checkbox(Component, ShadcnUi):
 
     @field_validator("id")
     def validate_id(cls, id: str) -> str:
-        if not has_valid_pattern(pattern=r"^[a-z]+(?:[A-Z][a-z]*)*$", value=id):
+        if not has_valid_pattern(pattern=LOWER_CAMELCASE_WITH_DIGITS, value=id):
             raise PydanticCustomError(
                 "string_pattern_mismatch",
                 "must be lowercase or camelCase",
-                dict(wrong_value=id, pattern="^[a-z]+(?:[A-Z][a-z]*)*$"),
+                dict(wrong_value=id, pattern=LOWER_CAMELCASE_WITH_DIGITS),
             )
         return id
 
@@ -195,11 +195,11 @@ class Collapsible(Component, ShadcnUi):
 
     @field_validator("id")
     def validate_id(cls, id: str) -> str:
-        if not has_valid_pattern(pattern=r"^[a-z]+(?:[A-Z][a-z]*)*$", value=id):
+        if not has_valid_pattern(pattern=LOWER_CAMELCASE_WITH_DIGITS, value=id):
             raise PydanticCustomError(
                 "string_pattern_mismatch",
                 "must be lowercase or camelCase",
-                dict(wrong_value=id, pattern="^[a-z]+(?:[A-Z][a-z]*)*$"),
+                dict(wrong_value=id, pattern=LOWER_CAMELCASE_WITH_DIGITS),
             )
         return id
 
@@ -262,11 +262,11 @@ class Input(Component, ShadcnUi):
 
     @field_validator("id")
     def validate_id(cls, id: str) -> str:
-        if not has_valid_pattern(pattern=r"^[a-z]+(?:[A-Z][a-z]*)*$", value=id):
+        if not has_valid_pattern(pattern=LOWER_CAMELCASE_WITH_DIGITS, value=id):
             raise PydanticCustomError(
                 "string_pattern_mismatch",
                 "must be lowercase or camelCase",
-                dict(wrong_value=id, pattern="^[a-z]+(?:[A-Z][a-z]*)*$"),
+                dict(wrong_value=id, pattern=LOWER_CAMELCASE_WITH_DIGITS),
             )
         return id
 
@@ -423,11 +423,11 @@ class Label(Component, ShadcnUi):
 
     @field_validator("id")
     def validate_id(cls, id: str) -> str:
-        if not has_valid_pattern(pattern=r"^[a-z]+(?:[A-Z][a-z]*)*$", value=id):
+        if not has_valid_pattern(pattern=LOWER_CAMELCASE_WITH_DIGITS, value=id):
             raise PydanticCustomError(
                 "string_pattern_mismatch",
                 "must be lowercase or camelCase",
-                dict(wrong_value=id, pattern="^[a-z]+(?:[A-Z][a-z]*)*$"),
+                dict(wrong_value=id, pattern=LOWER_CAMELCASE_WITH_DIGITS),
             )
         return id
 

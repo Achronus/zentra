@@ -7,7 +7,11 @@ from cli.conf.format import name_from_camel_case
 from cli.conf.storage import BasicNameStorage
 from cli.conf.types import ConditionResultMapping, LibraryNamePairs
 
-COMPONENT_FILTER_LIST = ["FormField"]
+
+LOWER_CAMELCASE_WITH_DIGITS = r"^[a-z]+(?:[A-Z][a-z]*)*\d*$"
+COMPONENT_FILTER_LIST = [
+    "FormField",
+]
 
 
 class Component(BaseModel):

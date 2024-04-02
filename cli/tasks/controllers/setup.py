@@ -2,7 +2,7 @@ import os
 
 from cli.conf.storage import ConfigExistStorage, SetupPathStorage
 from cli.tasks.controllers.base import BaseController, status
-from cli.conf.create import make_directories, make_file, make_code_files_from_url
+from cli.conf.create import make_directories, make_file, make_code_file_from_url
 from cli.conf.extract import local_path
 from cli.templates.retrieval import (
     CodeRetriever,
@@ -81,8 +81,11 @@ class SetupController(BaseController):
     @status
     def create_demo_files(self) -> None:
         """Creates a demo folder with files to demonstrate how to create Zentra Pages and Components."""
-        make_code_files_from_url(
-            url=f"{self.url}/{self.config_storage.demo_dir_path}",
-            filenames=self.config_storage.demo_filenames,
-            dest_path=self.paths.demo,
-        )
+        os.makedirs(self.paths.demo, exist_ok=True)
+
+        for filename in self.config_storage.demo_filenames:
+            make_code_file_from_url(
+                url=f"{self.url}/{self.config_storage.demo_dir_path}",
+                filename=filename,
+                dest_path=self.paths.demo,
+            )

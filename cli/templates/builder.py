@@ -1,89 +1,78 @@
-from zentra.core import Component
+import os
+
+from cli.conf.cleanup import remove_files
+from cli.conf.create import make_code_file_from_url, make_directories
+from cli.conf.storage import GeneratePathStorage, ModelFileStorage
+from cli.conf.types import LibraryNamePairs
+from cli.templates import ComponentFileType
+from cli.templates.retrieval import CodeRetriever
+
+from zentra.core.enums.ui import LibraryType
+from zentra.uploadthing import Uploadthing
 
 
-# Dictionary of components with containers around them
-# (classname, attributes)
-COMPONENTS_TO_WRAP = {
-    "Checkbox": 'className="flex items-top space-x-2"',
-}
+class LocalBuilder:
+    """
+    Handles functionality for creating files and directories in the Zentra generate folder.
 
-# Components that have a "use client" import at the top of their file
-USE_CLIENT_COMPONENTS = [
-    "Calendar",
-    "Checkbox",
-    "Collapsible",
-]
+    Parameters:
+    - `url` (`string`) - a GitHub URL housing the component files
+    - `paths` (`storage.GeneratePathStorage`) - a path storage container with paths specific to the controller
+    - `components` (`ModelFileStorage`) - a container filled with the Zentra model pairs to `generate` and `remove`
+    """
 
+    def __init__(
+        self, url: str, paths: GeneratePathStorage, components: ModelFileStorage
+    ) -> None:
+        self.url = url
+        self.paths = paths
+        self.components = components
 
-class ComponentJSXBuilder:
-    """A builder for creating the JSX representation of the components."""
+        self.retriever = CodeRetriever(url=url)
+        self.ut = Uploadthing(core_folder=os.path.basename(self.paths.lib))
 
-    def __init__(self, component: Component) -> None:
-        self.component = component
+    def folders(self, pairs: LibraryNamePairs) -> list[str]:
+        """Returns a list of `library_name` folders from a list of `LibraryNamePairs`."""
+        return list(set(item[0] for item in pairs))
 
-        self.attr_str = None
-        self.content_str = None
-        self.unique_logic_str = None
-        self.below_content_str = None
+    def make_dirs(self) -> None:
+        """Creates the needed directories inside the generate folder."""
+        for dir in self.folders(self.components.generate):
+            make_directories(os.path.join(self.paths.components, dir))
 
-        self.import_statements = ""
-        self.component_str = ""
+    def create_base_files(self, file_type: ComponentFileType) -> None:
+        """
+        Creates the base files for Zentra models that need to be generated in the generate folder.
 
-        self.classname = self.component.classname
-
-        self.build()
-
-    def __repr__(self) -> str:  # pragma: no cover
-        """Create a readable developer string representation of the object when using the `print()` function."""
-        attributes = ", ".join(
-            f"{key}={value!r}" for key, value in self.__dict__.items()
-        )
-        return f"{self.classname}({attributes})"
-
-    def build(self) -> None:
-        """Builds the component string based on the component values."""
-        self.set_attrs()
-        self.set_content()
-        self.set_unique_logic()
-        self.set_below_content()
-
-        self.set_imports()
-        self.set_component_str()
-
-    def set_imports(self) -> None:
-        """Sets the component import statements."""
-        if self.classname in USE_CLIENT_COMPONENTS:
-            self.import_statements += '"use_client"\n\n'
-
-        self.import_statements += self.component.import_str()
-
-    def set_component_str(self) -> None:
-        """Combines the outer shell of the component with its attributes and content."""
-        if self.content_str:
-            self.component_str = f"<{self.classname}{self.attr_str}>{self.content_str}</{self.classname}>"
-        else:
-            self.component_str = f"<{self.classname}{self.attr_str} />"
-
-        if self.below_content_str:
-            self.component_str += self.below_content_str
-
-        if self.classname in COMPONENTS_TO_WRAP.keys():
-            self.component_str = (
-                f"<div {COMPONENTS_TO_WRAP[self.classname]}>{self.component_str}</div>"
+        Parameter:
+        - `file_type` (`string`) - the type of file to extract. Options: ['base', 'templates', 'lib']
+        """
+        for folder, filename in self.components.generate:
+            url = f"{self.url}/{folder}/{file_type}"
+            make_code_file_from_url(
+                url=url,
+                filename=filename,
+                dest_path=os.path.join(self.paths.components, folder),
             )
 
-    def set_attrs(self) -> None:
-        """Populates the `attr_str` based on the component values."""
-        self.attr_str = " " + self.component.attr_str()
+            if folder == LibraryType.UPLOADTHING.value:
+                dest_path = self.paths.lib
+                os.makedirs(dest_path, exist_ok=True)
 
-    def set_content(self) -> None:
-        """Populates the `content_str` based on the component values."""
-        self.content_str = self.component.content_str()
+                core_path, core_filenames = self.ut.core_file_urls()
+                for core_filename in core_filenames:
+                    make_code_file_from_url(
+                        url=core_path,
+                        filename=core_filename,
+                        dest_path=dest_path,
+                    )
 
-    def set_unique_logic(self) -> None:
-        """Populates the `unique_logic_str` based on the component values."""
-        self.unique_logic_str = self.component.unique_logic_str()
+    def remove_models(self) -> None:
+        """Removes a list of Zentra models from the generate folder."""
+        remove_files(pairs=self.components.remove, dirpath=self.paths.components)
 
-    def set_below_content(self) -> None:
-        """Populates the `below_content_str` based on the component values."""
-        self.below_content_str = self.component.below_content_str()
+        if LibraryType.UPLOADTHING.value in self.folders(self.components.remove):
+            core_pairs = self.ut.core_file_pairs()
+            remove_files(
+                pairs=core_pairs, dirpath=self.paths.lib, ignore_pair_folder=True
+            )

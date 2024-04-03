@@ -1,4 +1,4 @@
-from cli.templates.builder import ComponentJSXBuilder
+from cli.templates.jsx import ComponentJSXBuilder
 from zentra.core import Component
 
 

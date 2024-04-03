@@ -47,9 +47,9 @@ class Setup:
             zentra = check_zentra_exists()
             if len(zentra.name_storage.components) == 0:
                 raise typer.Exit(code=SetupErrorCodes.NO_COMPONENTS)
-            else:
-                console.print(setup_complete_panel())
-                raise typer.Exit(code=SetupSuccessCodes.ALREADY_CONFIGURED)
+
+            console.print(setup_complete_panel())
+            raise typer.Exit(code=SetupSuccessCodes.ALREADY_CONFIGURED)
 
         # Create config files
         console.print()

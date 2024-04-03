@@ -49,14 +49,14 @@ class GeneratePathStorage(BaseModel):
     Parameters:
     - `config` (`string`) - the filepath to the Zentra models config file
     - `models` (`string`) - the directory path to the Zentra models folder
-    - `generate` (`string`) - the directory path to the Zentra generate component folder
+    - `components` (`string`) - the directory path to the Zentra generate component folder
     - `templates` (`string`) - the directory path to the Zentra generate template folder
     - `lib` (`string`) - the directory path to the Zentra generate lib folder
     """
 
     config: str
     models: str
-    generate: str
+    components: str
     templates: str
     lib: str
 

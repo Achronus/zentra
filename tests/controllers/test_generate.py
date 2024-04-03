@@ -27,7 +27,7 @@ def path_storage(tmp_path) -> GeneratePathStorage:
     return GeneratePathStorage(
         config=os.path.join(tmp_path, "test_models", "config_init.py"),
         models=os.path.join(tmp_path, "test_models"),
-        generate=os.path.join(tmp_path, "test_generated"),
+        components=os.path.join(tmp_path, "test_generated"),
         templates=os.path.join(tmp_path, "zentra_templates"),
         lib=os.path.join(tmp_path, "zentra_lib"),
     )
@@ -218,7 +218,7 @@ class TestGenerateController:
             assert result == valid, result
 
         def test_existing_models(self, generate_controller: GenerateController):
-            dest_dir = os.path.join(generate_controller.paths.generate, "ui")
+            dest_dir = os.path.join(generate_controller.paths.components, "ui")
             file1 = os.path.join(dest_dir, "accordion.tsx")
             os.makedirs(dest_dir)
 
@@ -337,10 +337,15 @@ class TestGenerateController:
             generate_controller.local_builder.components.generate = [
                 ("ui", "accordion.tsx")
             ]
-            dirpath = os.path.join(generate_controller.paths.generate, "ui")
+            dirpath = os.path.join(generate_controller.paths.components, "ui")
             generate_controller.retrieve_assets()
 
             assert os.path.exists(os.path.join(dirpath, "accordion.tsx"))
+
+        @staticmethod
+        def test_asset_retrieval_ut(generate_controller: GenerateController):
+            # TODO: complete
+            pass
 
         @staticmethod
         def test_count_zero(generate_controller: GenerateController):
@@ -353,7 +358,7 @@ class TestGenerateController:
             generate_controller.local_builder.components.remove = [
                 ("ui", "accordion.tsx")
             ]
-            dirpath = os.path.join(generate_controller.paths.generate, "ui")
+            dirpath = os.path.join(generate_controller.paths.components, "ui")
             file1 = os.path.join(dirpath, "accordion.tsx")
             os.makedirs(dirpath)
 
@@ -363,6 +368,11 @@ class TestGenerateController:
             generate_controller.remove_models()
 
             assert not os.path.exists(os.path.join(dirpath, "accordion.tsx"))
+
+        @staticmethod
+        def test_model_removal_ut(generate_controller: GenerateController):
+            # TODO: complete
+            pass
 
         @staticmethod
         def test_count_zero(generate_controller: GenerateController):

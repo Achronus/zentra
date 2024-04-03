@@ -36,7 +36,7 @@ def generate_components() -> None:
         paths = GeneratePathStorage(
             config=os.path.join(ZentaFilepaths.MODELS, ZentaFilepaths.SETUP_FILENAME),
             models=ZentaFilepaths.MODELS,
-            generate=ZentraGeneratedFilepaths.COMPONENTS,
+            components=ZentraGeneratedFilepaths.COMPONENTS,
             templates=ZentraGeneratedFilepaths.ZENTRA,
             lib=ZentraGeneratedFilepaths.LIB,
         )

@@ -45,7 +45,7 @@ class LocalBuilder:
     def make_dirs(self) -> None:
         """Creates the needed directories inside the generate folder."""
         for dir in self.folders(self.components.generate):
-            make_directories(os.path.join(self.paths.generate, dir))
+            make_directories(os.path.join(self.paths.components, dir))
 
     def create_base_files(self, file_type: ComponentFileType) -> None:
         """
@@ -59,7 +59,7 @@ class LocalBuilder:
             make_code_file_from_url(
                 url=url,
                 filename=filename,
-                dest_path=os.path.join(self.paths.generate, folder),
+                dest_path=os.path.join(self.paths.components, folder),
             )
 
             if folder == LibraryType.UPLOADTHING.value:
@@ -67,7 +67,7 @@ class LocalBuilder:
 
     def remove_models(self) -> None:
         """Removes a list of Zentra models from the generate folder."""
-        remove_files(pairs=self.components.remove, dir_path=self.paths.generate)
+        remove_files(pairs=self.components.remove, dir_path=self.paths.components)
 
         if LibraryType.UPLOADTHING.value in self.folders(self.components.remove):
             pass
@@ -89,7 +89,7 @@ class GenerateController(BaseController):
 
         self.storage: ModelStorage = ModelStorage()
         self.local_extractor = LocalExtractor(
-            generate_path=paths.generate, name_storage=zentra.name_storage
+            generate_path=paths.components, name_storage=zentra.name_storage
         )
 
         self.local_builder = LocalBuilder(

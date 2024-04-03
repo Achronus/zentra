@@ -27,3 +27,14 @@ ZENTRA_INIT_CODE_VALID = {
     ],
     "full_file": "from zentra.core import Component, Page, Zentra\n\n# Web pages that contain multiple React components\npage_map: list[Page] = [\n    # Custom pages here...\n]\n\n# Single components that are not in pages\nstandalone_components: list[Component] = [\n    # Custom components here...\n]\n\n# Setup the application\nzentra = Zentra()\n\n# Register the pages and components to generate\nzentra.register(page_map)\nzentra.register(standalone_components)",
 }
+
+GITHUB_CONTENT_VALID = {
+    "file_n_folders": [
+        {
+            "name": "file-upload.tsx",
+            "path": "components/uploadthing/base/file-upload.tsx",
+            "contentType": "file",
+        }
+    ],
+    "filenames": ["file-upload.tsx"],
+}

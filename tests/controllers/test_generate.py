@@ -29,7 +29,7 @@ def path_storage(tmp_path) -> GeneratePathStorage:
         models=os.path.join(tmp_path, "test_models"),
         components=os.path.join(tmp_path, "test_generated"),
         templates=os.path.join(tmp_path, "zentra_templates"),
-        lib=os.path.join(tmp_path, "zentra_lib"),
+        lib=os.path.join(tmp_path, "lib"),
     )
 
 
@@ -344,8 +344,22 @@ class TestGenerateController:
 
         @staticmethod
         def test_asset_retrieval_ut(generate_controller: GenerateController):
-            # TODO: complete
-            pass
+            generate_controller.storage.components.counts.generate = 1
+            generate_controller.local_builder.components.generate = [
+                ("uploadthing", "file-upload.tsx")
+            ]
+            dirpath = os.path.join(generate_controller.paths.components, "uploadthing")
+            libpath = generate_controller.paths.lib
+            files = [
+                os.path.join(dirpath, "file-upload.tsx"),
+                os.path.join(libpath, "core.ts"),
+                os.path.join(libpath, "route.ts"),
+                os.path.join(libpath, "uploadthing.ts"),
+            ]
+
+            generate_controller.retrieve_assets()
+            checks = [os.path.exists(file) for file in files]
+            assert all(checks)
 
         @staticmethod
         def test_count_zero(generate_controller: GenerateController):
@@ -371,8 +385,26 @@ class TestGenerateController:
 
         @staticmethod
         def test_model_removal_ut(generate_controller: GenerateController):
-            # TODO: complete
-            pass
+            generate_controller.storage.components.counts.remove = 1
+            generate_controller.local_builder.components.remove = [
+                ("uploadthing", "file-upload.tsx")
+            ]
+            dirpath = os.path.join(generate_controller.paths.components, "uploadthing")
+            libpath = generate_controller.paths.lib
+            file1 = os.path.join(dirpath, "file-upload.tsx")
+            file2 = os.path.join(libpath, "core.ts")
+            os.makedirs(libpath)
+            os.makedirs(dirpath)
+
+            with open(file1, "w") as f:
+                f.write("test")
+
+            with open(file2, "w") as f:
+                f.write("test")
+
+            generate_controller.remove_models()
+            checks = [not os.path.exists(file1), not os.path.exists(file2)]
+            assert all(checks)
 
         @staticmethod
         def test_count_zero(generate_controller: GenerateController):

@@ -1,9 +1,22 @@
 import pytest
 import typer
 
-from cli.conf.constants import GITHUB_INIT_ASSETS_DIR, CommonErrorCodes
-from cli.templates.retrieval import CodeRetriever, ZentraSetupRetriever, create_soup
-from tests.mappings.retrieval import ZENTRA_INIT_CODE_VALID, ZENTRA_INIT_VALID
+from cli.conf.constants import (
+    GITHUB_COMPONENTS_DIR,
+    GITHUB_INIT_ASSETS_DIR,
+    CommonErrorCodes,
+)
+from cli.templates.retrieval import (
+    CodeRetriever,
+    GithubContentRetriever,
+    ZentraSetupRetriever,
+    create_soup,
+)
+from tests.mappings.retrieval import (
+    GITHUB_CONTENT_VALID,
+    ZENTRA_INIT_CODE_VALID,
+    ZENTRA_INIT_VALID,
+)
 
 
 def test_create_soup_fail():
@@ -11,6 +24,27 @@ def test_create_soup_fail():
         create_soup("https://github.com/randomtest")
 
     assert e.value.exit_code == CommonErrorCodes.REQUEST_FAILED
+
+
+class TestGithubContentRetriever:
+    @pytest.fixture
+    def retriever(self) -> GithubContentRetriever:
+        return GithubContentRetriever(url=f"{GITHUB_COMPONENTS_DIR}/uploadthing/base")
+
+    @staticmethod
+    def test_get_content_no_url(retriever: GithubContentRetriever):
+        payload_dict = retriever.get_content()
+        assert payload_dict["payload"]
+
+    @staticmethod
+    def test_file_n_folders_no_url(retriever: GithubContentRetriever):
+        payload_list = retriever.file_n_folders()
+        assert payload_list == GITHUB_CONTENT_VALID["file_n_folders"]
+
+    @staticmethod
+    def test_filenames_no_url(retriever: GithubContentRetriever):
+        filenames = retriever.filenames()
+        assert filenames == GITHUB_CONTENT_VALID["filenames"]
 
 
 class TestZentraSetupRetriever:

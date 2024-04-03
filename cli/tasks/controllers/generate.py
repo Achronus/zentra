@@ -3,10 +3,7 @@ from cli.conf.types import LibraryNamePairs
 from cli.tasks.controllers.base import BaseController, status
 
 from cli.templates.builder import LocalBuilder
-from cli.templates.extract import (
-    LocalExtractor,
-    extract_component_details,
-)
+from cli.templates.extract import LocalExtractor
 
 from zentra.core import Zentra
 

@@ -1,8 +1,13 @@
 import os
 
 from cli.conf.cleanup import remove_files
-from cli.conf.create import make_code_file_from_url, make_directories
-from cli.conf.storage import GeneratePathStorage, ModelFileStorage
+from cli.conf.create import (
+    make_code_file_from_content,
+    make_code_file_from_url,
+    make_directories,
+)
+from cli.conf.format import name_to_camel_case
+from cli.conf.storage import ComponentDetails, GeneratePathStorage, ModelFileStorage
 from cli.conf.types import LibraryNamePairs
 from cli.templates import ComponentFileType
 from cli.templates.retrieval import CodeRetriever
@@ -27,6 +32,7 @@ class LocalBuilder:
         self.url = url
         self.paths = paths
         self.components = components
+        self.component_details: list[ComponentDetails] = []
 
         self.retriever = CodeRetriever(url=url)
         self.ut = Uploadthing(core_folder=os.path.basename(self.paths.lib))
@@ -48,11 +54,16 @@ class LocalBuilder:
         - `file_type` (`string`) - the type of file to extract. Options: ['base', 'templates', 'lib']
         """
         for folder, filename in self.components.generate:
-            url = f"{self.url}/{folder}/{file_type}"
-            make_code_file_from_url(
-                url=url,
+            url = f"{self.url}/{folder}/{file_type}/{filename}"
+            code_lines = self.retriever.code(url=url)
+
+            make_code_file_from_content(
+                content="\n".join(code_lines),
                 filename=filename,
                 dest_path=os.path.join(self.paths.components, folder),
+            )
+            self.store_component_details(
+                code_lines=code_lines, filename=filename, library_name=folder
             )
 
             if folder == LibraryType.UPLOADTHING.value:
@@ -76,3 +87,38 @@ class LocalBuilder:
             remove_files(
                 pairs=core_pairs, dirpath=self.paths.lib, ignore_pair_folder=True
             )
+
+    def extract_child_components(self, lines: list[str], filename: str) -> list[str]:
+        """Extracts the child components from the last line a list of code content."""
+
+        def get_children(lines: list[str]) -> list[str]:
+            """Extracts the child component names as a list from a given set of lines."""
+            return (
+                lines[-1]
+                .replace("export", "")
+                .replace("{", "")
+                .replace(";", "")
+                .replace("}", "")
+                .replace(" ", "")
+                .split(",")
+            )
+
+        children = get_children(lines=lines)
+        children.remove(name_to_camel_case(filename))
+        return children
+
+    def store_component_details(
+        self, code_lines: list[str], filename: str, library_name: str
+    ) -> None:
+        """Extracts and stores a components details into the `component_details` list."""
+        child_components = self.extract_child_components(
+            lines=code_lines, filename=filename
+        )
+        self.component_details.append(
+            ComponentDetails(
+                library=library_name,
+                filename=filename,
+                name=name_to_camel_case(filename),
+                child_names=child_components,
+            )
+        )

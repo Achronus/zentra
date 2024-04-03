@@ -73,8 +73,8 @@ class ComponentDetails(BaseModel):
 
     library: str
     filename: str
-    component_name: str
-    child_component_names: list[str]
+    name: str
+    child_names: list[str]
 
 
 class ModelFileStorage(BaseModel):

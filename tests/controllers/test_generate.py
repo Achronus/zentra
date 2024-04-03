@@ -14,6 +14,7 @@ from cli.conf.storage import CountStorage, GeneratePathStorage, ModelFileStorage
 from cli.tasks.controllers.generate import GenerateController
 from cli.tasks.generate import Generate
 
+from tests.mappings.builder import COMPONENT_DETAILS_VALID
 from zentra.core import Page, Zentra
 from zentra.ui import Form, FormField
 from zentra.ui.control import Button, Input
@@ -364,6 +365,30 @@ class TestGenerateController:
         @staticmethod
         def test_count_zero(generate_controller: GenerateController):
             generate_controller.retrieve_assets()
+
+        @staticmethod
+        def test_component_details(generate_controller: GenerateController):
+            components_test = [
+                ("ui", "accordion.tsx"),
+                ("ui", "badge.tsx"),
+                ("uploadthing", "file-upload.tsx"),
+            ]
+            generate_controller.local_builder.components.generate = components_test
+            generate_controller.storage.components.counts.generate = len(
+                components_test
+            )
+            generate_controller.retrieve_assets()
+            details_list = generate_controller.local_builder.component_details
+            print(details_list)
+            checks = [len(details_list) == len(components_test)]
+
+            for idx, (_, component) in enumerate(COMPONENT_DETAILS_VALID.items()):
+                checks.append(details_list[idx].library == component["library"])
+                checks.append(details_list[idx].filename == component["filename"])
+                checks.append(details_list[idx].name == component["name"])
+                checks.append(details_list[idx].child_names == component["child_names"])
+
+            assert all(checks)
 
     class TestRemoveModels:
         @staticmethod

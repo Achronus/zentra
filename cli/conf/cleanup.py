@@ -3,12 +3,15 @@ import os
 from cli.conf.types import LibraryNamePairs
 
 
-def remove_files(pairs: LibraryNamePairs, dir_path: str) -> None:
+def remove_files(
+    pairs: LibraryNamePairs, dirpath: str, ignore_pair_folder: bool = False
+) -> None:
     """Removes a set of `(library_name, filename)` pairs from a directory."""
     for folder, filename in pairs:
-        dirpath = os.path.join(dir_path, folder)
-        filepath = os.path.join(dirpath, filename)
+        if not ignore_pair_folder:
+            dirpath = os.path.join(dirpath, folder)
 
+        filepath = os.path.join(dirpath, filename)
         os.remove(filepath)
 
         if len(os.listdir(dirpath)) == 0:

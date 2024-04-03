@@ -44,19 +44,34 @@ class GithubContentRetriever:
     def __init__(self, url: str) -> None:
         self.url = url
 
-    def get_content(self, url: str) -> dict:
+    def get_content(self, url: str = None) -> dict:
         """Retrieves the list of file and folders displayed on a Github page. Returns it as a dictionary of JSON data."""
+        if not url:
+            url = self.url
+
         soup: BeautifulSoup = create_soup(url)
         content = soup.find("react-app").find("script").contents[0]
         return json.loads(content)
 
-    def file_n_folders(self, url: str) -> list[dict]:
+    def file_n_folders(self, url: str = None) -> list[dict]:
         """Retrieves a list of dictionaries from the page containing path related information. This includes:
         1. The `name` of the file/folder
         2. The `path` of it (`<previous_folder>/<name>`)
         3. the `contentType` (`directory` or `file`)
         """
+        if not url:
+            url = self.url
+
         return self.get_content(url=url)["payload"]["tree"]["items"]
+
+    def filenames(self, url: str = None) -> list[str]:
+        """Retrieves a list of filenames from a URL."""
+        if not url:
+            url = self.url
+
+        payload = self.file_n_folders(url=url)
+        filenames = [file["name"] for file in payload if file["contentType"] == "file"]
+        return filenames
 
     def __repr__(self) -> str:  # pragma: no cover
         """Create a readable developer string representation of the object when using the `print()` function."""

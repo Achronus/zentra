@@ -17,6 +17,7 @@ from cli.templates.extract import (
 from cli.templates.retrieval import CodeRetriever
 from zentra.core import Zentra
 from zentra.core.enums.ui import LibraryType
+from zentra.uploadthing import Uploadthing
 
 
 class LocalBuilder:
@@ -37,6 +38,7 @@ class LocalBuilder:
         self.components = components
 
         self.retriever = CodeRetriever(url=url)
+        self.ut = Uploadthing(core_folder=os.path.basename(self.paths.lib))
 
     def folders(self, pairs: LibraryNamePairs) -> list[str]:
         """Returns a list of `library_name` folders from a list of `LibraryNamePairs`."""
@@ -63,14 +65,26 @@ class LocalBuilder:
             )
 
             if folder == LibraryType.UPLOADTHING.value:
-                pass
+                dest_path = self.paths.lib
+                os.makedirs(dest_path, exist_ok=True)
+
+                core_path, core_filenames = self.ut.core_file_urls()
+                for core_filename in core_filenames:
+                    make_code_file_from_url(
+                        url=core_path,
+                        filename=core_filename,
+                        dest_path=dest_path,
+                    )
 
     def remove_models(self) -> None:
         """Removes a list of Zentra models from the generate folder."""
-        remove_files(pairs=self.components.remove, dir_path=self.paths.components)
+        remove_files(pairs=self.components.remove, dirpath=self.paths.components)
 
         if LibraryType.UPLOADTHING.value in self.folders(self.components.remove):
-            pass
+            core_pairs = self.ut.core_file_pairs()
+            remove_files(
+                pairs=core_pairs, dirpath=self.paths.lib, ignore_pair_folder=True
+            )
 
 
 class GenerateController(BaseController):
@@ -173,3 +187,5 @@ class GenerateController(BaseController):
     def update_template_files(self) -> None:
         """Updates the React components based on the Zentra model attributes."""
         pass
+        # TODO: add logic for 'extract_component_details' or remove function if not needed
+        # Likely better to find alternative. Function is long and slow

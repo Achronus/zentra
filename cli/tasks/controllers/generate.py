@@ -1,8 +1,5 @@
 import os
 
-import typer
-
-from cli.conf.constants import GenerateSuccessCodes
 from cli.conf.create import make_code_file_from_url, make_directories
 from cli.conf.cleanup import remove_files
 from cli.conf.storage import ModelFileStorage, ModelStorage, GeneratePathStorage
@@ -144,20 +141,13 @@ class GenerateController(BaseController):
         self.storage.components = ModelFileStorage(**changes)
         self.local_builder.components = self.storage.components
 
-    def no_new_components_check(
-        self, user_models: LibraryNamePairs, existing: LibraryNamePairs
-    ) -> None:
-        """Raises an error if there are no new components to create."""
-        if user_models == existing:
-            raise typer.Exit(code=GenerateSuccessCodes.NO_NEW_COMPONENTS)
-
     @status
     def detect_models(self) -> None:
         """Detects the user defined Zentra models and prepares them for file generation."""
         user_models = self.local_extractor.user_models()
         existing_models = self.local_extractor.existing_models()
 
-        self.no_new_components_check(user_models, existing_models)
+        self.local_extractor.no_new_components_check(user_models, existing_models)
 
         to_add, to_remove = self.local_extractor.model_changes(
             existing_models,

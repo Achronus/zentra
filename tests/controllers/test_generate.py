@@ -253,7 +253,7 @@ class TestGenerateController:
                 ("ui", "form.tsx"),
             ]
             with pytest.raises(typer.Exit) as e:
-                generate_controller.no_new_components_check(
+                generate_controller.local_extractor.no_new_components_check(
                     user_models, existing_models
                 )
 

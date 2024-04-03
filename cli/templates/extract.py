@@ -1,4 +1,7 @@
 import os
+
+import typer
+from cli.conf.constants import GenerateSuccessCodes
 from cli.conf.extract import get_filename_dir_pairs
 from cli.conf.storage import BasicNameStorage, ComponentDetails, CountStorage
 from cli.conf.types import LibraryNamePairs
@@ -51,6 +54,14 @@ class LocalExtractor:
                 self.model_counts.generate += 1
 
         return to_add, to_remove
+
+    @staticmethod
+    def no_new_components_check(
+        user_models: LibraryNamePairs, existing: LibraryNamePairs
+    ) -> None:
+        """Raises an error if there are no new components to create."""
+        if user_models == existing:
+            raise typer.Exit(code=GenerateSuccessCodes.NO_NEW_COMPONENTS)
 
 
 def extract_component_details(

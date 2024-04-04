@@ -23,6 +23,7 @@ class JSXMappings(BaseModel):
     component_attrs: list[tuple]
     common_content: list[tuple]
     component_content: list[tuple]
+    common_logic: list[tuple]
     use_client_map: list[str]
     additional_imports: list[tuple]
     wrappers: dict[str, str]
@@ -56,14 +57,14 @@ class JSXComponentContentStorage(BaseModel):
     - `props` (`list[string]`) - a list of strings representing the TypeScript props
     - `logic` (`list[string]`) - a list of strings representing the component function logic
     - `attributes` (`list[string]`) - a list of strings representing the attributes used in the main component
-    - `jsx` (`list[string]`) - a list of strings containing the JSX content used in the return statement
+    - `content` (`list[string]`) - a list of strings containing the JSX content used in the return statement
     """
 
     imports: list[str] = []
     props: list[str] = []
     logic: list[str] = []
     attributes: list[str] = []
-    jsx: list[str] = []
+    content: list[str] = []
 
 
 class JSXPageBuilder:
@@ -138,13 +139,15 @@ class ComponentBuilder:
         self.imports = ImportBuilder(
             component=component, mappings=mappings, child_names=details.child_names
         )
+        self.logic = LogicBuilder(component=component, mappings=mappings)
         self.content = ContentBuilder(component=component, mappings=mappings)
 
     def build(self, container: JSXPageContentStorage) -> None:
         """Builds the JSX for the component."""
         self.storage.imports = self.imports.build()
         self.storage.attributes = self.attrs.build()
-        self.storage.jsx = self.content.build()
+        self.storage.logic = self.logic.build()
+        self.storage.content = self.content.build()
         print(self.component.classname, self.storage)
 
     def apply_content_containers(
@@ -192,7 +195,7 @@ class AttributeBuilder:
             if isinstance(self.component, comp_type):
                 value = getattr(self.component, attr_name)
                 if value:
-                    attrs += condition(value)
+                    attrs.extend(condition(value))
         return attrs
 
 
@@ -306,3 +309,24 @@ class ContentBuilder:
                 content.append("<InputOTPSeparator />")
 
         return content
+
+
+class LogicBuilder:
+    """A builder for creating the Zentra `Component` function logic created above the `return` statement."""
+
+    def __init__(self, component: Component, mappings: JSXMappings) -> None:
+        self.component = component
+        self.maps = mappings
+
+    def build(self) -> list[str]:
+        """Builds the function logic for the component."""
+        logic = []
+
+        for item in self.maps.common_logic:
+            comp_type, attr_name, condition = item
+            if isinstance(self.component, comp_type):
+                value = getattr(self.component, attr_name)
+                if value:
+                    logic.extend(condition(value))
+
+        return logic

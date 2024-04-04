@@ -2,11 +2,6 @@ import re
 from pydantic import Field, HttpUrl, PrivateAttr, ValidationInfo, field_validator
 from pydantic_core import PydanticCustomError
 
-from cli.templates.ui import (
-    CalendarJSX,
-    CollapsibleJSX,
-)
-
 from zentra.core import LOWER_CAMELCASE_WITH_DIGITS, Component, Icon
 from zentra.core.enums.ui import (
     ButtonSize,
@@ -94,9 +89,6 @@ class Calendar(Component, ShadcnUi):
             )
         return name
 
-    def unique_logic_str(self) -> str:
-        return CalendarJSX.unique_logic(id=self.name)
-
 
 class Checkbox(Component, ShadcnUi):
     """
@@ -163,9 +155,6 @@ class Collapsible(Component, ShadcnUi):
                 dict(wrong_value=name, pattern=LOWER_CAMELCASE_WITH_DIGITS),
             )
         return name
-
-    def unique_logic_str(self) -> str:
-        return CollapsibleJSX.unique_logic(id=self.name)
 
 
 class Combobox(Component, ShadcnUi):

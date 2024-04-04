@@ -34,7 +34,7 @@ COMPONENT_ATTR_MAPPING = [
         "name",
         lambda value: [
             f"open={{{value}IsOpen}}",
-            f"open={{{value}SetIsOpen}}",
+            f"onOpenChange={{{value}SetIsOpen}}",
             'className="w-[350px] space-y-2"',
         ],
     ),
@@ -134,4 +134,18 @@ COMPONENT_CONTENT_MAPPING = [
 
 COMMON_CONTENT_MAPPING = [
     ("text", lambda value: value),
+]
+
+
+COMMON_LOGIC_MAPPING = [
+    (
+        Calendar,
+        "name",
+        lambda name: [f"const [{name}Date, {name}SetDate] = useState(new Date());"],
+    ),
+    (
+        Collapsible,
+        "name",
+        lambda name: [f"const [{name}IsOpen, {name}SetIsOpen] = useState(false);"],
+    ),
 ]

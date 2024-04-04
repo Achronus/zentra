@@ -100,6 +100,11 @@ class Icon(BaseModel):
 
     name: str
 
+    @property
+    def classname(self) -> str:
+        """Stores the classname for the JSX builder."""
+        return self.__class__.__name__
+
 
 class Zentra(BaseModel):
     """An application class for registering the components to create."""

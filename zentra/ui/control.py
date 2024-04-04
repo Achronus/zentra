@@ -3,14 +3,8 @@ from pydantic import Field, HttpUrl, PrivateAttr, ValidationInfo, field_validato
 from pydantic_core import PydanticCustomError
 
 from cli.templates.ui import (
-    ButtonJSX,
-    IconButtonJSX,
     CalendarJSX,
-    CheckboxJSX,
     CollapsibleJSX,
-    InputJSX,
-    InputOTPJSX,
-    LabelJSX,
 )
 
 from zentra.core import LOWER_CAMELCASE_WITH_DIGITS, Component, Icon
@@ -48,9 +42,6 @@ class Button(Component, ShadcnUi):
     size: ButtonSize = "default"
     disabled: bool = False
 
-    def content_str(self) -> str:
-        return ButtonJSX.main_content(text=self.text)
-
 
 class IconButton(Component, ShadcnUi):
     """
@@ -75,11 +66,6 @@ class IconButton(Component, ShadcnUi):
     disabled: bool = False
 
     _classname = PrivateAttr(default="Button")
-
-    def content_str(self) -> str:
-        return IconButtonJSX.main_content(
-            text=self.text, icon=self.icon, icon_position=self.icon_position
-        )
 
 
 class Calendar(Component, ShadcnUi):
@@ -138,15 +124,6 @@ class Checkbox(Component, ShadcnUi):
             )
         return id
 
-    def below_content_str(self) -> str:
-        content = CheckboxJSX.main_content(id=self.id, label=self.label)
-
-        if self.more_info:
-            content += CheckboxJSX.more_info(info=self.more_info)
-
-        content += "</div>"
-        return content
-
 
 class MultiCheckbox(Component, ShadcnUi):
     """
@@ -189,16 +166,6 @@ class Collapsible(Component, ShadcnUi):
 
     def unique_logic_str(self) -> str:
         return CollapsibleJSX.unique_logic(id=self.name)
-
-    def content_str(self) -> str:
-        title = CollapsibleJSX.title(self.title)
-        items_str = CollapsibleJSX.items(self.items)
-        return title + items_str
-
-    def import_str(self) -> str:
-        extra_parts = CollapsibleJSX.extra_parts()
-        core = super().import_str(extra_parts)
-        return CollapsibleJSX.imports(core=core)
 
 
 class Combobox(Component, ShadcnUi):
@@ -368,16 +335,6 @@ class InputOTP(Component, ShadcnUi):
                 )
         return pattern
 
-    def content_str(self) -> str:
-        return InputOTPJSX.main_content(
-            num_inputs=self.num_inputs, num_groups=self.num_groups
-        )
-
-    def import_str(self) -> str:
-        extra_parts = InputOTPJSX.extra_parts(num_groups=self.num_groups)
-        core = super().import_str(extra_parts)
-        return InputOTPJSX.imports(core=core, pattern=self.pattern)
-
 
 class Label(Component, ShadcnUi):
     """
@@ -400,9 +357,6 @@ class Label(Component, ShadcnUi):
                 dict(wrong_value=id, pattern=LOWER_CAMELCASE_WITH_DIGITS),
             )
         return name
-
-    def content_str(self) -> str:
-        return LabelJSX.main_content(text=self.text)
 
 
 class RadioGroup(Component, ShadcnUi):

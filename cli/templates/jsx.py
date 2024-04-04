@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from cli.conf.storage import ComponentDetails
 from zentra.core import Component, Page
 from zentra.ui import Form
+from zentra.ui.control import IconButton, InputOTP
 
 
 # (attribute_name, lambda_expression)
@@ -15,20 +16,16 @@ AttributeMapping = list[tuple[str, Callable]]
 ComponentAttributesMapping = list[tuple[Component, str, Callable]]
 
 
-# Dictionary of components with containers around them
-# (classname, attributes)
-COMPONENTS_TO_WRAP = {
-    "Checkbox": 'className="flex items-top space-x-2"',
-}
-
-
 class JSXMappings(BaseModel):
     """A storage container for JSX mappings."""
 
     common_attrs: AttributeMapping
     component_attrs: list[tuple]
+    common_content: list[tuple]
+    component_content: list[tuple]
     use_client_map: list[str]
     additional_imports: list[tuple]
+    wrappers: dict[str, str]
 
 
 class JSXPageContentStorage(BaseModel):
@@ -93,6 +90,7 @@ class JSXPageBuilder:
 
     def build(self) -> str:
         """Builds the JSX for the page."""
+
         for component in self.page.components:
             details = self.get_details(component=component)
             builder = ComponentBuilder(
@@ -140,12 +138,22 @@ class ComponentBuilder:
         self.imports = ImportBuilder(
             component=component, mappings=mappings, child_names=details.child_names
         )
+        self.content = ContentBuilder(component=component, mappings=mappings)
 
     def build(self, container: JSXPageContentStorage) -> None:
         """Builds the JSX for the component."""
         self.storage.imports = self.imports.build()
         self.storage.attributes = self.attrs.build()
+        self.storage.jsx = self.content.build()
         print(self.component.classname, self.storage)
+
+    def apply_content_containers(
+        self, content: list[str], wrapper_map: dict[str, str]
+    ) -> list[str]:
+        """Wraps the components content in its outer shell and any additional wrappers (if applicable)."""
+        class_wrapper = f"<{self.component.classname}"
+        if len(content) > 1:
+            content.insert(0, class_wrapper)
 
 
 class FormBuilder:
@@ -176,9 +184,8 @@ class AttributeBuilder:
         for attr_name, condition in self.maps.common_attrs:
             if hasattr(self.component, attr_name):
                 value = getattr(self.component, attr_name)
-                attr_str = condition(value)
-                if attr_str:
-                    attrs.append(attr_str)
+                if value:
+                    attrs.append(condition(value))
 
         for item in self.maps.component_attrs:
             comp_type, attr_name, condition = item
@@ -233,3 +240,69 @@ class ImportBuilder:
     def core_import_pieces(self) -> str:
         """Creates the core import pieces including the main component and its children (if required)."""
         return ", ".join([self.component.classname] + self.child_names)
+
+
+class ContentBuilder:
+    """A builder for creating Zentra `Component` content."""
+
+    def __init__(self, component: Component, mappings: JSXMappings) -> None:
+        self.component = component
+        self.maps = mappings
+
+    def build(self) -> list[str]:
+        """Builds the content for the component."""
+        content = []
+
+        for attr_name, condition in self.maps.common_content:
+            if isinstance(self.component, InputOTP):
+                content.extend(self.handle_input_otp())
+
+            elif hasattr(self.component, attr_name):
+                value = getattr(self.component, attr_name)
+                if value:
+                    content_str = condition(value)
+                    if attr_name == "text" and hasattr(self.component, "icon_position"):
+                        content.extend(self.handle_icon_position(text=content_str))
+                    else:
+                        content.append(content_str)
+
+        for comp_type, attr_name, condition in self.maps.component_content:
+            if isinstance(self.component, comp_type):
+                value = getattr(self.component, attr_name)
+                if value:
+                    content_str = condition(self.component)
+                    content.extend(content_str)
+
+        return content
+
+    def handle_icon_position(self, text: str) -> list[str]:
+        """Handles the logic for the content for the `icon_position` attribute."""
+        component: IconButton = self.component
+
+        icon_html = f'<{component.icon.classname} className="mr-2 h-4 w-4"/>'
+        if component.icon_position == "start":
+            return [icon_html, text]
+        else:
+            return [text, icon_html]
+
+    def handle_input_otp(self) -> list[str]:
+        """Input OTP is difficult to create with a single list comprehension. Instead, we create it separately here."""
+        content = []
+        component: InputOTP = self.component
+
+        slot_group_size = component.num_inputs // component.num_groups
+        slot_idx = 0
+
+        group_tag = "InputOTPGroup>"
+
+        for group_idx in range(component.num_groups):
+            content.append(f"<{group_tag}")
+            for _ in range(slot_group_size):
+                content.append(f"<InputOTPSlot index={{{slot_idx}}} />")
+                slot_idx += 1
+            content.append(f"</{group_tag}")
+
+            if component.num_groups > 1 and group_idx + 1 != component.num_groups:
+                content.append("<InputOTPSeparator />")
+
+        return content

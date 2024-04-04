@@ -1,6 +1,13 @@
 import re
 from zentra.core.enums.ui import InputOTPPatterns
-from zentra.ui.control import Calendar, Collapsible, InputOTP, Label
+from zentra.ui.control import Calendar, Checkbox, Collapsible, InputOTP, Label
+
+
+# Dictionary of components with containers around them
+# (classname, attributes)
+COMPONENTS_TO_WRAP = {
+    "Checkbox": 'className="flex items-top space-x-2"',
+}
 
 
 # Components that have a "use client" import at the top of their file
@@ -71,4 +78,60 @@ ADDITIONAL_IMPORTS_MAPPING = [
             'import { ChevronsUpDown } from "lucide-react"',
         ],
     )
+]
+
+COMPONENT_CONTENT_MAPPING = [
+    (
+        Checkbox,
+        "label",
+        lambda comp: [
+            '<div className="grid gap-1.5 leading-none">',
+            f'<label htmlFor="{comp.id}" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">',
+            f"{comp.label}",
+            "</label>",
+            f'<p className="text-sm text-muted-foreground">{comp.more_info}</p></div>'
+            if comp.more_info
+            else "</div>",
+        ],
+    ),
+    (
+        Collapsible,
+        "title",
+        lambda comp: [
+            '<div className="flex items-center justify-between space-x-4 px-4">',
+            '<h4 className="text-sm font-semibold">',
+            comp.title,
+            "</h4>",
+            "<CollapsibleTrigger asChild>",
+            '<Button variant="ghost" size="sm" className="w-9 p-0">',
+            '<ChevronsUpDown className="h-4 w-4" />',
+            '<span className="sr-only">',
+            "Toggle",
+            "</span>",
+            "</Button>",
+            "</CollapsibleTrigger>",
+            "</div>",
+        ],
+    ),
+    (
+        Collapsible,
+        "items",
+        lambda comp: [
+            '<div className="rounded-md border px-4 py-3 font-mono text-sm">',
+            comp.items[0],
+            "</div>",
+            '<CollapsibleContent className="space-y-2">',
+            *[
+                f'<div className="rounded-md border px-4 py-3 font-mono text-sm">{item}</div>'
+                for item in comp.items[1:]
+                if len(comp.items) > 1
+            ],
+            "</CollapsibleContent>",
+        ],
+    ),
+]
+
+
+COMMON_CONTENT_MAPPING = [
+    ("text", lambda value: value),
 ]

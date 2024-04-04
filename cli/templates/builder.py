@@ -91,21 +91,35 @@ class LocalBuilder:
     def extract_child_components(self, lines: list[str], filename: str) -> list[str]:
         """Extracts the child components from the last line a list of code content."""
 
+        def sanitise_children(children: list[str], filename: str) -> list[str]:
+            """Filters out items starting with a lowercase letter and the component name. In some Shadcn/ui components, the export line contains values such as, `buttonVariants`, `type CarouselApi`, `useFormField`, and `navigationMenuTriggerStyle`.
+
+            These need to be filtered out before passed into the import statements.
+            """
+            if len(children) > 0:
+                children = [item for item in children if not item[0].islower()]
+                children.remove(name_to_camel_case(filename))
+            return children
+
         def get_children(lines: list[str]) -> list[str]:
             """Extracts the child component names as a list from a given set of lines."""
-            return (
-                lines[-1]
-                .replace("export", "")
+            idx = [idx for idx, line in enumerate(lines) if "export {" in line][0]
+            export_line = lines[idx:]
+
+            if isinstance(export_line, list):
+                export_line = " ".join(export_line)
+
+            children = (
+                export_line.replace("export", "")
                 .replace("{", "")
                 .replace(";", "")
                 .replace("}", "")
                 .replace(" ", "")
                 .split(",")
             )
+            return [child for child in children if child != ""]
 
-        children = get_children(lines=lines)
-        children.remove(name_to_camel_case(filename))
-        return children
+        return sanitise_children(children=get_children(lines=lines), filename=filename)
 
     def store_component_details(
         self, code_lines: list[str], filename: str, library_name: str

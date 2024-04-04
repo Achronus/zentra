@@ -48,11 +48,6 @@ class Button(Component, ShadcnUi):
     size: ButtonSize = "default"
     disabled: bool = False
 
-    def attr_str(self) -> str:
-        return ButtonJSX.attributes(
-            url=self.url, variant=self.variant, size=self.size, disabled=self.disabled
-        )
-
     def content_str(self) -> str:
         return ButtonJSX.main_content(text=self.text)
 
@@ -79,12 +74,7 @@ class IconButton(Component, ShadcnUi):
     size: IconButtonSize = "icon"
     disabled: bool = False
 
-    _c_name = PrivateAttr(default="Button")
-
-    def attr_str(self) -> str:
-        return IconButtonJSX.attributes(
-            url=self.url, variant=self.variant, size=self.size, disabled=self.disabled
-        )
+    _classname = PrivateAttr(default="Button")
 
     def content_str(self) -> str:
         return IconButtonJSX.main_content(
@@ -97,32 +87,29 @@ class Calendar(Component, ShadcnUi):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Calendar component.
 
     Parameters:
-    - `id` (`str`) - an identifier for the component. Prepended to `get` and `set` for the `useState()` hook. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
+    - `name` (`str`) - an identifier for the component. Prepended to `get` and `set` for the `useState()` hook. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
 
     Example:
-    1. `id='monthly'` ->
+    1. `name='monthly'` ->
         `const [monthlyDate, monthlySetDate] = useState(new Date());"`
-    2. `id='yearlyCalendar'` ->
+    2. `name='yearlyCalendar'` ->
         `const [yearlyCalendarDate, yearlyCalendarSetDate] = useState(new Date());"`
     """
 
-    id: str = Field(min_length=1, max_length=15)
+    name: str = Field(min_length=1, max_length=15)
 
-    @field_validator("id")
-    def validate_id(cls, id: str) -> str:
-        if not has_valid_pattern(pattern=LOWER_CAMELCASE_WITH_DIGITS, value=id):
+    @field_validator("name")
+    def validate_id(cls, name: str) -> str:
+        if not has_valid_pattern(pattern=LOWER_CAMELCASE_WITH_DIGITS, value=name):
             raise PydanticCustomError(
                 "string_pattern_mismatch",
                 "must be lowercase or camelCase",
-                dict(wrong_value=id, pattern=LOWER_CAMELCASE_WITH_DIGITS),
+                dict(wrong_value=name, pattern=LOWER_CAMELCASE_WITH_DIGITS),
             )
-        return id
+        return name
 
     def unique_logic_str(self) -> str:
-        return CalendarJSX.unique_logic(id=self.id)
-
-    def attr_str(self) -> str:
-        return CalendarJSX.attributes(id=self.id)
+        return CalendarJSX.unique_logic(id=self.name)
 
 
 class Checkbox(Component, ShadcnUi):
@@ -151,9 +138,6 @@ class Checkbox(Component, ShadcnUi):
             )
         return id
 
-    def attr_str(self) -> str:
-        return CheckboxJSX.attributes(id=self.id, disabled=self.disabled)
-
     def below_content_str(self) -> str:
         content = CheckboxJSX.main_content(id=self.id, label=self.label)
 
@@ -174,7 +158,7 @@ class MultiCheckbox(Component, ShadcnUi):
 
     items: list[Checkbox] = Field(min_length=2)
 
-    _c_name = PrivateAttr(default="Checkbox")
+    _classname = PrivateAttr(default="Checkbox")
 
     # TODO: add logic specific to `Forms`
 
@@ -184,30 +168,27 @@ class Collapsible(Component, ShadcnUi):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Collapsible component.
 
     Parameters:
-    - `id` (`str`) - an identifier for the component. Prepended to `get` and `set` for the `useState()` hook. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
+    - `name` (`str`) - an identifier for the component. Prepended to `get` and `set` for the `useState()` hook. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
     - `title` (`str`) - the main heading of the collapsible
     - `items` (`list[str]`) - a list of strings representing the text to add into each collapsible block. Requires a `minimum` of `1` item
     """
 
-    id: str = Field(min_length=1, max_length=15)
+    name: str = Field(min_length=1, max_length=15)
     title: str = Field(min_length=1)
     items: list[str] = Field(min_length=1)
 
-    @field_validator("id")
-    def validate_id(cls, id: str) -> str:
-        if not has_valid_pattern(pattern=LOWER_CAMELCASE_WITH_DIGITS, value=id):
+    @field_validator("name")
+    def validate_id(cls, name: str) -> str:
+        if not has_valid_pattern(pattern=LOWER_CAMELCASE_WITH_DIGITS, value=name):
             raise PydanticCustomError(
                 "string_pattern_mismatch",
                 "must be lowercase or camelCase",
-                dict(wrong_value=id, pattern=LOWER_CAMELCASE_WITH_DIGITS),
+                dict(wrong_value=name, pattern=LOWER_CAMELCASE_WITH_DIGITS),
             )
-        return id
+        return name
 
     def unique_logic_str(self) -> str:
-        return CollapsibleJSX.unique_logic(id=self.id)
-
-    def attr_str(self) -> str:
-        return CollapsibleJSX.attributes(id=self.id)
+        return CollapsibleJSX.unique_logic(id=self.name)
 
     def content_str(self) -> str:
         title = CollapsibleJSX.title(self.title)
@@ -269,14 +250,6 @@ class Input(Component, ShadcnUi):
                 dict(wrong_value=id, pattern=LOWER_CAMELCASE_WITH_DIGITS),
             )
         return id
-
-    def attr_str(self) -> str:
-        return InputJSX.attributes(
-            id=self.id,
-            type=self.type,
-            placeholder=self.placeholder,
-            disabled=self.disabled,
-        )
 
 
 class InputOTP(Component, ShadcnUi):
@@ -395,9 +368,6 @@ class InputOTP(Component, ShadcnUi):
                 )
         return pattern
 
-    def attr_str(self) -> str:
-        return InputOTPJSX.attributes(num_inputs=self.num_inputs, pattern=self.pattern)
-
     def content_str(self) -> str:
         return InputOTPJSX.main_content(
             num_inputs=self.num_inputs, num_groups=self.num_groups
@@ -414,25 +384,22 @@ class Label(Component, ShadcnUi):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Label component.
 
     Parameters:
-    - `id` (`str`) - an identifier for the component. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
+    - `name` (`str`) - an identifier for the component. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
     - `text` (`str`) - the descriptive text to put into the label
     """
 
-    id: str = Field(min_length=1, max_length=15)
+    name: str = Field(min_length=1, max_length=15)
     text: str = Field(min_length=1)
 
-    @field_validator("id")
-    def validate_id(cls, id: str) -> str:
-        if not has_valid_pattern(pattern=LOWER_CAMELCASE_WITH_DIGITS, value=id):
+    @field_validator("name")
+    def validate_id(cls, name: str) -> str:
+        if not has_valid_pattern(pattern=LOWER_CAMELCASE_WITH_DIGITS, value=name):
             raise PydanticCustomError(
                 "string_pattern_mismatch",
                 "must be lowercase or camelCase",
                 dict(wrong_value=id, pattern=LOWER_CAMELCASE_WITH_DIGITS),
             )
-        return id
-
-    def attr_str(self) -> str:
-        return LabelJSX.attributes(id=self.id)
+        return name
 
     def content_str(self) -> str:
         return LabelJSX.main_content(text=self.text)

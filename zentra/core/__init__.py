@@ -23,14 +23,6 @@ class Component(BaseModel):
     model_config = ConfigDict(use_enum_values=True)
 
     @property
-    def core_import_str(self) -> str:
-        """Stores the core import statement for the component."""
-        filename = name_from_camel_case(self.classname)
-        return f'import {{ {self.classname}**extra_parts**}} from "../ui/{filename}"\n'.replace(
-            "'", " "
-        )
-
-    @property
     def classname(self) -> str:
         """Stores the classname for the JSX builder."""
         return self._classname if self._classname else self.__class__.__name__
@@ -50,22 +42,6 @@ class Component(BaseModel):
     def below_content_str(self) -> str | None:
         """Creates a JSX string containing content below the component. Often used in substitute of `content_str()`."""
         return None
-
-    def import_str(self, extra_parts: str = None) -> str:
-        """Creates a JSX string containing the import statements required for the component. Adds them to the top of the JSX file with the others.
-
-        By default, returns the `core_import_str` property with an optional parameter `extra_parts` as `None`. When updating `extra_parts`, structure your overloaded function as follows:
-
-        ```python
-        def import_str(self) -> str:
-            extra_parts = "..."  # Populate string
-            core = super().import_str(extra_parts)
-            return JSXContainer.imports(core=core)
-        ```
-        """
-        return self.core_import_str.replace(
-            "**extra_parts**", extra_parts if extra_parts else " "
-        )
 
     @classmethod
     def map_to_str(cls, map: ConditionResultMapping) -> str:

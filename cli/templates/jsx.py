@@ -3,6 +3,7 @@ from cli.conf.format import name_from_camel_case
 
 from pydantic import BaseModel
 
+from cli.conf.storage import ComponentDetails
 from zentra.core import Component, Page
 from zentra.ui import Form
 
@@ -20,19 +21,14 @@ COMPONENTS_TO_WRAP = {
     "Checkbox": 'className="flex items-top space-x-2"',
 }
 
-# Components that have a "use client" import at the top of their file
-USE_CLIENT_COMPONENTS = [
-    "Calendar",
-    "Checkbox",
-    "Collapsible",
-]
-
 
 class JSXMappings(BaseModel):
     """A storage container for JSX mappings."""
 
     common_attrs: AttributeMapping
     component_attrs: list[tuple]
+    use_client_map: list[str]
+    additional_imports: list[tuple]
 
 
 class JSXPageContentStorage(BaseModel):
@@ -76,17 +72,34 @@ class JSXComponentContentStorage(BaseModel):
 class JSXPageBuilder:
     """A builder for creating Zentra `Page` models as JSX."""
 
-    def __init__(self, page: Page, mappings: JSXMappings) -> None:
+    def __init__(
+        self,
+        page: Page,
+        mappings: JSXMappings,
+        component_details: list[ComponentDetails],
+    ) -> None:
         self.page = page
         self.mappings = mappings
+        self.component_details = component_details
 
         self.storage = JSXPageContentStorage()
         self.jsx = ""
 
+    def get_details(self, component: Component) -> ComponentDetails:
+        """Retrieves the component details for the component."""
+        for details in self.component_details:
+            if component.classname == details.name:
+                return details
+
     def build(self) -> str:
         """Builds the JSX for the page."""
         for component in self.page.components:
-            builder = ComponentBuilder(component=component, mappings=self.mappings)
+            details = self.get_details(component=component)
+            builder = ComponentBuilder(
+                component=component,
+                mappings=self.mappings,
+                details=details,
+            )
             builder.build(container=self.storage)
 
         return self.concat_content()
@@ -113,6 +126,28 @@ class JSXPageBuilder:
         return self.compress(self.dedupe(values))
 
 
+class ComponentBuilder:
+    """A builder for creating Zentra `Component` models as JSX."""
+
+    def __init__(
+        self, component: Component, mappings: JSXMappings, details: ComponentDetails
+    ) -> None:
+        self.component = component
+        self.details = details
+
+        self.storage = JSXComponentContentStorage()
+        self.attrs = AttributeBuilder(mappings=mappings, component=component)
+        self.imports = ImportBuilder(
+            component=component, mappings=mappings, child_names=details.child_names
+        )
+
+    def build(self, container: JSXPageContentStorage) -> None:
+        """Builds the JSX for the component."""
+        self.storage.imports = self.imports.build()
+        self.storage.attributes = self.attrs.build()
+        print(self.component.classname, self.storage)
+
+
 class FormBuilder:
     """A builder for creating Zentra `Form` models as JSX."""
 
@@ -130,121 +165,71 @@ class FormBuilder:
 class AttributeBuilder:
     """A builder for creating Zentra `Component` attributes."""
 
-    def __init__(self, mappings: JSXMappings) -> None:
+    def __init__(self, mappings: JSXMappings, component: Component) -> None:
         self.maps = mappings
+        self.component = component
 
-    def build(self, component: Component) -> list[str]:
+    def build(self) -> list[str]:
         """Builds the attributes from a mapping for the component."""
         attrs = []
 
         for attr_name, condition in self.maps.common_attrs:
-            if hasattr(component, attr_name):
-                value = getattr(component, attr_name)
+            if hasattr(self.component, attr_name):
+                value = getattr(self.component, attr_name)
                 attr_str = condition(value)
                 if attr_str:
                     attrs.append(attr_str)
 
         for item in self.maps.component_attrs:
             comp_type, attr_name, condition = item
-            if isinstance(component, comp_type):
-                value = getattr(component, attr_name)
+            if isinstance(self.component, comp_type):
+                value = getattr(self.component, attr_name)
                 if value:
                     attrs += condition(value)
         return attrs
 
 
-class ComponentBuilder:
-    """A builder for creating Zentra `Component` models as JSX."""
+class ImportBuilder:
+    """A builder for creating Zentra `Component` import statements."""
 
-    def __init__(self, component: Component, mappings: JSXMappings) -> None:
+    def __init__(
+        self, component: Component, mappings: JSXMappings, child_names: list[str]
+    ) -> None:
         self.component = component
+        self.maps = mappings
+        self.child_names = child_names
 
-        self.storage = JSXComponentContentStorage()
-        self.attrs = AttributeBuilder(mappings=mappings)
+    def build(self) -> list[str]:
+        """Builds the import statements for the component."""
+        additional_imports = self.additional_imports()
+        imports = [self.require_client(), self.core_import()]
 
-    def build(self, container: JSXPageContentStorage) -> None:
-        """Builds the JSX for the component."""
-        container.imports.append(self.core_import())
-        self.storage.attributes = self.attrs.build(self.component)
-        print(self.component.classname, self.storage.attributes)
+        if additional_imports:
+            imports.extend(additional_imports)
+
+        return [item for item in imports if item]
+
+    def require_client(self) -> str:
+        """Adds the `use_client` line to the import statement if required by the component."""
+        if self.component.classname in self.maps.use_client_map:
+            return '"use_client"'
+        return None
 
     def core_import(self) -> str:
         """Creates the core import statement for the component."""
         filename = name_from_camel_case(self.component.classname)
-        return f'import {{ {self.component.classname} }} from "../{self.component.library}/{filename}"'.replace(
+        return f'import {{ {self.core_import_pieces()} }} from "../{self.component.library}/{filename}"'.replace(
             "'", " "
         )
 
+    def additional_imports(self) -> list[str]:
+        """Creates the additional imports needed for the component."""
+        for item in self.maps.additional_imports:
+            component_type, imports = item
+            if isinstance(self.component, component_type):
+                return imports
+        return None
 
-class ComponentJSXBuilder:
-    """A builder for creating the JSX representation of the components."""
-
-    def __init__(self, component: Component) -> None:
-        self.component = component
-
-        self.attr_str = None
-        self.content_str = None
-        self.unique_logic_str = None
-        self.below_content_str = None
-
-        self.import_statements = ""
-        self.component_str = ""
-
-        self.classname = self.component.classname
-
-        self.build()
-
-    def __repr__(self) -> str:  # pragma: no cover
-        """Create a readable developer string representation of the object when using the `print()` function."""
-        attributes = ", ".join(
-            f"{key}={value!r}" for key, value in self.__dict__.items()
-        )
-        return f"{self.classname}({attributes})"
-
-    def build(self) -> None:
-        """Builds the component string based on the component values."""
-        self.set_attrs()
-        self.set_content()
-        self.set_unique_logic()
-        self.set_below_content()
-
-        self.set_imports()
-        self.set_component_str()
-
-    def set_imports(self) -> None:
-        """Sets the component import statements."""
-        if self.classname in USE_CLIENT_COMPONENTS:
-            self.import_statements += '"use_client"\n\n'
-
-        self.import_statements += self.component.import_str()
-
-    def set_component_str(self) -> None:
-        """Combines the outer shell of the component with its attributes and content."""
-        if self.content_str:
-            self.component_str = f"<{self.classname}{self.attr_str}>{self.content_str}</{self.classname}>"
-        else:
-            self.component_str = f"<{self.classname}{self.attr_str} />"
-
-        if self.below_content_str:
-            self.component_str += self.below_content_str
-
-        if self.classname in COMPONENTS_TO_WRAP.keys():
-            self.component_str = (
-                f"<div {COMPONENTS_TO_WRAP[self.classname]}>{self.component_str}</div>"
-            )
-
-    def set_attrs(self) -> None:
-        """Populates the `attr_str` based on the component values."""
-        self.attr_str = " " + self.component.attr_str()
-
-    def set_content(self) -> None:
-        """Populates the `content_str` based on the component values."""
-        self.content_str = self.component.content_str()
-
-    def set_unique_logic(self) -> None:
-        """Populates the `unique_logic_str` based on the component values."""
-        self.unique_logic_str = self.component.unique_logic_str()
-
-    def set_below_content(self) -> None:
-        """Populates the `below_content_str` based on the component values."""
-        self.below_content_str = self.component.below_content_str()
+    def core_import_pieces(self) -> str:
+        """Creates the core import pieces including the main component and its children (if required)."""
+        return ", ".join([self.component.classname] + self.child_names)

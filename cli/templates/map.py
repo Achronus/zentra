@@ -3,6 +3,13 @@ from zentra.core.enums.ui import InputOTPPatterns
 from zentra.ui.control import Calendar, Collapsible, InputOTP, Label
 
 
+# Components that have a "use client" import at the top of their file
+USE_CLIENT_COMPONENTS = [
+    "Calendar",
+    "Checkbox",
+    "Collapsible",
+]
+
 # (component_type, attribute_name, lambda_expression)
 COMPONENT_ATTR_MAPPING = [
     (
@@ -53,4 +60,15 @@ COMMON_ATTR_MAPPING = [
     ("disabled", lambda value: "disabled" if value else None),
     ("apiEndpoint", lambda value: f'apiEndpoint="{value}"'),
     ("num_inputs", lambda value: f"maxLength={{{value}}}"),
+]
+
+
+ADDITIONAL_IMPORTS_MAPPING = [
+    (
+        Collapsible,
+        [
+            'import { Button } from "../ui/button"',
+            'import { ChevronsUpDown } from "lucide-react"',
+        ],
+    )
 ]

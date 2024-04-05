@@ -5,7 +5,7 @@ from pydantic_core import PydanticCustomError
 
 from cli.conf.format import name_from_camel_case
 from cli.conf.storage import BasicNameStorage
-from cli.conf.types import ConditionResultMapping, LibraryNamePairs
+from cli.conf.types import LibraryNamePairs
 
 
 LOWER_CAMELCASE_WITH_DIGITS = r"^[a-z]+(?:[A-Z][a-z]*)*\d*$"
@@ -26,28 +26,6 @@ class Component(BaseModel):
     def classname(self) -> str:
         """Stores the classname for the JSX builder."""
         return self._classname if self._classname else self.__class__.__name__
-
-    def attr_str(self) -> str | None:
-        """Creates an attribute string based on conditional logic. Used for JSX conversion."""
-        return None
-
-    def content_str(self) -> str | None:
-        """Creates a content string based on conditional logic. Used for JSX conversion."""
-        return None
-
-    def unique_logic_str(self) -> str | None:
-        """Creates a JSX string containing the unique logic associated to the component added to the component before the `return`."""
-        return None
-
-    def below_content_str(self) -> str | None:
-        """Creates a JSX string containing content below the component. Often used in substitute of `content_str()`."""
-        return None
-
-    @classmethod
-    def map_to_str(cls, map: ConditionResultMapping) -> str:
-        """Creates a string based on a provided `(condition, result)` mapping. Usable inside `attr_str()` or `content_str()`. Used for JSX conversion."""
-        attributes = [result for condition, result in map if condition]
-        return " ".join(attributes)
 
 
 class Page(BaseModel):

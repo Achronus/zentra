@@ -81,6 +81,7 @@ class JSXPageBuilder:
         self.component_details = component_details
 
         self.storage = JSXPageContentStorage()
+        self.use_client = False
         self.jsx = ""
 
     def get_details(self, component: Component) -> ComponentDetails:
@@ -93,6 +94,7 @@ class JSXPageBuilder:
         """Builds the JSX for the page."""
 
         for component in self.page.components:
+            self.check_for_use_client(component=component)
             details = self.get_details(component=component)
             builder = ComponentBuilder(
                 component=component,
@@ -102,8 +104,17 @@ class JSXPageBuilder:
             builder.build()
             self.populate_storage(comp_store=builder.storage)
 
+        if self.use_client:
+            self.jsx += "use_client\n"
+
+        print(self.storage)
         # TODO: fix content concatenation
         return self.concat_content()
+
+    def check_for_use_client(self, component: Component) -> None:
+        """Performs a check to enable `use_client` at the top of the page if any required components exist."""
+        if component.classname in self.mappings.use_client_map:
+            self.use_client = True
 
     def populate_storage(self, comp_store: JSXComponentContentStorage) -> None:
         """Adds component items to storage."""
@@ -238,18 +249,12 @@ class ImportBuilder:
     def build(self) -> list[str]:
         """Builds the import statements for the component."""
         additional_imports = self.additional_imports()
-        imports = [self.require_client(), self.core_import()]
+        imports = [self.core_import()]
 
         if additional_imports:
             imports.extend(additional_imports)
 
         return [item for item in imports if item]
-
-    def require_client(self) -> str:
-        """Adds the `use_client` line to the import statement if required by the component."""
-        if self.component.classname in self.maps.use_client_map:
-            return '"use_client"'
-        return None
 
     def core_import(self) -> str:
         """Creates the core import statement for the component."""

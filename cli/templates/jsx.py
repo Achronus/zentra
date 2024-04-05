@@ -35,16 +35,18 @@ class JSXPageContentStorage(BaseModel):
 
     Parameters:
     - `imports` (`list[string]`) - a list of strings representing import statements
-    - `props` (`list[string]`) - a list of strings representing the TypeScript props
     - `logic` (`list[string]`) - a list of strings representing the component function logic
     - `content` (`list[string]`) - a list of strings containing the JSX content used in the return statement
+    - `attributes` (`list[string]`) - a list of strings representing the attributes used in the page components
+    - `props` (`list[string]`) - a list of strings representing the TypeScript props
     - `form_schema` (`list[string], optional`) - a list of strings representing the form schema, if the page contains a form. `None` by default
     """
 
     imports: list[str] = []
-    props: list[str] = []
     logic: list[str] = []
+    attributes: list[str] = []
     content: list[str] = []
+    props: list[str] = []
     form_schema: list[str] = None
 
 
@@ -54,14 +56,12 @@ class JSXComponentContentStorage(BaseModel):
 
     Parameters:
     - `imports` (`list[string]`) - a list of strings representing import statements
-    - `props` (`list[string]`) - a list of strings representing the TypeScript props
     - `logic` (`list[string]`) - a list of strings representing the component function logic
     - `attributes` (`list[string]`) - a list of strings representing the attributes used in the main component
     - `content` (`list[string]`) - a list of strings containing the JSX content used in the return statement
     """
 
     imports: list[str] = []
-    props: list[str] = []
     logic: list[str] = []
     attributes: list[str] = []
     content: list[str] = []
@@ -99,18 +99,25 @@ class JSXPageBuilder:
                 mappings=self.mappings,
                 details=details,
             )
-            builder.build(container=self.storage)
+            builder.build()
+            self.populate_storage(comp_store=builder.storage)
 
+        # TODO: fix content concatenation
         return self.concat_content()
+
+    def populate_storage(self, comp_store: JSXComponentContentStorage) -> None:
+        """Adds component items to storage."""
+        for key in self.storage.__dict__.keys():
+            if hasattr(comp_store, key):
+                getattr(self.storage, key).append(getattr(comp_store, key))
 
     def concat_content(self) -> str:
         """Compresses the storage values into a single string of JSX content."""
         imports = self.dedupe_n_compress(self.storage.imports)
-        props = self.compress(self.storage.props)
         logic = self.compress(self.storage.logic)
         content = self.compress(self.storage.content)
 
-        return "".join(imports + props + logic + content)
+        return "".join(imports + logic + content)
 
     def compress(self, values: list[str]) -> str:
         """Compresses an attributes values into a string."""
@@ -133,6 +140,7 @@ class ComponentBuilder:
     ) -> None:
         self.component = component
         self.details = details
+        self.maps = mappings
 
         self.storage = JSXComponentContentStorage()
         self.attrs = AttributeBuilder(mappings=mappings, component=component)
@@ -142,21 +150,39 @@ class ComponentBuilder:
         self.logic = LogicBuilder(component=component, mappings=mappings)
         self.content = ContentBuilder(component=component, mappings=mappings)
 
-    def build(self, container: JSXPageContentStorage) -> None:
+    def build(self) -> None:
         """Builds the JSX for the component."""
-        self.storage.imports = self.imports.build()
-        self.storage.attributes = self.attrs.build()
-        self.storage.logic = self.logic.build()
-        self.storage.content = self.content.build()
-        print(self.component.classname, self.storage)
+        self.storage.imports = self.compress(self.imports.build())
+        self.storage.attributes = self.compress(self.attrs.build(), chars=" ")
+        self.storage.logic = self.compress(self.logic.build())
+        self.storage.content = self.compress(
+            self.apply_content_containers(content=self.content.build())
+        )
 
-    def apply_content_containers(
-        self, content: list[str], wrapper_map: dict[str, str]
-    ) -> list[str]:
+    def apply_content_containers(self, content: list[str]) -> list[str]:
         """Wraps the components content in its outer shell and any additional wrappers (if applicable)."""
-        class_wrapper = f"<{self.component.classname}"
+        wrapped_content = [f"<{self.component.classname} />"]
+
         if len(content) > 1:
-            content.insert(0, class_wrapper)
+            wrapped_content = [
+                f"<{self.component.classname}>",
+                *content,
+                f"</{self.component.classname}>",
+            ]
+
+        if self.component.classname in self.maps.wrappers.keys():
+            wrapped_content.extend(
+                [
+                    f"<div {self.maps.wrappers[self.component.classname]}>",
+                    *wrapped_content,
+                    "</div>",
+                ]
+            )
+        return wrapped_content
+
+    def compress(self, items: list[str], chars: str = "\n") -> str:
+        """Concatenates a list of strings into a single string based on the given chars."""
+        return chars.join([item for item in items if item])
 
 
 class FormBuilder:

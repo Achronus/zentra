@@ -16,6 +16,29 @@ AttributeMapping = list[tuple[str, Callable]]
 ComponentAttributesMapping = list[tuple[Component, str, Callable]]
 
 
+JSX_BASE = """
+**imports**
+
+type Props = {
+    **props**
+}
+
+const FormSchema = z.object({
+    **form_schema**
+});
+
+
+const PageName = ({ **props_params** }: Props) => {
+    **logic**
+    return (
+        **content**
+    );
+};
+
+export default PageName;
+"""
+
+
 class JSXMappings(BaseModel):
     """A storage container for JSX mappings."""
 
@@ -82,7 +105,7 @@ class JSXPageBuilder:
 
         self.storage = JSXPageContentStorage()
         self.use_client = False
-        self.jsx = ""
+        self.jsx = JSX_BASE
 
     def get_details(self, component: Component) -> ComponentDetails:
         """Retrieves the component details for the component."""
@@ -90,7 +113,7 @@ class JSXPageBuilder:
             if component.classname == details.name:
                 return details
 
-    def build(self) -> str:
+    def build(self) -> None:
         """Builds the JSX for the page."""
 
         for component in self.page.components:
@@ -104,12 +127,10 @@ class JSXPageBuilder:
             builder.build()
             self.populate_storage(comp_store=builder.storage)
 
-        if self.use_client:
-            self.jsx += "use_client\n"
+        self.fill_jsx()
 
-        print(self.storage)
-        # TODO: fix content concatenation
-        return self.concat_content()
+        if self.use_client:
+            self.jsx = f'"use_client"\n{self.jsx}'
 
     def check_for_use_client(self, component: Component) -> None:
         """Performs a check to enable `use_client` at the top of the page if any required components exist."""
@@ -122,13 +143,26 @@ class JSXPageBuilder:
             if hasattr(comp_store, key):
                 getattr(self.storage, key).append(getattr(comp_store, key))
 
-    def concat_content(self) -> str:
-        """Compresses the storage values into a single string of JSX content."""
-        imports = self.dedupe_n_compress(self.storage.imports)
-        logic = self.compress(self.storage.logic)
+    def fill_jsx(self) -> None:
+        """Concatenates the lists of JSX content into strings, removes duplicate imports and redundant logic statements, and adds them to the appropriate areas in the JSX template."""
+        imports = self.unpack_additional_imports(self.storage.imports)
+        imports = self.dedupe_n_compress(imports)
+        logic = self.dedupe_n_compress(self.storage.logic)
         content = self.compress(self.storage.content)
 
-        return "".join(imports + logic + content)
+        self.jsx = self.jsx.replace("**imports**", imports)
+        self.jsx = self.jsx.replace("**logic**", logic)
+        self.jsx = self.jsx.replace("**content**", content)
+
+    def unpack_additional_imports(self, imports_list: list[str]) -> list[str]:
+        """Unpacks additional import values if a newline character is present in the list."""
+        unpacked_imports = []
+        for import_str in imports_list:
+            if "\n" in import_str:
+                unpacked_imports.extend(import_str.split("\n"))
+            else:
+                unpacked_imports.append(import_str)
+        return unpacked_imports
 
     def compress(self, values: list[str]) -> str:
         """Compresses an attributes values into a string."""
@@ -136,7 +170,9 @@ class JSXPageBuilder:
 
     def dedupe(self, values: list[str]) -> list[str]:
         """Filters out duplicate values from the list."""
-        return list(set(values))
+        result = list(set(values))
+        result.sort()
+        return result
 
     def dedupe_n_compress(self, values: list[str]) -> str:
         """Filters out duplicate values from a list and compresses them into a single string."""

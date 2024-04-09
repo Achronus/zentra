@@ -130,7 +130,7 @@ class JSXPageBuilder:
         self.fill_jsx()
 
         if self.use_client:
-            self.jsx = f'"use_client"\n{self.jsx}'
+            self.jsx = f'"use_client"\n\n{self.jsx}'
 
     def check_for_use_client(self, component: Component) -> None:
         """Performs a check to enable `use_client` at the top of the page if any required components exist."""
@@ -157,6 +157,7 @@ class JSXPageBuilder:
 
         form_schema = self.set_form_schema(self.storage.form_schema)
         self.jsx = self.jsx.replace("**form_schema**", form_schema)
+
     def unpack_additional_imports(self, imports_list: list[str]) -> list[str]:
         """Unpacks additional import values if a newline character is present in the list."""
         unpacked_imports = []

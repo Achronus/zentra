@@ -171,7 +171,7 @@ class JSXPageBuilder:
 
     def compress_lucide_react(self, imports: list[str]) -> list[str]:
         """Combines `lucide-react` imports into a single statement (if applicable). Returns the updated/unedited list."""
-        seen_lucide = []
+        seen_lucide, new_imports = [], []
         lucide_base = 'import { **parts** } from "lucide-react"'
 
         for statement in imports:
@@ -179,12 +179,14 @@ class JSXPageBuilder:
                 icon = statement.split(" ")[2]
                 if icon not in seen_lucide:
                     seen_lucide.append(icon)
-                imports.remove(statement)
+            else:
+                new_imports.append(statement)
 
         if len(seen_lucide) > 0:
             parts = ", ".join(seen_lucide)
             lucide_base = lucide_base.replace("**parts**", parts)
-            imports.append(lucide_base)
+            new_imports.append(lucide_base)
+            return new_imports
 
         return imports
 

@@ -150,6 +150,7 @@ class JSXPageBuilder:
         logic = self.dedupe_n_compress(self.storage.logic)
         content = self.compress(self.storage.content)
 
+        self.jsx = self.jsx.replace("PageName", self.page.name)
         self.jsx = self.jsx.replace("**imports**", imports)
         self.jsx = self.jsx.replace("**logic**", logic)
         self.jsx = self.jsx.replace("**content**", content)

@@ -1,12 +1,12 @@
 from typing import Callable
+
 from cli.conf.format import name_from_camel_case
-
-from pydantic import BaseModel
-
 from cli.conf.storage import ComponentDetails
 from zentra.core import Component, Page
 from zentra.ui import Form
 from zentra.ui.control import IconButton, InputOTP
+
+from pydantic import BaseModel
 
 
 # (attribute_name, lambda_expression)
@@ -15,19 +15,18 @@ AttributeMapping = list[tuple[str, Callable]]
 # (component_type, attribute_name, lambda_expression)
 ComponentAttributesMapping = list[tuple[Component, str, Callable]]
 
+FORM_SCHEMA_BASE = """
+const FormSchema = z.object({
+    **form_schema**
+});
+"""
 
-JSX_BASE = """
-**imports**
+JSX_BASE = """**imports**
 
 type Props = {
     **props**
 }
-
-const FormSchema = z.object({
-    **form_schema**
-});
-
-
+**form_schema**
 const PageName = ({ **props_params** }: Props) => {
     **logic**
     return (
@@ -105,6 +104,7 @@ class JSXPageBuilder:
 
         self.storage = JSXPageContentStorage()
         self.use_client = False
+        self.form_schema_base = FORM_SCHEMA_BASE
         self.jsx = JSX_BASE
 
     def get_details(self, component: Component) -> ComponentDetails:
@@ -155,6 +155,8 @@ class JSXPageBuilder:
         self.jsx = self.jsx.replace("**logic**", logic)
         self.jsx = self.jsx.replace("**content**", content)
 
+        form_schema = self.set_form_schema(self.storage.form_schema)
+        self.jsx = self.jsx.replace("**form_schema**", form_schema)
     def unpack_additional_imports(self, imports_list: list[str]) -> list[str]:
         """Unpacks additional import values if a newline character is present in the list."""
         unpacked_imports = []
@@ -178,6 +180,14 @@ class JSXPageBuilder:
     def dedupe_n_compress(self, values: list[str]) -> str:
         """Filters out duplicate values from a list and compresses them into a single string."""
         return self.compress(self.dedupe(values))
+
+    def set_form_schema(self, form_schema: list[str]) -> str:
+        """Sets the form schema depending on if a form exists in the page. If one does, uses `form_schema_base` to populate the values and returns it. Otherwise, returns an empty string."""
+        if form_schema:
+            form_schema = self.compress(self.storage.form_schema)
+            return self.form_schema_base.replace("**form_schema**", form_schema)
+        else:
+            return ""
 
 
 class ComponentBuilder:

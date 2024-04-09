@@ -17,21 +17,21 @@ ComponentAttributesMapping = list[tuple[Component, str, Callable]]
 
 FORM_SCHEMA_BASE = """
 const FormSchema = z.object({
-    **form_schema**
+  **form_schema**
 });
 """
 
 JSX_BASE = """**imports**
 
 type Props = {
-    **props**
+  **props**
 }
 **form_schema**
 const PageName = ({ **props_params** }: Props) => {
-    **logic**
-    return (
-        **content**
-    );
+  **logic**
+  return (
+      **content**
+  );
 };
 
 export default PageName;

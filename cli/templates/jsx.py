@@ -1,3 +1,4 @@
+import re
 from typing import Callable
 
 from cli.conf.format import name_from_camel_case
@@ -394,7 +395,7 @@ class ContentBuilder:
                     content_str = condition(self.component)
                     content.extend(content_str)
 
-        return content
+        return self.handle_single_quotes(content)
 
     def handle_icon_position(self, text: str) -> list[str]:
         """Handles the logic for the content for the `icon_position` attribute."""
@@ -425,6 +426,22 @@ class ContentBuilder:
 
             if component.num_groups > 1 and group_idx + 1 != component.num_groups:
                 content.append("<InputOTPSeparator />")
+
+        return content
+
+    def handle_single_quotes(self, content: list[str]) -> list[str]:
+        """Checks for `'` in a content list. If the item is a string without JSX tags, it will update the text into a suitable format for JSX processing. Returns the updated content list or unmodified version."""
+        single_quote_pattern = re.compile(r"\b\w*'\w*\b")
+
+        for idx, line in enumerate(content):
+            sq_matches = single_quote_pattern.findall(line)
+
+            if sq_matches:
+                for match in sq_matches:
+                    wrapped = "{`" + match + "`}"
+                    content[idx] = re.sub(
+                        r"\b" + re.escape(match) + r"\b", wrapped, line
+                    )
 
         return content
 

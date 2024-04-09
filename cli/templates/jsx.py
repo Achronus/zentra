@@ -216,10 +216,6 @@ class JSXPageBuilder:
         result.sort()
         return result
 
-    def dedupe_n_compress(self, values: list[str]) -> str:
-        """Filters out duplicate values from a list and compresses them into a single string."""
-        return self.compress(self.dedupe(values))
-
     def set_form_schema(self, form_schema: list[str]) -> str:
         """Sets the form schema depending on if a form exists in the page. If one does, uses `form_schema_base` to populate the values and returns it. Otherwise, returns an empty string."""
         if form_schema:

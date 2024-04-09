@@ -190,6 +190,22 @@ class JSXPageBuilder:
 
         return imports
 
+    def group_imports(self, imports: list[str]) -> list[str]:
+        """Splits import statements into groups for better readability. Returns an updated import list."""
+        non_components, components = [], []
+
+        for statement in imports:
+            if "@/components" not in statement:
+                non_components.append(statement)
+            else:
+                components.append(statement)
+
+        if len(non_components) > 0:
+            non_components.append("")
+            return non_components + components
+
+        return imports
+
     def compress(self, values: list[str]) -> str:
         """Compresses an attributes values into a string."""
         return "\n".join(values)
@@ -216,7 +232,8 @@ class JSXPageBuilder:
         """Sets the import statements depending on the values stored in storage and returns them as a compiled string."""
         imports = self.unpack_additional_imports(imports)
         imports = self.compress_lucide_react(imports)
-        return self.dedupe_n_compress(imports)
+        imports = self.group_imports(self.dedupe(imports))
+        return self.compress(imports)
 
     def set_logic(self, logic: list[str]) -> str:
         """Sets the page logic depending on the values stored in storage and returns them as a compiled string."""

@@ -6,22 +6,28 @@ import { FileIcon, X } from 'lucide-react';
 
 type FileUploadProps = {
   apiEndpoint: string,
-  onChange: (url?: string) => void,
+  onChange?: (url?: string) => void,
   value?: string
 }
 
 const FileUpload = ({ apiEndpoint, onChange, value }: FileUploadProps) => {
   const type = value?.split('.').pop();
 
-  if (value) {
+  if (value && onChange) {
     return (
       <UploadedFileView type={type} value={value} onChange={onChange} />
     );
   }
 
+  if (onChange) {
+    return (
+      <UploadDropzoneWrapper apiEndpoint={apiEndpoint} onChange={onChange} />
+    );
+  }
+  
   return (
-    <UploadDropzoneWrapper apiEndpoint={apiEndpoint} onChange={onChange} />
-  );
+    <UploadDropzoneWrapper apiEndpoint={apiEndpoint} />
+  )
 };
 
 const UploadedFileView = ({ type, value, onChange }: { type: string | undefined, value: string, onChange: (url?: string) => void }) => (
@@ -67,13 +73,13 @@ const RemoveButton = ({ onClick }: { onClick: () => void }) => (
   </Button>
 );
 
-const UploadDropzoneWrapper = ({ apiEndpoint, onChange }: { apiEndpoint: string, onChange: (url?: string) => void }) => (
+const UploadDropzoneWrapper = ({ apiEndpoint, onChange }: { apiEndpoint: string, onChange?: (url?: string) => void }) => (
   <div className='w-full bg-muted/30'>
-    <UploadDropzone
-      endpoint={apiEndpoint}
-      onClientUploadComplete={(res) => { onChange(res?.[0].url) }}
-      onUploadError={(error: Error) => { console.log(error) }}
-    />
+      <UploadDropzone
+        endpoint={apiEndpoint}
+        onClientUploadComplete={(res) => { onChange ? onChange(res?.[0].url) : console.log(res) }}
+        onUploadError={(error: Error) => { console.log(error) }}
+      />
   </div>
 );
 

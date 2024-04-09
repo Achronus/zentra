@@ -245,7 +245,7 @@ class ComponentBuilder:
         """Wraps the components content in its outer shell and any additional wrappers (if applicable)."""
         wrapped_content = [f"<{self.component.classname} {self.storage.attributes} />"]
 
-        if len(content) > 1:
+        if len(content) > 0:
             wrapped_content[0] = wrapped_content[0].replace(" />", ">")
             wrapped_content.extend(
                 [

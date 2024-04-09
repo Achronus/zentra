@@ -4,7 +4,7 @@ from cli.conf.format import name_from_camel_case
 from cli.conf.storage import ComponentDetails
 from zentra.core import Component, Page
 from zentra.ui import Form
-from zentra.ui.control import IconButton, InputOTP
+from zentra.ui.control import Button, IconButton, InputOTP
 
 from pydantic import BaseModel
 
@@ -380,10 +380,12 @@ class ContentBuilder:
                 value = getattr(self.component, attr_name)
                 if value:
                     content_str = condition(value)
-                    if attr_name == "text" and hasattr(self.component, "icon_position"):
-                        content.extend(self.handle_icon_position(text=content_str))
-                    else:
-                        content.append(content_str)
+
+                    if attr_name == "text" and not isinstance(self.component, Button):
+                        if hasattr(self.component, "icon_position"):
+                            content.extend(self.handle_icon_position(text=content_str))
+                        else:
+                            content.append(content_str)
 
         for comp_type, attr_name, condition in self.maps.component_content:
             if isinstance(self.component, comp_type):

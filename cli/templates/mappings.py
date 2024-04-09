@@ -1,6 +1,6 @@
 import re
 from zentra.core.enums.ui import InputOTPPatterns
-from zentra.ui.control import Calendar, Checkbox, Collapsible, InputOTP, Label
+from zentra.ui.control import Button, Calendar, Checkbox, Collapsible, InputOTP, Label
 
 
 # Dictionary of components with containers around them
@@ -65,7 +65,7 @@ COMPONENT_ATTR_MAPPING = [
 # (attribute_name, lambda_expression)
 COMMON_ATTR_MAPPING = [
     ("id", lambda value: f'id="{value}"'),
-    ("url", lambda value: f'href="{value}"' if value else None),
+    ("url", lambda value: "asChild" if value else None),
     ("type", lambda value: f'type="{value}"'),
     ("placeholder", lambda value: f'placeholder="{value}"'),
     ("variant", lambda value: f'variant="{value}"' if value != "default" else None),
@@ -94,7 +94,13 @@ ADDITIONAL_IMPORTS_MAPPING = [
         if pattern in InputOTPPatterns
         else None,
     ),
+    (
+        Button,
+        "url",
+        lambda url: ['import Link from "next/link"'] if url else None,
+    ),
 ]
+
 
 COMPONENT_CONTENT_MAPPING = [
     (
@@ -145,6 +151,13 @@ COMPONENT_CONTENT_MAPPING = [
             ],
             "</CollapsibleContent>",
         ],
+    ),
+    (
+        Button,
+        "text",
+        lambda comp: [f'<Link href="{comp.url}">', comp.text, "</Link>"]
+        if comp.url
+        else [comp.text],
     ),
 ]
 

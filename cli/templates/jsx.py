@@ -332,9 +332,11 @@ class ImportBuilder:
     def additional_imports(self) -> list[str]:
         """Creates the additional imports needed for the component."""
         for item in self.maps.additional_imports:
-            component_type, imports = item
-            if isinstance(self.component, component_type):
-                return imports
+            comp_type, attr_name, imports = item
+            if isinstance(self.component, comp_type):
+                value = getattr(self.component, attr_name)
+                if value:
+                    return imports(value)
         return None
 
     def core_import_pieces(self) -> str:

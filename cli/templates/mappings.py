@@ -79,11 +79,21 @@ COMMON_ATTR_MAPPING = [
 ADDITIONAL_IMPORTS_MAPPING = [
     (
         Collapsible,
-        [
+        "name",
+        lambda value: [
             'import { Button } from "@/components/ui/button"',
             'import { ChevronsUpDown } from "lucide-react"',
         ],
-    )
+    ),
+    (
+        InputOTP,
+        "pattern",
+        lambda pattern: [
+            "import { " + InputOTPPatterns(pattern).name + ' } from "input-otp"'
+        ]
+        if pattern in InputOTPPatterns
+        else None,
+    ),
 ]
 
 COMPONENT_CONTENT_MAPPING = [

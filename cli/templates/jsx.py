@@ -27,7 +27,7 @@ type Props = {
   **props**
 }
 **form_schema**
-const PageName = ({ **props_params** }: Props) => {
+const PageName = (**prop_params**: Props) => {
   **logic**
   return (
       **content**
@@ -148,12 +148,15 @@ class JSXPageBuilder:
         logic = self.set_logic(self.storage.logic)
         content = self.set_content(self.storage.content)
         form_schema = self.set_form_schema(self.storage.form_schema)
+        props, prop_params = self.set_props(self.storage.props)
 
         self.jsx = self.jsx.replace("PageName", self.page.name)
         self.jsx = self.jsx.replace("**imports**", imports)
         self.jsx = self.jsx.replace("**logic**", logic)
         self.jsx = self.jsx.replace("**content**", content)
         self.jsx = self.jsx.replace("**form_schema**", form_schema)
+        self.jsx = self.jsx.replace("**props**", props)
+        self.jsx = self.jsx.replace("**prop_params**", prop_params)
 
     def unpack_additional_imports(self, imports_list: list[str]) -> list[str]:
         """Unpacks additional import values if a newline character is present in the list."""
@@ -201,6 +204,14 @@ class JSXPageBuilder:
         content.insert(0, "<>")
         content.append("</>")
         return self.compress(content)
+
+    def set_props(self, props: list[str]) -> tuple[str, str]:
+        """Sets the prop content and prop parameters depending on the values stored in storage and returns them as a compiled string."""
+        if props:
+            # TODO: update logic here
+            return self.compress(props), self.compress(props)
+        else:
+            return "", "props"
 
 
 class ComponentBuilder:

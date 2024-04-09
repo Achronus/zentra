@@ -145,17 +145,15 @@ class JSXPageBuilder:
 
     def fill_jsx(self) -> None:
         """Concatenates the lists of JSX content into strings, removes duplicate imports and redundant logic statements, and adds them to the appropriate areas in the JSX template."""
-        imports = self.unpack_additional_imports(self.storage.imports)
-        imports = self.dedupe_n_compress(imports)
-        logic = self.dedupe_n_compress(self.storage.logic)
-        content = self.compress(self.storage.content)
+        imports = self.set_imports(self.storage.imports)
+        logic = self.set_logic(self.storage.logic)
+        content = self.set_content(self.storage.content)
+        form_schema = self.set_form_schema(self.storage.form_schema)
 
         self.jsx = self.jsx.replace("PageName", self.page.name)
         self.jsx = self.jsx.replace("**imports**", imports)
         self.jsx = self.jsx.replace("**logic**", logic)
         self.jsx = self.jsx.replace("**content**", content)
-
-        form_schema = self.set_form_schema(self.storage.form_schema)
         self.jsx = self.jsx.replace("**form_schema**", form_schema)
 
     def unpack_additional_imports(self, imports_list: list[str]) -> list[str]:
@@ -189,6 +187,19 @@ class JSXPageBuilder:
             return self.form_schema_base.replace("**form_schema**", form_schema)
         else:
             return ""
+
+    def set_imports(self, imports: list[str]) -> str:
+        """Sets the import statements depending on the values stored in storage and returns them as a compiled string."""
+        imports = self.unpack_additional_imports(imports)
+        return self.dedupe_n_compress(imports)
+
+    def set_logic(self, logic: list[str]) -> str:
+        """Sets the page logic depending on the values stored in storage and returns them as a compiled string."""
+        return self.compress(logic).strip("\n")
+
+    def set_content(self, content: list[str]) -> str:
+        """Sets the page JSX content depending on the values stored in storage and returns them as a compiled string."""
+        return self.compress(content)
 
 
 class ComponentBuilder:

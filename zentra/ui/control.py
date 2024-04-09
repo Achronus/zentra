@@ -2,7 +2,7 @@ import re
 from pydantic import Field, HttpUrl, PrivateAttr, ValidationInfo, field_validator
 from pydantic_core import PydanticCustomError
 
-from zentra.core import LOWER_CAMELCASE_WITH_DIGITS, Component, Icon
+from zentra.core import LOWER_CAMELCASE_WITH_DIGITS, Component, Icon, has_valid_pattern
 from zentra.core.enums.ui import (
     ButtonSize,
     ButtonVariant,
@@ -12,11 +12,6 @@ from zentra.core.enums.ui import (
     InputTypes,
 )
 from zentra.ui import ShadcnUi
-
-
-def has_valid_pattern(*, pattern: str, value: str) -> bool:
-    match = re.match(pattern, value)
-    return bool(match)
 
 
 class Button(Component, ShadcnUi):

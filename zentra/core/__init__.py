@@ -1,3 +1,4 @@
+import re
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, PrivateAttr, ValidationInfo, field_validator
@@ -12,6 +13,11 @@ LOWER_CAMELCASE_WITH_DIGITS = r"^[a-z]+(?:[A-Z][a-z]*)*\d*$"
 COMPONENT_FILTER_LIST = [
     "FormField",
 ]
+
+
+def has_valid_pattern(*, pattern: str, value: str) -> bool:
+    match = re.match(pattern, value)
+    return bool(match)
 
 
 class Component(BaseModel):

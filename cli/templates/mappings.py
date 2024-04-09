@@ -48,7 +48,7 @@ COMPONENT_ATTR_MAPPING = [
         InputOTP,
         "pattern",
         lambda pattern: [
-            f'pattern="{{{InputOTPPatterns(pattern).name}}}"'
+            f"pattern={{{InputOTPPatterns(pattern).name}}}"
             if pattern in InputOTPPatterns
             else f'pattern="{re.compile(pattern).pattern}"',
         ],

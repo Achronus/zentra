@@ -232,14 +232,16 @@ class ComponentBuilder:
 
     def apply_content_containers(self, content: list[str]) -> list[str]:
         """Wraps the components content in its outer shell and any additional wrappers (if applicable)."""
-        wrapped_content = [f"<{self.component.classname} />"]
+        wrapped_content = [f"<{self.component.classname} {self.storage.attributes} />"]
 
         if len(content) > 1:
-            wrapped_content = [
-                f"<{self.component.classname}>",
-                *content,
-                f"</{self.component.classname}>",
-            ]
+            wrapped_content[0] = wrapped_content[0].replace(" />", ">")
+            wrapped_content.extend(
+                [
+                    *content,
+                    f"</{self.component.classname}>",
+                ]
+            )
 
         if self.component.classname in self.maps.wrappers.keys():
             wrapped_content.extend(

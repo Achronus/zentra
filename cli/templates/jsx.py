@@ -325,7 +325,7 @@ class ImportBuilder:
     def core_import(self) -> str:
         """Creates the core import statement for the component."""
         filename = name_from_camel_case(self.component.classname)
-        return f'import {{ {self.core_import_pieces()} }} from "../{self.component.library}/{filename}"'.replace(
+        return f'import {{ {self.core_import_pieces()} }} from "@/components/{self.component.library}/{filename}"'.replace(
             "'", " "
         )
 

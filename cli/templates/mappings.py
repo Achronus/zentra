@@ -80,7 +80,7 @@ ADDITIONAL_IMPORTS_MAPPING = [
     (
         Collapsible,
         [
-            'import { Button } from "../ui/button"',
+            'import { Button } from "@/components/ui/button"',
             'import { ChevronsUpDown } from "lucide-react"',
         ],
     )

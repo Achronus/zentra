@@ -95,9 +95,10 @@ COMPONENT_CONTENT_MAPPING = [
             f'<label htmlFor="{comp.id}" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">',
             f"{comp.label}",
             "</label>",
-            f'<p className="text-sm text-muted-foreground">{comp.more_info}</p></div>'
-            if comp.more_info
-            else "</div>",
+            *[
+                f'<p className="text-sm text-muted-foreground">{comp.more_info}</p>',
+                "</div>" if comp.more_info else "</div>",
+            ],
         ],
     ),
     (
@@ -128,7 +129,7 @@ COMPONENT_CONTENT_MAPPING = [
             "</div>",
             '<CollapsibleContent className="space-y-2">',
             *[
-                f'<div className="rounded-md border px-4 py-3 font-mono text-sm">{item}</div>'
+                f'<div className="rounded-md border px-4 py-3 font-mono text-sm">\n{item}\n</div>'
                 for item in comp.items[1:]
                 if len(comp.items) > 1
             ],

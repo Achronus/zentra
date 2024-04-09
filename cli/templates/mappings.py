@@ -17,6 +17,12 @@ USE_CLIENT_COMPONENTS = [
     "Collapsible",
 ]
 
+# Components that have "useState"
+USE_STATE_COMPONENTS = [
+    "Calendar",
+    "Collapsible",
+]
+
 # (component_type, attribute_name, lambda_expression)
 COMPONENT_ATTR_MAPPING = [
     (

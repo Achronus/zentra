@@ -47,6 +47,7 @@ class JSXMappings(BaseModel):
     component_content: list[tuple]
     common_logic: list[tuple]
     use_client_map: list[str]
+    use_state_map: list[str]
     additional_imports: list[tuple]
     wrappers: dict[str, str]
 
@@ -308,7 +309,11 @@ class ImportBuilder:
     def build(self) -> list[str]:
         """Builds the import statements for the component."""
         additional_imports = self.additional_imports()
+        use_state = self.use_state()
         imports = [self.core_import()]
+
+        if use_state:
+            imports.extend(use_state)
 
         if additional_imports:
             imports.extend(additional_imports)
@@ -333,6 +338,12 @@ class ImportBuilder:
     def core_import_pieces(self) -> str:
         """Creates the core import pieces including the main component and its children (if required)."""
         return ", ".join([self.component.classname] + self.child_names)
+
+    def use_state(self) -> list[str]:
+        """Adds React's `useState` import if the component requires it."""
+        if self.component.classname in self.maps.use_state_map:
+            return ['import { useState } from "react"']
+        return None
 
 
 class ContentBuilder:

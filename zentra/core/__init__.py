@@ -10,6 +10,7 @@ from cli.conf.types import LibraryNamePairs
 
 
 LOWER_CAMELCASE_WITH_DIGITS = r"^[a-z]+(?:[A-Z][a-z]*)*\d*$"
+CAPITALISED_CAMELCASE_WITH_DIGITS = r"^[A-Z][a-zA-Z0-9]*$"
 COMPONENT_FILTER_LIST = [
     "FormField",
 ]
@@ -45,6 +46,16 @@ class Page(BaseModel):
 
     name: str
     components: list[Component]
+
+    @field_validator("name")
+    def validate_id(cls, name: str) -> str:
+        if not has_valid_pattern(pattern=CAPITALISED_CAMELCASE_WITH_DIGITS, value=name):
+            raise PydanticCustomError(
+                "string_pattern_mismatch",
+                "must be capitalised and camelCase",
+                dict(wrong_value=name, pattern=CAPITALISED_CAMELCASE_WITH_DIGITS),
+            )
+        return name
 
     def get_schema(self, node: BaseModel = None) -> dict:
         """Returns a JSON tree of the `Page` components as nodes with a type (the component name) and its attributes (attrs)."""

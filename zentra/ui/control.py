@@ -1,8 +1,8 @@
 import re
-from pydantic import Field, HttpUrl, PrivateAttr, ValidationInfo, field_validator
-from pydantic_core import PydanticCustomError
+import requests
 
-from zentra.core import LOWER_CAMELCASE_WITH_DIGITS, Component, Icon, has_valid_pattern
+from cli.conf.format import name_from_camel_case
+from zentra.core import LOWER_CAMELCASE_WITH_DIGITS, Component, has_valid_pattern
 from zentra.core.enums.ui import (
     ButtonSize,
     ButtonVariant,
@@ -12,6 +12,9 @@ from zentra.core.enums.ui import (
     InputTypes,
 )
 from zentra.ui import ShadcnUi
+
+from pydantic import Field, HttpUrl, PrivateAttr, ValidationInfo, field_validator
+from pydantic_core import PydanticCustomError
 
 
 class Button(Component, ShadcnUi):
@@ -35,19 +38,19 @@ class Button(Component, ShadcnUi):
 
 class IconButton(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Button component with a [Radix UI Icon](https://www.radix-ui.com/icons).
+    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Button component with a [Lucide React Icon](https://lucide.dev/icons).
 
     Parameters:
-    - `icon` (`Icon`) - the [Radix UI Icon](https://www.radix-ui.com/icons) to add inside the button
-    - `icon_position` (`str, optional`) - the position of the icon inside the button. When set to `start`, icon appears before the text. When `end`, it appears after the text. `start` by default. Valid options: `['start', 'end']`
-    - `text` (`str, optional`) - the text displayed inside the button. `None` by default. When `None` removes it from `Button`
-    - `url` (`str, optional`) - the URL the button links to. `None` by default. When `None` removes it from `Button`
-    - `variant` (`str, optional`) - the style of the button. Valid options: `['default', 'secondary', 'destructive', 'outline', 'ghost', 'link']`. `default` by default
-    - `size` (`str, optional`) - the size of the button. Valid options: `['default', 'sm', 'lg', 'icon']`. `icon` by default
+    - `icon` (`string`) - the name of the [Lucide React Icon](https://lucide.dev/icons) to add inside the button. Must be in React format (Capitalised camelCase). E.g., `CircleArrowDown` or `Loader`
+    - `icon_position` (`string, optional`) - the position of the icon inside the button. When set to `start`, icon appears before the text. When `end`, it appears after the text. `start` by default. Valid options: `['start', 'end']`
+    - `text` (`string, optional`) - the text displayed inside the button. `None` by default. When `None` removes it from `Button`
+    - `url` (`string, optional`) - the URL the button links to. `None` by default. When `None` removes it from `Button`
+    - `variant` (`string, optional`) - the style of the button. Valid options: `['default', 'secondary', 'destructive', 'outline', 'ghost', 'link']`. `default` by default
+    - `size` (`string, optional`) - the size of the button. Valid options: `['default', 'sm', 'lg', 'icon']`. `icon` by default
     - `disabled` (`bool, optional`) - adds the disabled property, preventing it from being clicked. `False` by default
     """
 
-    icon: Icon
+    icon: str
     icon_position: ButtonIconPosition = "start"
     text: str = None
     url: HttpUrl = Field(default=None)
@@ -56,6 +59,20 @@ class IconButton(Component, ShadcnUi):
     disabled: bool = False
 
     _classname = PrivateAttr(default="Button")
+
+    @field_validator("icon")
+    def validate_icon(cls, icon: str) -> str:
+        icon_name = name_from_camel_case(icon)
+        response = requests.get(f"https://lucide.dev/icons/{icon_name}")
+
+        if response.status_code != 200:
+            raise PydanticCustomError(
+                "invalid_icon",
+                f"'{icon}' at '{response.url}' does not exist",
+                dict(wrong_value=icon, error_code=response.status_code),
+            )
+
+        return icon
 
 
 class Calendar(Component, ShadcnUi):

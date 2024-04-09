@@ -1,6 +1,14 @@
 import re
 from zentra.core.enums.ui import InputOTPPatterns
-from zentra.ui.control import Button, Calendar, Checkbox, Collapsible, InputOTP, Label
+from zentra.ui.control import (
+    Button,
+    Calendar,
+    Checkbox,
+    Collapsible,
+    IconButton,
+    InputOTP,
+    Label,
+)
 
 
 # Dictionary of components with containers around them
@@ -98,6 +106,11 @@ ADDITIONAL_IMPORTS_MAPPING = [
         Button,
         "url",
         lambda url: ['import Link from "next/link"'] if url else None,
+    ),
+    (
+        IconButton,
+        "icon",
+        lambda icon: ["import { " + icon + ' } from "lucide-react"'],
     ),
 ]
 

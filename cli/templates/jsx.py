@@ -169,6 +169,25 @@ class JSXPageBuilder:
                 unpacked_imports.append(import_str)
         return unpacked_imports
 
+    def compress_lucide_react(self, imports: list[str]) -> list[str]:
+        """Combines `lucide-react` imports into a single statement (if applicable). Returns the updated/unedited list."""
+        seen_lucide = []
+        lucide_base = 'import { **parts** } from "lucide-react"'
+
+        for statement in imports:
+            if "lucide-react" in statement:
+                icon = statement.split(" ")[2]
+                if icon not in seen_lucide:
+                    seen_lucide.append(icon)
+                imports.remove(statement)
+
+        if len(seen_lucide) > 0:
+            parts = ", ".join(seen_lucide)
+            lucide_base = lucide_base.replace("**parts**", parts)
+            imports.append(lucide_base)
+
+        return imports
+
     def compress(self, values: list[str]) -> str:
         """Compresses an attributes values into a string."""
         return "\n".join(values)
@@ -194,6 +213,7 @@ class JSXPageBuilder:
     def set_imports(self, imports: list[str]) -> str:
         """Sets the import statements depending on the values stored in storage and returns them as a compiled string."""
         imports = self.unpack_additional_imports(imports)
+        imports = self.compress_lucide_react(imports)
         return self.dedupe_n_compress(imports)
 
     def set_logic(self, logic: list[str]) -> str:
@@ -401,7 +421,7 @@ class ContentBuilder:
         """Handles the logic for the content for the `icon_position` attribute."""
         component: IconButton = self.component
 
-        icon_html = f'<{component.icon.classname} className="mr-2 h-4 w-4"/>'
+        icon_html = f'<{component.icon} className="mr-2 h-4 w-4"/>'
         if component.icon_position == "start":
             return [icon_html, text]
         else:

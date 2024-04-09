@@ -90,17 +90,6 @@ class Page(BaseModel):
         return formatted_schema
 
 
-class Icon(BaseModel):
-    """A Zentra model for [Radix Ui Icons](https://www.radix-ui.com/icons)."""
-
-    name: str
-
-    @property
-    def classname(self) -> str:
-        """Stores the classname for the JSX builder."""
-        return self.__class__.__name__
-
-
 class Zentra(BaseModel):
     """An application class for registering the components to create."""
 

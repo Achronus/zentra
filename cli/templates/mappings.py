@@ -148,7 +148,9 @@ COMMON_LOGIC_MAPPING = [
     (
         Calendar,
         "name",
-        lambda name: [f"const [{name}Date, {name}SetDate] = useState(new Date());"],
+        lambda name: [
+            f"const [{name}Date, {name}SetDate] = useState<Date | undefined>(new Date());"
+        ],
     ),
     (
         Collapsible,

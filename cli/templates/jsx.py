@@ -60,14 +60,12 @@ class JSXPageContentStorage(BaseModel):
     - `imports` (`list[string]`) - a list of strings representing import statements
     - `logic` (`list[string]`) - a list of strings representing the component function logic
     - `content` (`list[string]`) - a list of strings containing the JSX content used in the return statement
-    - `attributes` (`list[string]`) - a list of strings representing the attributes used in the page components
     - `props` (`list[string]`) - a list of strings representing the TypeScript props
     - `form_schema` (`list[string], optional`) - a list of strings representing the form schema, if the page contains a form. `None` by default
     """
 
     imports: list[str] = []
     logic: list[str] = []
-    attributes: list[str] = []
     content: list[str] = []
     props: list[str] = []
     form_schema: list[str] = None
@@ -200,6 +198,8 @@ class JSXPageBuilder:
 
     def set_content(self, content: list[str]) -> str:
         """Sets the page JSX content depending on the values stored in storage and returns them as a compiled string."""
+        content.insert(0, "<>")
+        content.append("</>")
         return self.compress(content)
 
 

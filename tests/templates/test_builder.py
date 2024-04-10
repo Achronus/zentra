@@ -1,18 +1,72 @@
-from tests.mappings.helper import builder
-from zentra.ui.control import Button
+import pytest
+
+from cli.templates.jsx import JSXPageBuilder
+from tests.templates.helper import page_builder
+from zentra.core import Page
+from zentra.ui.control import (
+    Button,
+    Calendar,
+    Checkbox,
+    Collapsible,
+    IconButton,
+    Input,
+    InputOTP,
+    Label,
+)
+from zentra.uploadthing import FileUpload
 
 
-class TestBuilder:
-    @staticmethod
-    def test_all_params_valid():
-        btn = Button(
-            text="Click me",
-            url="https://example.com/",
-            variant="secondary",
-            size="sm",
-            disabled=True,
-        )
-        result = builder(btn).component_str
-        valid = '<Button disabled href="https://example.com/" variant="secondary" size="sm">Click me</Button>'
+def page() -> Page:
+    return Page(
+        name="TestPage",
+        components=[
+            Input(id="state", type="text", placeholder="State", disabled=True),
+            Input(id="zipcode", type="text", placeholder="Zipcode"),
+            FileUpload(),
+            Button(
+                text="test",
+                url="http://example.com",
+                variant="secondary",
+                size="sm",
+                disabled=True,
+            ),
+            Button(
+                text="test",
+            ),
+            IconButton(
+                icon="CircleArrowDown",
+                icon_position="start",
+                text="This icon is in the start position.",
+            ),
+            IconButton(
+                icon="RectangleEllipsis",
+                icon_position="end",
+                text="This icon is in the end position.",
+            ),
+            Calendar(name="testCalendar"),
+            Checkbox(
+                id="name",
+                label="Click for having a name!",
+                disabled=True,
+                more_info="more info test",
+            ),
+            Collapsible(
+                name="tags1", title="Click me to open me!", items=["I'm awesome"]
+            ),
+            Collapsible(
+                name="tags2",
+                title="Click me to open me!",
+                items=["I'm awesome", "You are awesome"],
+            ),
+            InputOTP(num_inputs=6, pattern="digits_only"),
+            InputOTP(num_inputs=6, num_groups=2, pattern="afwaifhwa"),
+            InputOTP(num_inputs=6, num_groups=3),
+            Label(name="name", text="Enter first name"),
+        ],
+    )
 
-        assert result == valid, (result, valid)
+
+class TestPageBuilder:
+    @pytest.fixture
+    def builder(self) -> JSXPageBuilder:
+        return page_builder(page=page())

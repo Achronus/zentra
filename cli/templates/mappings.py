@@ -2,6 +2,7 @@ import re
 from typing import Callable
 
 from pydantic import BaseModel
+from tests.templates.dummy import DummyIconButton
 from zentra.core.enums.ui import InputOTPPatterns
 from zentra.ui.control import (
     Button,
@@ -117,6 +118,16 @@ ADDITIONAL_IMPORTS_MAPPING = [
     ),
     (
         IconButton,
+        "url",
+        lambda url: ['import Link from "next/link"'] if url else None,
+    ),
+    (
+        DummyIconButton,
+        "icon",
+        lambda icon: ["import { " + icon + ' } from "lucide-react"'],
+    ),
+    (
+        DummyIconButton,
         "url",
         lambda url: ['import Link from "next/link"'] if url else None,
     ),

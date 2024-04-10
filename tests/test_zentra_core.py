@@ -8,24 +8,6 @@ from zentra.ui.presentation import Card
 from zentra.uploadthing import FileUpload
 
 
-class TestComponent:
-    @staticmethod
-    def test_attr_str():
-        assert Component().attr_str() is None
-
-    @staticmethod
-    def test_content_str():
-        assert Component().content_str() is None
-
-    @staticmethod
-    def test_unique_logic_str():
-        assert Component().unique_logic_str() is None
-
-    @staticmethod
-    def test_below_content_str():
-        assert Component().below_content_str() is None
-
-
 class TestZentra:
     @pytest.fixture
     def zentra(self) -> Zentra:

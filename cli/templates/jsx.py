@@ -398,7 +398,7 @@ class ContentBuilder:
                     content_str = condition(value)
 
                     if attr_name == "text" and not isinstance(self.component, Button):
-                        if isinstance(self.component, IconButton):
+                        if hasattr(self.component, "icon_position"):
                             content.extend(self.handle_icon_button(text=content_str))
                         else:
                             content.append(content_str)

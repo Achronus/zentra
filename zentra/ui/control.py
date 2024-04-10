@@ -50,7 +50,7 @@ class IconButton(Component, ShadcnUi):
     - `disabled` (`bool, optional`) - adds the disabled property, preventing it from being clicked. `False` by default
     """
 
-    icon: str
+    icon: str = Field(min_length=1)
     icon_position: ButtonIconPosition = "start"
     text: str = None
     url: HttpUrl = Field(default=None)

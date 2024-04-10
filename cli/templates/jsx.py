@@ -363,8 +363,9 @@ class ImportBuilder:
             comp_type, attr_name, imports = item
             if isinstance(self.component, comp_type):
                 value = getattr(self.component, attr_name)
-                if value:
-                    results.extend(imports(value))
+                result = imports(value)
+                if value and result:
+                    results.extend(result)
 
         if len(results) == 0:
             return None

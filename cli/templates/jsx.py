@@ -398,8 +398,8 @@ class ContentBuilder:
                     content_str = condition(value)
 
                     if attr_name == "text" and not isinstance(self.component, Button):
-                        if hasattr(self.component, "icon_position"):
-                            content.extend(self.handle_icon_position(text=content_str))
+                        if isinstance(self.component, IconButton):
+                            content.extend(self.handle_icon_button(text=content_str))
                         else:
                             content.append(content_str)
 
@@ -412,15 +412,22 @@ class ContentBuilder:
 
         return self.handle_single_quotes(content)
 
-    def handle_icon_position(self, text: str) -> list[str]:
-        """Handles the logic for the content for the `icon_position` attribute."""
+    def handle_icon_button(self, text: str) -> list[str]:
+        """Handles the logic for the icon button."""
         component: IconButton = self.component
+        result = []
 
         icon_html = f'<{component.icon} className="mr-2 h-4 w-4"/>'
         if component.icon_position == "start":
-            return [icon_html, text]
+            result.extend([icon_html, text])
         else:
-            return [text, icon_html]
+            result.extend([text, icon_html])
+
+        if component.url:
+            result.insert(0, f'<Link href="{component.url}">')
+            result.append("</Link>")
+
+        return result
 
     def handle_input_otp(self) -> list[str]:
         """Input OTP is difficult to create with a single list comprehension. Instead, we create it separately here."""

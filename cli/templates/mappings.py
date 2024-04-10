@@ -115,6 +115,11 @@ ADDITIONAL_IMPORTS_MAPPING = [
         "icon",
         lambda icon: ["import { " + icon + ' } from "lucide-react"'],
     ),
+    (
+        IconButton,
+        "url",
+        lambda url: ['import Link from "next/link"'] if url else None,
+    ),
 ]
 
 

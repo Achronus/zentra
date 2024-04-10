@@ -1,4 +1,7 @@
 import re
+from typing import Callable
+
+from pydantic import BaseModel
 from zentra.core.enums.ui import InputOTPPatterns
 from zentra.ui.control import (
     Button,
@@ -194,3 +197,30 @@ COMMON_LOGIC_MAPPING = [
         lambda name: [f"const [{name}IsOpen, {name}SetIsOpen] = useState(false);"],
     ),
 ]
+
+
+class JSXMappings(BaseModel):
+    """A storage container for JSX mappings."""
+
+    common_attrs: list[tuple[str, Callable]]
+    component_attrs: list[tuple]
+    common_content: list[tuple]
+    component_content: list[tuple]
+    common_logic: list[tuple]
+    use_client_map: list[str]
+    use_state_map: list[str]
+    additional_imports: list[tuple]
+    wrappers: dict[str, str]
+
+
+JSX_MAPPINGS = JSXMappings(
+    common_attrs=COMMON_ATTR_MAPPING,
+    component_attrs=COMPONENT_ATTR_MAPPING,
+    common_content=COMMON_CONTENT_MAPPING,
+    component_content=COMPONENT_CONTENT_MAPPING,
+    common_logic=COMMON_LOGIC_MAPPING,
+    use_client_map=USE_CLIENT_COMPONENTS,
+    use_state_map=USE_STATE_COMPONENTS,
+    additional_imports=ADDITIONAL_IMPORTS_MAPPING,
+    wrappers=COMPONENTS_TO_WRAP,
+)

@@ -1,20 +1,14 @@
 import re
-from typing import Callable
 
 from cli.conf.format import name_from_camel_case
 from cli.conf.storage import ComponentDetails
+from cli.templates.mappings import JSXMappings
 from zentra.core import Component, Page
 from zentra.ui import Form
 from zentra.ui.control import Button, IconButton, InputOTP
 
 from pydantic import BaseModel
 
-
-# (attribute_name, lambda_expression)
-AttributeMapping = list[tuple[str, Callable]]
-
-# (component_type, attribute_name, lambda_expression)
-ComponentAttributesMapping = list[tuple[Component, str, Callable]]
 
 FORM_SCHEMA_BASE = """
 const FormSchema = z.object({
@@ -37,20 +31,6 @@ const PageName = (**prop_params**: Props) => {
 
 export default PageName;
 """
-
-
-class JSXMappings(BaseModel):
-    """A storage container for JSX mappings."""
-
-    common_attrs: AttributeMapping
-    component_attrs: list[tuple]
-    common_content: list[tuple]
-    component_content: list[tuple]
-    common_logic: list[tuple]
-    use_client_map: list[str]
-    use_state_map: list[str]
-    additional_imports: list[tuple]
-    wrappers: dict[str, str]
 
 
 class JSXPageContentStorage(BaseModel):

@@ -13,7 +13,7 @@ COMPONENT_DETAILS_VALID = {
         "library": "ui",
         "filename": "badge.tsx",
         "name": "Badge",
-        "child_names": ["badgeVariants"],
+        "child_names": [],
     },
     "file-upload": {
         "library": "uploadthing",

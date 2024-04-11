@@ -16,14 +16,14 @@ CALENDAR_VALID_VALS = {
 
 CHECKBOX_VALID_VALS = {
     "attributes": {
-        "required": 'id="terms"',
+        "standard": 'id="terms"',
         "with_disabled": 'id="terms" disabled',
     },
-    "below_content": {
-        "required": '<div className="grid gap-1.5 leading-none"><label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Accept the terms and conditions.</label></div>',
-        "with_optionals": '<div className="grid gap-1.5 leading-none"><label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Accept the terms and conditions.</label><p className="text-sm text-muted-foreground">Pretty please!</p></div>',
+    "imports": 'import { Checkbox } from "@/components/ui/checkbox"',
+    "content": {
+        "standard": '<div className="flex items-top space-x-2">\n<Checkbox id="terms">\n<div className="grid gap-1.5 leading-none">\n<label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">\nAccept the terms and conditions.\n</label>\n</div>\n</Checkbox>\n</div>',
+        "with_disabled": '<div className="flex items-top space-x-2">\n<Checkbox id="terms" disabled>\n<div className="grid gap-1.5 leading-none">\n<label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">\nAccept the terms and conditions.\n</label>\n<p className="text-sm text-muted-foreground">\nPretty please!\n</p>\n</div>\n</Checkbox>\n</div>',
     },
-    "full_jsx": '<div className="flex items-top space-x-2"><Checkbox id="terms" disabled /><div className="grid gap-1.5 leading-none"><label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Accept the terms and conditions.</label><p className="text-sm text-muted-foreground">Pretty please!</p></div></div>',
 }
 
 COLLAPSIBLE_VALID_VALS = {

@@ -7,7 +7,7 @@ import pytest
 from pydantic import ValidationError
 
 from cli.conf.storage import ComponentDetails
-from tests.templates.details import button_details, calendar_details
+from tests.templates.details import button_details, calendar_details, checkbox_details
 from tests.templates.dummy import DummyIconButton
 from tests.templates.helper import component_builder
 from tests.mappings.ui_attributes import BTN_VALID_ATTRS, ICON_BTN_VALID_ATTRS
@@ -115,7 +115,7 @@ class SimpleComponentFuncWrapper:
         builder.build()
 
         result = getattr(builder.storage, result_attr)
-        assert result == valid_value, (result, valid_value)
+        assert result == valid_value, (result.split("\n"), valid_value.split("\n"))
 
 
 class TestButton:
@@ -386,7 +386,7 @@ class TestCalendar:
 
 class TestCheckbox:
     @pytest.fixture
-    def basic_checkbox(self) -> Checkbox:
+    def checkbox(self) -> Checkbox:
         return Checkbox(id="terms", label="Accept the terms and conditions.")
 
     @pytest.fixture
@@ -398,78 +398,41 @@ class TestCheckbox:
             more_info="Pretty please!",
         )
 
+    @pytest.fixture
+    def wrapper(self, checkbox: Checkbox) -> SimpleComponentFuncWrapper:
+        return SimpleComponentFuncWrapper(checkbox, checkbox_details())
+
+    @pytest.fixture
+    def wrapper_disabled(
+        self, checkbox_with_disabled: Checkbox
+    ) -> SimpleComponentFuncWrapper:
+        return SimpleComponentFuncWrapper(checkbox_with_disabled, checkbox_details())
+
     @staticmethod
-    def test_attr_str_required(basic_checkbox: Checkbox):
-        result = basic_checkbox.attr_str()
-        builder_result: str = builder(basic_checkbox).attr_str
+    def test_attr_str(wrapper: SimpleComponentFuncWrapper):
+        wrapper.run("attributes", CHECKBOX_VALID_VALS["attributes"]["standard"])
 
-        valid = CHECKBOX_VALID_VALS["attributes"]["required"]
-
-        checks = all(
-            [
-                result == valid,
-                builder_result.lstrip() == valid,
-            ]
+    @staticmethod
+    def test_attr_str_disabled(wrapper_disabled: SimpleComponentFuncWrapper):
+        wrapper_disabled.run(
+            "attributes", CHECKBOX_VALID_VALS["attributes"]["with_disabled"]
         )
-        assert checks, (builder_result, result, valid)
 
     @staticmethod
-    def test_attr_str_with_disabled(checkbox_with_disabled: Checkbox):
-        result = checkbox_with_disabled.attr_str()
-        builder_result: str = builder(checkbox_with_disabled).attr_str
-
-        valid = CHECKBOX_VALID_VALS["attributes"]["with_disabled"]
-
-        checks = all(
-            [
-                result == valid,
-                builder_result.lstrip() == valid,
-            ]
-        )
-        assert checks, (builder_result, result, valid)
+    def test_import_str(wrapper: SimpleComponentFuncWrapper):
+        wrapper.run("imports", CHECKBOX_VALID_VALS["imports"])
 
     @staticmethod
-    def test_below_content_str_required(basic_checkbox: Checkbox):
-        result = basic_checkbox.below_content_str()
-        builder_result: str = builder(basic_checkbox).below_content_str
-
-        valid = CHECKBOX_VALID_VALS["below_content"]["required"]
-
-        checks = all(
-            [
-                result == valid,
-                builder_result == valid,
-            ]
-        )
-        assert checks, (builder_result, result, valid)
+    def test_import_str_disabled(wrapper_disabled: SimpleComponentFuncWrapper):
+        wrapper_disabled.run("imports", CHECKBOX_VALID_VALS["imports"])
 
     @staticmethod
-    def test_below_content_str_with_optionals(checkbox_with_disabled: Checkbox):
-        result = checkbox_with_disabled.below_content_str()
-        builder_result: str = builder(checkbox_with_disabled).below_content_str
-
-        valid = CHECKBOX_VALID_VALS["below_content"]["with_optionals"]
-
-        checks = all(
-            [
-                result == valid,
-                builder_result == valid,
-            ]
-        )
-        assert checks, (builder_result, result, valid)
+    def test_content_str(wrapper: SimpleComponentFuncWrapper):
+        wrapper.run("content", CHECKBOX_VALID_VALS["content"]["standard"])
 
     @staticmethod
-    def test_complete_jsx_valid(checkbox_with_disabled: Checkbox):
-        result: str = builder(checkbox_with_disabled).component_str
-        valid = CHECKBOX_VALID_VALS["full_jsx"]
-
-        assert result == valid, (result, valid)
-
-    @staticmethod
-    def test_import_str_valid(basic_checkbox: Checkbox):
-        result = builder(basic_checkbox).import_statements
-        valid = VALID_IMPORTS["checkbox"]
-        assert result == valid, (valid, result)
+    def test_content_str_disabled(wrapper_disabled: SimpleComponentFuncWrapper):
+        wrapper_disabled.run("content", CHECKBOX_VALID_VALS["content"]["with_disabled"])
 
     @staticmethod
     def test_id_validation_whitespace():

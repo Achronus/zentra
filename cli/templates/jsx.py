@@ -362,9 +362,13 @@ class ImportBuilder:
         for item in self.maps.additional_imports:
             comp_type, attr_name, imports = item
             if isinstance(self.component, comp_type):
-                value = getattr(self.component, attr_name)
-                result = imports(value)
-                if value and result:
+                if attr_name == "all":
+                    result = imports(self.component)
+                else:
+                    value = getattr(self.component, attr_name)
+                    result = imports(value)
+
+                if result:
                     results.extend(result)
 
         if len(results) == 0:
@@ -409,11 +413,10 @@ class ContentBuilder:
                         else:
                             content.append(content_str)
 
-        for comp_type, attr_name, condition in self.maps.component_content:
+        for comp_type, condition in self.maps.component_content:
             if isinstance(self.component, comp_type):
-                value = getattr(self.component, attr_name)
-                if value:
-                    content_str = condition(self.component)
+                content_str = condition(self.component)
+                if content_str:
                     content.extend(content_str)
 
         return self.handle_single_quotes(content)

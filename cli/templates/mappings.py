@@ -1,9 +1,22 @@
-import re
 from typing import Callable
 
-from pydantic import BaseModel
+from cli.templates.ui.attributes import (
+    calendar_attributes,
+    collapsible_attributes,
+    input_otp_attributes,
+)
+from cli.templates.ui.content import (
+    button_content,
+    checkbox_content,
+    collapsible_content,
+)
+from cli.templates.ui.imports import (
+    button_imports,
+    collapsible_imports,
+    input_opt_imports,
+)
+from cli.templates.ui.logic import calendar_logic, collapsible_logic
 from tests.templates.dummy import DummyIconButton
-from zentra.core.enums.ui import InputOTPPatterns
 from zentra.ui.control import (
     Button,
     Calendar,
@@ -13,6 +26,8 @@ from zentra.ui.control import (
     InputOTP,
     Label,
 )
+
+from pydantic import BaseModel
 
 
 # Dictionary of components with containers around them
@@ -37,41 +52,10 @@ USE_STATE_COMPONENTS = [
 
 # (component_type, attribute_name, lambda_expression)
 COMPONENT_ATTR_MAPPING = [
-    (
-        Calendar,
-        "name",
-        lambda value: [
-            'mode="single"',
-            f"selected={{{value}Date}}",
-            f"onSelect={{{value}SetDate}}",
-            'className="rounded-md border"',
-        ],
-    ),
-    (
-        Collapsible,
-        "name",
-        lambda value: [
-            f"open={{{value}IsOpen}}",
-            f"onOpenChange={{{value}SetIsOpen}}",
-            'className="w-[350px] space-y-2"',
-        ],
-    ),
-    (
-        InputOTP,
-        "pattern",
-        lambda pattern: [
-            f"pattern={{{InputOTPPatterns(pattern).name}}}"
-            if pattern in InputOTPPatterns
-            else f'pattern="{re.compile(pattern).pattern}"',
-        ],
-    ),
-    (
-        Label,
-        "name",
-        lambda value: [
-            f'htmlFor="{value}"',
-        ],
-    ),
+    (Calendar, "name", lambda name: calendar_attributes(name)),
+    (Collapsible, "name", lambda name: collapsible_attributes(name)),
+    (InputOTP, "pattern", lambda pattern: input_otp_attributes(pattern)),
+    (Label, "name", lambda name: [f'htmlFor="{name}"']),
 ]
 
 # (attribute_name, lambda_expression)
@@ -89,108 +73,18 @@ COMMON_ATTR_MAPPING = [
 
 
 ADDITIONAL_IMPORTS_MAPPING = [
-    (
-        Collapsible,
-        "name",
-        lambda value: [
-            'import { Button } from "@/components/ui/button"',
-            'import { ChevronsUpDown } from "lucide-react"',
-        ],
-    ),
-    (
-        InputOTP,
-        "pattern",
-        lambda pattern: [
-            "import { " + InputOTPPatterns(pattern).name + ' } from "input-otp"'
-        ]
-        if pattern in InputOTPPatterns
-        else None,
-    ),
-    (
-        Button,
-        "url",
-        lambda url: ['import Link from "next/link"'] if url else None,
-    ),
-    (
-        IconButton,
-        "icon",
-        lambda icon: ["import { " + icon + ' } from "lucide-react"'],
-    ),
-    (
-        IconButton,
-        "url",
-        lambda url: ['import Link from "next/link"'] if url else None,
-    ),
-    (
-        DummyIconButton,
-        "icon",
-        lambda icon: ["import { " + icon + ' } from "lucide-react"'],
-    ),
-    (
-        DummyIconButton,
-        "url",
-        lambda url: ['import Link from "next/link"'] if url else None,
-    ),
+    (Collapsible, "name", lambda _: collapsible_imports()),
+    (InputOTP, "pattern", lambda pattern: input_opt_imports(pattern)),
+    (Button, "all", lambda btn: button_imports(btn)),
+    (IconButton, "all", lambda btn: button_imports(btn)),
+    (DummyIconButton, "all", lambda btn: button_imports(btn)),
 ]
 
 
 COMPONENT_CONTENT_MAPPING = [
-    (
-        Checkbox,
-        "label",
-        lambda comp: [
-            '<div className="grid gap-1.5 leading-none">',
-            f'<label htmlFor="{comp.id}" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">',
-            f"{comp.label}",
-            "</label>",
-            *[
-                f'<p className="text-sm text-muted-foreground">{comp.more_info}</p>',
-                "</div>" if comp.more_info else "</div>",
-            ],
-        ],
-    ),
-    (
-        Collapsible,
-        "title",
-        lambda comp: [
-            '<div className="flex items-center justify-between space-x-4 px-4">',
-            '<h4 className="text-sm font-semibold">',
-            comp.title,
-            "</h4>",
-            "<CollapsibleTrigger asChild>",
-            '<Button variant="ghost" size="sm" className="w-9 p-0">',
-            '<ChevronsUpDown className="h-4 w-4" />',
-            '<span className="sr-only">',
-            "Toggle",
-            "</span>",
-            "</Button>",
-            "</CollapsibleTrigger>",
-            "</div>",
-        ],
-    ),
-    (
-        Collapsible,
-        "items",
-        lambda comp: [
-            '<div className="rounded-md border px-4 py-3 font-mono text-sm">',
-            comp.items[0],
-            "</div>",
-            '<CollapsibleContent className="space-y-2">',
-            *[
-                f'<div className="rounded-md border px-4 py-3 font-mono text-sm">\n{item}\n</div>'
-                for item in comp.items[1:]
-                if len(comp.items) > 1
-            ],
-            "</CollapsibleContent>",
-        ],
-    ),
-    (
-        Button,
-        "text",
-        lambda comp: [f'<Link href="{comp.url}">', comp.text, "</Link>"]
-        if comp.url
-        else [comp.text],
-    ),
+    (Checkbox, lambda cb: checkbox_content(cb)),
+    (Collapsible, lambda comp: collapsible_content(comp)),
+    (Button, lambda btn: button_content(btn)),
 ]
 
 
@@ -200,18 +94,8 @@ COMMON_CONTENT_MAPPING = [
 
 
 COMMON_LOGIC_MAPPING = [
-    (
-        Calendar,
-        "name",
-        lambda name: [
-            f"const [{name}Date, {name}SetDate] = useState<Date | undefined>(new Date());"
-        ],
-    ),
-    (
-        Collapsible,
-        "name",
-        lambda name: [f"const [{name}IsOpen, {name}SetIsOpen] = useState(false);"],
-    ),
+    (Calendar, "name", lambda name: calendar_logic(name)),
+    (Collapsible, "name", lambda name: collapsible_logic(name)),
 ]
 
 

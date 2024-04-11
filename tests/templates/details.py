@@ -75,12 +75,24 @@ def label_details() -> ComponentDetails:
 
 def component_details() -> list[ComponentDetails]:
     return [
-        input_details(),
-        file_upload_details(),
         button_details(),
         calendar_details(),
         checkbox_details(),
         collapsible_details(),
+        input_details(),
         input_otp_details(),
         label_details(),
+        file_upload_details(),
     ]
+
+
+COMPONENT_DETAILS_MAPPING = {
+    "button": button_details(),
+    "calendar": calendar_details(),
+    "checkbox": checkbox_details(),
+    "collapsible": collapsible_details(),
+    "input": input_details(),
+    "input_otp": input_otp_details(),
+    "label": label_details(),
+    "file_upload": file_upload_details(),
+}

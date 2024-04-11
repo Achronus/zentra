@@ -7,7 +7,7 @@ import pytest
 from pydantic import ValidationError
 
 from cli.conf.storage import ComponentDetails
-from tests.templates.details import button_details, calendar_details, checkbox_details
+from tests.templates.details import COMPONENT_DETAILS_MAPPING
 from tests.templates.dummy import DummyIconButton
 from tests.templates.helper import component_builder
 from tests.mappings.ui_attributes import BTN_VALID_ATTRS, ICON_BTN_VALID_ATTRS
@@ -151,7 +151,7 @@ class TestButton:
         return ComponentFuncWrapper(
             iterable_dict=iterables,
             component_func=btn,
-            component_details=button_details(),
+            component_details=COMPONENT_DETAILS_MAPPING["button"],
         )
 
     @pytest.fixture
@@ -159,7 +159,7 @@ class TestButton:
         return ComponentFuncWrapper(
             iterable_dict=iterables,
             component_func=btn_with_url,
-            component_details=button_details(),
+            component_details=COMPONENT_DETAILS_MAPPING["button"],
         )
 
     @staticmethod
@@ -245,7 +245,7 @@ class TestIconButton:
         return ComponentFuncWrapper(
             iterable_dict=iterables,
             component_func=btn,
-            component_details=button_details(),
+            component_details=COMPONENT_DETAILS_MAPPING["button"],
         )
 
     @pytest.fixture
@@ -253,7 +253,7 @@ class TestIconButton:
         return ComponentFuncWrapper(
             iterable_dict=iterables,
             component_func=btn_with_url,
-            component_details=button_details(),
+            component_details=COMPONENT_DETAILS_MAPPING["button"],
         )
 
     @staticmethod
@@ -321,11 +321,15 @@ class TestCalendar:
 
     @pytest.fixture
     def wrapper(self, calendar: Calendar) -> SimpleComponentFuncWrapper:
-        return SimpleComponentFuncWrapper(calendar, calendar_details())
+        return SimpleComponentFuncWrapper(
+            calendar, COMPONENT_DETAILS_MAPPING["calendar"]
+        )
 
     @pytest.fixture
     def wrapper_long(self, calendar_long_name: Calendar) -> SimpleComponentFuncWrapper:
-        return SimpleComponentFuncWrapper(calendar_long_name, calendar_details())
+        return SimpleComponentFuncWrapper(
+            calendar_long_name, COMPONENT_DETAILS_MAPPING["calendar"]
+        )
 
     @staticmethod
     def test_attr_str(wrapper: SimpleComponentFuncWrapper):
@@ -400,13 +404,17 @@ class TestCheckbox:
 
     @pytest.fixture
     def wrapper(self, checkbox: Checkbox) -> SimpleComponentFuncWrapper:
-        return SimpleComponentFuncWrapper(checkbox, checkbox_details())
+        return SimpleComponentFuncWrapper(
+            checkbox, COMPONENT_DETAILS_MAPPING["checkbox"]
+        )
 
     @pytest.fixture
     def wrapper_disabled(
         self, checkbox_with_disabled: Checkbox
     ) -> SimpleComponentFuncWrapper:
-        return SimpleComponentFuncWrapper(checkbox_with_disabled, checkbox_details())
+        return SimpleComponentFuncWrapper(
+            checkbox_with_disabled, COMPONENT_DETAILS_MAPPING["checkbox"]
+        )
 
     @staticmethod
     def test_attr_str(wrapper: SimpleComponentFuncWrapper):
@@ -463,71 +471,38 @@ class TestCollapsible:
     @pytest.fixture
     def collapsible(self) -> Collapsible:
         return Collapsible(
-            id="test",
+            name="test",
             title="Starred repositories",
             items=["Astrum-AI/Zentra", "Not Zentra"],
         )
 
-    @staticmethod
-    def test_logic_str(collapsible: Collapsible):
-        result = collapsible.unique_logic_str()
-        builder_result: str = builder(collapsible).unique_logic_str
-        valid = COLLAPSIBLE_VALID_VALS["unique_logic"]
-
-        checks = all(
-            [
-                result == valid,
-                builder_result == valid,
-            ]
+    @pytest.fixture
+    def wrapper(self, collapsible: Collapsible) -> SimpleComponentFuncWrapper:
+        return SimpleComponentFuncWrapper(
+            collapsible, COMPONENT_DETAILS_MAPPING["collapsible"]
         )
-        assert checks, (builder_result, result, valid)
 
     @staticmethod
-    def test_attr_str(collapsible: Collapsible):
-        result = collapsible.attr_str()
-        builder_result: str = builder(collapsible).attr_str
-        valid = COLLAPSIBLE_VALID_VALS["attributes"]
-
-        checks = all(
-            [
-                result == valid,
-                builder_result.lstrip() == valid,
-            ]
-        )
-        assert checks, (builder_result, result, valid)
+    def test_attr_str(wrapper: SimpleComponentFuncWrapper):
+        wrapper.run("attributes", COLLAPSIBLE_VALID_VALS["attributes"])
 
     @staticmethod
-    def test_content_str(collapsible: Collapsible):
-        result = collapsible.content_str()
-        builder_result: str = builder(collapsible).content_str
-        valid = COLLAPSIBLE_VALID_VALS["content"]
-
-        checks = all(
-            [
-                result == valid,
-                builder_result == valid,
-            ]
-        )
-        assert checks, (builder_result, result, valid)
+    def test_logic_str(wrapper: SimpleComponentFuncWrapper):
+        wrapper.run("logic", COLLAPSIBLE_VALID_VALS["logic"])
 
     @staticmethod
-    def test_complete_jsx_valid(collapsible: Collapsible):
-        result: str = builder(collapsible).component_str
-        valid = COLLAPSIBLE_VALID_VALS["full_jsx"]
-
-        assert result == valid, (result, valid)
+    def test_import_str(wrapper: SimpleComponentFuncWrapper):
+        wrapper.run("imports", COLLAPSIBLE_VALID_VALS["imports"])
 
     @staticmethod
-    def test_import_str_valid(collapsible: Collapsible):
-        result = builder(collapsible).import_statements
-        valid = VALID_IMPORTS["collapsible"]
-        assert result == valid, (valid, result)
+    def test_content_str(wrapper: SimpleComponentFuncWrapper):
+        wrapper.run("content", COLLAPSIBLE_VALID_VALS["content"])
 
     @staticmethod
     def test_id_validation_whitespace():
         with pytest.raises(ValidationError):
             Collapsible(
-                id="invalid id",
+                name="invalid id",
                 title="Starred repositories",
                 items=["Astrum-AI/Zentra", "Not Zentra"],
             )
@@ -536,7 +511,7 @@ class TestCollapsible:
     def test_id_validation_dashes():
         with pytest.raises(ValidationError):
             Collapsible(
-                id="invalid-id",
+                name="invalid-id",
                 title="Starred repositories",
                 items=["Astrum-AI/Zentra", "Not Zentra"],
             )
@@ -545,7 +520,7 @@ class TestCollapsible:
     def test_id_validation_uppercase():
         with pytest.raises(ValidationError):
             Collapsible(
-                id="INVALID",
+                name="INVALID",
                 title="Starred repositories",
                 items=["Astrum-AI/Zentra", "Not Zentra"],
             )
@@ -554,7 +529,7 @@ class TestCollapsible:
     def test_id_validation_capitalise():
         with pytest.raises(ValidationError):
             Collapsible(
-                id="Wrong",
+                name="Wrong",
                 title="Starred repositories",
                 items=["Astrum-AI/Zentra", "Not Zentra"],
             )
@@ -562,7 +537,7 @@ class TestCollapsible:
     @staticmethod
     def test_id_validation_camelcase():
         Collapsible(
-            id="testCorrect",
+            name="testCorrect",
             title="Starred repositories",
             items=["Astrum-AI/Zentra", "Not Zentra"],
         )

@@ -271,13 +271,12 @@ class ComponentBuilder:
             )
 
         if self.component.classname in self.maps.wrappers.keys():
-            wrapped_content.extend(
-                [
-                    f"<div {self.maps.wrappers[self.component.classname]}>",
-                    *wrapped_content,
-                    "</div>",
-                ]
-            )
+            wrapped_content = [
+                f"<div {self.maps.wrappers[self.component.classname]}>",
+                *wrapped_content,
+                "</div>",
+            ]
+
         return wrapped_content
 
     def compress(self, items: list[str], chars: str = "\n") -> str:

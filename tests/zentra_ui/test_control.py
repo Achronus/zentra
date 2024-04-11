@@ -7,7 +7,7 @@ import pytest
 from pydantic import ValidationError
 
 from cli.conf.storage import ComponentDetails
-from tests.templates.details import button_details
+from tests.templates.details import button_details, calendar_details
 from tests.templates.dummy import DummyIconButton
 from tests.templates.helper import component_builder
 from tests.mappings.ui_attributes import BTN_VALID_ATTRS, ICON_BTN_VALID_ATTRS
@@ -61,14 +61,14 @@ def calc_valid_total(*iterables) -> int:
 
 
 class ComponentFuncWrapper:
-    """A helper class that handles the logic for keeping component test implementation unified."""
+    """A helper class that handles the logic for keeping complicated component test implementations unified."""
 
     def __init__(
         self,
         iterable_dict: dict[list],
         component_func: callable,
         component_details: ComponentDetails,
-    ):
+    ) -> None:
         self.iterable_dict = iterable_dict
         self.details = component_details
         self.comp_func = component_func
@@ -78,11 +78,7 @@ class ComponentFuncWrapper:
         values = d.values()
         return [dict(zip(keys, items)) for items in product(*values)]
 
-    def run(
-        self,
-        result_attr: str,
-        mapping: list[str] | dict[str, Any],
-    ):
+    def run(self, result_attr: str, mapping: list[str] | dict[str, Any]):
         valid_total = 0
         items_list = self.dict_product(self.iterable_dict)
         desired_total = calc_valid_total(items_list)
@@ -103,6 +99,23 @@ class ComponentFuncWrapper:
         assert (
             valid_total == desired_total
         ), f"({valid_total}/{desired_total}) {test_fail_result} != {map_value}"
+
+
+class SimpleComponentFuncWrapper:
+    """A helper class that handles the logic for keeping simple component test implementations unified."""
+
+    def __init__(
+        self, component: Component, component_details: ComponentDetails
+    ) -> None:
+        self.component = component
+        self.details = component_details
+
+    def run(self, result_attr: str, valid_value: str):
+        builder = component_builder(self.component, details=self.details)
+        builder.build()
+
+        result = getattr(builder.storage, result_attr)
+        assert result == valid_value, (result, valid_value)
 
 
 class TestButton:
@@ -300,74 +313,75 @@ class TestIconButton:
 class TestCalendar:
     @pytest.fixture
     def calendar(self) -> Calendar:
-        return Calendar(id="test")
+        return Calendar(name="monthly")
+
+    @pytest.fixture
+    def calendar_long_name(self) -> Calendar:
+        return Calendar(name="yearlyCalendar")
+
+    @pytest.fixture
+    def wrapper(self, calendar: Calendar) -> SimpleComponentFuncWrapper:
+        return SimpleComponentFuncWrapper(calendar, calendar_details())
+
+    @pytest.fixture
+    def wrapper_long(self, calendar_long_name: Calendar) -> SimpleComponentFuncWrapper:
+        return SimpleComponentFuncWrapper(calendar_long_name, calendar_details())
 
     @staticmethod
-    def test_attr_str_valid(calendar: Calendar):
-        result = calendar.attr_str()
-        builder_result: str = builder(calendar).attr_str
-
-        valid = CALENDAR_VALID_VALS["attributes"]
-
-        checks = all(
-            [
-                result == valid,
-                builder_result.lstrip() == valid,
-            ]
-        )
-        assert checks, (result, valid)
+    def test_attr_str(wrapper: SimpleComponentFuncWrapper):
+        wrapper.run("attributes", CALENDAR_VALID_VALS["attributes"]["standard"])
 
     @staticmethod
-    def test_unique_logic_str_valid(calendar: Calendar):
-        result = calendar.unique_logic_str()
-        builder_result = builder(calendar).unique_logic_str
-
-        valid = CALENDAR_VALID_VALS["unique_logic"]
-
-        checks = all(
-            [
-                result == valid,
-                builder_result == valid,
-            ]
-        )
-        assert checks, (result, valid)
+    def test_attr_str_long_name(wrapper_long: SimpleComponentFuncWrapper):
+        wrapper_long.run("attributes", CALENDAR_VALID_VALS["attributes"]["long_name"])
 
     @staticmethod
-    def test_complete_jsx_valid(calendar: Calendar):
-        result: str = builder(calendar).component_str
-        valid = CALENDAR_VALID_VALS["full_jsx"]
-
-        assert result == valid, (result, valid)
+    def test_logic_str(wrapper: SimpleComponentFuncWrapper):
+        wrapper.run("logic", CALENDAR_VALID_VALS["logic"]["standard"])
 
     @staticmethod
-    def test_import_str_valid(calendar: Calendar):
-        result = builder(calendar).import_statements
-        valid = VALID_IMPORTS["calendar"]
-        assert result == valid, (valid, result)
+    def test_logic_str_long_name(wrapper_long: SimpleComponentFuncWrapper):
+        wrapper_long.run("logic", CALENDAR_VALID_VALS["logic"]["long_name"])
+
+    @staticmethod
+    def test_import_str(wrapper: SimpleComponentFuncWrapper):
+        wrapper.run("imports", CALENDAR_VALID_VALS["imports"])
+
+    @staticmethod
+    def test_import_str_long_name(wrapper_long: SimpleComponentFuncWrapper):
+        wrapper_long.run("imports", CALENDAR_VALID_VALS["imports"])
+
+    @staticmethod
+    def test_content_str(wrapper: SimpleComponentFuncWrapper):
+        wrapper.run("content", CALENDAR_VALID_VALS["content"]["standard"])
+
+    @staticmethod
+    def test_content_str_long_name(wrapper_long: SimpleComponentFuncWrapper):
+        wrapper_long.run("content", CALENDAR_VALID_VALS["content"]["long_name"])
 
     @staticmethod
     def test_id_validation_whitespace():
         with pytest.raises(ValidationError):
-            Calendar(id="invalid id")
+            Calendar(name="invalid id")
 
     @staticmethod
     def test_id_validation_dashes():
         with pytest.raises(ValidationError):
-            Calendar(id="invalid-id")
+            Calendar(name="invalid-id")
 
     @staticmethod
     def test_id_validation_uppercase():
         with pytest.raises(ValidationError):
-            Calendar(id="INVALID")
+            Calendar(name="INVALID")
 
     @staticmethod
     def test_id_validation_capitalise():
         with pytest.raises(ValidationError):
-            Calendar(id="Wrong")
+            Calendar(name="Wrong")
 
     @staticmethod
     def test_id_validation_camelcase():
-        Calendar(id="testCorrect")
+        Calendar(name="testCorrect")
 
 
 class TestCheckbox:

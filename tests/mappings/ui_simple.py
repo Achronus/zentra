@@ -1,7 +1,17 @@
 CALENDAR_VALID_VALS = {
-    "attributes": 'mode="single" selected={testDate} onSelect={testSetDate} className="rounded-md border"',
-    "unique_logic": "const [testDate, testSetDate] = useState(new Date());",
-    "full_jsx": '<Calendar mode="single" selected={testDate} onSelect={testSetDate} className="rounded-md border" />',
+    "attributes": {
+        "standard": 'mode="single" selected={monthlyDate} onSelect={monthlySetDate} className="rounded-md border"',
+        "long_name": 'mode="single" selected={yearlyCalendarDate} onSelect={yearlyCalendarSetDate} className="rounded-md border"',
+    },
+    "logic": {
+        "standard": "const [monthlyDate, monthlySetDate] = useState<Date | undefined>(new Date());",
+        "long_name": "const [yearlyCalendarDate, yearlyCalendarSetDate] = useState<Date | undefined>(new Date());",
+    },
+    "imports": 'import { Calendar } from "@/components/ui/calendar"\nimport { useState } from "react"',
+    "content": {
+        "standard": '<Calendar mode="single" selected={monthlyDate} onSelect={monthlySetDate} className="rounded-md border" />',
+        "long_name": '<Calendar mode="single" selected={yearlyCalendarDate} onSelect={yearlyCalendarSetDate} className="rounded-md border" />',
+    },
 }
 
 CHECKBOX_VALID_VALS = {

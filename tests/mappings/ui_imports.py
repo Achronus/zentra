@@ -4,19 +4,14 @@ VALID_IMPORTS = {
         "standard": 'import { Button } from "@/components/ui/button"\nimport { Loader } from "lucide-react"',
         "with_url": 'import { Button } from "@/components/ui/button"\nimport Link from "next/link"\nimport { Loader } from "lucide-react"',
     },
-    "calendar": 'import { Calendar } from "@/components/ui/calendar"',
+    "calendar": 'import { Calendar } from "@/components/ui/calendar"\nimport { useState } from "react"',
     "checkbox": 'import { Checkbox } from "@/components/ui/checkbox"',
-    "collapsible": [
-        'import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible", import { Button } from "@/components/ui/button", import { ChevronsUpDown } from "lucide-react"'
-    ],
+    "collapsible": 'import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible"\nimport { useState } from "react"\nimport { Button } from "@/components/ui/button"\nimport { ChevronsUpDown } from "lucide-react"',
     "input": 'import { Input } from "@/components/ui/input"',
     "input_otp": {
-        "required": 'import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp"',
-        "with_pattern": 'import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp"import { REGEXP_ONLY_DIGITS } from "input-otp"',
-        "with_sep": 'import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@/components/ui/input-otp"',
-        "all": [
-            'import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@/components/ui/input-otp", import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp"'
-        ],
+        "standard": 'import { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator } from "@/components/ui/input-otp"',
+        "pattern": 'import { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator } from "@/components/ui/input-otp"\nimport { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp"',
+        "custom_pattern": 'import { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator } from "@/components/ui/input-otp"',
     },
-    "label": 'import { Label } from "@/components/ui/label"\n',
+    "label": 'import { Label } from "@/components/ui/label"',
 }

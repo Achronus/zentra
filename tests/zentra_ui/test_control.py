@@ -349,11 +349,7 @@ class TestCalendar:
 
     @staticmethod
     def test_import_str(wrapper: SimpleComponentFuncWrapper):
-        wrapper.run("imports", CALENDAR_VALID_VALS["imports"])
-
-    @staticmethod
-    def test_import_str_long_name(wrapper_long: SimpleComponentFuncWrapper):
-        wrapper_long.run("imports", CALENDAR_VALID_VALS["imports"])
+        wrapper.run("imports", VALID_IMPORTS["calendar"])
 
     @staticmethod
     def test_content_str(wrapper: SimpleComponentFuncWrapper):
@@ -428,11 +424,7 @@ class TestCheckbox:
 
     @staticmethod
     def test_import_str(wrapper: SimpleComponentFuncWrapper):
-        wrapper.run("imports", CHECKBOX_VALID_VALS["imports"])
-
-    @staticmethod
-    def test_import_str_disabled(wrapper_disabled: SimpleComponentFuncWrapper):
-        wrapper_disabled.run("imports", CHECKBOX_VALID_VALS["imports"])
+        wrapper.run("imports", VALID_IMPORTS["checkbox"])
 
     @staticmethod
     def test_content_str(wrapper: SimpleComponentFuncWrapper):
@@ -492,7 +484,7 @@ class TestCollapsible:
 
     @staticmethod
     def test_import_str(wrapper: SimpleComponentFuncWrapper):
-        wrapper.run("imports", COLLAPSIBLE_VALID_VALS["imports"])
+        wrapper.run("imports", VALID_IMPORTS["collapsible"])
 
     @staticmethod
     def test_content_str(wrapper: SimpleComponentFuncWrapper):
@@ -545,55 +537,46 @@ class TestCollapsible:
 
 class TestInput:
     @pytest.fixture
-    def basic_input(self) -> Input:
+    def input(self) -> Input:
         return Input(id="name", type="text", placeholder="Name")
 
     @pytest.fixture
     def input_with_disabled(self) -> Input:
         return Input(id="name", type="text", placeholder="Name", disabled=True)
 
-    @staticmethod
-    def test_attr_str_required(basic_input: Input):
-        result = basic_input.attr_str()
-        builder_result: str = builder(basic_input).attr_str
+    @pytest.fixture
+    def wrapper(self, input: Input) -> SimpleComponentFuncWrapper:
+        return SimpleComponentFuncWrapper(input, COMPONENT_DETAILS_MAPPING["input"])
 
-        valid = INPUT_VALID_VALS["attributes"]["required"]
-
-        checks = all(
-            [
-                result == valid,
-                builder_result.lstrip() == valid,
-            ]
+    @pytest.fixture
+    def wrapper_disabled(
+        self, input_with_disabled: Input
+    ) -> SimpleComponentFuncWrapper:
+        return SimpleComponentFuncWrapper(
+            input_with_disabled, COMPONENT_DETAILS_MAPPING["input"]
         )
-        assert checks, (builder_result, result, valid)
 
     @staticmethod
-    def test_attr_str_with_disabled(input_with_disabled: Input):
-        result = input_with_disabled.attr_str()
-        builder_result: str = builder(input_with_disabled).attr_str
+    def test_attr_str(wrapper: SimpleComponentFuncWrapper):
+        wrapper.run("attributes", INPUT_VALID_VALS["attributes"]["standard"])
 
-        valid = INPUT_VALID_VALS["attributes"]["with_disabled"]
-
-        checks = all(
-            [
-                result == valid,
-                builder_result.lstrip() == valid,
-            ]
+    @staticmethod
+    def test_attr_str_with_disabled(wrapper_disabled: SimpleComponentFuncWrapper):
+        wrapper_disabled.run(
+            "attributes", INPUT_VALID_VALS["attributes"]["with_disabled"]
         )
-        assert checks, (builder_result, result, valid)
 
     @staticmethod
-    def test_complete_jsx_valid(input_with_disabled: Input):
-        result: str = builder(input_with_disabled).component_str
-        valid = INPUT_VALID_VALS["full_jsx"]
-
-        assert result == valid, (result, valid)
+    def test_import_str(wrapper: SimpleComponentFuncWrapper):
+        wrapper.run("imports", VALID_IMPORTS["input"])
 
     @staticmethod
-    def test_import_str_valid(basic_input: Input):
-        result = builder(basic_input).import_statements
-        valid = VALID_IMPORTS["input"]
-        assert result == valid, (valid, result)
+    def test_content_str(wrapper: SimpleComponentFuncWrapper):
+        wrapper.run("content", INPUT_VALID_VALS["content"]["standard"])
+
+    @staticmethod
+    def test_content_str_with_disabled(wrapper_disabled: SimpleComponentFuncWrapper):
+        wrapper_disabled.run("content", INPUT_VALID_VALS["content"]["with_disabled"])
 
     @staticmethod
     def test_id_validation_whitespace():
@@ -622,137 +605,82 @@ class TestInput:
 
 class TestInputOTP:
     @pytest.fixture
-    def basic_input(self) -> InputOTP:
-        return InputOTP(num_inputs=6, num_groups=2)
+    def input(self) -> InputOTP:
+        return InputOTP(num_inputs=6, num_groups=1)
 
     @pytest.fixture
-    def input_with_pattern(self) -> InputOTP:
+    def input_pattern(self) -> InputOTP:
         return InputOTP(num_inputs=6, num_groups=2, pattern="digits_n_chars_only")
 
-    @staticmethod
-    def test_attr_str_required(basic_input: InputOTP):
-        result = basic_input.attr_str()
-        builder_result: str = builder(basic_input).attr_str
+    @pytest.fixture
+    def input_custom_pattern(self) -> InputOTP:
+        return InputOTP(num_inputs=6, num_groups=3, pattern=r"([\^$.|?*+()\[\]{}])")
 
-        valid = INPUTOTP_VALID_VALS["attributes"]["required"]
+    @pytest.fixture
+    def wrapper(self, input: InputOTP) -> SimpleComponentFuncWrapper:
+        return SimpleComponentFuncWrapper(input, COMPONENT_DETAILS_MAPPING["input_otp"])
 
-        checks = all(
-            [
-                result == valid,
-                builder_result.lstrip() == valid,
-            ]
+    @pytest.fixture
+    def wrapper_pattern(self, input_pattern: InputOTP) -> SimpleComponentFuncWrapper:
+        return SimpleComponentFuncWrapper(
+            input_pattern, COMPONENT_DETAILS_MAPPING["input_otp"]
         )
-        assert checks, (builder_result, result, valid)
 
-    @staticmethod
-    def test_attr_str_with_official_pattern(input_with_pattern: InputOTP):
-        result = input_with_pattern.attr_str()
-        builder_result: str = builder(input_with_pattern).attr_str
-
-        valid = INPUTOTP_VALID_VALS["attributes"]["with_official_pattern"]
-
-        checks = all(
-            [
-                result == valid,
-                builder_result.lstrip() == valid,
-            ]
+    @pytest.fixture
+    def wrapper_custom_pattern(
+        self, input_custom_pattern: InputOTP
+    ) -> SimpleComponentFuncWrapper:
+        return SimpleComponentFuncWrapper(
+            input_custom_pattern, COMPONENT_DETAILS_MAPPING["input_otp"]
         )
-        assert checks, (builder_result, result, valid)
 
     @staticmethod
-    def test_attr_str_with_custom_pattern():
-        input_with_pattern = InputOTP(
-            num_inputs=6, num_groups=2, pattern=r"([\^$.|?*+()\[\]{}])"
+    def test_attr_str(wrapper: SimpleComponentFuncWrapper):
+        wrapper.run("attributes", INPUTOTP_VALID_VALS["attributes"]["standard"])
+
+    @staticmethod
+    def test_attr_str_pattern(wrapper_pattern: SimpleComponentFuncWrapper):
+        wrapper_pattern.run("attributes", INPUTOTP_VALID_VALS["attributes"]["pattern"])
+
+    @staticmethod
+    def test_attr_str_custom_pattern(
+        wrapper_custom_pattern: SimpleComponentFuncWrapper,
+    ):
+        wrapper_custom_pattern.run(
+            "attributes", INPUTOTP_VALID_VALS["attributes"]["custom_pattern"]
         )
-        result = input_with_pattern.attr_str()
-        builder_result: str = builder(input_with_pattern).attr_str
 
-        valid = INPUTOTP_VALID_VALS["attributes"]["with_custom_pattern"]
+    @staticmethod
+    def test_content_str(wrapper: SimpleComponentFuncWrapper):
+        wrapper.run("content", INPUTOTP_VALID_VALS["content"]["one_group"])
 
-        checks = all(
-            [
-                result == valid,
-                builder_result.lstrip() == valid,
-            ]
+    @staticmethod
+    def test_content_str_pattern(wrapper_pattern: SimpleComponentFuncWrapper):
+        wrapper_pattern.run("content", INPUTOTP_VALID_VALS["content"]["two_groups"])
+
+    @staticmethod
+    def test_content_str_custom_pattern(
+        wrapper_custom_pattern: SimpleComponentFuncWrapper,
+    ):
+        wrapper_custom_pattern.run(
+            "content", INPUTOTP_VALID_VALS["content"]["three_groups"]
         )
-        assert checks, (builder_result, result, valid)
 
     @staticmethod
-    def test_content_str_one_group():
-        input = InputOTP(num_inputs=6)
-        result = input.content_str()
-        builder_result: str = builder(input).content_str
-        valid = INPUTOTP_VALID_VALS["content"]["one_group"]
+    def test_imports_str(wrapper: SimpleComponentFuncWrapper):
+        wrapper.run("imports", VALID_IMPORTS["input_otp"]["standard"])
 
-        checks = all(
-            [
-                result == valid,
-                builder_result == valid,
-            ]
+    @staticmethod
+    def test_imports_str_pattern(wrapper_pattern: SimpleComponentFuncWrapper):
+        wrapper_pattern.run("imports", VALID_IMPORTS["input_otp"]["pattern"])
+
+    @staticmethod
+    def test_imports_str_custom_pattern(
+        wrapper_custom_pattern: SimpleComponentFuncWrapper,
+    ):
+        wrapper_custom_pattern.run(
+            "imports", VALID_IMPORTS["input_otp"]["custom_pattern"]
         )
-        assert checks, (builder_result, result, valid)
-
-    @staticmethod
-    def test_content_str_two_groups(basic_input: InputOTP):
-        result = basic_input.content_str()
-        builder_result: str = builder(basic_input).content_str
-        valid = INPUTOTP_VALID_VALS["content"]["two_groups"]
-
-        checks = all(
-            [
-                result == valid,
-                builder_result == valid,
-            ]
-        )
-        assert checks, (builder_result, result, valid)
-
-    @staticmethod
-    def test_content_str_three_groups():
-        input = InputOTP(num_inputs=6, num_groups=3)
-        result = input.content_str()
-        builder_result: str = builder(input).content_str
-        valid = INPUTOTP_VALID_VALS["content"]["three_groups"]
-
-        checks = all(
-            [
-                result == valid,
-                builder_result == valid,
-            ]
-        )
-        assert checks, (builder_result, result, valid)
-
-    @staticmethod
-    def test_complete_jsx_valid(input_with_pattern: InputOTP):
-        result: str = builder(input_with_pattern).component_str
-        valid = INPUTOTP_VALID_VALS["full_jsx"]
-
-        assert result == valid, (result, valid)
-
-    @staticmethod
-    def test_import_str_required():
-        input = InputOTP(num_inputs=6, num_groups=1)
-        result = builder(input).import_statements
-        valid = VALID_IMPORTS["input_otp"]["required"]
-        assert result == valid, (valid, result)
-
-    @staticmethod
-    def test_import_str_with_official_pattern():
-        input = InputOTP(num_inputs=6, num_groups=1, pattern="digits_only")
-        result = builder(input).import_statements
-        valid = VALID_IMPORTS["input_otp"]["with_pattern"]
-        assert result == valid, (valid, result)
-
-    @staticmethod
-    def test_import_str_with_seperator(basic_input: InputOTP):
-        result = builder(basic_input).import_statements
-        valid = VALID_IMPORTS["input_otp"]["with_sep"]
-        assert result == valid, (valid, result)
-
-    @staticmethod
-    def test_import_str_with_all(input_with_pattern: InputOTP):
-        result = builder(input_with_pattern).import_statements
-        valid = VALID_IMPORTS["input_otp"]["all"]
-        assert result == valid, (valid, result)
 
     @staticmethod
     def test_num_groups_validation_error():
@@ -768,70 +696,44 @@ class TestInputOTP:
 class TestLabel:
     @pytest.fixture
     def label(self) -> Label:
-        return Label(id="terms", text="Accept terms and conditions.")
+        return Label(name="terms", text="Accept terms and conditions.")
+
+    @pytest.fixture
+    def wrapper(self, label: Label) -> SimpleComponentFuncWrapper:
+        return SimpleComponentFuncWrapper(label, COMPONENT_DETAILS_MAPPING["label"])
 
     @staticmethod
-    def test_attr_str(label: Label):
-        result = label.attr_str()
-        builder_result: str = builder(label).attr_str
-
-        valid = LABEL_VALID_VALS["attributes"]
-
-        checks = all(
-            [
-                result == valid,
-                builder_result.lstrip() == valid,
-            ]
-        )
-        assert checks, (builder_result, result, valid)
+    def test_attr_str(wrapper: SimpleComponentFuncWrapper):
+        wrapper.run("attributes", LABEL_VALID_VALS["attributes"])
 
     @staticmethod
-    def test_content_str(label: Label):
-        result = label.content_str()
-        builder_result: str = builder(label).content_str
-        valid = LABEL_VALID_VALS["content"]
-
-        checks = all(
-            [
-                result == valid,
-                builder_result == valid,
-            ]
-        )
-        assert checks, (builder_result, result, valid)
+    def test_content_str(wrapper: SimpleComponentFuncWrapper):
+        wrapper.run("content", LABEL_VALID_VALS["content"])
 
     @staticmethod
-    def test_complete_jsx_valid(label: Label):
-        result: str = builder(label).component_str
-        valid = LABEL_VALID_VALS["full_jsx"]
-
-        assert result == valid, (result, valid)
+    def test_imports_str(wrapper: SimpleComponentFuncWrapper):
+        wrapper.run("imports", VALID_IMPORTS["label"])
 
     @staticmethod
-    def test_import_str(label: Label):
-        result = builder(label).import_statements
-        valid = VALID_IMPORTS["label"]
-        assert result == valid, (valid, result)
-
-    @staticmethod
-    def test_id_validation_whitespace():
+    def test_name_validation_whitespace():
         with pytest.raises(ValidationError):
-            Label(id="terms conditions", text="Accept terms and conditions.")
+            Label(name="terms conditions", text="Accept terms and conditions.")
 
     @staticmethod
-    def test_id_validation_dashes():
+    def test_name_validation_dashes():
         with pytest.raises(ValidationError):
-            Label(id="terms-conditions", text="Accept terms and conditions.")
+            Label(name="terms-conditions", text="Accept terms and conditions.")
 
     @staticmethod
-    def test_id_validation_uppercase():
+    def test_name_validation_uppercase():
         with pytest.raises(ValidationError):
-            Label(id="TERMS", text="Accept terms and conditions.")
+            Label(name="TERMS", text="Accept terms and conditions.")
 
     @staticmethod
-    def test_id_validation_capitalise():
+    def test_name_validation_capitalise():
         with pytest.raises(ValidationError):
-            Label(id="Terms", text="Accept terms and conditions.")
+            Label(name="Terms", text="Accept terms and conditions.")
 
     @staticmethod
-    def test_id_validation_camelcase():
-        Label(id="termsConditions", text="Accept terms and conditions.")
+    def test_name_validation_camelcase():
+        Label(name="termsConditions", text="Accept terms and conditions.")

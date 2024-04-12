@@ -2,7 +2,12 @@ import re
 import requests
 
 from cli.conf.format import name_from_camel_case
-from zentra.core import LOWER_CAMELCASE_WITH_DIGITS, Component, has_valid_pattern
+from zentra.core import (
+    LOWER_CAMELCASE_WITH_DIGITS,
+    LOWERCASE_SINGLE_WORD,
+    Component,
+    has_valid_pattern,
+)
 from zentra.core.enums.ui import (
     ButtonSize,
     ButtonVariant,
@@ -22,11 +27,11 @@ class Button(Component, ShadcnUi):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Button component focusing on text.
 
     Parameters:
-    - `text` (`str`) - the text displayed inside the button
-    - `url` (`str, optional`) - the URL the button links to. `None` by default. When `None` removes it from `Button`
-    - `variant` (`str, optional`) - the style of the button. Valid options: `['default', 'secondary', 'destructive', 'outline', 'ghost', 'link']`. `default` by default
-    - `size` (`str, optional`) - the size of the button. Valid options: `['default', 'sm', 'lg']`. `default` by default
-    - `disabled` (`bool, optional`) - adds the disabled property, preventing it from being clicked. `False` by default
+    - `text` (`string`) - the text displayed inside the button
+    - `url` (`string, optional`) - the URL the button links to. `None` by default. When `None` removes it from `Button`
+    - `variant` (`string, optional`) - the style of the button. Valid options: `['default', 'secondary', 'destructive', 'outline', 'ghost', 'link']`. `default` by default
+    - `size` (`string, optional`) - the size of the button. Valid options: `['default', 'sm', 'lg']`. `default` by default
+    - `disabled` (`boolean, optional`) - adds the disabled property, preventing it from being clicked. `False` by default
     """
 
     text: str = Field(min_length=1)
@@ -47,7 +52,7 @@ class IconButton(Component, ShadcnUi):
     - `url` (`string, optional`) - the URL the button links to. `None` by default. When `None` removes it from `Button`
     - `variant` (`string, optional`) - the style of the button. Valid options: `['default', 'secondary', 'destructive', 'outline', 'ghost', 'link']`. `default` by default
     - `size` (`string, optional`) - the size of the button. Valid options: `['default', 'sm', 'lg', 'icon']`. `icon` by default
-    - `disabled` (`bool, optional`) - adds the disabled property, preventing it from being clicked. `False` by default
+    - `disabled` (`boolean, optional`) - adds the disabled property, preventing it from being clicked. `False` by default
     """
 
     icon: str = Field(min_length=1)
@@ -80,7 +85,7 @@ class Calendar(Component, ShadcnUi):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Calendar component.
 
     Parameters:
-    - `name` (`str`) - an identifier for the component. Prepended to `get` and `set` for the `useState()` hook. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
+    - `name` (`string`) - an identifier for the component. Prepended to `get` and `set` for the `useState()` hook. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
 
     Example:
     1. `name='monthly'` ->
@@ -107,10 +112,10 @@ class Checkbox(Component, ShadcnUi):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Checkbox component.
 
     Parameters:
-    - `id` (`str`) - an identifier for the component. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
-    - `label` (`str`) - the text associated to the checkbox
-    - `more_info` (`str, optional`) - additional information to add under the checkbox. `None` by default. When `None` removes it from `Checkbox`
-    - `disabled` (`bool, optional`) - adds the disabled property, preventing it from being selected. `False` by default
+    - `id` (`string`) - an identifier for the component. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
+    - `label` (`string`) - the text associated to the checkbox
+    - `more_info` (`string, optional`) - additional information to add under the checkbox. `None` by default. When `None` removes it from `Checkbox`
+    - `disabled` (`boolean, optional`) - adds the disabled property, preventing it from being selected. `False` by default
     """
 
     id: str = Field(min_length=1, max_length=15)
@@ -149,8 +154,8 @@ class Collapsible(Component, ShadcnUi):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Collapsible component.
 
     Parameters:
-    - `name` (`str`) - an identifier for the component. Prepended to `get` and `set` for the `useState()` hook. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
-    - `title` (`str`) - the main heading of the collapsible
+    - `name` (`string`) - an identifier for the component. Prepended to `get` and `set` for the `useState()` hook. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
+    - `title` (`string`) - the main heading of the collapsible
     - `items` (`list[str]`) - a list of strings representing the text to add into each collapsible block. Requires a `minimum` of `1` item
     """
 
@@ -174,7 +179,7 @@ class Combobox(Component, ShadcnUi):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Combobox component.
 
     Parameters:
-    - `name` (`str`) - the name of the component
+    - `name` (`string`) - the name of the component
     """
 
     # TODO: come back once 'popover' and 'command' created
@@ -185,7 +190,7 @@ class DatePicker(Component, ShadcnUi):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) DatePicker component.
 
     Parameters:
-    - `name` (`str`) - the name of the component
+    - `name` (`string`) - the name of the component
     """
 
     # TODO: come back once 'popover' created
@@ -198,10 +203,10 @@ class Input(Component, ShadcnUi):
     Inputs are extremely versatile as expressed in the [HTML Input docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/url). We've limited the attributes to the basics for simplicity. Once components are generated, you can edit them in the respective `.tsx` files with additional attributes if needed.
 
     Parameters:
-    - `id` (`str`) - an identifier for the component. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
-    - `type` (`str`) - the type of input field. Options `['text', 'email', 'password', 'number', 'file', 'tel', 'search', 'url', 'color']`
-    - `placeholder` (`str`) - the placeholder text for the input
-    - `disabled` (`bool, optional`) - adds the disabled property, preventing it from being selected. `False` by default
+    - `id` (`string`) - an identifier for the component. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
+    - `type` (`string`) - the type of input field. Options `['text', 'email', 'password', 'number', 'file', 'tel', 'search', 'url', 'color']`
+    - `placeholder` (`string`) - the placeholder text for the input
+    - `disabled` (`boolean, optional`) - adds the disabled property, preventing it from being selected. `False` by default
     """
 
     id: str = Field(min_length=1, max_length=15)
@@ -227,7 +232,7 @@ class InputOTP(Component, ShadcnUi):
     Parameters:
     - `num_inputs` (`int`) - the length of the OTP. E.g., 6 = 6 input slots. Must be a minimum of `1`
     - `num_groups` (`int, optional`) - the number of slot groups. E.g., `InputOTP(num_inputs=6, num_groups=2)` -> 2 groups of 3 input slots. `1` by default
-    - `pattern` (`str, optional`) - a regex pattern to limit the OTP input values. Options include: `['digits_only', 'chars_only', 'digits_n_chars_only']` ([official patterns](https://github.com/guilhermerodz/input-otp/blob/master/packages/input-otp/src/regexp.ts)) or a `custom` variant. `None` by default
+    - `pattern` (`string, optional`) - a regex pattern to limit the OTP input values. Options include: `['digits_only', 'chars_only', 'digits_n_chars_only']` ([official patterns](https://github.com/guilhermerodz/input-otp/blob/master/packages/input-otp/src/regexp.ts)) or a `custom` variant. `None` by default
 
     Examples:
     1. A basic OTP without a pattern.
@@ -342,8 +347,8 @@ class Label(Component, ShadcnUi):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Label component.
 
     Parameters:
-    - `name` (`str`) - an identifier for the component. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
-    - `text` (`str`) - the descriptive text to put into the label
+    - `name` (`string`) - an identifier for the component. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
+    - `text` (`string`) - the descriptive text to put into the label
     """
 
     name: str = Field(min_length=1, max_length=15)
@@ -449,7 +454,7 @@ class ScrollArea(Component, ShadcnUi):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) ScrollArea component.
 
     Parameters:
-    - `name` (`str`) - the name of the component
+    - `name` (`string`) - the name of the component
     """
 
 
@@ -458,7 +463,7 @@ class Select(Component, ShadcnUi):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Select component.
 
     Parameters:
-    - `name` (`str`) - the name of the component
+    - `name` (`string`) - the name of the component
     """
 
 
@@ -467,7 +472,7 @@ class Slider(Component, ShadcnUi):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Slider component.
 
     Parameters:
-    - `name` (`str`) - the name of the component
+    - `name` (`string`) - the name of the component
     """
 
 
@@ -476,8 +481,8 @@ class Switch(Component, ShadcnUi):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Switch component.
 
     Parameters:
-    - `disabled` (`bool, optional`) - a flag for disabling the switch component. Default is `False`
-    - `read_only` (`bool, optional`) - a flag for making the switch read only. Default is `False`. Indicates that the element is not editable, but is otherwise operable. More information on [Read only](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-readonly)
+    - `disabled` (`boolean, optional`) - a flag for disabling the switch component. Default is `False`
+    - `read_only` (`boolean, optional`) - a flag for making the switch read only. Default is `False`. Indicates that the element is not editable, but is otherwise operable. More information on [Read only](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-readonly)
     """
 
     disabled: bool = False
@@ -489,7 +494,7 @@ class Tabs(Component, ShadcnUi):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Tabs component.
 
     Parameters:
-    - `name` (`str`) - the name of the component
+    - `name` (`string`) - the name of the component
     """
 
 
@@ -498,7 +503,7 @@ class Textarea(Component, ShadcnUi):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Textarea component.
 
     Parameters:
-    - `name` (`str`) - the name of the component
+    - `name` (`string`) - the name of the component
     """
 
 
@@ -507,7 +512,7 @@ class Toggle(Component, ShadcnUi):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Toggle component.
 
     Parameters:
-    - `name` (`str`) - the name of the component
+    - `name` (`string`) - the name of the component
     """
 
 
@@ -516,5 +521,5 @@ class ToggleGroup(Component, ShadcnUi):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) ToggleGroup component.
 
     Parameters:
-    - `name` (`str`) - the name of the component
+    - `name` (`string`) - the name of the component
     """

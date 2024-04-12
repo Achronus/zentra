@@ -1,7 +1,6 @@
 import re
-from typing import Any
 
-from pydantic import BaseModel, ConfigDict, PrivateAttr, ValidationInfo, field_validator
+from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, field_validator
 from pydantic_core import PydanticCustomError
 
 from cli.conf.format import name_from_camel_case
@@ -10,7 +9,7 @@ from cli.conf.types import LibraryNamePairs
 
 
 LOWER_CAMELCASE_WITH_DIGITS = r"^[a-z]+(?:[A-Z][a-z]*)*\d*$"
-CAPITALISED_CAMELCASE_WITH_DIGITS = r"^[A-Z][a-zA-Z0-9]*$"
+PASCALCASE_WITH_DIGITS = r"^[A-Z][a-zA-Z0-9]*$"
 LOWERCASE_SINGLE_WORD = r"^[a-z]+\b$"
 
 COMPONENT_FILTER_LIST = [
@@ -46,16 +45,16 @@ class Page(BaseModel):
     - `components` (`list[Component]`) - a list of page components
     """
 
-    name: str
+    name: str = Field(min_length=1)
     components: list[Component]
 
     @field_validator("name")
     def validate_id(cls, name: str) -> str:
-        if not has_valid_pattern(pattern=CAPITALISED_CAMELCASE_WITH_DIGITS, value=name):
+        if not has_valid_pattern(pattern=PASCALCASE_WITH_DIGITS, value=name):
             raise PydanticCustomError(
                 "string_pattern_mismatch",
-                "must be capitalised and camelCase",
-                dict(wrong_value=name, pattern=CAPITALISED_CAMELCASE_WITH_DIGITS),
+                "must be PascalCase",
+                dict(wrong_value=name, pattern=PASCALCASE_WITH_DIGITS),
             )
         return name
 

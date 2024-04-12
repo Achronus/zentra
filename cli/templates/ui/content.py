@@ -1,4 +1,4 @@
-from zentra.ui.control import Button, Checkbox, Collapsible
+from zentra.ui.control import Button, Checkbox, Collapsible, RadioButton, RadioGroup
 
 
 def checkbox_content(cb: Checkbox) -> list[str]:
@@ -61,3 +61,24 @@ def button_content(btn: Button) -> list[str]:
         return [f'<Link href="{btn.url}">', btn.text, "</Link>"]
 
     return [btn.text]
+
+
+def radio_button_content(rb: RadioButton) -> list[str]:
+    """Returns a list of strings for the RadioButton content based on the components attributes."""
+    return [
+        '<div className="flex items-center space-x-2">',
+        f'<RadioGroupItem value="{rb.value}" id="{rb.id}" />',
+        f'<Label htmlFor="{rb.id}">',
+        rb.text,
+        "</Label>",
+        "</div>",
+    ]
+
+
+def radio_group_content(rg: RadioGroup) -> list[str]:
+    """Returns a list of strings for the RadioGroup content based on the components attributes."""
+    content = []
+    for rb in rg.items:
+        content.extend(radio_button_content(rb))
+
+    return content

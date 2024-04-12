@@ -58,3 +58,8 @@ LABEL_VALID_VALS = {
     "attributes": 'htmlFor="terms"',
     "content": '<Label htmlFor="terms">\nAccept terms and conditions.\n</Label>',
 }
+
+RADIO_GROUP_VALID_VALS = {
+    "attributes": 'defaultValue="comfortable"',
+    "content": '<RadioGroup defaultValue="comfortable">\n<div className="flex items-center space-x-2">\n<RadioGroupItem value="default" id="r1" />\n<Label htmlFor="r1">\nDefault\n</Label>\n</div>\n<div className="flex items-center space-x-2">\n<RadioGroupItem value="comfortable" id="r2" />\n<Label htmlFor="r2">\nComfortable\n</Label>\n</div>\n<div className="flex items-center space-x-2">\n<RadioGroupItem value="compact" id="r3" />\n<Label htmlFor="r3">\nCompact\n</Label>\n</div>\n</RadioGroup>',
+}

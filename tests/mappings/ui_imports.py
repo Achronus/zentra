@@ -14,4 +14,5 @@ VALID_IMPORTS = {
         "custom_pattern": 'import { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator } from "@/components/ui/input-otp"',
     },
     "label": 'import { Label } from "@/components/ui/label"',
+    "radio_group": 'import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"\nimport { Label } from "@/components/ui/label"',
 }

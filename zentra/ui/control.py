@@ -355,9 +355,44 @@ class Label(Component, ShadcnUi):
             raise PydanticCustomError(
                 "string_pattern_mismatch",
                 "must be lowercase or camelCase",
-                dict(wrong_value=id, pattern=LOWER_CAMELCASE_WITH_DIGITS),
+                dict(wrong_value=name, pattern=LOWER_CAMELCASE_WITH_DIGITS),
             )
         return name
+
+
+class RadioButton(Component, ShadcnUi):
+    """
+    A helper Zentra model for the [shadcn/ui](https://ui.shadcn.com/) RadioGroup component. Cannot be used on its own, must be used inside a `RadioGroup`.
+
+    Parameters:
+    - `id` (`string`) - an identifier for the component. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
+    - `value` (`string`) - the value for the radio button. Up to a maximum of `30` characters. Must be `lowercase` and a `single word`
+    - `text` (`string`) - the text to display for the radio button
+    """
+
+    id: str = Field(min_length=1, max_length=15)
+    value: str = Field(min_length=1, max_length=30)
+    text: str = Field(min_length=1)
+
+    @field_validator("id")
+    def validate_id(cls, id: str) -> str:
+        if not has_valid_pattern(pattern=LOWER_CAMELCASE_WITH_DIGITS, value=id):
+            raise PydanticCustomError(
+                "string_pattern_mismatch",
+                "must be lowercase or camelCase",
+                dict(wrong_value=id, pattern=LOWER_CAMELCASE_WITH_DIGITS),
+            )
+        return id
+
+    @field_validator("value")
+    def validate_value(cls, value: str) -> str:
+        if not has_valid_pattern(pattern=LOWERCASE_SINGLE_WORD, value=value):
+            raise PydanticCustomError(
+                "string_pattern_mismatch",
+                "must be lowercase and a single word",
+                dict(wrong_value=value, pattern=LOWERCASE_SINGLE_WORD),
+            )
+        return value
 
 
 class RadioGroup(Component, ShadcnUi):
@@ -365,8 +400,48 @@ class RadioGroup(Component, ShadcnUi):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) RadioGroup component.
 
     Parameters:
-    - `name` (`str`) - the name of the component
+    - `items` (`list[RadioButton]`) - a list of `zentra.control.RadioButton`
+    - `default_value` (`string`) - the default value of the radio group. Must be a `value` assigned to a `RadioButton` in the `items` list. Must be `lowercase` and a `single word` and Up to a maximum of `30` characters
     """
+
+    items: list[RadioButton]
+    default_value: str = Field(min_length=1, max_length=30)
+
+    @field_validator("items")
+    def validate_items(cls, items: list[RadioButton]) -> list[RadioButton]:
+        if not items or len(items) == 0:
+            raise PydanticCustomError(
+                "missing_radio_button",
+                "must have at least one 'RadioButton'",
+                dict(wrong_value=items),
+            )
+        return items
+
+    @field_validator("default_value")
+    def validate_default_value(cls, default_value: str, info: ValidationInfo) -> str:
+        if not has_valid_pattern(pattern=LOWERCASE_SINGLE_WORD, value=default_value):
+            raise PydanticCustomError(
+                "string_pattern_mismatch",
+                "must be lowercase and a single word",
+                dict(wrong_value=default_value, pattern=LOWERCASE_SINGLE_WORD),
+            )
+
+        present = False
+        radio_buttons: list[RadioButton] = info.data.get("items")
+        if radio_buttons:
+            for rb in radio_buttons:
+                if rb.value == default_value:
+                    present = True
+                    break
+
+            if not present:
+                raise PydanticCustomError(
+                    "default_value_missing",
+                    f"""'value="{default_value}"' missing from 'items'. Provided -> \n    '{radio_buttons}'\n""",
+                    dict(wrong_value=default_value, items=radio_buttons),
+                )
+
+        return default_value
 
 
 class ScrollArea(Component, ShadcnUi):

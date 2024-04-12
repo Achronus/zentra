@@ -11,6 +11,8 @@ from cli.conf.types import LibraryNamePairs
 
 LOWER_CAMELCASE_WITH_DIGITS = r"^[a-z]+(?:[A-Z][a-z]*)*\d*$"
 CAPITALISED_CAMELCASE_WITH_DIGITS = r"^[A-Z][a-zA-Z0-9]*$"
+LOWERCASE_SINGLE_WORD = r"^[a-z]+\b$"
+
 COMPONENT_FILTER_LIST = [
     "FormField",
 ]

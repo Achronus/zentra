@@ -73,6 +73,15 @@ def label_details() -> ComponentDetails:
     )
 
 
+def radio_group_details() -> ComponentDetails:
+    return ComponentDetails(
+        library="ui",
+        filename="radio-group.jsx",
+        name="RadioGroup",
+        child_names=["RadioGroupItem"],
+    )
+
+
 def component_details() -> list[ComponentDetails]:
     return [
         button_details(),
@@ -83,6 +92,7 @@ def component_details() -> list[ComponentDetails]:
         input_otp_details(),
         label_details(),
         file_upload_details(),
+        radio_group_details(),
     ]
 
 
@@ -95,4 +105,5 @@ COMPONENT_DETAILS_MAPPING = {
     "input_otp": input_otp_details(),
     "label": label_details(),
     "file_upload": file_upload_details(),
+    "radio_group": radio_group_details(),
 }

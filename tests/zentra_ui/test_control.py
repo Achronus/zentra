@@ -25,6 +25,7 @@ from tests.mappings.ui_simple import (
     INPUT_VALID_VALS,
     INPUTOTP_VALID_VALS,
     LABEL_VALID_VALS,
+    RADIO_GROUP_VALID_VALS,
 )
 from zentra.core import Component
 from zentra.core.enums.ui import (
@@ -42,6 +43,8 @@ from zentra.ui.control import (
     Input,
     InputOTP,
     Label,
+    RadioButton,
+    RadioGroup,
 )
 
 
@@ -737,3 +740,92 @@ class TestLabel:
     @staticmethod
     def test_name_validation_camelcase():
         Label(name="termsConditions", text="Accept terms and conditions.")
+
+
+class TestRadioGroup:
+    @pytest.fixture
+    def radio_group(self) -> RadioGroup:
+        return RadioGroup(
+            default_value="comfortable",
+            items=[
+                RadioButton(id="r1", value="default", text="Default"),
+                RadioButton(id="r2", value="comfortable", text="Comfortable"),
+                RadioButton(id="r3", value="compact", text="Compact"),
+            ],
+        )
+
+    @pytest.fixture
+    def wrapper(self, radio_group: RadioGroup) -> SimpleComponentFuncWrapper:
+        return SimpleComponentFuncWrapper(
+            radio_group, COMPONENT_DETAILS_MAPPING["radio_group"]
+        )
+
+    @staticmethod
+    def test_attr_str(wrapper: SimpleComponentFuncWrapper):
+        wrapper.run("attributes", RADIO_GROUP_VALID_VALS["attributes"])
+
+    @staticmethod
+    def test_content_str(wrapper: SimpleComponentFuncWrapper):
+        wrapper.run("content", RADIO_GROUP_VALID_VALS["content"])
+
+    @staticmethod
+    def test_imports_str(wrapper: SimpleComponentFuncWrapper):
+        wrapper.run("imports", VALID_IMPORTS["radio_group"])
+
+    @staticmethod
+    def test_items_validation_missing_radio_button():
+        with pytest.raises(ValidationError):
+            RadioGroup(default_value="comfortable", items=[])
+
+    @staticmethod
+    def test_items_validation_missing_parameter():
+        with pytest.raises(ValidationError):
+            RadioGroup(default_value="comfortable")
+
+    @staticmethod
+    def test_default_value_validation_dashed():
+        with pytest.raises(ValidationError):
+            RadioGroup(
+                default_value="default-value",
+                items=[RadioButton(id="r1", value="default", text="Default")],
+            )
+
+    @staticmethod
+    def test_default_value_validation_uppercase():
+        with pytest.raises(ValidationError):
+            RadioGroup(
+                default_value="DEFAULT",
+                items=[RadioButton(id="r1", value="default", text="Default")],
+            )
+
+    @staticmethod
+    def test_default_value_validation_capitalise():
+        with pytest.raises(ValidationError):
+            RadioGroup(
+                default_value="Default",
+                items=[RadioButton(id="r1", value="default", text="Default")],
+            )
+
+    @staticmethod
+    def test_default_value_validation_camelcase():
+        with pytest.raises(ValidationError):
+            RadioGroup(
+                default_value="defaultValue",
+                items=[RadioButton(id="r1", value="default", text="Default")],
+            )
+
+    @staticmethod
+    def test_default_value_validation_two_words():
+        with pytest.raises(ValidationError):
+            RadioGroup(
+                default_value="default value",
+                items=[RadioButton(id="r1", value="default", text="Default")],
+            )
+
+    @staticmethod
+    def test_default_value_validation_missing_from_items():
+        with pytest.raises(ValidationError):
+            RadioGroup(
+                default_value="comfortable",
+                items=[RadioButton(id="r1", value="default", text="Default")],
+            )

@@ -9,11 +9,13 @@ from cli.templates.ui.content import (
     button_content,
     checkbox_content,
     collapsible_content,
+    radio_group_content,
 )
 from cli.templates.ui.imports import (
     button_imports,
     collapsible_imports,
     input_opt_imports,
+    radio_group_imports,
 )
 from cli.templates.ui.logic import calendar_logic, collapsible_logic
 from tests.templates.dummy import DummyIconButton
@@ -25,6 +27,7 @@ from zentra.ui.control import (
     IconButton,
     InputOTP,
     Label,
+    RadioGroup,
 )
 
 from pydantic import BaseModel
@@ -56,6 +59,7 @@ COMPONENT_ATTR_MAPPING = [
     (Collapsible, "name", lambda name: collapsible_attributes(name)),
     (InputOTP, "pattern", lambda pattern: input_otp_attributes(pattern)),
     (Label, "name", lambda name: [f'htmlFor="{name}"']),
+    (RadioGroup, "default_value", lambda dv: [f'defaultValue="{dv}"']),
 ]
 
 # (attribute_name, lambda_expression)
@@ -78,6 +82,7 @@ ADDITIONAL_IMPORTS_MAPPING = [
     (Button, "all", lambda btn: button_imports(btn)),
     (IconButton, "all", lambda btn: button_imports(btn)),
     (DummyIconButton, "all", lambda btn: button_imports(btn)),
+    (RadioGroup, "default_value", lambda _: radio_group_imports()),
 ]
 
 
@@ -85,6 +90,7 @@ COMPONENT_CONTENT_MAPPING = [
     (Checkbox, lambda cb: checkbox_content(cb)),
     (Collapsible, lambda comp: collapsible_content(comp)),
     (Button, lambda btn: button_content(btn)),
+    (RadioGroup, lambda rg: radio_group_content(rg)),
 ]
 
 

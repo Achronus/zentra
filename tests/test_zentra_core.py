@@ -1,4 +1,3 @@
-from pydantic import ValidationError
 import pytest
 from zentra.core import Zentra, Page, Component
 from zentra.ui import Form, FormField

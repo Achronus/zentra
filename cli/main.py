@@ -1,12 +1,15 @@
 import os
 import typer
-from cli.conf.constants import ZentaFilepaths, ZentraGeneratedFilepaths
+import warnings
 
-from cli.conf.constants import console
+from cli.conf.constants import ZentaFilepaths, ZentraGeneratedFilepaths, console
 from cli.conf.message import MSG_MAPPER, MessageHandler
 from cli.conf.storage import GeneratePathStorage
 from cli.tasks.setup import Setup
 from cli.tasks.generate import Generate
+
+
+warnings.filterwarnings("ignore", category=SyntaxWarning)
 
 
 app = typer.Typer(

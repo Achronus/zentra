@@ -42,7 +42,7 @@ class Page(BaseModel):
     A Zentra model for a single webpage of React components.
 
     Parameters:
-    - `name` (`str`) - the name of the page
+    - `name` (`string`) - the name of the page
     - `components` (`list[Component]`) - a list of page components
     """
 
@@ -95,19 +95,24 @@ class Page(BaseModel):
 class Zentra(BaseModel):
     """An application class for registering the components to create."""
 
-    pages: list[Page] = []
-    components: list[Component] = []
-    name_storage: BasicNameStorage = BasicNameStorage()
+    _pages = PrivateAttr(default=[])
+    _components = PrivateAttr(default=[])
+    _name_storage = PrivateAttr(default=BasicNameStorage())
 
-    @field_validator("pages", "components", "name_storage", mode="plain")
-    def prevent_init_editing(
-        cls, value: Any, info: ValidationInfo
-    ) -> PydanticCustomError:
-        raise PydanticCustomError(
-            "init_disabled",
-            f"custom initalisation disabled for '{info.field_name}'. Remove '{info.field_name}' argument",
-            dict(field_name=info.field_name, wrong_value=value),
-        )
+    @property
+    def pages(self) -> list[Page]:
+        """Stores a list of user created Pages found in the Zentra models folder."""
+        return self._pages
+
+    @property
+    def components(self) -> list[Component]:
+        """Stores a list of Zentra Components populated by the user in the Zentra models folder."""
+        return self._components
+
+    @property
+    def name_storage(self) -> BasicNameStorage:
+        """A storage container for the user defined Zentra pages and Component names."""
+        return self._name_storage
 
     def __set_type(
         self, component: BaseModel, valid_types: tuple[BaseModel, ...]
@@ -119,8 +124,8 @@ class Zentra(BaseModel):
     def register(self, components: list[Page | Component]) -> None:
         """Register a list of Zentra models to generate."""
         type_mapping: dict[BaseModel, list] = {
-            Page: self.pages,
-            Component: self.components,
+            Page: self._pages,
+            Component: self._components,
         }
         valid_types = tuple(type_mapping.keys())
 
@@ -133,7 +138,7 @@ class Zentra(BaseModel):
             comp_type = self.__set_type(component, valid_types)
             type_mapping[comp_type].append(component)
 
-        self.fill_storage(pages=self.pages)
+        self.fill_storage(pages=self._pages)
 
     def fill_storage(self, pages: list[Page]) -> None:
         """Populates page and component names into name storage."""
@@ -142,9 +147,9 @@ class Zentra(BaseModel):
         )
         component_names = [name for _, name in component_pairs]
 
-        self.name_storage.components = component_names
-        self.name_storage.pages = [page.name for page in pages]
-        self.name_storage.filenames = [
+        self._name_storage.components = component_names
+        self._name_storage.pages = [page.name for page in pages]
+        self._name_storage.filenames = [
             (folder, f"{name_from_camel_case(name)}.tsx")
             for folder, name in component_pairs
         ]
@@ -162,7 +167,7 @@ class Zentra(BaseModel):
         """
         component_names = set()
 
-        def recursive_extract(component):
+        def recursive_extract(component: Component):
             if isinstance(component, list):
                 for item in component:
                     recursive_extract(item)

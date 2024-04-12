@@ -74,14 +74,6 @@ class TestZentra:
         zentra.register([page])
         return zentra
 
-    def test_init(self, zentra: Zentra):
-        assert zentra.pages == []
-        assert zentra.components == []
-
-    def test_init_fail(self):
-        with pytest.raises(ValidationError):
-            Zentra(pages=["test"])
-
     def test_page_registration(self, zentra: Zentra):
         page1 = Page(
             name="Page1",

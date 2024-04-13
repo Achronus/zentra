@@ -54,3 +54,8 @@ class InputOTPPatterns(str, Enum):
     REGEXP_ONLY_DIGITS = "digits_only"
     REGEXP_ONLY_CHARS = "chars_only"
     REGEXP_ONLY_DIGITS_AND_CHARS = "digits_n_chars_only"
+
+
+class ScrollType(str, Enum):
+    VERTICAL = "vertical"
+    HORIZONTAL = "horizontal"

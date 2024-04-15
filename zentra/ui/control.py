@@ -1,10 +1,8 @@
 import re
-from typing import Any
 import requests
 
 from cli.conf.format import name_from_camel_case
 from zentra.core import (
-    LOWER_CAMELCASE_SINGLE_WORD,
     LOWER_CAMELCASE_WITH_DIGITS,
     LOWERCASE_SINGLE_WORD,
     Component,
@@ -17,6 +15,7 @@ from zentra.core.enums.ui import (
     IconButtonSize,
     InputOTPPatterns,
     InputTypes,
+    ScrollAreaData,
     ScrollType,
 )
 from zentra.ui import ShadcnUi
@@ -457,73 +456,20 @@ class ScrollArea(Component, ShadcnUi):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) ScrollArea component.
 
     Parameters:
-    - `core_content` (`string`) - the core content of the `ScrollArea`. If `data` is specified, applies it to the `map` function. Defined as a multi-line string that can be as basic as a string of text or a set of complicated `JSX`. Always required for the component. Remember to add existing Zentra components! Refer to the examples below for more info
-    - `content_container_styles` (`string, optional`) - an optional set of class tags to apply to a `div` container around the content inside the `ScrollArea` component. If present, adds a `div` tag automatically with the styles. `None` by default
-    - `content_above_core` (`string, optional`) - an optional JSX string added above the `core_content`. Useful when you want to add additional `JSX`, such as a header, above the `map` function. `None` by default
-    - `content_below_core` (`string, optional`) -an optional JSX string added below the `core_content`. Useful when you want to add additional `JSX` below the `map` function. `None` by default
-    - `data` (`tuple[string, string, list[dict[string, Any]]], optional`) - `None` by default. A tuple of the following items:
-      1. The name of the `data` object. E.g., 'works'. Must be `lowercase` or `camelCase` and a maximum of `30` characters
-      2. The map `parameter` name. E.g., 'artwork'. Must be `lowercase` or `camelCase` and a maximum of `30` characters
-      3. A list of dictionaries of information to pass into the scroll area that is iterated over using a `map` function. Each dictionary must have the same key values and values of the same type
+    - `content` (`string`) - the core content of the `ScrollArea`. If `data` is specified, applies it to the `map` function. Defined as a multi-line string that can be as basic as a string of text or a set of complicated `JSX`. Always required for the component. Remember to add existing Zentra components! Refer to the examples below for more info
+    - `container_styles` (`string, optional`) - an optional set of class tags to apply to a `div` container around the content inside the `ScrollArea` component. If present, adds a `div` tag automatically with the styles. `None` by default
+    - `above_map` (`string, optional`) - an optional JSX string added above the `content`. Useful when you want to add additional `JSX`, such as a header, above the `map` function when using the `data` attribute. `None` by default
+    - `below_map` (`string, optional`) -an optional JSX string added below the `content`. Useful when you want to add additional `JSX` below the `map` function when using the `data` attribute. `None` by default
+    - `data` (`ScrollAreaData, optional`) - A `ScrollAreaData` object containing the data `name`, the map `parameter` for iterating over each data item, and the data itself. `None` by default
     - `scroll_type` (`string, optional`) - the scroll axis. Valid options: `[horizontal, vertical]`. `vertical` by default
     """
 
-    core_content: str = Field(min_length=1)
-    content_container_styles: str = None
-    content_above_core: str = None
-    content_below_core: str = None
-    data: tuple[str, str, list[dict[str, Any]]] = None
+    content: str = Field(min_length=1)
+    container_styles: str = None
+    above_map: str = None
+    below_map: str = None
+    data: ScrollAreaData = None
     scroll_type: ScrollType = "vertical"
-
-    @field_validator("data")
-    def validate_data(
-        cls, data: tuple[str, str, list[dict[str, Any]]]
-    ) -> tuple[str, str, list[dict[str, Any]]]:
-        if data:
-            name, parameter, data_dict_list = data
-
-            def string_pattern_match(value: str, idx: int) -> bool:
-                result = has_valid_pattern(
-                    pattern=LOWER_CAMELCASE_SINGLE_WORD, value=value
-                )
-
-                if not result and len(value) <= 30:
-                    raise PydanticCustomError(
-                        "string_pattern_mismatch",
-                        f"position: {idx} -> '{value}'. Must be 'lowercase' or 'camelCase', a single word and a maximum of '30' characters\n",
-                        dict(wrong_value=value, pattern=LOWER_CAMELCASE_SINGLE_WORD),
-                    )
-
-                return value
-
-            name = string_pattern_match(value=name, idx=0)
-            parameter = string_pattern_match(value=parameter, idx=1)
-
-            if len(data_dict_list) == 0 or len(data_dict_list[0]) == 0:
-                raise PydanticCustomError(
-                    "missing_data",
-                    "No data exists in the list",
-                    dict(wrong_value=data_dict_list),
-                )
-            else:
-                reference_dict = data_dict_list[0]
-                for idx, d in enumerate(data_dict_list[1:], start=1):
-                    if set(d.keys()) != set(reference_dict.keys()):
-                        raise PydanticCustomError(
-                            "invalid_dictionary_keys",
-                            f"position: 2.{idx} -> '{d.keys()} != {reference_dict.keys()}'\n",
-                            dict(wrong_value=d, full_data=data_dict_list),
-                        )
-
-                    for key, value in reference_dict.items():
-                        if type(d[key]) != type(value):
-                            raise PydanticCustomError(
-                                "invalid_value_type",
-                                f"position: 2.{idx} -> '{type(d[key])} ({d[key]}) != {type(value)} ({value})'\n",
-                                dict(wrong_value=d, full_data=data_dict_list),
-                            )
-
-        return data
 
 
 class Select(Component, ShadcnUi):

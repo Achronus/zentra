@@ -464,7 +464,7 @@ class ScrollArea(Component, ShadcnUi):
     - `data` (`tuple[string, string, list[dict[string, Any]]], optional`) - `None` by default. A tuple of the following items:
       1. The name of the `data` object. E.g., 'works'. Must be `lowercase` or `camelCase` and a maximum of `30` characters
       2. The map `parameter` name. E.g., 'artwork'. Must be `lowercase` or `camelCase` and a maximum of `30` characters
-      3. A list of dictionaries of information to pass into the scroll area that is iterated over using a `map` function. Each dictionary must have the same key values and its values the same type
+      3. A list of dictionaries of information to pass into the scroll area that is iterated over using a `map` function. Each dictionary must have the same key values and values of the same type
     - `scroll_type` (`string, optional`) - the scroll axis. Valid options: `[horizontal, vertical]`. `vertical` by default
     """
 

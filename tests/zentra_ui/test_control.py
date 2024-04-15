@@ -18,15 +18,7 @@ from tests.mappings.ui_content import (
     ICON_BTN_VALID_CONTENT_WITHOUT_LINK,
 )
 from tests.mappings.ui_imports import VALID_IMPORTS
-from tests.mappings.ui_simple import (
-    CALENDAR_VALID_VALS,
-    CHECKBOX_VALID_VALS,
-    COLLAPSIBLE_VALID_VALS,
-    INPUT_VALID_VALS,
-    INPUTOTP_VALID_VALS,
-    LABEL_VALID_VALS,
-    RADIO_GROUP_VALID_VALS,
-)
+from tests.mappings.ui_simple import VALID_VALS_MAP
 from zentra.core import Component
 from zentra.core.enums.ui import (
     ButtonIconPosition,
@@ -337,19 +329,21 @@ class TestCalendar:
 
     @staticmethod
     def test_attr_str(wrapper: SimpleComponentFuncWrapper):
-        wrapper.run("attributes", CALENDAR_VALID_VALS["attributes"]["standard"])
+        wrapper.run("attributes", VALID_VALS_MAP["calendar"]["attributes"]["standard"])
 
     @staticmethod
     def test_attr_str_long_name(wrapper_long: SimpleComponentFuncWrapper):
-        wrapper_long.run("attributes", CALENDAR_VALID_VALS["attributes"]["long_name"])
+        wrapper_long.run(
+            "attributes", VALID_VALS_MAP["calendar"]["attributes"]["long_name"]
+        )
 
     @staticmethod
     def test_logic_str(wrapper: SimpleComponentFuncWrapper):
-        wrapper.run("logic", CALENDAR_VALID_VALS["logic"]["standard"])
+        wrapper.run("logic", VALID_VALS_MAP["calendar"]["logic"]["standard"])
 
     @staticmethod
     def test_logic_str_long_name(wrapper_long: SimpleComponentFuncWrapper):
-        wrapper_long.run("logic", CALENDAR_VALID_VALS["logic"]["long_name"])
+        wrapper_long.run("logic", VALID_VALS_MAP["calendar"]["logic"]["long_name"])
 
     @staticmethod
     def test_import_str(wrapper: SimpleComponentFuncWrapper):
@@ -357,11 +351,11 @@ class TestCalendar:
 
     @staticmethod
     def test_content_str(wrapper: SimpleComponentFuncWrapper):
-        wrapper.run("content", CALENDAR_VALID_VALS["content"]["standard"])
+        wrapper.run("content", VALID_VALS_MAP["calendar"]["content"]["standard"])
 
     @staticmethod
     def test_content_str_long_name(wrapper_long: SimpleComponentFuncWrapper):
-        wrapper_long.run("content", CALENDAR_VALID_VALS["content"]["long_name"])
+        wrapper_long.run("content", VALID_VALS_MAP["calendar"]["content"]["long_name"])
 
     @staticmethod
     def test_id_validation_whitespace():
@@ -418,12 +412,12 @@ class TestCheckbox:
 
     @staticmethod
     def test_attr_str(wrapper: SimpleComponentFuncWrapper):
-        wrapper.run("attributes", CHECKBOX_VALID_VALS["attributes"]["standard"])
+        wrapper.run("attributes", VALID_VALS_MAP["checkbox"]["attributes"]["standard"])
 
     @staticmethod
     def test_attr_str_disabled(wrapper_disabled: SimpleComponentFuncWrapper):
         wrapper_disabled.run(
-            "attributes", CHECKBOX_VALID_VALS["attributes"]["with_disabled"]
+            "attributes", VALID_VALS_MAP["checkbox"]["attributes"]["with_disabled"]
         )
 
     @staticmethod
@@ -432,11 +426,13 @@ class TestCheckbox:
 
     @staticmethod
     def test_content_str(wrapper: SimpleComponentFuncWrapper):
-        wrapper.run("content", CHECKBOX_VALID_VALS["content"]["standard"])
+        wrapper.run("content", VALID_VALS_MAP["checkbox"]["content"]["standard"])
 
     @staticmethod
     def test_content_str_disabled(wrapper_disabled: SimpleComponentFuncWrapper):
-        wrapper_disabled.run("content", CHECKBOX_VALID_VALS["content"]["with_disabled"])
+        wrapper_disabled.run(
+            "content", VALID_VALS_MAP["checkbox"]["content"]["with_disabled"]
+        )
 
     @staticmethod
     def test_id_validation_whitespace():
@@ -480,11 +476,11 @@ class TestCollapsible:
 
     @staticmethod
     def test_attr_str(wrapper: SimpleComponentFuncWrapper):
-        wrapper.run("attributes", COLLAPSIBLE_VALID_VALS["attributes"])
+        wrapper.run("attributes", VALID_VALS_MAP["collapsible"]["attributes"])
 
     @staticmethod
     def test_logic_str(wrapper: SimpleComponentFuncWrapper):
-        wrapper.run("logic", COLLAPSIBLE_VALID_VALS["logic"])
+        wrapper.run("logic", VALID_VALS_MAP["collapsible"]["logic"])
 
     @staticmethod
     def test_import_str(wrapper: SimpleComponentFuncWrapper):
@@ -492,7 +488,7 @@ class TestCollapsible:
 
     @staticmethod
     def test_content_str(wrapper: SimpleComponentFuncWrapper):
-        wrapper.run("content", COLLAPSIBLE_VALID_VALS["content"])
+        wrapper.run("content", VALID_VALS_MAP["collapsible"]["content"])
 
     @staticmethod
     def test_id_validation_whitespace():
@@ -562,12 +558,12 @@ class TestInput:
 
     @staticmethod
     def test_attr_str(wrapper: SimpleComponentFuncWrapper):
-        wrapper.run("attributes", INPUT_VALID_VALS["attributes"]["standard"])
+        wrapper.run("attributes", VALID_VALS_MAP["input"]["attributes"]["standard"])
 
     @staticmethod
     def test_attr_str_with_disabled(wrapper_disabled: SimpleComponentFuncWrapper):
         wrapper_disabled.run(
-            "attributes", INPUT_VALID_VALS["attributes"]["with_disabled"]
+            "attributes", VALID_VALS_MAP["input"]["attributes"]["with_disabled"]
         )
 
     @staticmethod
@@ -576,11 +572,13 @@ class TestInput:
 
     @staticmethod
     def test_content_str(wrapper: SimpleComponentFuncWrapper):
-        wrapper.run("content", INPUT_VALID_VALS["content"]["standard"])
+        wrapper.run("content", VALID_VALS_MAP["input"]["content"]["standard"])
 
     @staticmethod
     def test_content_str_with_disabled(wrapper_disabled: SimpleComponentFuncWrapper):
-        wrapper_disabled.run("content", INPUT_VALID_VALS["content"]["with_disabled"])
+        wrapper_disabled.run(
+            "content", VALID_VALS_MAP["input"]["content"]["with_disabled"]
+        )
 
     @staticmethod
     def test_id_validation_whitespace():
@@ -640,34 +638,38 @@ class TestInputOTP:
 
     @staticmethod
     def test_attr_str(wrapper: SimpleComponentFuncWrapper):
-        wrapper.run("attributes", INPUTOTP_VALID_VALS["attributes"]["standard"])
+        wrapper.run("attributes", VALID_VALS_MAP["input_otp"]["attributes"]["standard"])
 
     @staticmethod
     def test_attr_str_pattern(wrapper_pattern: SimpleComponentFuncWrapper):
-        wrapper_pattern.run("attributes", INPUTOTP_VALID_VALS["attributes"]["pattern"])
+        wrapper_pattern.run(
+            "attributes", VALID_VALS_MAP["input_otp"]["attributes"]["pattern"]
+        )
 
     @staticmethod
     def test_attr_str_custom_pattern(
         wrapper_custom_pattern: SimpleComponentFuncWrapper,
     ):
         wrapper_custom_pattern.run(
-            "attributes", INPUTOTP_VALID_VALS["attributes"]["custom_pattern"]
+            "attributes", VALID_VALS_MAP["input_otp"]["attributes"]["custom_pattern"]
         )
 
     @staticmethod
     def test_content_str(wrapper: SimpleComponentFuncWrapper):
-        wrapper.run("content", INPUTOTP_VALID_VALS["content"]["one_group"])
+        wrapper.run("content", VALID_VALS_MAP["input_otp"]["content"]["one_group"])
 
     @staticmethod
     def test_content_str_pattern(wrapper_pattern: SimpleComponentFuncWrapper):
-        wrapper_pattern.run("content", INPUTOTP_VALID_VALS["content"]["two_groups"])
+        wrapper_pattern.run(
+            "content", VALID_VALS_MAP["input_otp"]["content"]["two_groups"]
+        )
 
     @staticmethod
     def test_content_str_custom_pattern(
         wrapper_custom_pattern: SimpleComponentFuncWrapper,
     ):
         wrapper_custom_pattern.run(
-            "content", INPUTOTP_VALID_VALS["content"]["three_groups"]
+            "content", VALID_VALS_MAP["input_otp"]["content"]["three_groups"]
         )
 
     @staticmethod
@@ -708,11 +710,11 @@ class TestLabel:
 
     @staticmethod
     def test_attr_str(wrapper: SimpleComponentFuncWrapper):
-        wrapper.run("attributes", LABEL_VALID_VALS["attributes"])
+        wrapper.run("attributes", VALID_VALS_MAP["label"]["attributes"])
 
     @staticmethod
     def test_content_str(wrapper: SimpleComponentFuncWrapper):
-        wrapper.run("content", LABEL_VALID_VALS["content"])
+        wrapper.run("content", VALID_VALS_MAP["label"]["content"])
 
     @staticmethod
     def test_imports_str(wrapper: SimpleComponentFuncWrapper):
@@ -763,11 +765,11 @@ class TestRadioGroup:
 
     @staticmethod
     def test_attr_str(wrapper: SimpleComponentFuncWrapper):
-        wrapper.run("attributes", RADIO_GROUP_VALID_VALS["attributes"])
+        wrapper.run("attributes", VALID_VALS_MAP["radio_group"]["attributes"])
 
     @staticmethod
     def test_content_str(wrapper: SimpleComponentFuncWrapper):
-        wrapper.run("content", RADIO_GROUP_VALID_VALS["content"])
+        wrapper.run("content", VALID_VALS_MAP["radio_group"]["content"])
 
     @staticmethod
     def test_imports_str(wrapper: SimpleComponentFuncWrapper):

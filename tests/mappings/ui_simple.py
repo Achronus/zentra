@@ -64,6 +64,16 @@ RADIO_GROUP_VALID_VALS = {
     "content": '<RadioGroup defaultValue="comfortable">\n<div className="flex items-center space-x-2">\n<RadioGroupItem value="default" id="r1" />\n<Label htmlFor="r1">\nDefault\n</Label>\n</div>\n<div className="flex items-center space-x-2">\n<RadioGroupItem value="comfortable" id="r2" />\n<Label htmlFor="r2">\nComfortable\n</Label>\n</div>\n<div className="flex items-center space-x-2">\n<RadioGroupItem value="compact" id="r3" />\n<Label htmlFor="r3">\nCompact\n</Label>\n</div>\n</RadioGroup>',
 }
 
+SCROLL_AREA_VALID_VALS = {
+    "attributes": 'className="w-96 rounded-md border"',
+    "content": {
+        "simple": '<ScrollArea className="w-96 rounded-md border">\nThis is some text that is extremely simple.\n<ScrollBar orientation="vertical" />\n</ScrollArea>',
+        "vertical": '<ScrollArea className="w-96 rounded-md border">\n<div className="p-4">\n<h4 className="mb-4 text-sm font-medium leading-none">Tags</h4>\n{tags.map((tag) => (\n<>\n<div key={tag} className="text-sm">\n{tag}\n</div>\n<Separator className="my-2" />\n</>\n))}\n<div>Content below map</div>\n</div>\n<ScrollBar orientation="vertical" />\n</ScrollArea>',
+        "horizontal": '<ScrollArea className="w-96 rounded-md border">\n<div className="flex w-max space-x-4 p-4">\n{works.map((artwork) => (\n<figure key={artwork.artist} className="shrink-0">\n<div className="overflow-hidden rounded-md">\n<Image\nsrc={artwork.art}\nalt={`Photo by ${artwork.artist}`}\nclassName="aspect-[3/4] h-fit w-fit object-cover"\nwidth={300}\nheight={400}\n/>\n</div>\n<figcaption className="pt-2 text-xs text-muted-foreground">\nPhoto by{" "}\n<span className="font-semibold text-foreground">\n{artwork.artist}\n</span>\n</figcaption>\n</figure>\n))}\n</div>\n<ScrollBar orientation="horizontal" />\n</ScrollArea>',
+    },
+}
+
+
 VALID_VALS_MAP = {
     "calendar": CALENDAR_VALID_VALS,
     "checkbox": CHECKBOX_VALID_VALS,

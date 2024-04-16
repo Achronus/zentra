@@ -25,6 +25,7 @@ from zentra.core.enums.ui import (
     ButtonSize,
     ButtonVariant,
     IconButtonSize,
+    ScrollAreaData,
 )
 from zentra.ui.control import (
     Button,
@@ -835,23 +836,150 @@ class TestRadioGroup:
 
 
 class TestScrollArea:
+    @pytest.fixture
+    def scroll_area(self) -> ScrollArea:
+        return ScrollArea(content="This is some text that is extremely simple.")
+
+    @pytest.fixture
+    def scroll_area_vertical(self) -> ScrollArea:
+        return ScrollArea(
+            content="""
+            <>
+            <div key={tag} className="text-sm">
+                {tag}
+            </div>
+            <Separator className="my-2" />
+            </>
+            """,
+            container_styles="p-4",
+            above_map='<h4 className="mb-4 text-sm font-medium leading-none">Tags</h4>',
+            below_map="<div>Content below map</div>",
+            data=ScrollAreaData(
+                name="tags",
+                parameter="tag",
+                data=[
+                    {"tag": "v1.2.0-beta"},
+                    {"tag": "v1.2.0-alpha"},
+                ],
+            ),
+        )
+
+    @pytest.fixture
+    def scroll_area_horizontal(self) -> ScrollArea:
+        return ScrollArea(
+            content="""
+            <figure key={artwork.artist} className="shrink-0">
+              <div className="overflow-hidden rounded-md">
+                <Image
+                    src={artwork.art}
+                    alt={`Photo by ${artwork.artist}`}
+                    className="aspect-[3/4] h-fit w-fit object-cover"
+                    width={300}
+                    height={400}
+                />
+              </div>
+              <figcaption className="pt-2 text-xs text-muted-foreground">
+                Photo by{" "}
+                <span className="font-semibold text-foreground">
+                  {artwork.artist}
+                </span>
+              </figcaption>
+            </figure>
+            """,
+            container_styles="flex w-max space-x-4 p-4",
+            data=ScrollAreaData(
+                name="works",
+                parameter="artwork",
+                data=[{"artist": "Ornella Binni", "art": "http://example.com/"}],
+            ),
+            orientation="horizontal",
+        )
+
+    @pytest.fixture
+    def wrapper(self, scroll_area: ScrollArea) -> SimpleComponentFuncWrapper:
+        return SimpleComponentFuncWrapper(
+            scroll_area, COMPONENT_DETAILS_MAPPING["scroll_area"]
+        )
+
+    @pytest.fixture
+    def wrapper_vertical(
+        self, scroll_area_vertical: ScrollArea
+    ) -> SimpleComponentFuncWrapper:
+        return SimpleComponentFuncWrapper(
+            scroll_area_vertical, COMPONENT_DETAILS_MAPPING["scroll_area"]
+        )
+
+    @pytest.fixture
+    def wrapper_horizontal(
+        self, scroll_area_horizontal: ScrollArea
+    ) -> SimpleComponentFuncWrapper:
+        return SimpleComponentFuncWrapper(
+            scroll_area_horizontal, COMPONENT_DETAILS_MAPPING["scroll_area"]
+        )
+
+    @staticmethod
+    def test_attr_str(wrapper: SimpleComponentFuncWrapper):
+        wrapper.run("attributes", VALID_VALS_MAP["scroll_area"]["attributes"])
+
+    @staticmethod
+    def test_attr_str_vertical(wrapper_vertical: SimpleComponentFuncWrapper):
+        wrapper_vertical.run("attributes", VALID_VALS_MAP["scroll_area"]["attributes"])
+
+    @staticmethod
+    def test_attr_str_horizontal(wrapper_horizontal: SimpleComponentFuncWrapper):
+        wrapper_horizontal.run(
+            "attributes", VALID_VALS_MAP["scroll_area"]["attributes"]
+        )
+
+    @staticmethod
+    def test_content_str(wrapper: SimpleComponentFuncWrapper):
+        wrapper.run("content", VALID_VALS_MAP["scroll_area"]["content"]["simple"])
+
+    @staticmethod
+    def test_content_str_vertical(wrapper_vertical: SimpleComponentFuncWrapper):
+        wrapper_vertical.run(
+            "content", VALID_VALS_MAP["scroll_area"]["content"]["vertical"]
+        )
+
+    @staticmethod
+    def test_content_str_horizontal(wrapper_horizontal: SimpleComponentFuncWrapper):
+        wrapper_horizontal.run(
+            "content", VALID_VALS_MAP["scroll_area"]["content"]["horizontal"]
+        )
+
+    @staticmethod
+    def test_imports_str(wrapper: SimpleComponentFuncWrapper):
+        wrapper.run("imports", VALID_IMPORTS["scroll_area"])
+
+    @staticmethod
+    def test_imports_str_vertical(wrapper_vertical: SimpleComponentFuncWrapper):
+        wrapper_vertical.run("imports", VALID_IMPORTS["scroll_area"])
+
+    @staticmethod
+    def test_imports_str_horizontal(wrapper_horizontal: SimpleComponentFuncWrapper):
+        wrapper_horizontal.run("imports", VALID_IMPORTS["scroll_area"])
+
     @staticmethod
     def test_invalid_name_string():
         with pytest.raises(ValidationError):
             ScrollArea(
-                core_content='<div key={artwork.art} className="text-sm">\n{artwork.artist}\n</div>',
-                data=("WORKS", "artwork", [{"artist": "Ornella Binni", "art": "url"}]),
+                content='<div key={artwork.art} className="text-sm">\n{artwork.artist}\n</div>',
+                data=ScrollAreaData(
+                    name="WORKS",
+                    parameter="artwork",
+                    data=[{"artist": "Ornella Binni", "art": "url"}],
+                ),
             )
 
     @staticmethod
     def test_invalid_parameter_string():
         with pytest.raises(ValidationError):
             ScrollArea(
-                core_content='<div key={artwork.art} className="text-sm">\n{artwork.artist}\n</div>',
-                data=(
-                    "works",
-                    "amazing artworks",
-                    [{"artist": "Ornella Binni", "art": "url"}],
+                content='<div key={artwork.art} className="text-sm">\n{artwork.artist}\n</div>',
+                data=ScrollAreaData(
+                    name="works",
+                    parameter="amazing artworks",
+                    data=[{"artist": "Ornella Binni", "art": "url"}],
                 ),
             )
 
@@ -859,27 +987,27 @@ class TestScrollArea:
     def test_data_dict_list_missing1():
         with pytest.raises(ValidationError):
             ScrollArea(
-                core_content='<div key={artwork.art} className="text-sm">\n{artwork.artist}\n</div>',
-                data=("works", "artwork", []),
+                content='<div key={artwork.art} className="text-sm">\n{artwork.artist}\n</div>',
+                data=ScrollAreaData(name="works", parameter="artwork", data=[]),
             )
 
     @staticmethod
     def test_data_dict_list_missing2():
         with pytest.raises(ValidationError):
             ScrollArea(
-                core_content='<div key={artwork.art} className="text-sm">\n{artwork.artist}\n</div>',
-                data=("works", "artwork", [{}]),
+                content='<div key={artwork.art} className="text-sm">\n{artwork.artist}\n</div>',
+                data=ScrollAreaData(name="works", parameter="artwork", data=[{}]),
             )
 
     @staticmethod
     def test_data_dict_list_invalid_keys():
         with pytest.raises(ValidationError):
             ScrollArea(
-                core_content='<div key={artwork.art} className="text-sm">\n{artwork.artist}\n</div>',
-                data=(
-                    "works",
-                    "amazing artworks",
-                    [
+                content='<div key={artwork.art} className="text-sm">\n{artwork.artist}\n</div>',
+                data=ScrollAreaData(
+                    name="works",
+                    parameter="amazing artworks",
+                    data=[
                         {"artist": "Ornella Binni", "art": "url"},
                         {"artist": "Ornella Binni", "test": "url"},
                     ],
@@ -890,11 +1018,11 @@ class TestScrollArea:
     def test_data_dict_list_invalid_value_types():
         with pytest.raises(ValidationError):
             ScrollArea(
-                core_content='<div key={artwork.art} className="text-sm">\n{artwork.artist}\n</div>',
-                data=(
-                    "works",
-                    "amazing artworks",
-                    [
+                content='<div key={artwork.art} className="text-sm">\n{artwork.artist}\n</div>',
+                data=ScrollAreaData(
+                    name="works",
+                    parameter="amazing artworks",
+                    data=[
                         {"artist": "Ornella Binni", "art": "url"},
                         {"artist": 1, "art": "url"},
                     ],

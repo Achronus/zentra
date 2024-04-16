@@ -1,4 +1,11 @@
-from zentra.ui.control import Button, Checkbox, Collapsible, RadioButton, RadioGroup
+from zentra.ui.control import (
+    Button,
+    Checkbox,
+    Collapsible,
+    RadioButton,
+    RadioGroup,
+    ScrollArea,
+)
 
 
 def checkbox_content(cb: Checkbox) -> list[str]:
@@ -81,4 +88,41 @@ def radio_group_content(rg: RadioGroup) -> list[str]:
     for rb in rg.items:
         content.extend(radio_button_content(rb))
 
+    return content
+
+
+def scroll_area_content(sa: ScrollArea) -> list[str]:
+    """Returns a list of strings for the ScrollArea content based on the components attributes."""
+    content = []
+
+    def whitespace_stripper(div_str: str) -> list[str]:
+        items: list[str] = div_str.split("\n")
+        return [item.strip() for item in items]
+
+    def map_wrapper(content: list[str]) -> list[str]:
+        content = whitespace_stripper(content)
+
+        if sa.data:
+            content.insert(0, "{" + f"{sa.data.name}.map(({sa.data.parameter}) => (")
+            content.append("))}")
+
+        return content
+
+    def container_wrapper(content: list[str], styles: str) -> list[str]:
+        if sa.container_styles:
+            content.insert(0, f'<div className="{styles}">')
+            content.append("</div>")
+
+        return content
+
+    if sa.above_map:
+        content.extend(whitespace_stripper(sa.above_map))
+
+    content.extend(map_wrapper(sa.content))
+
+    if sa.below_map:
+        content.extend(whitespace_stripper(sa.below_map))
+
+    content = container_wrapper(content, sa.container_styles)
+    content.extend([f'<ScrollBar orientation="{sa.orientation}" />'])
     return content

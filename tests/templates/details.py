@@ -82,6 +82,15 @@ def radio_group_details() -> ComponentDetails:
     )
 
 
+def scroll_area_details() -> ComponentDetails:
+    return ComponentDetails(
+        library="ui",
+        filename="scroll-area.jsx",
+        name="ScrollArea",
+        child_names=["ScrollBar"],
+    )
+
+
 def component_details() -> list[ComponentDetails]:
     return [
         button_details(),
@@ -93,6 +102,7 @@ def component_details() -> list[ComponentDetails]:
         label_details(),
         file_upload_details(),
         radio_group_details(),
+        scroll_area_details(),
     ]
 
 
@@ -106,4 +116,5 @@ COMPONENT_DETAILS_MAPPING = {
     "label": label_details(),
     "file_upload": file_upload_details(),
     "radio_group": radio_group_details(),
+    "scroll_area": scroll_area_details(),
 }

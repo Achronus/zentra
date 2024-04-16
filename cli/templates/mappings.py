@@ -10,6 +10,7 @@ from cli.templates.ui.content import (
     checkbox_content,
     collapsible_content,
     radio_group_content,
+    scroll_area_content,
 )
 from cli.templates.ui.imports import (
     button_imports,
@@ -28,6 +29,7 @@ from zentra.ui.control import (
     InputOTP,
     Label,
     RadioGroup,
+    ScrollArea,
 )
 
 from pydantic import BaseModel
@@ -60,6 +62,7 @@ COMPONENT_ATTR_MAPPING = [
     (InputOTP, "pattern", lambda pattern: input_otp_attributes(pattern)),
     (Label, "name", lambda name: [f'htmlFor="{name}"']),
     (RadioGroup, "default_value", lambda dv: [f'defaultValue="{dv}"']),
+    (ScrollArea, "content", lambda _: ['className="w-96 rounded-md border"']),
 ]
 
 # (attribute_name, lambda_expression)
@@ -91,6 +94,7 @@ COMPONENT_CONTENT_MAPPING = [
     (Collapsible, lambda comp: collapsible_content(comp)),
     (Button, lambda btn: button_content(btn)),
     (RadioGroup, lambda rg: radio_group_content(rg)),
+    (ScrollArea, lambda sa: scroll_area_content(sa)),
 ]
 
 

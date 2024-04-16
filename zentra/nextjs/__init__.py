@@ -1,0 +1,196 @@
+from pydantic_core import PydanticCustomError
+from zentra.core import LOWER_CAMELCASE_SINGLE_WORD, Component, has_valid_pattern
+from zentra.core.enums.ui import LibraryType
+
+from pydantic import BaseModel, Field, field_validator
+
+
+class NextJs:
+    """A Zentra model for all [NextJS](https://nextjs.org/docs/app/api-reference/components) components."""
+
+    @property
+    def library(self) -> str:
+        return LibraryType.NEXTJS.value
+
+
+class Url(BaseModel, NextJs):
+    """
+    A model for the [NextJS URL object](https://nextjs.org/docs/app/api-reference/components/link#with-url-object) used within the [NextJS Link](https://nextjs.org/docs/app/api-reference/components/link) component.
+
+    Parameter:
+    - `pathname` (`string`) - the name of the route to link to. Can be predefined (e.g., `/about`) or dynamic (e.g., `/blog/[slug]`). Must start with a `/`
+    - `query` (`dict[string, string]`) - a dictionary object containing the query parameters and values assigned to them. Start values with a `$` to indicate they are a function parameter. Otherwise, they are treated as a static value
+
+    Example usage:
+    1. A predefined route (`/about?name=test`).
+    ```python
+    from zentra.nextjs import Url
+
+    Url(pathname="/about", query={'name': 'test'})
+    ```
+    JSX equivalent ->
+    ```jsx
+    {{
+        pathname: '/about',
+        query: { name: 'test' },
+    }}
+    ```
+
+    2. A dynamic route (`/blog/my-post`)
+    ```python
+    Url(pathname="/blog/[slug]", query={'slug': 'my-post'})
+    ```
+    JSX equivalent ->
+    ```jsx
+    {{
+        pathname: '/blog/[slug]',
+        query: { slig: 'my-post' },
+    }}
+    ```
+
+    3. A predefined route with a function parameter (`/about?name={name}`)
+    ```python
+    from zentra.nextjs import Url
+
+    Url(pathname="/about", query={'name': '$name'})
+    ```
+    JSX equivalent ->
+    ```jsx
+    {{
+        pathname: '/about',
+        query: { name: name },
+    }}
+    ```
+    """
+
+    pathname: str
+    query: dict[str, str]
+
+    @field_validator("pathname")
+    def validate_pathname(cls, pathname: str) -> str:
+        if pathname[0] != "/":
+            raise PydanticCustomError(
+                "invalid_string",
+                "must start with a '/'",
+                dict(wrong_value=pathname),
+            )
+        return pathname
+
+
+class StaticImage(BaseModel, NextJs):
+    """
+    A model for [NextJS local images] used within the [NextJS Image](https://nextjs.org/docs/app/api-reference/components/image) component.
+
+    Parameter:
+    - `name` (`string`) - the import variable name for the image. Must be `lowercase` or `camelCase`, a `single world` and up to a maximum of `30` characters
+    - `path` (`string`) - the import path to the image. E.g., `'./me.png'`
+
+    Example usage:
+    1. A profile picture.
+    ```python
+    from zentra.nextjs import StaticImage
+
+    StaticImage(name='profilePic', path='./me.png')
+    ```
+    JSX equivalent ->
+    ```jsx
+    import Image from 'next/image'
+    import profilePic from './me.png'
+
+    <Image src={profilePic} />
+    ```
+    """
+
+    name: str = Field(min_length=1, max_length=30)
+    path: str = Field(min_length=1)
+
+    @field_validator("name")
+    def validate_import_name(cls, name: str) -> str:
+        if not has_valid_pattern(pattern=LOWER_CAMELCASE_SINGLE_WORD, value=name):
+            raise PydanticCustomError(
+                "string_pattern_mismatch",
+                "must be 'lowercase' or 'camelCase', a 'single word' and a maximum of '30' characters",
+                dict(wrong_value=name, pattern=LOWER_CAMELCASE_SINGLE_WORD),
+            )
+
+        return name
+
+
+class Image(Component, NextJs):
+    """
+    A Zentra model for the [NextJS Image](https://nextjs.org/docs/app/api-reference/components/image) component.
+
+    Parameter:
+    - `src` (`string | zentra.nextjs.StaticImage`) - a path string to an image, such as an absolute external URL or an internal path depending on the [loader](https://nextjs.org/docs/app/api-reference/components/image#loader) prop (attribute), or a statically imported image file represented by the `StaticImage` model
+    - `width` (`integer`) - a static width for the image
+    - `height` (`integer`) - a static height for the image
+    - `alt` (`string`) - an `alt` tag used to describe the image for screen readers and search engines. Also, acts as fallback text if the image is disabled, errors, or fails to load
+
+    Example Usage:
+    1. A statically imported local image.
+    ```python
+    from zentra.nextjs import Image, StaticImage
+
+    Image(src=StaticImage(name='profilePic', path='./me.png'), width=500, height=500, alt='Picture of the author')
+    ```
+    JSX equivalent ->
+    ```jsx
+    import Image from 'next/image'
+    import profilePic from './me.png'
+
+    <Image
+        src={profilePic}
+        width={500}
+        height={500}
+        alt="Picture of the author"
+    />
+    ```
+
+    2. Using a remote image or path string.
+        1. A statically imported local image.
+    ```python
+    from zentra.nextjs import Image
+
+    Image(src='https://s3.amazonaws.com/my-bucket/profile.png', width=500, height=500, alt='Picture of the author')
+    ```
+    JSX equivalent ->
+    ```jsx
+    import Image from 'next/image'
+
+    <Image
+        src="https://s3.amazonaws.com/my-bucket/profile.png"
+        width={500}
+        height={500}
+        alt="Picture of the author"
+    />
+    ```
+    """
+
+    src: str | StaticImage
+    width: int
+    height: int
+    alt: str
+
+
+class Link(Component, NextJs):
+    """
+    A Zentra model for the [NextJS Link](https://nextjs.org/docs/app/api-reference/components/link) component.
+
+    Parameters:
+    - `href` (`string | zentra.nextjs.Url`) - a path or URL to navigate to, or a `zentra.nextjs.Url` object
+    - `styles` (`string, optional`) - a set of optional CSS styles. Automatically assigns them to a `className` attribute. `None` by default
+    - `target` (`string, optional`) - a target for the URL such as `_blank` for a new tab. `None` by default
+    - `replace` (`boolean, optional`) - a boolean flag for enabling replacement of the current history state instead of adding a new URL into the [browser's history](https://developer.mozilla.org/en-US/docs/Web/API/History_API) stack. `False` by default
+    - `scroll` (`boolean, optional`) - a boolean flag for setting the scroll behaviour. When `True` links will scroll to the top of a new route or maintain its scroll position for backwards and forwards navigation. When `False` links will `not` scroll to the top of the page. `True` by default
+    - `prefetch` (`boolean, optional`) - a boolean flag for prefetching behaviour. Happens when a `Link` component enters the user's viewport (initially or through scroll). Involves loading the linked route (`href`) and its data in the background to improve the performance of the client-side navigations. Only enabled during production. `None` by default. Options:
+      1. `None` - prefetching depends on whether the route is `static` or `dynamic`. For `static` routes, the full route is prefetched (including all its data). For `dynamic` routes, we prefetch the partial route down to the nearest [loading.js](https://nextjs.org/docs/app/building-your-application/routing/loading-ui-and-streaming#instant-loading-states) segment boundary
+      2. `True` - the full route is prefetched for both static and dynamic routes
+      3. `False` - prefetching never happens on hover or when entering the viewport
+    """
+
+    href: str | Url
+    styles: str = None
+    target: str = None
+    replace: bool = False
+    scroll: bool = True
+    prefetch: bool = None

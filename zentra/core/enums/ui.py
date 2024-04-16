@@ -10,6 +10,7 @@ from zentra.core import LOWER_CAMELCASE_SINGLE_WORD, has_valid_pattern
 class LibraryType(str, Enum):
     SHADCNUI = "ui"
     UPLOADTHING = "uploadthing"
+    NEXTJS = "nextjs"
 
 
 class ButtonVariant(str, Enum):

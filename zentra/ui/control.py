@@ -16,7 +16,7 @@ from zentra.core.enums.ui import (
     InputOTPPatterns,
     InputTypes,
     ScrollAreaData,
-    ScrollType,
+    Orientation,
 )
 from zentra.ui import ShadcnUi
 
@@ -461,7 +461,7 @@ class ScrollArea(Component, ShadcnUi):
     - `above_map` (`string, optional`) - an optional JSX string added above the `content`. Useful when you want to add additional `JSX`, such as a header, above the `map` function when using the `data` attribute. `None` by default
     - `below_map` (`string, optional`) -an optional JSX string added below the `content`. Useful when you want to add additional `JSX` below the `map` function when using the `data` attribute. `None` by default
     - `data` (`ScrollAreaData, optional`) - A `ScrollAreaData` object containing the data `name`, the map `parameter` for iterating over each data item, and the data itself. `None` by default
-    - `scroll_type` (`string, optional`) - the scroll axis. Valid options: `[horizontal, vertical]`. `vertical` by default
+    - `orientation` (`string, optional`) - the orientation of the scroll axis. Valid options: `[horizontal, vertical]`. `vertical` by default
     """
 
     content: str = Field(min_length=1)
@@ -469,7 +469,7 @@ class ScrollArea(Component, ShadcnUi):
     above_map: str = None
     below_map: str = None
     data: ScrollAreaData = None
-    scroll_type: ScrollType = "vertical"
+    orientation: Orientation = "vertical"
 
 
 class Select(Component, ShadcnUi):

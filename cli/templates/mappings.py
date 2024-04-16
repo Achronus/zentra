@@ -119,14 +119,16 @@ class JSXMappings(BaseModel):
     wrappers: dict[str, str]
 
 
-JSX_MAPPINGS = JSXMappings(
-    common_attrs=COMMON_ATTR_MAPPING,
-    component_attrs=COMPONENT_ATTR_MAPPING,
-    common_content=COMMON_CONTENT_MAPPING,
-    component_content=COMPONENT_CONTENT_MAPPING,
-    common_logic=COMMON_LOGIC_MAPPING,
-    use_client_map=USE_CLIENT_COMPONENTS,
-    use_state_map=USE_STATE_COMPONENTS,
-    additional_imports=ADDITIONAL_IMPORTS_MAPPING,
-    wrappers=COMPONENTS_TO_WRAP,
-)
+MAPPING_DICT = {
+    "common_attrs": COMMON_ATTR_MAPPING,
+    "component_attrs": COMPONENT_ATTR_MAPPING,
+    "common_content": COMMON_CONTENT_MAPPING,
+    "component_content": COMPONENT_CONTENT_MAPPING,
+    "common_logic": COMMON_LOGIC_MAPPING,
+    "use_client_map": USE_CLIENT_COMPONENTS,
+    "use_state_map": USE_STATE_COMPONENTS,
+    "additional_imports": ADDITIONAL_IMPORTS_MAPPING,
+    "wrappers": COMPONENTS_TO_WRAP,
+}
+
+JSX_MAPPINGS = JSXMappings(**MAPPING_DICT)

@@ -125,13 +125,14 @@ class Image(Component, NextJs):
     - `width` (`integer`) - a static width for the image
     - `height` (`integer`) - a static height for the image
     - `alt` (`string`) - an `alt` tag used to describe the image for screen readers and search engines. Also, acts as fallback text if the image is disabled, errors, or fails to load
+    - `styles` (`string, optional`) - a set of optional CSS styles. Automatically assigns them to a `className` attribute. `None` by default
 
     Example Usage:
     1. A statically imported local image.
     ```python
     from zentra.nextjs import Image, StaticImage
 
-    Image(src=StaticImage(name='profilePic', path='./me.png'), width=500, height=500, alt='Picture of the author')
+    Image(src=StaticImage(name='profilePic', path='./me.png'), width=500, height=500, alt='Picture of the author', styles="aspect-[3/4] h-fit w-fit object-cover")
     ```
     JSX equivalent ->
     ```jsx
@@ -143,6 +144,7 @@ class Image(Component, NextJs):
         width={500}
         height={500}
         alt="Picture of the author"
+        className="aspect-[3/4] h-fit w-fit object-cover"
     />
     ```
 
@@ -170,6 +172,7 @@ class Image(Component, NextJs):
     width: int
     height: int
     alt: str
+    styles: str = None
 
 
 class Link(Component, NextJs):

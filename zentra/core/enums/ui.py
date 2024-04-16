@@ -109,28 +109,15 @@ class ScrollAreaData(BaseModel):
 
         return data
 
-    @field_validator("name")
-    def validate_name(cls, name: str) -> str:
-        result = has_valid_pattern(pattern=LOWER_CAMELCASE_SINGLE_WORD, value=name)
+    @field_validator("name", "parameter")
+    def validate_name_parameter(cls, v: str) -> str:
+        result = has_valid_pattern(pattern=LOWER_CAMELCASE_SINGLE_WORD, value=v)
 
         if not result:
             raise PydanticCustomError(
                 "string_pattern_mismatch",
-                f"'{name}'. Must be 'lowercase' or 'camelCase', a single word and a maximum of '30' characters\n",
-                dict(wrong_value=name, pattern=LOWER_CAMELCASE_SINGLE_WORD),
+                f"'{v}'. Must be 'lowercase' or 'camelCase', a single word and a maximum of '30' characters\n",
+                dict(wrong_value=v, pattern=LOWER_CAMELCASE_SINGLE_WORD),
             )
 
-        return name
-
-    @field_validator("parameter")
-    def validate_parameter(cls, parameter: str) -> str:
-        result = has_valid_pattern(pattern=LOWER_CAMELCASE_SINGLE_WORD, value=parameter)
-
-        if not result:
-            raise PydanticCustomError(
-                "string_pattern_mismatch",
-                f"'{parameter}'. Must be 'lowercase' or 'camelCase', a single word and a maximum of '30' characters\n",
-                dict(wrong_value=parameter, pattern=LOWER_CAMELCASE_SINGLE_WORD),
-            )
-
-        return parameter
+        return v

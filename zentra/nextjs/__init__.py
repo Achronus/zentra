@@ -121,10 +121,10 @@ class Image(Component, NextJs):
     A Zentra model for the [NextJS Image](https://nextjs.org/docs/app/api-reference/components/image) component.
 
     Parameter:
-    - `src` (`string | zentra.nextjs.StaticImage`) - a path string to an image, such as an absolute external URL or an internal path depending on the [loader](https://nextjs.org/docs/app/api-reference/components/image#loader) prop (attribute), or a statically imported image file represented by the `StaticImage` model
+    - `src` (`string | zentra.nextjs.StaticImage`) - a path string to an image, such as an absolute external URL or a statically imported image file represented by the `StaticImage` model. Can also be a parameter, signified by a `$` at the start of the parameter name. This is useful when using the `Image` inside an `iterable` function like `map`
     - `width` (`integer`) - a static width for the image
     - `height` (`integer`) - a static height for the image
-    - `alt` (`string`) - an `alt` tag used to describe the image for screen readers and search engines. Also, acts as fallback text if the image is disabled, errors, or fails to load
+    - `alt` (`string`) - an `alt` tag used to describe the image for screen readers and search engines. Also, acts as fallback text if the image is disabled, errors, or fails to load. Can also include parameters, signified by a `$` at the start of the parameter name. This is useful when using the `Image` inside an `iterable` function like `map`
     - `styles` (`string, optional`) - a set of optional CSS styles. Automatically assigns them to a `className` attribute. `None` by default
 
     Example Usage:
@@ -149,7 +149,6 @@ class Image(Component, NextJs):
     ```
 
     2. Using a remote image or path string.
-        1. A statically imported local image.
     ```python
     from zentra.nextjs import Image
 
@@ -166,6 +165,24 @@ class Image(Component, NextJs):
         alt="Picture of the author"
     />
     ```
+
+    3. Using parameters inside src and alt.
+    ```python
+    from zentra.nextjs import Image
+
+    Image(src='$artwork.art', width=500, height=500, alt='Picture of the $author $name')
+    ```
+    JSX equivalent ->
+    ```jsx
+    import Image from 'next/image'
+
+    <Image
+        src={artwork.art}
+        width={500}
+        height={500}
+        alt={`Picture of the ${author} ${name}`}
+    />
+    ```
     """
 
     src: str | StaticImage
@@ -173,6 +190,8 @@ class Image(Component, NextJs):
     height: int
     alt: str
     styles: str = None
+
+    # TODO: add optional attributes such as loader
 
 
 class Link(Component, NextJs):

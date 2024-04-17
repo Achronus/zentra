@@ -1,5 +1,4 @@
-from dataclasses import Field
-from pydantic import field_validator
+from pydantic import field_validator, Field
 from pydantic_core import PydanticCustomError
 
 from zentra.core import LOWER_CAMELCASE_SINGLE_WORD, Component, has_valid_pattern

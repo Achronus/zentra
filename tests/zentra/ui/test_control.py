@@ -25,8 +25,10 @@ from zentra.core.enums.ui import (
     ButtonSize,
     ButtonVariant,
     IconButtonSize,
-    ScrollAreaData,
 )
+from zentra.core.html import Div, FigCaption, Figure, HTMLContent
+from zentra.core.js import Map
+from zentra.nextjs import Image
 from zentra.ui.control import (
     Button,
     Calendar,
@@ -40,6 +42,7 @@ from zentra.ui.control import (
     RadioGroup,
     ScrollArea,
 )
+from zentra.ui.presentation import Separator
 
 
 @pytest.fixture
@@ -843,23 +846,26 @@ class TestScrollArea:
     @pytest.fixture
     def scroll_area_vertical(self) -> ScrollArea:
         return ScrollArea(
-            content="""
-            <>
-            <div key={tag} className="text-sm">
-                {tag}
-            </div>
-            <Separator className="my-2" />
-            </>
-            """,
-            container_styles="p-4",
-            above_map='<h4 className="mb-4 text-sm font-medium leading-none">Tags</h4>',
-            below_map="<div>Content below map</div>",
-            data=ScrollAreaData(
-                name="tags",
-                parameter="tag",
-                data=[
-                    {"tag": "v1.2.0-beta"},
-                    {"tag": "v1.2.0-alpha"},
+            styles="h-72 w-48 rounded-md border",
+            content=Div(
+                styles="p-4",
+                items=[
+                    HTMLContent(
+                        tag="h4",
+                        styles="mb-4 text-sm font-medium leading-none",
+                        text="Tags",
+                    ),
+                    Map(
+                        obj_name="tags",
+                        param_name="tag",
+                        content=Div(
+                            shell=True,
+                            items=[
+                                Div(key="$tag", styles="text-sm", items="$tag"),
+                                Separator(styles="my-2"),
+                            ],
+                        ),
+                    ),
                 ],
             ),
         )
@@ -867,30 +873,36 @@ class TestScrollArea:
     @pytest.fixture
     def scroll_area_horizontal(self) -> ScrollArea:
         return ScrollArea(
-            content="""
-            <figure key={artwork.artist} className="shrink-0">
-              <div className="overflow-hidden rounded-md">
-                <Image
-                    src={artwork.art}
-                    alt={`Photo by ${artwork.artist}`}
-                    className="aspect-[3/4] h-fit w-fit object-cover"
-                    width={300}
-                    height={400}
-                />
-              </div>
-              <figcaption className="pt-2 text-xs text-muted-foreground">
-                Photo by{" "}
-                <span className="font-semibold text-foreground">
-                  {artwork.artist}
-                </span>
-              </figcaption>
-            </figure>
-            """,
-            container_styles="flex w-max space-x-4 p-4",
-            data=ScrollAreaData(
-                name="works",
-                parameter="artwork",
-                data=[{"artist": "Ornella Binni", "art": "http://example.com/"}],
+            styles="w-96 whitespace-nowrap rounded-md border",
+            content=Div(
+                styles="flex w-max space-x-4 p-4",
+                items=Map(
+                    obj_name="works",
+                    param_name="artwork",
+                    content=Figure(
+                        key="$artwork.artist",
+                        styles="shrink-0",
+                        img_container_styles="overflow-hidden rounded-md",
+                        img=Image(
+                            src="$artwork.art",
+                            alt="Photo by $artwork.artist",
+                            styles="aspect-[3/4] h-fit w-fit object-cover",
+                            width=300,
+                            height=400,
+                        ),
+                        caption=FigCaption(
+                            styles="pt-2 text-xs text-muted-foreground",
+                            text=[
+                                'Photo by{" "}',
+                                HTMLContent(
+                                    tag="span",
+                                    styles="font-semibold text-foreground",
+                                    text="$artwork.artist",
+                                ),
+                            ],
+                        ),
+                    ),
+                ),
             ),
             orientation="horizontal",
         )
@@ -960,71 +972,16 @@ class TestScrollArea:
         wrapper_horizontal.run("imports", VALID_IMPORTS["scroll_area"])
 
     @staticmethod
-    def test_invalid_name_string():
-        with pytest.raises(ValidationError):
-            ScrollArea(
-                content='<div key={artwork.art} className="text-sm">\n{artwork.artist}\n</div>',
-                data=ScrollAreaData(
-                    name="WORKS",
-                    parameter="artwork",
-                    data=[{"artist": "Ornella Binni", "art": "url"}],
-                ),
-            )
+    def test_type_str(wrapper: SimpleComponentFuncWrapper):
+        # wrapper.run("types",)
+        pass
 
     @staticmethod
-    def test_invalid_parameter_string():
-        with pytest.raises(ValidationError):
-            ScrollArea(
-                content='<div key={artwork.art} className="text-sm">\n{artwork.artist}\n</div>',
-                data=ScrollAreaData(
-                    name="works",
-                    parameter="amazing artworks",
-                    data=[{"artist": "Ornella Binni", "art": "url"}],
-                ),
-            )
+    def test_type_str_vertical(wrapper_vertical: SimpleComponentFuncWrapper):
+        # wrapper.run("types",)
+        pass
 
     @staticmethod
-    def test_data_dict_list_missing1():
-        with pytest.raises(ValidationError):
-            ScrollArea(
-                content='<div key={artwork.art} className="text-sm">\n{artwork.artist}\n</div>',
-                data=ScrollAreaData(name="works", parameter="artwork", data=[]),
-            )
-
-    @staticmethod
-    def test_data_dict_list_missing2():
-        with pytest.raises(ValidationError):
-            ScrollArea(
-                content='<div key={artwork.art} className="text-sm">\n{artwork.artist}\n</div>',
-                data=ScrollAreaData(name="works", parameter="artwork", data=[{}]),
-            )
-
-    @staticmethod
-    def test_data_dict_list_invalid_keys():
-        with pytest.raises(ValidationError):
-            ScrollArea(
-                content='<div key={artwork.art} className="text-sm">\n{artwork.artist}\n</div>',
-                data=ScrollAreaData(
-                    name="works",
-                    parameter="amazing artworks",
-                    data=[
-                        {"artist": "Ornella Binni", "art": "url"},
-                        {"artist": "Ornella Binni", "test": "url"},
-                    ],
-                ),
-            )
-
-    @staticmethod
-    def test_data_dict_list_invalid_value_types():
-        with pytest.raises(ValidationError):
-            ScrollArea(
-                content='<div key={artwork.art} className="text-sm">\n{artwork.artist}\n</div>',
-                data=ScrollAreaData(
-                    name="works",
-                    parameter="amazing artworks",
-                    data=[
-                        {"artist": "Ornella Binni", "art": "url"},
-                        {"artist": 1, "art": "url"},
-                    ],
-                ),
-            )
+    def test_type_str_horizontal(wrapper_horizontal: SimpleComponentFuncWrapper):
+        # wrapper.run("types",)
+        pass

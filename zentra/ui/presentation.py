@@ -1,4 +1,5 @@
 from zentra.core import Component
+from zentra.core.enums.ui import Orientation
 from zentra.ui import ShadcnUi
 
 
@@ -102,8 +103,12 @@ class Separator(Component, ShadcnUi):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Separator component.
 
     Parameters:
-    - `name` (`str`) - the name of the component
+    - `styles` (`string, optional`) - an optional set of CSS classes. `None` by default
+    - `orientation` (`string, optional`) - the axis orientation of the separator. Valid options: `['horizontal', 'vertical']`. `vertical` by default
     """
+
+    styles: str = None
+    orientation: Orientation = "vertical"
 
 
 class Skeleton(Component, ShadcnUi):

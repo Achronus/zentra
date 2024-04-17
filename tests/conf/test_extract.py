@@ -2,10 +2,11 @@ import pytest
 
 from cli.conf.extract import extract_component_names
 from zentra.core import Page
-from zentra.ui import FileUpload, Form, FormField
+from zentra.ui import Form, FormField
 from zentra.ui.control import Input
 from zentra.ui.notification import AlertDialog
 from zentra.ui.presentation import Card
+from zentra.uploadthing import FileUpload
 
 
 class TestExtractComponentNames:
@@ -24,17 +25,19 @@ class TestExtractComponentNames:
                             content=[
                                 Form(
                                     name="agencyForm",
+                                    layout=[2],
                                     fields=[
                                         FormField(
                                             name="agencyLogo",
                                             label="Agency Logo",
-                                            content=FileUpload(name="agencyLogo"),
+                                            content=FileUpload(),
                                         ),
                                         FormField(
                                             name="name",
                                             label="Agency Name",
                                             content=Input(
-                                                name="name",
+                                                id="agencyName",
+                                                type="text",
                                                 label="Agency Name",
                                                 placeholder="Your Agency Name",
                                             ),

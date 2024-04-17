@@ -9,6 +9,7 @@ from cli.conf.checks import (
 )
 
 from cli.conf.constants import (
+    GITHUB_COMPONENTS_DIR,
     CommonErrorCodes,
     GenerateErrorCodes,
     GenerateSuccessCodes,
@@ -28,7 +29,6 @@ class Generate:
 
     def __init__(self, paths: GeneratePathStorage) -> None:
         self.paths = paths
-        self.controller = None
 
     def init_checks(self) -> None:
         """Performs various checks to immediately provide feedback to the user regarding missing files."""
@@ -57,12 +57,16 @@ class Generate:
         self.check_config_valid()
         zentra = check_zentra_exists()
 
-        if len(zentra.names.components) == 0:
+        if len(zentra.name_storage.components) == 0:
             raise typer.Exit(code=GenerateErrorCodes.NO_COMPONENTS)
 
         console.print()
-        self.controller = GenerateController(zentra, self.paths)
-        self.controller.run()
+        controller = GenerateController(
+            url=GITHUB_COMPONENTS_DIR,
+            zentra=zentra,
+            paths=self.paths,
+        )
+        controller.run()
 
-        console.print(generate_complete_panel(self.controller.storage))
+        console.print(generate_complete_panel(controller.storage))
         raise typer.Exit(GenerateSuccessCodes.COMPLETE)

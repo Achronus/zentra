@@ -2,6 +2,23 @@ import os
 from enum import Enum
 
 from cli.conf.extract import local_path
+from rich.console import Console
+
+
+console = Console()
+
+# Library versions
+NEXTJS_VERSION = "14.1.4"
+SHADCN_UI_VERSION = "0.8.0"
+
+# TODO: replace with 'main' branch
+# Request package URLs
+GITHUB_ROOT = "https://github.com/Astrum-AI/Zentra"
+BRANCH = "ui-components"  # "main"
+GITHUB_URL_CORE = f"{GITHUB_ROOT}/tree/{BRANCH}"
+
+GITHUB_COMPONENTS_DIR = f"{GITHUB_URL_CORE}/components"
+GITHUB_INIT_ASSETS_DIR = f"{GITHUB_URL_CORE}/init"
 
 
 class CommonErrorCodes(Enum):
@@ -11,6 +28,7 @@ class CommonErrorCodes(Enum):
     CONFIG_EMPTY = 3
     ZENTRA_MISSING = 4
     MODELS_DIR_MISSING = 5
+    REQUEST_FAILED = 900
     UNKNOWN_ERROR = 1000
 
 
@@ -56,24 +74,9 @@ class ZentaFilepaths:
     MODELS = os.path.join(ROOT, "models")  # (cwd)/zentra/models
     GENERATED = os.path.join(ROOT, "generated")  # (cwd)/zentra/generated
 
+    DEMO = os.path.join(MODELS, "_demo")  # (cwd)/zentra/models/_demo
+
     SETUP_FILENAME = "__init__.py"
-
-
-class ZentraConfigFilepaths:
-    """A storage container for the core filepaths in the `zentra_config` folder."""
-
-    # (cwd)/cli/zentra_config
-    ROOT = os.path.join(os.getcwd(), "cli", "zentra_config")
-    DEMO = os.path.join(ROOT, "_demo")  # /zentra_config/_demo
-
-
-class LocalCoreComponentFilepaths:
-    """A storage container for the local core component filepaths in the `components` folder."""
-
-    # (cwd)/cli/components
-    ROOT = os.path.join(os.getcwd(), "cli", "components")
-    UI = os.path.join(ROOT, "ui")  # cli/components/ui
-    UPLOADTHING = os.path.join(ROOT, "uploadthing")  # cli/components/uploadthing
 
 
 class ZentraGeneratedFilepaths:
@@ -83,6 +86,8 @@ class ZentraGeneratedFilepaths:
     ROOT = ZentaFilepaths.GENERATED
     PAGES = os.path.join(ROOT, "pages")  # generated/pages
     COMPONENTS = os.path.join(ROOT, "components")  # generated/components
+    LIB = os.path.join(ROOT, "lib")  # generated/lib
+
     ZENTRA = os.path.join(COMPONENTS, "zentra")  # generated/components/zentra
 
 

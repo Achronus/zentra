@@ -1,15 +1,27 @@
 import re
 from hypothesis import given
-from hypothesis.strategies import text, characters, sampled_from, integers
+import hypothesis.strategies as st
 
 from cli.conf.format import (
+    format_item_list,
     name_from_camel_case,
+    name_to_camel_case,
     name_to_plural,
     set_colour,
+    to_cc_from_pairs,
 )
 
 
-@given(text(alphabet=characters(whitelist_categories=("Lu", "Ll", "Nd")), min_size=10))
+# Hypothesis strategy for valid text and colour inputs
+text_strategy = st.text(min_size=1, max_size=50)
+colour_strategy = st.sampled_from(["red", "green", "blue", "yellow"])
+
+
+@given(
+    st.text(
+        alphabet=st.characters(whitelist_categories=("Lu", "Ll", "Nd")), min_size=10
+    )
+)
 def test_name_from_camel_case(input_string):
     result = name_from_camel_case(input_string)
 
@@ -17,9 +29,18 @@ def test_name_from_camel_case(input_string):
     assert result == expected_result
 
 
-# Hypothesis strategy for valid text and colour inputs
-text_strategy = text(min_size=1, max_size=50)
-colour_strategy = sampled_from(["red", "green", "blue", "yellow"])
+@given(
+    st.text(
+        alphabet=st.characters(whitelist_categories=("Ll", "Pd")),
+        min_size=1,
+        max_size=100,
+    )
+)
+def test_name_to_camel_case(name):
+    result = name_to_camel_case(name)
+    expected_result = "".join(word.title() for word in name.split("-"))
+    assert isinstance(result, str)
+    assert result == expected_result
 
 
 @given(text=text_strategy, colour=colour_strategy)
@@ -30,10 +51,47 @@ def test_set_colour(text, colour):
     assert text in result
 
 
-@given(name=text(min_size=1, max_size=20), count=integers(min_value=0, max_value=100))
+@given(
+    name=st.text(min_size=1, max_size=20), count=st.integers(min_value=0, max_value=100)
+)
 def test_name_to_plural(name, count):
     result = name_to_plural(name, count)
     if count == 1:
         assert result == name
     else:
         assert result == f"{name}s"
+
+
+def test_format_item_list():
+    pairs = [
+        ("ui", "alert-dialog.tsx"),
+        ("ui", "card.tsx"),
+        ("ui", "form.tsx"),
+        ("ui", "input.tsx"),
+        ("uploadthing", "core.ts"),
+        ("uploadthing", "route.ts"),
+        ("uploadthing", "uploadthing.ts"),
+    ]
+    result = format_item_list(pairs)
+    expected_result = [(folder, name_to_camel_case(file)) for folder, file in pairs]
+    assert result == expected_result
+
+
+def test_to_cc_from_pairs():
+    pairs = [
+        ("ui", "alert-dialog.tsx"),
+        ("ui", "card.tsx"),
+        ("ui", "form.tsx"),
+        ("ui", "input.tsx"),
+        ("uploadthing", "file-upload.tsx"),
+    ]
+    result = to_cc_from_pairs(pairs)
+
+    checks = [
+        isinstance(result, list),
+        all(isinstance(item, str) for item in result),
+        sorted(result) == result,
+        "FileUpload" in result,
+    ]
+
+    assert all(checks)

@@ -1,16 +1,22 @@
 from zentra.core import Component
+from zentra.ui import ShadcnUi
 
 
-class Alert(Component):
-    """A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Alert component."""
+class Alert(Component, ShadcnUi):
+    """
+    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Alert component.
+
+    Parameters:
+    - `name` (`str`) - the name of the component
+    """
 
 
-class AlertDialog(Component):
+class AlertDialog(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) AlertDialog component.
 
     Parameters:
-    - name (str) - the name of the component.
+    - `name` (`str`) - the name of the component
     """
 
     title: str = None
@@ -20,13 +26,28 @@ class AlertDialog(Component):
     trigger: list[Component] | str = None
 
 
-class Sonner(Component):
-    """A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Sonner component."""
+class Sonner(Component, ShadcnUi):
+    """
+    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Sonner component.
+
+    Parameters:
+    - `name` (`str`) - the name of the component
+    """
 
 
-class Toast(Component):
-    """A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Toast component."""
+class Toast(Component, ShadcnUi):
+    """
+    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Toast component.
+
+    Parameters:
+    - `name` (`str`) - the name of the component
+    """
 
 
-class Tooltip(Component):
-    """A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Tooltip component."""
+class Tooltip(Component, ShadcnUi):
+    """
+    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Tooltip component.
+
+    Parameters:
+    - `name` (`str`) - the name of the component
+    """

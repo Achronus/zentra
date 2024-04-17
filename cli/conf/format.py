@@ -1,7 +1,7 @@
 from enum import Enum
 import re
 
-from cli.conf.types import FolderFilePair
+from cli.conf.types import LibraryNamePairs
 
 
 def name_from_camel_case(name: str) -> str:
@@ -37,21 +37,18 @@ def name_to_plural(name: str, count: int) -> str:
     return name if count == 1 else f"{name}s"
 
 
-def format_item_list(items: FolderFilePair) -> list[str]:
+def format_item_list(items: LibraryNamePairs) -> list[str]:
     """Formats model filenames into camel case."""
     return [(folder, name_to_camel_case(file)) for folder, file in items]
 
 
-def to_cc_from_pairs(pairs: FolderFilePair) -> list[str]:
+def to_cc_from_pairs(pairs: LibraryNamePairs) -> list[str]:
     """Converts a set of Zentra model filename pairs back into their basenames."""
     result = []
     formatted_pairs = format_item_list(pairs)
 
-    for folder, file in formatted_pairs:
-        if folder == "uploadthing":
-            result.append("FileUpload")
-        else:
-            result.append(file)
+    for _, file in formatted_pairs:
+        result.append(file)
 
     result = list(set(result))
     result.sort()

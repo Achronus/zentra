@@ -15,7 +15,8 @@ from cli.conf.checks import (
 )
 from cli.conf.constants import SetupErrorCodes
 from cli.conf.extract import get_file_content
-from zentra.core import Component, Zentra
+from zentra.core import Page, Zentra
+from zentra.ui.control import Input
 
 
 class TestCheckZentraExists:
@@ -70,7 +71,14 @@ class TestCheckModelsRegistered:
 
     def test_success(self):
         zentra = Zentra()
-        zentra.register([Component(name="Component1")])
+        zentra.register(
+            [
+                Page(
+                    name="TestPage",
+                    components=[Input(id="test", type="text", placeholder="test")],
+                )
+            ]
+        )
         assert check_models_registered(zentra)
 
 

@@ -6,7 +6,7 @@ from cli.conf.constants import MAGIC
 from cli.conf.checks import check_zentra_exists
 from cli.conf.format import list_to_str, set_colour, name_to_plural, to_cc_from_pairs
 from cli.conf.message import SETUP_COMPLETE_MSG
-from cli.conf.storage import BasicNameStorage, ModelStorage
+from cli.conf.storage import ModelStorage
 
 from pydantic import BaseModel
 from rich.panel import Panel
@@ -23,11 +23,9 @@ class SetupPanelFormatter(BaseModel):
     """Handles the logic for creating completion panels for `zentra init`.
 
     Parameters:
-    - storage (storage.BasicNameStorage) - the storage container with Zentra model names
-    - action (Enum.Action) - a single Action Enum item to indicate an addition or subtraction string
+    - `action` (`Enum.Action`) - a single Action Enum item to indicate an addition or subtraction string
     """
 
-    storage: BasicNameStorage
     action: Action
 
     def title_str(
@@ -49,15 +47,13 @@ class GeneratePanelFormatter(BaseModel):
     """Handles the logic for creating completion panels for `zentra generate`.
 
     Parameters:
-    - name (str) - a name to associate the formatter used in the title string (e.g., 'component' or 'page')
-    - actions (Enum.Action) - an Action Enum class with an addition and subtraction value
-    - storage (storage.ModelStorage) - the storage container with Zentra model names
-    - data (GenerateDataTuple) - a tuple containing two lists of item information, one for addition and one for subtraction
+    - `name` (`str`) - a name to associate the formatter used in the title string (e.g., 'component' or 'page')
+    - `actions` (`Enum.Action`) - an Action Enum class with an addition and subtraction value
+    - `data` (`GenerateDataTuple`) - a tuple containing two `lists` of item information: `(list[items_to_add], list[items_to_remove])`
     """
 
     name: str
     actions: type[Action]
-    storage: ModelStorage
     data: GenerateDataTuple
 
     def data_str(self) -> str:
@@ -96,8 +92,8 @@ def setup_first_run_panel() -> Panel:
 def setup_complete_panel() -> Panel:
     """Creates a printable panel after successfully completing `zentra init`."""
     zentra = check_zentra_exists()
-    storage = zentra.names
-    add_formatter = SetupPanelFormatter(storage=storage, action=Action.ADD)
+    storage = zentra.name_storage
+    add_formatter = SetupPanelFormatter(action=Action.ADD)
 
     component_str = list_to_str(storage.components, action=Action.ADD)
     page_str = list_to_str(storage.pages, action=Action.ADD)
@@ -132,7 +128,7 @@ def generate_complete_panel(storage: ModelStorage) -> Panel:
         to_cc_from_pairs(storage.pages.remove),
     )
 
-    formatter = partial(GeneratePanelFormatter, actions=Action, storage=storage)
+    formatter = partial(GeneratePanelFormatter, actions=Action)
     comp_formatter = formatter(name="component", data=components)
     page_formatter = formatter(name="page", data=pages)
 

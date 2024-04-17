@@ -1,9 +1,6 @@
-from cli.conf.constants import LocalCoreComponentFilepaths
-from cli.conf.extract import get_dirnames, get_filename_dir_pairs
-
 from pydantic import BaseModel
 
-from cli.conf.types import FolderFilePair
+from cli.conf.types import LibraryNamePairs
 
 
 class ConfigExistStorage:
@@ -35,18 +32,14 @@ class SetupPathStorage(BaseModel):
     A storage container for file and folder paths specific to `zentra init`.
 
     Parameters:
-    - config (str) - the filepath to the zentra models config file
-    - models (str) - the directory path to the zentra models folder
-    - local (str) - the directory path to the local zentra config folder
-    - demo (str) - the directory path to the local zentra config demo folder
-    - local_config (str) - the filepath to the local zentra models config file
+    - `config` (`string`) - the filepath to the Zentra models config file
+    - `models` (`string`) - the directory path to the Zentra models folder
+    - `demo` (`string`) - the directory path to the Zentra models demo folder
     """
 
     config: str
     models: str
-    local: str
     demo: str
-    local_config: str
 
 
 class GeneratePathStorage(BaseModel):
@@ -54,16 +47,18 @@ class GeneratePathStorage(BaseModel):
     A storage container for file and folder paths specific to `zentra generate`.
 
     Parameters:
-    - config (str) - the filepath to the zentra models config file
-    - models (str) - the directory path to the zentra models folder
-    - component (str) - the directory path to the local zentra component folder
-    - zentra (str) - the directory path to the zentra generate component folder
+    - `config` (`string`) - the filepath to the Zentra models config file
+    - `models` (`string`) - the directory path to the Zentra models folder
+    - `components` (`string`) - the directory path to the Zentra generate component folder
+    - `templates` (`string`) - the directory path to the Zentra generate template folder
+    - `lib` (`string`) - the directory path to the Zentra generate lib folder
     """
 
     config: str
     models: str
-    component: str
-    generate: str
+    components: str
+    templates: str
+    lib: str
 
 
 class CountStorage(BaseModel):
@@ -73,12 +68,21 @@ class CountStorage(BaseModel):
     remove: int = 0
 
 
-class ModelFileStorage(BaseModel):
-    """A storage container for storing Zentra model (library, filename) pairs."""
+class ComponentDetails(BaseModel):
+    """A container for storing core component details extracted from base JSX files."""
 
-    generate: FolderFilePair = []
-    remove: FolderFilePair = []
-    existing: FolderFilePair = []
+    library: str
+    filename: str
+    name: str
+    child_names: list[str]
+
+
+class ModelFileStorage(BaseModel):
+    """A storage container for storing Zentra model `(library, filename)` pairs."""
+
+    generate: LibraryNamePairs = []
+    remove: LibraryNamePairs = []
+    existing: LibraryNamePairs = []
 
     counts: CountStorage = CountStorage()
 
@@ -88,16 +92,13 @@ class BasicNameStorage(BaseModel):
 
     pages: list[str] = []
     components: list[str] = []
+    filenames: LibraryNamePairs = []
 
 
 class ModelStorage(BaseModel):
     """A storage container for Zentra model filenames."""
 
-    base_files: FolderFilePair = get_filename_dir_pairs(
-        parent_dir=LocalCoreComponentFilepaths.ROOT, sub_dir="base"
-    )
-    folders_to_generate: list[str] = get_dirnames(LocalCoreComponentFilepaths.ROOT)
-
-    base_names: BasicNameStorage = BasicNameStorage()
     pages: ModelFileStorage = ModelFileStorage()
     components: ModelFileStorage = ModelFileStorage()
+
+    initalised_models: list[ComponentDetails] = []

@@ -87,7 +87,7 @@ Then, check if:
 )
 
 BUG_MSG = f"""
-This is a bug, please report this as an issue [bright_blue][link={GITHUB_ISSUES_URL}]on GitHub[/link][/bright_blue].
+This is a [yellow]bug[/yellow], please report this as an issue [bright_blue][link={GITHUB_ISSUES_URL}]on GitHub[/link][/bright_blue].
 """
 
 SETUP_COMPLETE_MSG = f"""
@@ -123,6 +123,7 @@ SUCCESS_MSG_MAP = {
 
 COMMON_ERROR_MAP = {
     CommonErrorCodes.TEST_ERROR: "Test",
+    CommonErrorCodes.REQUEST_FAILED: "",
     CommonErrorCodes.CONFIG_MISSING: error_msg_with_checks(
         f"{MODELS_FILEPATH} [yellow]config[/yellow] file [red]missing[/red]!",
         checks=MISSING_FILES_CHECKS,
@@ -197,24 +198,25 @@ class MessageHandler:
     @staticmethod
     def __success_msg(msg: str, e: typer.Exit) -> Panel:
         """Handles success messages and returns a panel with their information."""
-        if msg != "":
-            return Panel(msg, expand=False, border_style="bright_green")
-        else:
-            return ""
+        return Panel(msg, expand=False, border_style="bright_green")
 
     def msg(self, e: typer.Exit) -> None:
         """Assigns a success or error message depending on the code received."""
         try:
+            if e.exit_code not in self.msg_mapper.keys():
+                e.exit_code = CommonErrorCodes.UNKNOWN_ERROR
+
             msg = textwrap.dedent(self.msg_mapper.get(e.exit_code, UNKNOWN_ERROR))
+
         except AttributeError:
             e.exit_code = CommonErrorCodes.UNKNOWN_ERROR
 
         msg_type = e.exit_code.__class__.__name__
 
-        panel = (
-            self.__error_msg(msg, e)
-            if "Error" in msg_type
-            else self.__success_msg(msg, e)
-        )
-
-        self.console.print(panel)
+        if msg != "":
+            panel = (
+                self.__error_msg(msg, e)
+                if "Error" in msg_type
+                else self.__success_msg(msg, e)
+            )
+            self.console.print(panel)

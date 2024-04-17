@@ -1,31 +1,71 @@
-from typing import Any
-from pydantic import BaseModel, field_validator
+import re
 
-from cli.conf.extract import extract_component_names
+from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, field_validator
+from pydantic_core import PydanticCustomError
+
+from cli.conf.format import name_from_camel_case
 from cli.conf.storage import BasicNameStorage
+from cli.conf.types import LibraryNamePairs
+
+
+LOWER_CAMELCASE_WITH_DIGITS = r"^[a-z]+(?:[A-Z][a-z]*)*\d*$"
+LOWER_CAMELCASE_SINGLE_WORD = r"^[a-z]+(?:[A-Z][a-z]*)*$"
+PASCALCASE_WITH_DIGITS = r"^[A-Z][a-zA-Z0-9]*$"
+LOWERCASE_SINGLE_WORD = r"^[a-z]+\b$"
+
+COMPONENT_FILTER_LIST = [
+    "FormField",
+]
+
+
+def has_valid_pattern(*, pattern: str, value: str) -> bool:
+    match = re.match(pattern, value)
+    return bool(match)
 
 
 class Component(BaseModel):
     """
     A Zentra model for all React components.
-
-    Parameters:
-    - name (str) - the name of the component.
     """
 
-    name: str
+    _classname = PrivateAttr(default=None)
+    model_config = ConfigDict(use_enum_values=True)
+
+    @property
+    def classname(self) -> str:
+        """Stores the classname for the JSX builder."""
+        return self._classname if self._classname else self.__class__.__name__
 
 
 class Page(BaseModel):
-    """A Zentra model for a single webpage of React components."""
+    """
+    A Zentra model for a single webpage of React components.
 
-    name: str
+    Parameters:
+    - `name` (`string`) - the name of the page
+    - `components` (`list[Component]`) - a list of page components
+    """
+
+    name: str = Field(min_length=1)
     components: list[Component]
+
+    @field_validator("name")
+    def validate_id(cls, name: str) -> str:
+        if not has_valid_pattern(pattern=PASCALCASE_WITH_DIGITS, value=name):
+            raise PydanticCustomError(
+                "string_pattern_mismatch",
+                "must be PascalCase",
+                dict(wrong_value=name, pattern=PASCALCASE_WITH_DIGITS),
+            )
+        return name
 
     def get_schema(self, node: BaseModel = None) -> dict:
         """Returns a JSON tree of the `Page` components as nodes with a type (the component name) and its attributes (attrs)."""
         if node is None:
             node = self
+
+        if isinstance(node, list):
+            return [self.get_schema(item) for item in node]
 
         formatted_schema = {
             "type": node.__class__.__name__,
@@ -52,23 +92,27 @@ class Page(BaseModel):
         return formatted_schema
 
 
-class Icon(BaseModel):
-    """A Zentra model for [Radix Ui Icons](https://www.radix-ui.com/icons)."""
-
-    name: str
-
-
 class Zentra(BaseModel):
     """An application class for registering the components to create."""
 
-    pages: list[Page] = []
-    components: list[Component] = []
-    names: BasicNameStorage = BasicNameStorage()
+    _pages = PrivateAttr(default=[])
+    _components = PrivateAttr(default=[])
+    _name_storage = PrivateAttr(default=BasicNameStorage())
 
-    @field_validator("pages", "components", "names", mode="plain")
-    @classmethod
-    def prevent_init_editing(cls, value: Any) -> ValueError:
-        raise ValueError("Attributes cannot be updated during initialisation.")
+    @property
+    def pages(self) -> list[Page]:
+        """Stores a list of user created Pages found in the Zentra models folder."""
+        return self._pages
+
+    @property
+    def components(self) -> list[Component]:
+        """Stores a list of Zentra Components populated by the user in the Zentra models folder."""
+        return self._components
+
+    @property
+    def name_storage(self) -> BasicNameStorage:
+        """A storage container for the user defined Zentra pages and Component names."""
+        return self._name_storage
 
     def __set_type(
         self, component: BaseModel, valid_types: tuple[BaseModel, ...]
@@ -80,8 +124,8 @@ class Zentra(BaseModel):
     def register(self, components: list[Page | Component]) -> None:
         """Register a list of Zentra models to generate."""
         type_mapping: dict[BaseModel, list] = {
-            Page: self.pages,
-            Component: self.components,
+            Page: self._pages,
+            Component: self._components,
         }
         valid_types = tuple(type_mapping.keys())
 
@@ -94,28 +138,54 @@ class Zentra(BaseModel):
             comp_type = self.__set_type(component, valid_types)
             type_mapping[comp_type].append(component)
 
-        self.__set_component_cls_names()
-        self.__set_page_names()
+        self.fill_storage(pages=self._pages)
 
-    def __get_page_component_names(self) -> list[str]:
-        """A helper function for retrieving the page component names."""
-        page_components = []
+    def fill_storage(self, pages: list[Page]) -> None:
+        """Populates page and component names into name storage."""
+        component_pairs = self.__extract_component_names(
+            pages=pages, filter_list=COMPONENT_FILTER_LIST
+        )
+        component_names = [name for _, name in component_pairs]
 
-        for page in self.pages:
-            page_components += extract_component_names(page.get_schema())
+        self._name_storage.components = component_names
+        self._name_storage.pages = [page.name for page in pages]
+        self._name_storage.filenames = [
+            (folder, f"{name_from_camel_case(name)}.tsx")
+            for folder, name in component_pairs
+        ]
 
-        return page_components
+    @staticmethod
+    def __extract_component_names(
+        pages: list[Page], filter_list: list[str] = []
+    ) -> LibraryNamePairs:
+        """
+        A helper function for retrieving the component names and their associated library name.
 
-    def __set_component_cls_names(self) -> None:
-        """A helper function for storing the component class names."""
-        filter_items = ["Page", "FormField"]
-        page_components = self.__get_page_component_names()
 
-        for component in self.components:
-            page_components.append(component.__class__.__name__)
+        Returns:
+        `[(libray_name, component_name), ...]`
+        """
+        component_names = set()
 
-        self.names.components = list(set(page_components) - set(filter_items))
+        def recursive_extract(component: Component):
+            if isinstance(component, list):
+                for item in component:
+                    recursive_extract(item)
+            else:
+                name = component.__class__.__name__
+                if name not in filter_list:
+                    library_name = component.library
+                    component_names.add((library_name, name))
 
-    def __set_page_names(self) -> None:
-        """A helper function for retrieving the page names."""
-        self.names.pages = [page.name for page in self.pages]
+            for attr in ["content", "fields"]:
+                if hasattr(component, attr):
+                    next_node = getattr(component, attr)
+                    recursive_extract(next_node)
+
+        for page in pages:
+            for component in page.components:
+                recursive_extract(component)
+
+        component_names = list(component_names)
+        component_names.sort()
+        return component_names

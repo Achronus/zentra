@@ -1,5 +1,10 @@
 import pytest
 from zentra.core import Zentra, Page, Component
+from zentra.ui import Form, FormField
+from zentra.ui.control import Input
+from zentra.ui.notification import AlertDialog
+from zentra.ui.presentation import Card
+from zentra.uploadthing import FileUpload
 
 
 class TestZentra:
@@ -7,25 +12,78 @@ class TestZentra:
     def zentra(self) -> Zentra:
         return Zentra()
 
-    def test_init(self, zentra: Zentra):
-        assert zentra.pages == []
-        assert zentra.components == []
+    @pytest.fixture
+    def form_fields(self) -> list[FormField | list[FormField]]:
+        return [
+            FormField(
+                name="agencyLogo",
+                label="Agency Logo",
+                content=FileUpload(),
+            ),
+            [
+                FormField(
+                    name="name",
+                    label="Agency Name",
+                    content=Input(
+                        id="agencyName",
+                        type="text",
+                        placeholder="Your Agency Name",
+                    ),
+                ),
+                FormField(
+                    name="companyEmail",
+                    label="Agency Email",
+                    content=Input(
+                        id="email",
+                        type="email",
+                        placeholder="Email",
+                    ),
+                ),
+            ],
+        ]
 
-    def test_init_fail(self):
-        with pytest.raises(ValueError):
-            Zentra(pages=["test"])
+    @pytest.fixture
+    def page(self, form_fields) -> Page:
+        return Page(
+            name="AgencyDetails",
+            components=[
+                AlertDialog(
+                    name="agencyAlertDialog",
+                    content=[
+                        Card(
+                            name="agencyInfo",
+                            title="Agency Information",
+                            description="Let's create an agency for your business. You can edit agency settings later from the agency settings tab.",
+                            content=[
+                                Form(
+                                    name="agencyForm",
+                                    fields=form_fields,
+                                    btn_text="Save Agency Information",
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ],
+        )
+
+    @pytest.fixture
+    def zentra_registered(self, page: Page) -> Zentra:
+        zentra = Zentra()
+        zentra.register([page])
+        return zentra
 
     def test_page_registration(self, zentra: Zentra):
         page1 = Page(
             name="Page1",
             components=[
-                Component(name="Component1"),
+                Input(id="test1", type="text", placeholder="Component1"),
             ],
         )
         page2 = Page(
             name="Page2",
             components=[
-                Component(name="Component2"),
+                Input(id="test2", type="text", placeholder="Component2"),
             ],
         )
         page_map = [page1, page2]
@@ -47,10 +105,10 @@ class TestZentra:
         page = Page(
             name="Page1",
             components=[
-                Component(name="Component1"),
+                Input(id="test", type="text", placeholder="Component1"),
             ],
         )
-        component = Component(name="Component1")
+        component = Input(id="test", type="text", placeholder="Component1")
         mixed_list = [page, component]
         zentra.register(mixed_list)
 
@@ -61,3 +119,28 @@ class TestZentra:
         invalid_input = "InvalidInput"
         with pytest.raises(ValueError):
             zentra.register(invalid_input)
+
+    def test_storage_valid(self, zentra_registered: Zentra):
+        storage = zentra_registered.name_storage
+
+        storage.components.sort()
+        storage.filenames.sort()
+
+        valid_components = ["AlertDialog", "Card", "FileUpload", "Form", "Input"]
+        valid_filenames = [
+            ("ui", "alert-dialog.tsx"),
+            ("ui", "card.tsx"),
+            ("uploadthing", "file-upload.tsx"),
+            ("ui", "form.tsx"),
+            ("ui", "input.tsx"),
+        ]
+
+        valid_components.sort()
+        valid_filenames.sort()
+
+        checks = [
+            storage.pages == ["AgencyDetails"],
+            storage.components == valid_components,
+            storage.filenames == valid_filenames,
+        ]
+        assert all(checks), checks

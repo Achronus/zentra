@@ -1,7 +1,8 @@
 from dataclasses import Field
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
+from pydantic_core import PydanticCustomError
 
-from zentra.core import Component
+from zentra.core import LOWER_CAMELCASE_SINGLE_WORD, Component, has_valid_pattern
 from zentra.core.html import HTMLTag
 
 
@@ -14,11 +15,11 @@ class Map(Iterable):
     A model dedicated to the [JavaScript map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map) iterable function.
 
     Parameters:
-    - `obj_name` (`string`) - the name of the data object array to iterate over
-    - `parameters` (`string`) - the name of the parameter to iterate over inside the map
+    - `obj_name` (`string`) - the name of the data object array to iterate over. Must be `lowercase` or `camelCase`, a `single word`, and up to a maximum of `20` characters
+    - `param_name` (`string`) - the name of the parameter to iterate over inside the map. Must be `lowercase` or `camelCase`, a `single word`, and up to a maximum of `20` characters
     - `content` (`zentra.core.html.HTMLTag | zentra.core.Component`) - Can be either:
-      1. Any `zentra.core.html.HTMLTag` object, such as `zentra.core.html.Div` or `zentra.core.html.Figure`
-      2. Any `zentra.core.Component`, such as `zentra.ui.control.Label`
+      1. Any `zentra.core.html.HTMLTag` model, such as `zentra.core.html.Div` or `zentra.core.html.Figure`
+      2. Any `zentra.core.Component` model, such as `zentra.ui.control.Label`
 
     Example usage:
     1. A map with a predefined data array of images.
@@ -52,7 +53,7 @@ class Map(Iterable):
 
     Map(
         obj_name="works",
-        parameter="artwork",
+        param_name="artwork",
         content=fig
     )
     ```
@@ -81,5 +82,18 @@ class Map(Iterable):
     """
 
     obj_name: str = Field(min_length=1, max_length=20)
-    parameter: str = Field(min_length=1, max_length=20)
+    param_name: str = Field(min_length=1, max_length=20)
     content: HTMLTag | Component
+
+    @field_validator("obj_name", "param_name")
+    def validate_name(cls, v: str) -> str:
+        result = has_valid_pattern(pattern=LOWER_CAMELCASE_SINGLE_WORD, value=v)
+
+        if not result:
+            raise PydanticCustomError(
+                "string_pattern_mismatch",
+                f"'{v}'. Must be 'lowercase' or 'camelCase', a single word and a maximum of '20' characters\n",
+                dict(wrong_value=v, pattern=LOWER_CAMELCASE_SINGLE_WORD),
+            )
+
+        return v

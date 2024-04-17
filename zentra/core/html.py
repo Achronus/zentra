@@ -1,5 +1,5 @@
 from zentra.core import Component
-from zentra.core.enums.html import ContentTagType
+from zentra.core.enums.html import HTMLContentTagType
 from zentra.nextjs import Image
 
 from pydantic import BaseModel
@@ -16,7 +16,7 @@ class HTMLTag(BaseModel):
     styles: str = None
 
 
-class ContentTag(HTMLTag):
+class HTMLContent(HTMLTag):
     """
     A model dedicated to HTML content tags, including `headings`, `paragraphs`, and `span`.
 
@@ -27,7 +27,7 @@ class ContentTag(HTMLTag):
     """
 
     text: str
-    tag: ContentTagType
+    tag: HTMLContentTagType
 
 
 class Div(HTMLTag):
@@ -35,14 +35,14 @@ class Div(HTMLTag):
     A model dedicated to the `<div>` HTML tag.
 
     Parameters:
-    - `items` (`string | zentra.core.Component | list[string | zentra.core.html.ContentTag | zentra.core.Component]`) - Can be either:
+    - `items` (`string | zentra.core.Component | list[string | zentra.core.html.HTMLContent | zentra.core.Component]`) - Can be either:
       1. A `string` of text without any tags wrapped around it
       2. Any `zentra.core.Component` model
-      2. A `list` of a combination of `strings` of text, `zentra.core.html.ContentTag` items, or `zentra.core.Component` models
+      2. A `list` of a combination of `strings` of text, `zentra.core.html.HTMLContent` items, or `zentra.core.Component` models
     - `styles` (`string, optional`) - the CSS styles to apply to the tag. `None` by default
     """
 
-    items: str | Component | list[str | ContentTag | Component]
+    items: str | Component | list[str | HTMLContent | Component]
 
 
 class FigCaption(HTMLTag):
@@ -50,21 +50,21 @@ class FigCaption(HTMLTag):
     A model dedicated to the `<figcaption>` HTML tag used within the `<figure>` tag.
 
     Parameters:
-    - `text` (`string | zentra.core.html.ContentTag | list[string | zentra.core.html.ContentTag]`) - the text to put into the caption. Can either be:
+    - `text` (`string | zentra.core.html.HTMLContent | list[string | zentra.core.html.HTMLContent]`) - the text to put into the caption. Can either be:
       1. A single or multi-line `string` of text without any tags wrapped around it
-      2. A `zentra.core.html.ContentTag` object for wrapping the text in a `heading`, `paragraph`, or `span` tag
-      3. A `list` of combined `string` and `zentra.core.html.ContentTag` objects for more advanced captions
+      2. A `zentra.core.html.HTMLContent` object for wrapping the text in a `heading`, `paragraph`, or `span` tag
+      3. A `list` of combined `string` and `zentra.core.html.HTMLContent` objects for more advanced captions
     - `styles` (`string, optional`) - the CSS styles to apply to the tag. `None` by default
 
     Example Usage:
     1. Advanced captioning.
     ```python
-    from zentra.core.html import FigCaption, ContentTag
+    from zentra.core.html import FigCaption, HTMLContent
 
     FigCaption(
         text=[
             'Photo by{" "}',
-            ContentTag(
+            HTMLContent(
                 tag="span",
                 text="{artwork.artist}",
                 styles="font-semibold text-foreground",
@@ -84,7 +84,7 @@ class FigCaption(HTMLTag):
     ```
     """
 
-    text: str | ContentTag | list[str | ContentTag]
+    text: str | HTMLContent | list[str | HTMLContent]
 
 
 class Figure(HTMLTag):
@@ -101,7 +101,7 @@ class Figure(HTMLTag):
     Example usage:
     1. A detailed figure with variables.
     ```python
-    from zentra.core.html import Figure, FigCaption, ContentTag
+    from zentra.core.html import Figure, FigCaption, HTMLContent
     from zentra.nextjs import Image
 
     Figure(
@@ -115,7 +115,7 @@ class Figure(HTMLTag):
         caption=FigCaption(
             text=[
                 'Photo by{" "}',
-                ContentTag(
+                HTMLContent(
                     tag="span",
                     text="$artwork.artist",
                     styles="font-semibold text-foreground",

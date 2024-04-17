@@ -505,7 +505,6 @@ class ScrollArea(Component, ShadcnUi):
     ScrollArea(
         styles="w-96 whitespace-nowrap rounded-md border",
         content=artwork_map,
-        data=artwork_data,
         orientation="horizontal",
     )
     ```

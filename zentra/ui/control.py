@@ -568,6 +568,7 @@ class ScrollArea(Component, ShadcnUi):
             shell=True,
             items=[
                 Div(
+                    key="$tag",
                     styles="text-sm",
                     items="$tag"
                 ),
@@ -602,7 +603,7 @@ class ScrollArea(Component, ShadcnUi):
                     <div key={tag} className="text-sm">
                         {tag}
                     </div>
-                    <Separator className="my-2" />
+                    <Separator className="my-2" orientation="vertical" />
                 </>
             ))}
         </div>

@@ -1,21 +1,11 @@
-from pydantic_core import PydanticCustomError
 from zentra.core import Component
+from zentra.core.base import HTMLTag
 from zentra.core.enums.html import HTMLContentTagType
 from zentra.core.js import Iterable
 from zentra.nextjs import Image
 
-from pydantic import BaseModel, field_validator
-
-
-class HTMLTag(BaseModel):
-    """
-    A parent model for all HTML tags.
-
-    Parameters:
-    - `styles` (`string, optional`) - the CSS styles to apply to the tag. Automatically adds them to `className`. `None` by default
-    """
-
-    styles: str = None
+from pydantic import field_validator
+from pydantic_core import PydanticCustomError
 
 
 class HTMLContent(HTMLTag):

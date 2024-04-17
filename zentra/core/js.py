@@ -1,13 +1,9 @@
 from dataclasses import Field
-from pydantic import BaseModel, field_validator
+from pydantic import field_validator
 from pydantic_core import PydanticCustomError
 
 from zentra.core import LOWER_CAMELCASE_SINGLE_WORD, Component, has_valid_pattern
-from zentra.core.html import HTMLTag
-
-
-class Iterable(BaseModel):
-    """A parent model for all JavaScript iterables."""
+from zentra.core.base import Iterable, HTMLTag
 
 
 class Map(Iterable):

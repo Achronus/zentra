@@ -15,9 +15,9 @@ from zentra.core.enums.ui import (
     IconButtonSize,
     InputOTPPatterns,
     InputTypes,
-    ScrollAreaData,
     Orientation,
 )
+from zentra.core.html import Div
 from zentra.ui import ShadcnUi
 
 from pydantic import Field, HttpUrl, PrivateAttr, ValidationInfo, field_validator
@@ -408,7 +408,7 @@ class RadioGroup(Component, ShadcnUi):
 
     Parameters:
     - `items` (`list[RadioButton]`) - a list of `zentra.control.RadioButton`
-    - `default_value` (`string`) - the default value of the radio group. Must be a `value` assigned to a `RadioButton` in the `items` list. Must be `lowercase` and a `single word` and Up to a maximum of `30` characters
+    - `default_value` (`string`) - the default value of the radio group. Must be a `value` assigned to a `RadioButton` in the `items` list. Must be `lowercase` and a `single word` and up to a maximum of `30` characters
     """
 
     items: list[RadioButton]
@@ -456,19 +456,163 @@ class ScrollArea(Component, ShadcnUi):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) ScrollArea component.
 
     Parameters:
-    - `content` (`string`) - the core content of the `ScrollArea`. If `data` is specified, applies it to the `map` function. Defined as a multi-line string that can be as basic as a string of text or a set of complicated `JSX`. Always required for the component. Remember to add existing Zentra components! Refer to the examples below for more info
-    - `container_styles` (`string, optional`) - an optional set of class tags to apply to a `div` container around the content inside the `ScrollArea` component. If present, adds a `div` tag automatically with the styles. `None` by default
-    - `above_map` (`string, optional`) - an optional JSX string added above the `content`. Useful when you want to add additional `JSX`, such as a header, above the `map` function when using the `data` attribute. `None` by default
-    - `below_map` (`string, optional`) -an optional JSX string added below the `content`. Useful when you want to add additional `JSX` below the `map` function when using the `data` attribute. `None` by default
-    - `data` (`ScrollAreaData, optional`) - A `ScrollAreaData` object containing the data `name`, the map `parameter` for iterating over each data item, and the data itself. `None` by default
+    - `content` (`string | zentra.core.html.Div | zentra.core.Component`) - Can be either:
+      1. A simple `string` of text
+      2. A `zentra.core.html.Div` model (recommended)
+      3. Any `zentra.core.Component` model, such as `zentra.nextjs.Image`
+    - `styles` (`string, optional`) - the CSS styles to apply to the `ScrollArea`. Automatically adds them to `className`. `w-96 rounded-md border` by default
     - `orientation` (`string, optional`) - the orientation of the scroll axis. Valid options: `[horizontal, vertical]`. `vertical` by default
+
+    Example usage:
+    1. A horizontal scroll area for images.
+    ```python
+    from zentra.core.html import Figure, FigCaption, Div, HTMLContent
+    from zentra.core.js import Map
+    from zentra.nextjs import Image
+    from zentra.ui.control import ScrollArea
+
+    artwork_map = Div(
+        styles="flex w-max space-x-4 p-4",
+        items=Map(
+            obj_name="works",
+            param_name="artwork",
+            content=Figure(
+                key="$artwork.artist",
+                styles="shrink-0",
+                img_container_styles="overflow-hidden rounded-md",
+                img=Image(
+                    src="$artwork.art",
+                    alt="Photo by $artwork.artist",
+                    styles="aspect-[3/4] h-fit w-fit object-cover",
+                    width=300,
+                    height=400
+                ),
+                caption=FigCaption(
+                    styles="pt-2 text-xs text-muted-foreground",
+                    text=[
+                        'Photo by{" "}',
+                        HTMLContent(
+                            tag="span",
+                            styles="font-semibold text-foreground",
+                            text="$artwork.artist"
+                        )
+                    ]
+                ),
+            ),
+        )
+    )
+
+    ScrollArea(
+        styles="w-96 whitespace-nowrap rounded-md border",
+        content=artwork_map,
+        data=artwork_data,
+        orientation="horizontal",
+    )
+    ```
+    JSX equivalent ->
+    ```jsx
+    <ScrollArea className="w-96 whitespace-nowrap rounded-md border">
+      <div className="flex w-max space-x-4 p-4">
+        {works.map((artwork) => (
+          <figure key={artwork.artist} className="shrink-0">
+            <div className="overflow-hidden rounded-md">
+              <Image
+                src={artwork.art}
+                alt={`Photo by ${artwork.artist}`}
+                className="aspect-[3/4] h-fit w-fit object-cover"
+                width={300}
+                height={400}
+              />
+            </div>
+            <figcaption className="pt-2 text-xs text-muted-foreground">
+              Photo by{" "}
+              <span className="font-semibold text-foreground">
+                {artwork.artist}
+              </span>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+      <ScrollBar orientation="horizontal" />
+    </ScrollArea>
+    ```
+
+    2. A simple scroll area with text.
+    ```python
+    from zentra.ui.control import ScrollArea
+
+    ScrollArea(
+        content="This is some text that is extremely simple."
+    )
+    ```
+    JSX equivalent ->
+    ```jsx
+    <ScrollArea className="w-96 rounded-md border">
+        This is some text that is extremely simple.
+        <ScrollBar orientation="vertical" />
+    </ScrollArea>
+    ```
+
+    3. A vertical scroll area for a predefined set of tags.
+    ```python
+    from zentra.core.html import Div, HTMLContent
+    from zentra.core.js import Map
+
+    from zentra.ui.control import ScrollArea
+    from zentra.ui.presentation import Separator
+
+    tags_map = Map(
+        obj_name="tags",
+        param_name="tag",
+        content=Div(
+            shell=True,
+            items=[
+                Div(
+                    styles="text-sm",
+                    items="$tag"
+                ),
+                Separator(styles="my-2"),
+            ]
+        )
+
+    )
+
+    ScrollArea(
+        styles="h-72 w-48 rounded-md border",
+        content=Div(
+            styles="p-4"
+            items=[
+                HTMLContent(
+                    tag="h4",
+                    styles="mb-4 text-sm font-medium leading-none",
+                    text="Tags"
+                ),
+                tags_map,
+            ]
+        ),
+    )
+    ```
+    JSX equivalent ->
+    ```jsx
+    <ScrollArea className="h-72 w-48 rounded-md border">
+        <div className="p-4">
+            <h4 className="mb-4 text-sm font-medium leading-none">Tags</h4>
+            {tags.map((tag) => (
+                <>
+                    <div key={tag} className="text-sm">
+                        {tag}
+                    </div>
+                    <Separator className="my-2" />
+                </>
+            ))}
+        </div>
+        <ScrollBar orientation="vertical" />
+    </ScrollArea>
+    ```
     """
 
-    content: str = Field(min_length=1)
-    container_styles: str = None
-    above_map: str = None
-    below_map: str = None
-    data: ScrollAreaData = None
+    content: str | Div | Component
+    styles: str = "w-96 rounded-md border"
     orientation: Orientation = "vertical"
 
 

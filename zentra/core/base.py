@@ -12,5 +12,5 @@ class HTMLTag(BaseModel):
     styles: str = None
 
 
-class Iterable(BaseModel):
+class JSIterable(BaseModel):
     """A parent model for all JavaScript iterables."""

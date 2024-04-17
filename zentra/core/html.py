@@ -1,5 +1,5 @@
 from zentra.core import Component
-from zentra.core.base import HTMLTag, Iterable
+from zentra.core.base import HTMLTag, JSIterable
 from zentra.core.enums.html import HTMLContentTagType
 from zentra.nextjs import Image
 
@@ -26,17 +26,17 @@ class Div(HTMLTag):
     A model dedicated to the `<div>` HTML tag.
 
     Parameters:
-    - `items` (`string | zentra.core.Component | zentra.core.js.Iterable | list[string | zentra.core.html.HTMLContent | zentra.core.Component]`) - Can be either:
+    - `items` (`string | zentra.core.Component | zentra.core.js.JSIterable | list[string | zentra.core.html.HTMLContent | zentra.core.Component]`) - Can be either:
       1. A `string` of text. Can include parameter variables (indicated by starting the variable name with a `$`) or be one specifically
       2. Any `zentra.core.Component` model, such as `zentra.ui.control.Label`
-      3. Any `zentra.core.js.Iterable` model, such as `zentra.core.js.Map`
+      3. Any `zentra.core.js.JSIterable` model, such as `zentra.core.js.Map`
       4. A `list` of a combination of `strings` of text, `zentra.core.html.HTMLContent` items, or `zentra.core.Component` models
     - `shell` (`boolean, optional`) - A flag to indicate whether the div should be an empty tag wrapper (`<>`, `</>`). Often used in JSX when a single parent container is needed. `False` by default
     - `key` (`string, optional`) - A unique identifier added to the container. Needed when using JS iterables like `map`. When provided, must be a parameter (start with a `$`). `None` by default
     - `styles` (`string, optional`) - the CSS styles to apply to the tag. `None` by default
     """
 
-    items: str | Component | Iterable | list[str | HTMLContent | Component]
+    items: str | Component | JSIterable | list[str | HTMLContent | Component]
     shell: bool = False
     key: str = None
 

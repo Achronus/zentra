@@ -574,13 +574,12 @@ class ScrollArea(Component, ShadcnUi):
                 Separator(styles="my-2"),
             ]
         )
-
     )
 
     ScrollArea(
         styles="h-72 w-48 rounded-md border",
         content=Div(
-            styles="p-4"
+            styles="p-4",
             items=[
                 HTMLContent(
                     tag="h4",

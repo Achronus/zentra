@@ -2,10 +2,10 @@ from pydantic import field_validator, Field
 from pydantic_core import PydanticCustomError
 
 from zentra.core import LOWER_CAMELCASE_SINGLE_WORD, Component, has_valid_pattern
-from zentra.core.base import Iterable, HTMLTag
+from zentra.core.base import JSIterable, HTMLTag
 
 
-class Map(Iterable):
+class Map(JSIterable):
     """
     A model dedicated to the [JavaScript map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map) iterable function.
 

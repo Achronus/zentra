@@ -11,8 +11,10 @@ from cli.conf.types import LibraryNamePairs
 
 LOWER_CAMELCASE_WITH_DIGITS = r"^[a-z]+(?:[A-Z][a-z]*)*\d*$"
 LOWER_CAMELCASE_SINGLE_WORD = r"^[a-z]+(?:[A-Z][a-z]*)*$"
-PASCALCASE_WITH_DIGITS = r"^[A-Z][a-zA-Z0-9]*$"
 LOWERCASE_SINGLE_WORD = r"^[a-z]+\b$"
+PASCALCASE_SINGLE_WORD = r"^[A-Z][a-zA-Z]*$"
+PASCALCASE_WITH_DIGITS = r"^[A-Z][a-zA-Z0-9]*$"
+COMPONENT_TAG_NAME_PATTERN = r"<([A-Z][a-zA-Z]*)"
 
 COMPONENT_FILTER_LIST = [
     "FormField",
@@ -43,11 +45,53 @@ class DataArray(BaseModel):
     A Zentra model for predefined data array objects.
 
     Parameters:
-    - `name` (`string`) - the name of the `data` object. E.g., 'works'. Must be `lowercase` or `camelCase` and a maximum of `30` characters
+    - `name` (`string`) - the name of the `data` object. E.g., 'works'. Must be `lowercase` or `camelCase`, a `single word`, and up to a maximum of `30` characters
+    - `type_name` (`string`) - the name for the `TypeScript` props associated to the data. Types are automatically populated based on the `data` value type. Must be `PascalCase`, a `single word`, and up to a maximum of `40` characters
     - `data` (`list[dict[string, Any]]`) - A list of dictionaries containing information that is typically passed into a JS iterable function such as a `map` (`zentra.core.js.Map`). Each dictionary must have the same key values and values of the same type
+
+
+    Example usage:
+    1. A simple data array of artists work.
+    ```python
+    from zentra.core import DataArray
+
+    artwork_data = DataArray(
+        name="works",
+        type_name="Artwork",
+        data=[
+            {
+                'artist': "Ornella Binni",
+                'art': "https://images.unsplash.com/photo-1465869185982-5a1a7522cbcb?auto=format&fit=crop&w=300&q=80"
+            },
+            {
+                'artist': "Tom Byrom",
+                'art': "https://images.unsplash.com/photo-1548516173-3cabfa4607e9?auto=format&fit=crop&w=300&q=80"
+            },
+        ]
+    )
+    ```
+    JSX equivalent ->
+    ```jsx
+    type Artwork = {
+        artist: string
+        art: string
+    }
+
+    const works: Artwork[] = [
+        {
+            artist: "Ornella Binni",
+            art: "https://images.unsplash.com/photo-1465869185982-5a1a7522cbcb?auto=format&fit=crop&w=300&q=80",
+        },
+        {
+            artist: "Tom Byrom",
+            art: "https://images.unsplash.com/photo-1548516173-3cabfa4607e9?auto=format&fit=crop&w=300&q=80",
+        },
+    ]
+    ```
     """
 
     name: str = Field(min_length=1, max_length=30)
+    type_name: str = Field(min_length=1, max_length=40)
     data: list[dict[str, Any]]
 
     @field_validator("data")
@@ -87,6 +131,19 @@ class DataArray(BaseModel):
                 "string_pattern_mismatch",
                 f"'{v}'. Must be 'lowercase' or 'camelCase', a single word and a maximum of '30' characters\n",
                 dict(wrong_value=v, pattern=LOWER_CAMELCASE_SINGLE_WORD),
+            )
+
+        return v
+
+    @field_validator("type_name")
+    def validate_type_name(cls, v: str) -> str:
+        result = has_valid_pattern(pattern=PASCALCASE_SINGLE_WORD, value=v)
+
+        if not result:
+            raise PydanticCustomError(
+                "string_pattern_mismatch",
+                f"'{v}'. Must be 'PascalCase', a single word and a maximum of '40' characters\n",
+                dict(wrong_value=v, pattern=PASCALCASE_SINGLE_WORD),
             )
 
         return v

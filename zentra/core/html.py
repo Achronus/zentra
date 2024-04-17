@@ -1,9 +1,10 @@
+from pydantic_core import PydanticCustomError
 from zentra.core import Component
 from zentra.core.enums.html import HTMLContentTagType
 from zentra.core.js import Iterable
 from zentra.nextjs import Image
 
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 
 class HTMLTag(BaseModel):
@@ -37,14 +38,28 @@ class Div(HTMLTag):
 
     Parameters:
     - `items` (`string | zentra.core.Component | zentra.core.js.Iterable | list[string | zentra.core.html.HTMLContent | zentra.core.Component]`) - Can be either:
-      1. A simple `string` of text
+      1. A `string` of text. Can include parameter variables (indicated by starting the variable name with a `$`) or be one specifically
       2. Any `zentra.core.Component` model, such as `zentra.ui.control.Label`
       3. Any `zentra.core.js.Iterable` model, such as `zentra.core.js.Map`
       4. A `list` of a combination of `strings` of text, `zentra.core.html.HTMLContent` items, or `zentra.core.Component` models
+    - `shell` (`boolean, optional`) - A flag to indicate whether the div should be an empty tag wrapper (`<>`, `</>`). Often used in JSX when a single parent container is needed. `False` by default
+    - `key` (`string, optional`) - A unique identifier added to the container. Needed when using JS iterables like `map`. When provided, must be a parameter (start with a `$`). `None` by default
     - `styles` (`string, optional`) - the CSS styles to apply to the tag. `None` by default
     """
 
     items: str | Component | Iterable | list[str | HTMLContent | Component]
+    shell: bool = False
+    key: str = None
+
+    @field_validator("key")
+    def validate_key(cls, key: str) -> str:
+        if key and key[0] != "$":
+            raise PydanticCustomError(
+                "key_must_be_a_parameter",
+                f"'{key}' != '${key}'! Must start with a '$' to set as a parameter\n",
+                dict(wrong_value=key),
+            )
+        return key
 
 
 class FigCaption(HTMLTag):
@@ -97,7 +112,7 @@ class Figure(HTMLTag):
     - `img` (`zentra.nextjs.Image`) - a NextJS `Image` component defining the image to display in the figure
     - `caption` (`zentra.core.html.FigCaption`) - a `FigCaption` component representing the caption of the Image
     - `styles` (`string, optional`) - the CSS styles to apply to the tag. `None` by default
-    - `key` (`string, optional`) - the key to add to the figure if using in a `map` or related iterable function. `None` by default. When declaring parameter values, start the variable name with a `$`
+    - `key` (`string, optional`) -A unique identifier added to the figure. Needed if using a JS iterable like `map`. When provided, must be a parameter (start with a `$`). `None` by default
     - `img_container_styles` (`string, optional`) - a string of CSS styles to apply to a `div` tag around the image. When provided, a `div` tag is automatically wrapped around the image with the styles supplied to its `className` attribute. `None` by default
 
     Example usage:
@@ -155,3 +170,13 @@ class Figure(HTMLTag):
     caption: FigCaption
     key: str = None
     img_container_styles: str = None
+
+    @field_validator("key")
+    def validate_key(cls, key: str) -> str:
+        if key and key[0] != "$":
+            raise PydanticCustomError(
+                "key_must_be_a_parameter",
+                f"'{key}' != '${key}'! Must start with a '$' to set as a parameter\n",
+                dict(wrong_value=key),
+            )
+        return key

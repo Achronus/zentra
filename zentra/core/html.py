@@ -1,7 +1,6 @@
 from zentra.core import Component
-from zentra.core.base import HTMLTag
+from zentra.core.base import HTMLTag, Iterable
 from zentra.core.enums.html import HTMLContentTagType
-from zentra.core.js import Iterable
 from zentra.nextjs import Image
 
 from pydantic import field_validator

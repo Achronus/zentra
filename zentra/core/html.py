@@ -1,5 +1,6 @@
 from zentra.core import Component
 from zentra.core.enums.html import HTMLContentTagType
+from zentra.core.js import Iterable
 from zentra.nextjs import Image
 
 from pydantic import BaseModel
@@ -35,14 +36,15 @@ class Div(HTMLTag):
     A model dedicated to the `<div>` HTML tag.
 
     Parameters:
-    - `items` (`string | zentra.core.Component | list[string | zentra.core.html.HTMLContent | zentra.core.Component]`) - Can be either:
-      1. A `string` of text without any tags wrapped around it
-      2. Any `zentra.core.Component` model
-      2. A `list` of a combination of `strings` of text, `zentra.core.html.HTMLContent` items, or `zentra.core.Component` models
+    - `items` (`string | zentra.core.Component | zentra.core.js.Iterable | list[string | zentra.core.html.HTMLContent | zentra.core.Component]`) - Can be either:
+      1. A simple `string` of text
+      2. Any `zentra.core.Component` model, such as `zentra.ui.control.Label`
+      3. Any `zentra.core.js.Iterable` model, such as `zentra.core.js.Map`
+      4. A `list` of a combination of `strings` of text, `zentra.core.html.HTMLContent` items, or `zentra.core.Component` models
     - `styles` (`string, optional`) - the CSS styles to apply to the tag. `None` by default
     """
 
-    items: str | Component | list[str | HTMLContent | Component]
+    items: str | Component | Iterable | list[str | HTMLContent | Component]
 
 
 class FigCaption(HTMLTag):

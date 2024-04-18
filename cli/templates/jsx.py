@@ -204,7 +204,7 @@ class JSXPageBuilder:
         return imports
 
     def compress(self, values: list[str]) -> str:
-        """Compresses an attributes values into a string."""
+        """Compresses values into a string."""
         return "\n".join(values)
 
     def dedupe(self, values: list[str]) -> list[str]:
@@ -260,19 +260,43 @@ class ParentComponentBuilder:
         self.mappings = mappings
         self.details = details_dict
         self.storage = JSXListContentStorage()
+        self.str_storage = JSXComponentContentStorage()
 
         self.inner_content = []
 
     def build(self) -> None:
         """Builds the JSX for the component."""
         storage = self.build_component_model(model=self.component)
+        self.storage.content = storage.content.split("\n")
 
         if not isinstance(self.component.content, str):
             self.build_inner_content(model=self.component.content, root=True)
 
             content = storage.content.split("\n")
-            content = "\n".join([content[0], *self.inner_content, *content[1:]])
-            self.storage.content = [content]
+            self.storage.content = [
+                content[0],
+                *self.inner_content,
+                *content[1:],
+            ]
+
+        self.fill_str_storage(storage=storage)
+
+    def compress(self, values: list[str]) -> str:
+        """Compresses values into a string."""
+        return "\n".join(values)
+
+    def dedupe(self, values: list[str]) -> list[str]:
+        """Filters out duplicate values from the list."""
+        result = list(set(values))
+        result.sort()
+        return result
+
+    def fill_str_storage(self, storage: JSXComponentContentStorage) -> None:
+        """Fills `self.str_storage` with the required values."""
+        self.str_storage.content = self.compress(self.storage.content)
+        self.str_storage.attributes = storage.attributes
+        self.str_storage.imports = self.compress(self.dedupe(self.storage.imports))
+        self.str_storage.logic = self.compress(self.storage.logic).strip("\n")
 
     def build_inner_content(
         self, model: JSIterable | HTMLTag | Component, root: bool = False
@@ -354,7 +378,7 @@ class ParentComponentBuilder:
         return builder.build()
 
     def build_component_model(self, model: Component) -> JSXComponentContentStorage:
-        """Builds the component model and then adds the corresponding items to storage."""
+        """Builds the component model and returns the values and adds them to `self.storage`."""
         builder = ComponentBuilder(
             component=model,
             mappings=self.mappings,
@@ -362,6 +386,7 @@ class ParentComponentBuilder:
         )
         builder.build()
         self.populate_storage(comp_store=builder.storage)
+
         return builder.storage
 
     def html_content_container(

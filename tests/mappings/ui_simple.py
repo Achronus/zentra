@@ -65,11 +65,15 @@ RADIO_GROUP_VALID_VALS = {
 }
 
 SCROLL_AREA_VALID_VALS = {
-    "attributes": 'className="w-96 rounded-md border"',
+    "attributes": {
+        "simple": 'className="w-96 rounded-md border"',
+        "vertical": 'className="h-72 w-48 rounded-md border"',
+        "horizontal": 'className="w-96 whitespace-nowrap rounded-md border"',
+    },
     "content": {
         "simple": '<ScrollArea className="w-96 rounded-md border">\nThis is some text that is extremely simple.\n<ScrollBar orientation="vertical" />\n</ScrollArea>',
-        "vertical": '<ScrollArea className="w-96 rounded-md border">\n<div className="p-4">\n<h4 className="mb-4 text-sm font-medium leading-none">Tags</h4>\n{tags.map((tag) => (\n<>\n<div key={tag} className="text-sm">\n{tag}\n</div>\n<Separator className="my-2" />\n</>\n))}\n<div>Content below map</div>\n</div>\n<ScrollBar orientation="vertical" />\n</ScrollArea>',
-        "horizontal": '<ScrollArea className="w-96 rounded-md border">\n<div className="flex w-max space-x-4 p-4">\n{works.map((artwork) => (\n<figure key={artwork.artist} className="shrink-0">\n<div className="overflow-hidden rounded-md">\n<Image\nsrc={artwork.art}\nalt={`Photo by ${artwork.artist}`}\nclassName="aspect-[3/4] h-fit w-fit object-cover"\nwidth={300}\nheight={400}\n/>\n</div>\n<figcaption className="pt-2 text-xs text-muted-foreground">\nPhoto by{" "}\n<span className="font-semibold text-foreground">\n{artwork.artist}\n</span>\n</figcaption>\n</figure>\n))}\n</div>\n<ScrollBar orientation="horizontal" />\n</ScrollArea>',
+        "vertical": '<ScrollArea className="h-72 w-48 rounded-md border">\n<div className="p-4">\n<h4 className="mb-4 text-sm font-medium leading-none">\nTags\n</h4>\n{tags.map((tag) => (\n<>\n<div key={tag} className="text-sm">\n{tag}\n</div>\n<Separator className="my-2" orientation="vertical" />\n</>\n))}\n</div>\n<ScrollBar orientation="vertical" />\n</ScrollArea>',
+        "horizontal": '<ScrollArea className="w-96 whitespace-nowrap rounded-md border">\n<div className="flex w-max space-x-4 p-4">\n{works.map((artwork) => (\n<figure key={artwork.artist} className="shrink-0">\n<div className="overflow-hidden rounded-md">\n<Image\nsrc={artwork.art}\nalt={`Photo by ${artwork.artist}`}\nclassName="aspect-[3/4] h-fit w-fit object-cover"\nwidth={300}\nheight={400}\n/>\n</div>\n<figcaption className="pt-2 text-xs text-muted-foreground">\nPhoto by{" "}\n<span className="font-semibold text-foreground">\n{artwork.artist}\n</span>\n</figcaption>\n</figure>\n))}\n</div>\n<ScrollBar orientation="horizontal" />\n</ScrollArea>',
     },
 }
 

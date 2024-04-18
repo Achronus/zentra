@@ -15,5 +15,9 @@ VALID_IMPORTS = {
     },
     "label": 'import { Label } from "@/components/ui/label"',
     "radio_group": 'import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"\nimport { Label } from "@/components/ui/label"',
-    "scroll_area": 'import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"',
+    "scroll_area": {
+        "simple": 'import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"',
+        "vertical": 'import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"\nimport { Separator } from "@/components/ui/separator"',
+        "horizontal": 'import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"',
+    },
 }

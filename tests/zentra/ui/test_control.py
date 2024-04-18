@@ -131,8 +131,8 @@ class ParentComponentFuncWrapper:
         builder = parent_component_builder(self.component)
         builder.build()
 
-        result = getattr(builder.storage, result_attr)
-        assert result == valid_value, (result, valid_value)
+        result: str = getattr(builder.str_storage, result_attr)
+        assert result == valid_value, (result.split("\n"), valid_value.split("\n"))
 
 
 class TestButton:
@@ -940,43 +940,19 @@ class TestScrollArea:
     ) -> ParentComponentFuncWrapper:
         return ParentComponentFuncWrapper(scroll_area_horizontal)
 
-    @pytest.fixture
-    def wrapper_simple(self, scroll_area: ScrollArea) -> SimpleComponentFuncWrapper:
-        return SimpleComponentFuncWrapper(
-            scroll_area, COMPONENT_DETAILS_MAPPING["ScrollArea"]
-        )
-
-    @pytest.fixture
-    def wrapper_simple_vertical(
-        self, scroll_area_vertical: ScrollArea
-    ) -> SimpleComponentFuncWrapper:
-        return SimpleComponentFuncWrapper(
-            scroll_area_vertical, COMPONENT_DETAILS_MAPPING["ScrollArea"]
-        )
-
-    @pytest.fixture
-    def wrapper_simple_horizontal(
-        self, scroll_area_horizontal: ScrollArea
-    ) -> SimpleComponentFuncWrapper:
-        return SimpleComponentFuncWrapper(
-            scroll_area_horizontal, COMPONENT_DETAILS_MAPPING["ScrollArea"]
-        )
+    @staticmethod
+    def test_attr_str(wrapper: ParentComponentFuncWrapper):
+        wrapper.run("attributes", VALID_VALS_MAP["scroll_area"]["attributes"]["simple"])
 
     @staticmethod
-    def test_attr_str(wrapper_simple: SimpleComponentFuncWrapper):
-        wrapper_simple.run(
-            "attributes", VALID_VALS_MAP["scroll_area"]["attributes"]["simple"]
-        )
-
-    @staticmethod
-    def test_attr_str_vertical(wrapper_simple_vertical: SimpleComponentFuncWrapper):
-        wrapper_simple_vertical.run(
+    def test_attr_str_vertical(wrapper_vertical: ParentComponentFuncWrapper):
+        wrapper_vertical.run(
             "attributes", VALID_VALS_MAP["scroll_area"]["attributes"]["vertical"]
         )
 
     @staticmethod
-    def test_attr_str_horizontal(wrapper_simple_horizontal: SimpleComponentFuncWrapper):
-        wrapper_simple_horizontal.run(
+    def test_attr_str_horizontal(wrapper_horizontal: ParentComponentFuncWrapper):
+        wrapper_horizontal.run(
             "attributes", VALID_VALS_MAP["scroll_area"]["attributes"]["horizontal"]
         )
 
@@ -998,27 +974,12 @@ class TestScrollArea:
 
     @staticmethod
     def test_imports_str(wrapper: ParentComponentFuncWrapper):
-        wrapper.run("imports", VALID_IMPORTS["scroll_area"])
+        wrapper.run("imports", VALID_IMPORTS["scroll_area"]["simple"])
 
     @staticmethod
     def test_imports_str_vertical(wrapper_vertical: ParentComponentFuncWrapper):
-        wrapper_vertical.run("imports", VALID_IMPORTS["scroll_area"])
+        wrapper_vertical.run("imports", VALID_IMPORTS["scroll_area"]["vertical"])
 
     @staticmethod
     def test_imports_str_horizontal(wrapper_horizontal: ParentComponentFuncWrapper):
-        wrapper_horizontal.run("imports", VALID_IMPORTS["scroll_area"])
-
-    @staticmethod
-    def test_type_str(wrapper: ParentComponentFuncWrapper):
-        # wrapper.run("types",)
-        pass
-
-    @staticmethod
-    def test_type_str_vertical(wrapper_vertical: ParentComponentFuncWrapper):
-        # wrapper.run("types",)
-        pass
-
-    @staticmethod
-    def test_type_str_horizontal(wrapper_horizontal: ParentComponentFuncWrapper):
-        # wrapper.run("types",)
-        pass
+        wrapper_horizontal.run("imports", VALID_IMPORTS["scroll_area"]["horizontal"])

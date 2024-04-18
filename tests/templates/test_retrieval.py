@@ -68,13 +68,13 @@ class TestZentraSetupRetriever:
 class TestCodeRetriever:
     @pytest.fixture
     def retriever(self) -> CodeRetriever:
-        URL = "https://github.com/Astrum-AI/Zentra/blob/ui-components/init/__init__.py"
+        URL = f"{GITHUB_INIT_ASSETS_DIR}/__init__.py"
         return CodeRetriever(url=URL)
 
     @staticmethod
     def test_code(retriever: CodeRetriever):
         result = retriever.code(retriever.url)
-        assert result == ZENTRA_INIT_CODE_VALID["rawlines"]
+        assert result == ZENTRA_INIT_CODE_VALID["rawlines"], result
 
     @staticmethod
     def test_extract(retriever: CodeRetriever):

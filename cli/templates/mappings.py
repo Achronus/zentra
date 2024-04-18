@@ -9,6 +9,7 @@ from cli.templates.ui.content import (
     button_content,
     checkbox_content,
     collapsible_content,
+    div_content,
     radio_group_content,
     scroll_area_content,
 )
@@ -20,6 +21,7 @@ from cli.templates.ui.imports import (
 )
 from cli.templates.ui.logic import calendar_logic, collapsible_logic
 from tests.templates.dummy import DummyIconButton
+from zentra.core.html import Div
 from zentra.ui.control import (
     Button,
     Calendar,
@@ -31,6 +33,7 @@ from zentra.ui.control import (
     RadioGroup,
     ScrollArea,
 )
+from zentra.ui.presentation import Separator
 
 from pydantic import BaseModel
 
@@ -62,7 +65,7 @@ COMPONENT_ATTR_MAPPING = [
     (InputOTP, "pattern", lambda pattern: input_otp_attributes(pattern)),
     (Label, "name", lambda name: [f'htmlFor="{name}"']),
     (RadioGroup, "default_value", lambda dv: [f'defaultValue="{dv}"']),
-    (ScrollArea, "content", lambda _: ['className="w-96 rounded-md border"']),
+    (Separator, "orientation", lambda val: [f'orientation="{val}"']),
 ]
 
 # (attribute_name, lambda_expression)
@@ -76,6 +79,8 @@ COMMON_ATTR_MAPPING = [
     ("disabled", lambda value: "disabled" if value else None),
     ("apiEndpoint", lambda value: f'apiEndpoint="{value}"'),
     ("num_inputs", lambda value: f"maxLength={{{value}}}"),
+    ("key", lambda key: f"key={{{key[1:]}}}" if key else None),
+    ("styles", lambda value: f'className="{value}"' if value else None),
 ]
 
 
@@ -90,6 +95,7 @@ ADDITIONAL_IMPORTS_MAPPING = [
 
 
 COMPONENT_CONTENT_MAPPING = [
+    (Div, lambda div: div_content(div)),
     (Checkbox, lambda cb: checkbox_content(cb)),
     (Collapsible, lambda comp: collapsible_content(comp)),
     (Button, lambda btn: button_content(btn)),

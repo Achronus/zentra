@@ -610,7 +610,7 @@ class ScrollArea(Component, ShadcnUi):
     ```
     """
 
-    content: str | Div | Component
+    content: str | Div
     styles: str = "w-96 rounded-md border"
     orientation: Orientation = "vertical"
 

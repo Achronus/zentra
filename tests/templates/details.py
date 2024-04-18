@@ -91,6 +91,15 @@ def scroll_area_details() -> ComponentDetails:
     )
 
 
+def separator_details() -> ComponentDetails:
+    return ComponentDetails(
+        library="ui",
+        filename="separator.jsx",
+        name="Separator",
+        child_names=[],
+    )
+
+
 def component_details() -> list[ComponentDetails]:
     return [
         button_details(),
@@ -103,18 +112,20 @@ def component_details() -> list[ComponentDetails]:
         file_upload_details(),
         radio_group_details(),
         scroll_area_details(),
+        separator_details(),
     ]
 
 
 COMPONENT_DETAILS_MAPPING = {
-    "button": button_details(),
-    "calendar": calendar_details(),
-    "checkbox": checkbox_details(),
-    "collapsible": collapsible_details(),
-    "input": input_details(),
-    "input_otp": input_otp_details(),
-    "label": label_details(),
-    "file_upload": file_upload_details(),
-    "radio_group": radio_group_details(),
-    "scroll_area": scroll_area_details(),
+    "Button": button_details(),
+    "Calendar": calendar_details(),
+    "Checkbox": checkbox_details(),
+    "Collapsible": collapsible_details(),
+    "Input": input_details(),
+    "InputOtp": input_otp_details(),
+    "Label": label_details(),
+    "FileUpload": file_upload_details(),
+    "RadioGroup": radio_group_details(),
+    "ScrollArea": scroll_area_details(),
+    "Separator": separator_details(),
 }

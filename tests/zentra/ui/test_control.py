@@ -151,7 +151,7 @@ class TestButton:
         return ComponentFuncWrapper(
             iterable_dict=iterables,
             component_func=btn,
-            component_details=COMPONENT_DETAILS_MAPPING["button"],
+            component_details=COMPONENT_DETAILS_MAPPING["Button"],
         )
 
     @pytest.fixture
@@ -159,7 +159,7 @@ class TestButton:
         return ComponentFuncWrapper(
             iterable_dict=iterables,
             component_func=btn_with_url,
-            component_details=COMPONENT_DETAILS_MAPPING["button"],
+            component_details=COMPONENT_DETAILS_MAPPING["Button"],
         )
 
     @staticmethod
@@ -245,7 +245,7 @@ class TestIconButton:
         return ComponentFuncWrapper(
             iterable_dict=iterables,
             component_func=btn,
-            component_details=COMPONENT_DETAILS_MAPPING["button"],
+            component_details=COMPONENT_DETAILS_MAPPING["Button"],
         )
 
     @pytest.fixture
@@ -253,7 +253,7 @@ class TestIconButton:
         return ComponentFuncWrapper(
             iterable_dict=iterables,
             component_func=btn_with_url,
-            component_details=COMPONENT_DETAILS_MAPPING["button"],
+            component_details=COMPONENT_DETAILS_MAPPING["Button"],
         )
 
     @staticmethod
@@ -322,13 +322,13 @@ class TestCalendar:
     @pytest.fixture
     def wrapper(self, calendar: Calendar) -> SimpleComponentFuncWrapper:
         return SimpleComponentFuncWrapper(
-            calendar, COMPONENT_DETAILS_MAPPING["calendar"]
+            calendar, COMPONENT_DETAILS_MAPPING["Calendar"]
         )
 
     @pytest.fixture
     def wrapper_long(self, calendar_long_name: Calendar) -> SimpleComponentFuncWrapper:
         return SimpleComponentFuncWrapper(
-            calendar_long_name, COMPONENT_DETAILS_MAPPING["calendar"]
+            calendar_long_name, COMPONENT_DETAILS_MAPPING["Calendar"]
         )
 
     @staticmethod
@@ -403,7 +403,7 @@ class TestCheckbox:
     @pytest.fixture
     def wrapper(self, checkbox: Checkbox) -> SimpleComponentFuncWrapper:
         return SimpleComponentFuncWrapper(
-            checkbox, COMPONENT_DETAILS_MAPPING["checkbox"]
+            checkbox, COMPONENT_DETAILS_MAPPING["Checkbox"]
         )
 
     @pytest.fixture
@@ -411,7 +411,7 @@ class TestCheckbox:
         self, checkbox_with_disabled: Checkbox
     ) -> SimpleComponentFuncWrapper:
         return SimpleComponentFuncWrapper(
-            checkbox_with_disabled, COMPONENT_DETAILS_MAPPING["checkbox"]
+            checkbox_with_disabled, COMPONENT_DETAILS_MAPPING["Checkbox"]
         )
 
     @staticmethod
@@ -475,7 +475,7 @@ class TestCollapsible:
     @pytest.fixture
     def wrapper(self, collapsible: Collapsible) -> SimpleComponentFuncWrapper:
         return SimpleComponentFuncWrapper(
-            collapsible, COMPONENT_DETAILS_MAPPING["collapsible"]
+            collapsible, COMPONENT_DETAILS_MAPPING["Collapsible"]
         )
 
     @staticmethod
@@ -550,14 +550,14 @@ class TestInput:
 
     @pytest.fixture
     def wrapper(self, input: Input) -> SimpleComponentFuncWrapper:
-        return SimpleComponentFuncWrapper(input, COMPONENT_DETAILS_MAPPING["input"])
+        return SimpleComponentFuncWrapper(input, COMPONENT_DETAILS_MAPPING["Input"])
 
     @pytest.fixture
     def wrapper_disabled(
         self, input_with_disabled: Input
     ) -> SimpleComponentFuncWrapper:
         return SimpleComponentFuncWrapper(
-            input_with_disabled, COMPONENT_DETAILS_MAPPING["input"]
+            input_with_disabled, COMPONENT_DETAILS_MAPPING["Input"]
         )
 
     @staticmethod
@@ -624,12 +624,12 @@ class TestInputOTP:
 
     @pytest.fixture
     def wrapper(self, input: InputOTP) -> SimpleComponentFuncWrapper:
-        return SimpleComponentFuncWrapper(input, COMPONENT_DETAILS_MAPPING["input_otp"])
+        return SimpleComponentFuncWrapper(input, COMPONENT_DETAILS_MAPPING["InputOtp"])
 
     @pytest.fixture
     def wrapper_pattern(self, input_pattern: InputOTP) -> SimpleComponentFuncWrapper:
         return SimpleComponentFuncWrapper(
-            input_pattern, COMPONENT_DETAILS_MAPPING["input_otp"]
+            input_pattern, COMPONENT_DETAILS_MAPPING["InputOtp"]
         )
 
     @pytest.fixture
@@ -637,7 +637,7 @@ class TestInputOTP:
         self, input_custom_pattern: InputOTP
     ) -> SimpleComponentFuncWrapper:
         return SimpleComponentFuncWrapper(
-            input_custom_pattern, COMPONENT_DETAILS_MAPPING["input_otp"]
+            input_custom_pattern, COMPONENT_DETAILS_MAPPING["InputOtp"]
         )
 
     @staticmethod
@@ -710,7 +710,7 @@ class TestLabel:
 
     @pytest.fixture
     def wrapper(self, label: Label) -> SimpleComponentFuncWrapper:
-        return SimpleComponentFuncWrapper(label, COMPONENT_DETAILS_MAPPING["label"])
+        return SimpleComponentFuncWrapper(label, COMPONENT_DETAILS_MAPPING["Label"])
 
     @staticmethod
     def test_attr_str(wrapper: SimpleComponentFuncWrapper):
@@ -764,7 +764,7 @@ class TestRadioGroup:
     @pytest.fixture
     def wrapper(self, radio_group: RadioGroup) -> SimpleComponentFuncWrapper:
         return SimpleComponentFuncWrapper(
-            radio_group, COMPONENT_DETAILS_MAPPING["radio_group"]
+            radio_group, COMPONENT_DETAILS_MAPPING["RadioGroup"]
         )
 
     @staticmethod
@@ -910,23 +910,23 @@ class TestScrollArea:
     @pytest.fixture
     def wrapper(self, scroll_area: ScrollArea) -> SimpleComponentFuncWrapper:
         return SimpleComponentFuncWrapper(
-            scroll_area, COMPONENT_DETAILS_MAPPING["scroll_area"]
+            scroll_area, COMPONENT_DETAILS_MAPPING["ScrollArea"]
         )
 
     @pytest.fixture
-    def wrapper_vertical(
+    def wrapper_simple_vertical(
         self, scroll_area_vertical: ScrollArea
     ) -> SimpleComponentFuncWrapper:
         return SimpleComponentFuncWrapper(
-            scroll_area_vertical, COMPONENT_DETAILS_MAPPING["scroll_area"]
+            scroll_area_vertical, COMPONENT_DETAILS_MAPPING["ScrollArea"]
         )
 
     @pytest.fixture
-    def wrapper_horizontal(
+    def wrapper_simple_horizontal(
         self, scroll_area_horizontal: ScrollArea
     ) -> SimpleComponentFuncWrapper:
         return SimpleComponentFuncWrapper(
-            scroll_area_horizontal, COMPONENT_DETAILS_MAPPING["scroll_area"]
+            scroll_area_horizontal, COMPONENT_DETAILS_MAPPING["ScrollArea"]
         )
 
     @staticmethod

@@ -4,6 +4,8 @@ from cli.conf.format import name_from_camel_case
 from cli.conf.storage import ComponentDetails
 from cli.templates.mappings import JSXMappings
 from zentra.core import Component, Page
+from zentra.core.base import HTMLTag, JSIterable
+from zentra.core.html import Div
 from zentra.ui import Form
 from zentra.ui.control import Button, IconButton, InputOTP
 
@@ -52,21 +54,36 @@ class JSXPageContentStorage(BaseModel):
     form_schema: list[str] = None
 
 
-class JSXComponentContentStorage(BaseModel):
+class JSXListContentStorage(BaseModel):
     """
-    A storage container for the pieces of a JSX Zentra `Component` model.
+    A storage container for the pieces of multiple JSX Zentra `Component` models.
 
     Parameters:
-    - `imports` (`list[string]`) - a list of strings representing import statements
+    - `imports` (`list[string]`) - a list of strings representing the components import statements
     - `logic` (`list[string]`) - a list of strings representing the component function logic
-    - `attributes` (`list[string]`) - a list of strings representing the attributes used in the main component
     - `content` (`list[string]`) - a list of strings containing the JSX content used in the return statement
     """
 
     imports: list[str] = []
     logic: list[str] = []
-    attributes: list[str] = []
     content: list[str] = []
+
+
+class JSXComponentContentStorage(BaseModel):
+    """
+    A storage container for the pieces of a JSX Zentra `Component` model.
+
+    Parameters:
+    - `imports` (`string`) - a string representing the components import statements
+    - `logic` (`string`) - a string representing the component function logic
+    - `attributes` (`string`) - a string representing the attributes used in the main component
+    - `content` (`string`) - a string containing the JSX content used in the return statement
+    """
+
+    imports: str = ""
+    logic: str = ""
+    attributes: str = ""
+    content: str = ""
 
 
 class JSXPageBuilder:
@@ -230,6 +247,146 @@ class JSXPageBuilder:
             return "", "props"
 
 
+class ParentComponentBuilder:
+    """A builder for creating Zentra `Component` model JSX for components that have other components inside of them."""
+
+    def __init__(
+        self,
+        component: Component,
+        mappings: JSXMappings,
+        details_dict: dict[str, ComponentDetails],
+    ) -> None:
+        self.component = component
+        self.mappings = mappings
+        self.details = details_dict
+        self.storage = JSXListContentStorage()
+
+        self.inner_content = []
+
+    def build(self) -> None:
+        """Builds the JSX for the component."""
+        storage = self.build_component_model(model=self.component)
+
+        if not isinstance(self.component.content, str):
+            self.build_inner_content(model=self.component.content, root=True)
+
+            content = storage.content.split("\n")
+            content = "\n".join([content[0], *self.inner_content, *content[1:]])
+            self.storage.content = [content]
+
+    def build_inner_content(
+        self, model: JSIterable | HTMLTag | Component, root: bool = False
+    ) -> None:
+        """Extracts the inner models from the component and returns them as a list."""
+        if root:
+            self.handle_build_start(model=model)
+
+        if isinstance(model, HTMLTag):
+            if not model.shell:
+                self.inner_content.extend(self.build_html(model=model))
+
+        if isinstance(model, Component):
+            content = [self.build_component_model(model=model).content]
+            self.inner_content.extend(content)
+
+        if hasattr(model, "content") and isinstance(model.content, Div):
+            self.handle_div_shell(model_content=model.content)
+
+        if hasattr(model, "items"):
+            for item in model.items:
+                if isinstance(item, HTMLTag):
+                    self.inner_content.extend(self.build_html(model=item))
+
+                elif isinstance(item, JSIterable):
+                    self.build_js_iterable(model=item)
+
+                elif isinstance(item, Component):
+                    content = [self.build_component_model(model=item).content]
+                    self.inner_content.extend(content)
+
+        if root:
+            self.handle_build_end(model=model)
+
+    def handle_build_start(self, model: HTMLTag | Component) -> None:
+        """Handles the logic for the root object. Configuring the required tag at the start of the build if required."""
+        if isinstance(model, Div):
+            if model.shell:
+                self.inner_content.append("<>")
+
+    def handle_build_end(self, model: HTMLTag | Component) -> None:
+        """Handles the logic for the root object. Configuring the required tag at the end of the build if required."""
+        if isinstance(model, Div):
+            if model.shell:
+                self.inner_content.append("</>")
+            else:
+                self.inner_content.append(f"</{model.classname}>")
+
+    def handle_div_shell(self, model_content: Div) -> None:
+        """Handles the logic for the Div model `shell` attribute."""
+        if model_content.shell:
+            self.inner_content.append("<>")
+            self.build_inner_content(model=model_content)
+            self.inner_content.append("</>")
+        else:
+            self.build_inner_content(model=model_content)
+
+    def build_html(self, model: HTMLTag) -> list[str]:
+        """Builds the content for HTMLTag models and returns them as a list of strings."""
+        content, attributes = self.build_html_model(model=model)
+        return self.html_content_container(
+            model=model, content=content, attributes=attributes
+        )
+
+    def build_js_iterable(self, model: JSIterable) -> None:
+        """Builds the content for JSIterable models and adds it to `self.inner_content`."""
+        self.inner_content.append(
+            "{" + f"{model.obj_name}.{model.classname}(({model.param_name}) => ("
+        )
+        self.build_inner_content(model=model)
+        self.inner_content.append("))}")
+
+    def build_html_model(self, model: HTMLTag) -> list[str]:
+        """Builds the content of the HTML and JS model and returns it as a list of strings."""
+        builder = HTMLContentBuilder(
+            tag=model,
+            mappings=self.mappings,
+        )
+        return builder.build()
+
+    def build_component_model(self, model: Component) -> JSXComponentContentStorage:
+        """Builds the component model and then adds the corresponding items to storage."""
+        builder = ComponentBuilder(
+            component=model,
+            mappings=self.mappings,
+            details=self.details[model.classname],
+        )
+        builder.build()
+        self.populate_storage(comp_store=builder.storage)
+        return builder.storage
+
+    def html_content_container(
+        self, model: HTMLTag, content: list[str], attributes: list[str]
+    ) -> list[str]:
+        """Performs content container wrapping for HTMLTags."""
+        wrapped_content = [f"<{model.classname} {attributes}>"]
+
+        if len(content) > 0:
+            wrapped_content.extend(
+                [
+                    *content,
+                    f"</{model.classname}>",
+                ]
+            )
+
+        return wrapped_content
+
+    def populate_storage(self, comp_store: JSXComponentContentStorage) -> None:
+        """Adds component items to storage."""
+        for key in self.storage.__dict__.keys():
+            if hasattr(comp_store, key):
+                getattr(self.storage, key).append(getattr(comp_store, key))
+
+
 class ComponentBuilder:
     """A builder for creating Zentra `Component` models as JSX."""
 
@@ -296,6 +453,21 @@ class FormBuilder:
             # TODO: access sub-components
             # field.content
             pass
+
+
+class HTMLContentBuilder:
+    """A builder for creating Zentra `HTML` models content as JSX."""
+
+    def __init__(self, tag: HTMLTag, mappings: JSXMappings) -> None:
+        self.tag = tag
+        self.maps = mappings
+
+    def build(self) -> tuple[list[str], list[str]]:
+        """Builds a single item's content and attributes and returns them as a tuple."""
+        attr_builder = AttributeBuilder(mappings=self.maps, component=self.tag)
+        builder = ContentBuilder(component=self.tag, mappings=self.maps)
+        attributes = " ".join(attr_builder.build())
+        return builder.build(), attributes
 
 
 class AttributeBuilder:

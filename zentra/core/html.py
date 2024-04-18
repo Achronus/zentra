@@ -3,7 +3,7 @@ from zentra.core.base import HTMLTag, JSIterable
 from zentra.core.enums.html import HTMLContentTagType
 from zentra.nextjs import Image
 
-from pydantic import field_validator
+from pydantic import ConfigDict, field_validator
 from pydantic_core import PydanticCustomError
 
 
@@ -20,23 +20,29 @@ class HTMLContent(HTMLTag):
     text: str
     tag: HTMLContentTagType
 
+    model_config = ConfigDict(use_enum_values=True)
+
+    @property
+    def classname(self) -> str:
+        return self.tag
+
 
 class Div(HTMLTag):
     """
     A model dedicated to the `<div>` HTML tag.
 
     Parameters:
-    - `items` (`string | zentra.core.Component | zentra.core.js.JSIterable | list[string | zentra.core.html.HTMLContent | zentra.core.Component]`) - Can be either:
+    - `items` (`string | zentra.core.Component | zentra.core.js.JSIterable | list[string | zentra.core.html.HTMLTag | zentra.core.Component | zentra.core.js.JSIterable]`) - Can be either:
       1. A `string` of text. Can include parameter variables (indicated by starting the variable name with a `$`) or be one specifically
       2. Any `zentra.core.Component` model, such as `zentra.ui.control.Label`
       3. Any `zentra.core.js.JSIterable` model, such as `zentra.core.js.Map`
-      4. A `list` of a combination of `strings` of text, `zentra.core.html.HTMLContent` items, or `zentra.core.Component` models
+      4. A `list` of a combination of `strings` of text, `zentra.core.html.HTMLTag` models, `zentra.core.js.JSIterable` models, or `zentra.core.Component` models
     - `shell` (`boolean, optional`) - A flag to indicate whether the div should be an empty tag wrapper (`<>`, `</>`). Often used in JSX when a single parent container is needed. `False` by default
     - `key` (`string, optional`) - A unique identifier added to the container. Needed when using JS iterables like `map`. When provided, must be a parameter (start with a `$`). `None` by default
     - `styles` (`string, optional`) - the CSS styles to apply to the tag. `None` by default
     """
 
-    items: str | Component | JSIterable | list[str | HTMLContent | Component]
+    items: str | Component | JSIterable | list[str | HTMLTag | Component | JSIterable]
     shell: bool = False
     key: str = None
 

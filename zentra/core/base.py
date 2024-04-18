@@ -14,6 +14,11 @@ class HTMLTag(BaseModel):
 
     styles: str = None
 
+    @property
+    def classname(self) -> str:
+        """Stores the classname for the JSX builder."""
+        return self.__class__.__name__.lower()
+
 
 class JSIterable(BaseModel):
     """

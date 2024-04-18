@@ -1,9 +1,11 @@
 from typing import Callable
 
 from cli.templates.ui.attributes import (
+    alt_attribute,
     calendar_attributes,
     collapsible_attributes,
     input_otp_attributes,
+    src_attribute,
 )
 from cli.templates.ui.content import (
     button_content,
@@ -81,6 +83,10 @@ COMMON_ATTR_MAPPING = [
     ("num_inputs", lambda value: f"maxLength={{{value}}}"),
     ("key", lambda key: f"key={{{key[1:]}}}" if key else None),
     ("styles", lambda value: f'className="{value}"' if value else None),
+    ("src", lambda value: src_attribute(value) if value else None),
+    ("alt", lambda alt: alt_attribute(alt) if alt else None),
+    ("width", lambda width: f"width={{{width}}}" if width else None),
+    ("height", lambda height: f"height={{{height}}}" if height else None),
 ]
 
 

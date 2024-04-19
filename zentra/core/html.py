@@ -48,7 +48,7 @@ class Div(HTMLTag):
 
     @field_validator("key")
     def validate_key(cls, key: str) -> str:
-        if key and key[0] != "$":
+        if key and not key.startswith("$"):
             raise PydanticCustomError(
                 "key_must_be_a_parameter",
                 f"'{key}' != '${key}'! Must start with a '$' to set as a parameter\n",
@@ -168,7 +168,7 @@ class Figure(HTMLTag):
 
     @field_validator("key")
     def validate_key(cls, key: str) -> str:
-        if key and key[0] != "$":
+        if key and not key.startswith("$"):
             raise PydanticCustomError(
                 "key_must_be_a_parameter",
                 f"'{key}' != '${key}'! Must start with a '$' to set as a parameter\n",

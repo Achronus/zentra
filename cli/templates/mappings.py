@@ -15,6 +15,7 @@ from cli.templates.ui.content import (
     div_content,
     radio_group_content,
     scroll_area_content,
+    text_content,
 )
 from cli.templates.ui.imports import (
     button_imports,
@@ -120,7 +121,7 @@ COMPONENT_CONTENT_MAPPING = [
 
 
 COMMON_CONTENT_MAPPING = [
-    ("text", lambda value: value),
+    ("text", lambda value: text_content(value)),
 ]
 
 

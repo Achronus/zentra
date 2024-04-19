@@ -86,7 +86,7 @@ def alt_attribute(alt: str) -> str:
 
     new_alt = []
     for word in values:
-        if word and word[0] == "$":
+        if word and word.startswith("$"):
             word = "{" + word[1:] + "}"
             param_str = True
         new_alt.append(word)

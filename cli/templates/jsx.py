@@ -493,6 +493,92 @@ class NextJSComponentBuilder:
         return chars.join([item for item in items if item])
 
 
+class HTMLContentBuilder:
+    """A builder for creating Zentra `HTML` model content as JSX."""
+
+    def __init__(self, model: HTMLTag, mappings: JSXMappings) -> None:
+        self.model = model
+        self.maps = mappings
+
+        self.comp_storage = JSXComponentContentStorage()
+        self.inner_content = []
+
+    def build(self, model: HTMLTag = None) -> list[str]:
+        """Builds a single item's content and returns it as a list of strings."""
+        if model is None:
+            model = self.model
+
+        if hasattr(model, "text"):
+            self.handle_text(text=model.text)
+            model.text = self.inner_content
+
+        if isinstance(model, Figure):
+            return self.build_figure_model(model=model)
+
+        return self.get_content(model=model)
+
+    def build_figure_model(self, model: Figure) -> list[str]:
+        """Builds the content for the Figure model and returns it as a list of strings."""
+        content = []
+        shell_start, shell_end = self.get_content(model=model)
+
+        nextjs = NextJSComponentBuilder(component=model.img, mappings=self.maps)
+        nextjs.build()
+        self.comp_storage = nextjs.storage
+        img_content = [nextjs.storage.content]
+
+        content.append(shell_start)
+
+        if model.img_container_styles:
+            img_content.insert(0, f'<div className="{model.img_container_styles}"')
+            img_content.append("</div>")
+
+        content.extend(img_content)
+        content.extend(self.build(model=model.caption))
+        content.append(shell_end)
+        return content
+
+    def handle_text(self, text: str | HTMLTag | list[str | HTMLTag]) -> None:
+        """Handles the content building for the text attribute and stores it in `self.inner_content`."""
+        if isinstance(text, list):
+            for item in text:
+                self.handle_text(text=item)
+
+        if isinstance(text, HTMLTag):
+            self.inner_content.extend(self.get_content(model=text))
+        elif isinstance(text, str):
+            self.inner_content.append(text)
+
+    def get_content(self, model: HTMLTag) -> list[str]:
+        """A helper function to build the content of the HTMLTag and returns it as a list of strings."""
+        attr_builder = AttributeBuilder(mappings=self.maps, component=model)
+        content_builder = ContentBuilder(component=model, mappings=self.maps)
+
+        attributes = " ".join(attr_builder.build())
+        content = content_builder.build()
+        return self.html_content_container(
+            model=model, content=content, attributes=attributes
+        )
+
+    def html_content_container(
+        self, model: HTMLTag, content: list[str], attributes: list[str]
+    ) -> list[str]:
+        """Performs content container wrapping for HTMLTags."""
+        wrapped_content = [f"<{model.classname} {attributes}>"]
+
+        if len(content) > 0:
+            wrapped_content.extend(content)
+
+        wrapped_content.append(f"</{model.classname}>")
+
+        if isinstance(model, Div):
+            if model.shell:
+                wrapped_content[0] = "<>"
+                wrapped_content[-1] = "</>"
+
+        return wrapped_content
+
+
 class JSIterableContentBuilder:
     """A builder for creating Zentra `JSIterable` model content as JSX."""
 
@@ -508,6 +594,7 @@ class JSIterableContentBuilder:
         if isinstance(self.model.content, HTMLTag):
             builder = HTMLContentBuilder(model=self.model.content, mappings=self.maps)
             content = builder.build()
+            self.comp_storage = builder.comp_storage
         else:
             builder = ComponentBuilder(
                 component=self.model.content, mappings=self.maps, details=details
@@ -594,21 +681,6 @@ class FormBuilder:
             # TODO: access sub-components
             # field.content
             pass
-
-
-class HTMLContentBuilder:
-    """A builder for creating Zentra `HTML` models content as JSX."""
-
-    def __init__(self, tag: HTMLTag, mappings: JSXMappings) -> None:
-        self.tag = tag
-        self.maps = mappings
-
-    def build(self) -> tuple[list[str], list[str]]:
-        """Builds a single item's content and attributes and returns them as a tuple."""
-        attr_builder = AttributeBuilder(mappings=self.maps, component=self.tag)
-        builder = ContentBuilder(component=self.tag, mappings=self.maps)
-        attributes = " ".join(attr_builder.build())
-        return builder.build(), attributes
 
 
 class AttributeBuilder:
@@ -735,6 +807,9 @@ class ContentBuilder:
                 content_str = condition(self.component)
                 if content_str:
                     content.extend(content_str)
+
+        if len(content) > 0 and isinstance(content[0], list):
+            return self.handle_single_quotes(*content)
 
         return self.handle_single_quotes(content)
 

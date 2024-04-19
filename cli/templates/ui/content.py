@@ -1,4 +1,4 @@
-from zentra.core.html import Div
+from zentra.core.html import Div, HTMLContent
 from zentra.ui.control import (
     Button,
     Checkbox,
@@ -12,7 +12,7 @@ from zentra.ui.control import (
 def div_content(div: Div) -> list[str]:
     """Returns a list of strings for the Div content based on the components attributes."""
     if isinstance(div.items, str):
-        if div.items[0] == "$":
+        if div.items.startswith("$"):
             return [f"{{{div.items[1:]}}}"]
 
         return [div.items]
@@ -109,3 +109,14 @@ def scroll_area_content(sa: ScrollArea) -> list[str]:
 
     content.append(f'<ScrollBar orientation="{sa.orientation}" />')
     return content
+
+
+def text_content(
+    text: str | HTMLContent | list[str | HTMLContent],
+) -> str | HTMLContent:
+    """Returns a list of strings for the text attribute based on the given value."""
+    if isinstance(text, str):
+        if text.startswith("$"):
+            return f"{{{text[1:]}}}"
+
+    return text

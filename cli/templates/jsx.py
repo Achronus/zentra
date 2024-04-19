@@ -493,6 +493,41 @@ class NextJSComponentBuilder:
         return chars.join([item for item in items if item])
 
 
+class JSIterableContentBuilder:
+    """A builder for creating Zentra `JSIterable` model content as JSX."""
+
+    def __init__(self, model: JSIterable, mappings: JSXMappings) -> None:
+        self.model = model
+        self.maps = mappings
+        self.comp_storage = JSXComponentContentStorage()
+
+    def build(self, details: ComponentDetails = None) -> list[str]:
+        """Builds the content for the JSX iterable and returns it as a list of strings. If the the content inside is a component, also stores its information in `self.storage`."""
+        start, end = self.get_container()
+
+        if isinstance(self.model.content, HTMLTag):
+            builder = HTMLContentBuilder(model=self.model.content, mappings=self.maps)
+            content = builder.build()
+        else:
+            builder = ComponentBuilder(
+                component=self.model.content, mappings=self.maps, details=details
+            )
+            builder.build()
+            content = builder.storage.content
+            self.comp_storage = builder.storage
+
+        return [start, *content, end]
+
+    def get_container(self) -> tuple[str, str]:
+        """Creates the outer shell of the iterable and returns it in the form of `(start, end)`."""
+        start = (
+            "{"
+            + f"{self.model.obj_name}.{self.model.classname}(({self.model.param_name}) => ("
+        )
+        end = "))}"
+        return start, end
+
+
 class ComponentBuilder:
     """A builder for creating Zentra `Component` models as JSX."""
 

@@ -113,3 +113,24 @@ class TestImage:
                 width=300,
                 height=400,
             )
+
+
+class TestStaticImage:
+    @pytest.fixture
+    def image(self) -> StaticImage:
+        return StaticImage(name="profilePic", path="./me.png")
+
+    @staticmethod
+    def test_name_uppercase_error():
+        with pytest.raises(ValidationError):
+            StaticImage(name="PROFILE", path="./me.png")
+
+    @staticmethod
+    def test_name_multi_word_error():
+        with pytest.raises(ValidationError):
+            StaticImage(name="profile pic", path="./me.png")
+
+    @staticmethod
+    def test_name_pascalcase_error():
+        with pytest.raises(ValidationError):
+            StaticImage(name="ProfilePic", path="./me.png")

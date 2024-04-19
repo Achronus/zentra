@@ -27,5 +27,6 @@ NEXTJS_VALID_IMPORTS = {
     "image": {
         "standard": "import Image from 'next/image'",
         "static_src": "import Image from 'next/image'\nimport profilePic from './me.png'",
-    }
+    },
+    "link": "import Link from 'next/link'",
 }

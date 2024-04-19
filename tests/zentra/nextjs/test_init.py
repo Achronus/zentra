@@ -5,7 +5,7 @@ from tests.mappings.ui_simple import NEXTJS_VALID_VALS_MAP
 from tests.templates.helper import nextjs_component_builder
 
 from zentra.core import Component
-from zentra.nextjs import Image, StaticImage
+from zentra.nextjs import Image, Link, StaticImage, Url
 
 from pydantic import ValidationError
 
@@ -134,3 +134,121 @@ class TestStaticImage:
     def test_name_pascalcase_error():
         with pytest.raises(ValidationError):
             StaticImage(name="ProfilePic", path="./me.png")
+
+
+class TestLink:
+    @pytest.fixture
+    def link(self) -> Link:
+        return Link(href="/dashboard")
+
+    @staticmethod
+    def test_imports_valid(link: Link):
+        builder = Builder(link)
+        builder.run("imports", NEXTJS_VALID_IMPORTS["link"])
+
+    @staticmethod
+    def test_content_required(link: Link):
+        builder = Builder(link)
+        builder.run("content", NEXTJS_VALID_VALS_MAP["link"]["content"]["standard"])
+
+    @staticmethod
+    def test_content_with_text():
+        link = Link(href="/dashboard", text="Dashboard")
+        builder = Builder(link)
+        builder.run("content", NEXTJS_VALID_VALS_MAP["link"]["content"]["with_text"])
+
+    @staticmethod
+    def test_content_full():
+        link = Link(
+            href=Url(
+                pathname="/dashboard",
+                query={"name": "test"},
+            ),
+            text="Dashboard",
+            styles="rounded-md border",
+            target="_blank",
+            replace=True,
+            scroll=False,
+            prefetch=False,
+        )
+        builder = Builder(link)
+        builder.run("content", NEXTJS_VALID_VALS_MAP["link"]["content"]["full"])
+
+    @staticmethod
+    def test_attr_styles():
+        link = Link(href="/dashboard", styles="rounded-md border")
+        builder = Builder(link)
+        builder.run("attributes", NEXTJS_VALID_VALS_MAP["link"]["attributes"]["styles"])
+
+    @staticmethod
+    def test_attr_target():
+        link = Link(href="/dashboard", target="_blank")
+        builder = Builder(link)
+        builder.run("attributes", NEXTJS_VALID_VALS_MAP["link"]["attributes"]["target"])
+
+    @staticmethod
+    def test_attr_replace():
+        link = Link(href="/dashboard", replace=True)
+        builder = Builder(link)
+        builder.run(
+            "attributes", NEXTJS_VALID_VALS_MAP["link"]["attributes"]["replace"]
+        )
+
+    @staticmethod
+    def test_attr_scroll():
+        link = Link(href="/dashboard", scroll=False)
+        builder = Builder(link)
+        builder.run("attributes", NEXTJS_VALID_VALS_MAP["link"]["attributes"]["scroll"])
+
+    @staticmethod
+    def test_attr_prefetch_false():
+        link = Link(href="/dashboard", prefetch=False)
+        builder = Builder(link)
+        builder.run(
+            "attributes", NEXTJS_VALID_VALS_MAP["link"]["attributes"]["prefetch_false"]
+        )
+
+    @staticmethod
+    def test_attr_prefetch_true():
+        link = Link(href="/dashboard", prefetch=True)
+        builder = Builder(link)
+        builder.run(
+            "attributes", NEXTJS_VALID_VALS_MAP["link"]["attributes"]["prefetch_true"]
+        )
+
+    @staticmethod
+    def test_attr_href_url():
+        link = Link(
+            href=Url(
+                pathname="/dashboard",
+                query={"name": "test"},
+            ),
+        )
+        builder = Builder(link)
+        builder.run(
+            "attributes", NEXTJS_VALID_VALS_MAP["link"]["attributes"]["href_url"]
+        )
+
+    @staticmethod
+    def test_attr_href_url_multi_query():
+        link = Link(
+            href=Url(
+                pathname="/dashboard",
+                query={"name": "test", "second": "test2"},
+            ),
+        )
+        builder = Builder(link)
+        builder.run(
+            "attributes",
+            NEXTJS_VALID_VALS_MAP["link"]["attributes"]["href_url_multi_query"],
+        )
+
+
+class TestUrl:
+    @staticmethod
+    def test_pathname_invalid():
+        with pytest.raises(ValidationError):
+            Url(
+                pathname="dashboard",
+                query={"name": "test"},
+            )

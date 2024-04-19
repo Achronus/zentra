@@ -68,7 +68,7 @@ class Url(BaseModel, NextJs):
 
     @field_validator("pathname")
     def validate_pathname(cls, pathname: str) -> str:
-        if pathname[0] != "/":
+        if not pathname.startswith("/"):
             raise PydanticCustomError(
                 "invalid_string",
                 "must start with a '/'",
@@ -211,20 +211,81 @@ class Link(Component, NextJs):
     A Zentra model for the [NextJS Link](https://nextjs.org/docs/app/api-reference/components/link) component.
 
     Parameters:
-    - `href` (`string | zentra.nextjs.Url`) - a path or URL to navigate to, or a `zentra.nextjs.Url` object
+    - `href` (`string | HttpUrl | zentra.nextjs.Url`) - a path or URL to navigate to, or a `zentra.nextjs.Url` object
+    - `text` (`string, optional`) - a string of text to display inside the `Link`. `None` by default
     - `styles` (`string, optional`) - a set of optional CSS styles. Automatically assigns them to a `className` attribute. `None` by default
-    - `target` (`string, optional`) - a target for the URL such as `_blank` for a new tab. `None` by default
+    - `target` (`string | HttpUrl, optional`) - a target for the URL such as `_blank` for a new tab. `None` by default
     - `replace` (`boolean, optional`) - a boolean flag for enabling replacement of the current history state instead of adding a new URL into the [browser's history](https://developer.mozilla.org/en-US/docs/Web/API/History_API) stack. `False` by default
     - `scroll` (`boolean, optional`) - a boolean flag for setting the scroll behaviour. When `True` links will scroll to the top of a new route or maintain its scroll position for backwards and forwards navigation. When `False` links will `not` scroll to the top of the page. `True` by default
     - `prefetch` (`boolean, optional`) - a boolean flag for prefetching behaviour. Happens when a `Link` component enters the user's viewport (initially or through scroll). Involves loading the linked route (`href`) and its data in the background to improve the performance of the client-side navigations. Only enabled during production. `None` by default. Options:
       1. `None` - prefetching depends on whether the route is `static` or `dynamic`. For `static` routes, the full route is prefetched (including all its data). For `dynamic` routes, we prefetch the partial route down to the nearest [loading.js](https://nextjs.org/docs/app/building-your-application/routing/loading-ui-and-streaming#instant-loading-states) segment boundary
       2. `True` - the full route is prefetched for both static and dynamic routes
       3. `False` - prefetching never happens on hover or when entering the viewport
+
+    Example Usage:
+    1. A simple link.
+    ```python
+    from zentra.nextjs import Link
+
+    Link(href="/dashboard")
+    ```
+    JSX equivalent ->
+    ```jsx
+    <Link href="/dashboard" />
+    ```
+
+    2. A simple link with text.
+    ```python
+    from zentra.nextjs import Link
+
+    Link(href="/dashboard", text="Dashboard")
+    ```
+    JSX equivalent ->
+    ```jsx
+    <Link href="/dashboard">
+        Dashboard
+    </Link>
+    ```
+
+    3. An advanced link with everything.
+    ```python
+    from zentra.nextjs import Link, Url
+
+    Link(
+        href=Url(
+            pathname="/dashboard",
+            query={"name": "test"},
+        ),
+        text="Dashboard",
+        styles="rounded-md border",
+        target="_blank",
+        replace=True,
+        scroll=False,
+        prefetch=False,
+    )
+    ```
+    JSX equivalent ->
+    ```jsx
+    <Link
+        href={{
+            pathname: '/dashboard',
+            query: { name: 'test' },
+        }}
+        target="_blank"
+        className="rounded-md border"
+        replace
+        scroll={false}
+        prefetch={false}
+    >
+        Dashboard
+    </Link>
+    ```
     """
 
-    href: str | Url
+    href: str | HttpUrl | Url
+    text: str = None
     styles: str = None
-    target: str = None
+    target: str | HttpUrl = None
     replace: bool = False
     scroll: bool = True
     prefetch: bool = None

@@ -596,9 +596,14 @@ class AttributeBuilder:
         for item in self.maps.component_attrs:
             comp_type, attr_name, condition = item
             if isinstance(self.component, comp_type):
-                value = getattr(self.component, attr_name)
+                if attr_name == "all":
+                    value = condition(self.component)
+                else:
+                    value = getattr(self.component, attr_name)
+                    value = condition(value)
+
                 if value:
-                    attrs.extend(condition(value))
+                    attrs.extend(value)
         return attrs
 
 

@@ -2,7 +2,7 @@ import re
 
 from pydantic import HttpUrl
 from zentra.core.enums.ui import InputOTPPatterns
-from zentra.nextjs import StaticImage
+from zentra.nextjs import Link, StaticImage, Url
 
 
 def calendar_attributes(name: str) -> list[str]:
@@ -31,6 +31,39 @@ def input_otp_attributes(pattern: str) -> list[str]:
         if pattern in InputOTPPatterns
         else f'pattern="{re.compile(pattern).pattern}"'
     ]
+
+
+def nextjs_link_attributes(link: Link) -> list[str]:
+    """Returns a list of strings for the Link attributes based on its given values."""
+    attributes = []
+
+    if isinstance(link.href, Url):
+        queries = ", ".join(
+            [f'{key}: "{value}"' for key, value in link.href.query.items()]
+        )
+        print(queries)
+
+        attributes.extend(
+            [
+                "href={{",
+                f'pathname: "{link.href.pathname}",',
+                "query: { " + queries + " },",
+                "}}",
+            ]
+        )
+    elif isinstance(link.href, str):
+        attributes.append(f'href="{link.href}"')
+
+    if link.replace:
+        attributes.append("replace")
+
+    if not link.scroll:
+        attributes.append(f"scroll={{{str(link.scroll).lower()}}}")
+
+    if link.prefetch is not None:
+        attributes.append(f"prefetch={{{str(link.prefetch).lower()}}}")
+
+    return attributes
 
 
 def src_attribute(value: str | HttpUrl | StaticImage) -> str:

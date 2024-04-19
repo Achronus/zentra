@@ -5,6 +5,7 @@ from cli.templates.ui.attributes import (
     calendar_attributes,
     collapsible_attributes,
     input_otp_attributes,
+    nextjs_link_attributes,
     src_attribute,
 )
 from cli.templates.ui.content import (
@@ -26,7 +27,7 @@ from cli.templates.ui.imports import (
 from cli.templates.ui.logic import calendar_logic, collapsible_logic
 from tests.templates.dummy import DummyIconButton
 from zentra.core.html import Div
-from zentra.nextjs import Image, StaticImage
+from zentra.nextjs import Image, Link, StaticImage
 from zentra.ui.control import (
     Button,
     Calendar,
@@ -72,6 +73,7 @@ COMPONENT_ATTR_MAPPING = [
     (Label, "name", lambda name: [f'htmlFor="{name}"']),
     (RadioGroup, "default_value", lambda dv: [f'defaultValue="{dv}"']),
     (Separator, "orientation", lambda val: [f'orientation="{val}"']),
+    (Link, "all", lambda comp: nextjs_link_attributes(comp)),
 ]
 
 # (attribute_name, lambda_expression)
@@ -86,6 +88,7 @@ COMMON_ATTR_MAPPING = [
     ("apiEndpoint", lambda value: f'apiEndpoint="{value}"'),
     ("num_inputs", lambda value: f"maxLength={{{value}}}"),
     ("key", lambda key: f"key={{{key[1:]}}}" if key else None),
+    ("target", lambda value: f'target="{value}"' if value else None),
     ("styles", lambda value: f'className="{value}"' if value else None),
     ("src", lambda value: src_attribute(value) if value else None),
     ("alt", lambda alt: alt_attribute(alt) if alt else None),

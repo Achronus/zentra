@@ -2,7 +2,7 @@ from pydantic_core import PydanticCustomError
 from zentra.core import LOWER_CAMELCASE_SINGLE_WORD, Component, has_valid_pattern
 from zentra.core.enums.ui import LibraryType
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, HttpUrl, field_validator
 
 
 class NextJs:
@@ -121,10 +121,10 @@ class Image(Component, NextJs):
     A Zentra model for the [NextJS Image](https://nextjs.org/docs/app/api-reference/components/image) component.
 
     Parameter:
-    - `src` (`string | zentra.nextjs.StaticImage`) - a path string to an image, such as an absolute external URL or a statically imported image file represented by the `StaticImage` model. Can also be a parameter, signified by a `$` at the start of the parameter name. This is useful when using the `Image` inside an `iterable` function like `map`
+    - `src` (`string | HttpUrl | zentra.nextjs.StaticImage`) - a path string to an image represented by the `StaticImage` model, an absolute external URL denoted by 'http', or a parameter, signified by a `$` at the start of the parameter name. Choosing a parameter is useful when using the `Image` inside an `iterable` function like `zentra.js.Map`
     - `width` (`integer`) - a static width for the image
     - `height` (`integer`) - a static height for the image
-    - `alt` (`string`) - an `alt` tag used to describe the image for screen readers and search engines. Also, acts as fallback text if the image is disabled, errors, or fails to load. Can also include parameters, signified by a `$` at the start of the parameter name. This is useful when using the `Image` inside an `iterable` function like `map`
+    - `alt` (`string`) - an `alt` tag used to describe the image for screen readers and search engines. Also, acts as fallback text if the image is disabled, errors, or fails to load. Can also include parameters, signified by a `$` at the start of the parameter name. This is useful when using the `Image` inside an `iterable` function like `zentra.js.Map`
     - `styles` (`string, optional`) - a set of optional CSS styles. Automatically assigns them to a `className` attribute. `None` by default
 
     Example Usage:
@@ -185,13 +185,25 @@ class Image(Component, NextJs):
     ```
     """
 
-    src: str | StaticImage
+    src: str | HttpUrl | StaticImage
     width: int
     height: int
     alt: str
     styles: str = None
 
     # TODO: add optional attributes such as loader
+    @field_validator("src")
+    def validate_src(
+        cls, src: str | HttpUrl | StaticImage
+    ) -> str | HttpUrl | StaticImage:
+        if isinstance(src, str) and not src.startswith(("$", "http")):
+            raise PydanticCustomError(
+                "invalid_string_value",
+                "when 'string' must be a 'parameter' (start with '$') or 'url' (start with 'http')\n",
+                dict(wrong_value=src),
+            )
+
+        return src
 
 
 class Link(Component, NextJs):

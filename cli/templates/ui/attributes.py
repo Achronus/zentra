@@ -1,4 +1,6 @@
 import re
+
+from pydantic import HttpUrl
 from zentra.core.enums.ui import InputOTPPatterns
 from zentra.nextjs import StaticImage
 
@@ -31,14 +33,15 @@ def input_otp_attributes(pattern: str) -> list[str]:
     ]
 
 
-def src_attribute(value: str | StaticImage) -> str:
+def src_attribute(value: str | HttpUrl | StaticImage) -> str:
     """Returns a string for the `src` attribute based on its given value."""
     attr = "src="
     if isinstance(value, str):
-        if value[0] == "$":
+        if value.startswith("http"):
+            return f'{attr}"{value}"'
+        elif value.startswith("$"):
             return f"{attr}{{{value[1:]}}}"
 
-        return f'{attr}"{value}"'
     else:
         return f"{attr}{{{value.name}}}"
 

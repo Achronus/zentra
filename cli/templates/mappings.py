@@ -18,12 +18,15 @@ from cli.templates.ui.content import (
 from cli.templates.ui.imports import (
     button_imports,
     collapsible_imports,
+    image_imports,
     input_opt_imports,
     radio_group_imports,
+    static_img_imports,
 )
 from cli.templates.ui.logic import calendar_logic, collapsible_logic
 from tests.templates.dummy import DummyIconButton
 from zentra.core.html import Div
+from zentra.nextjs import Image, StaticImage
 from zentra.ui.control import (
     Button,
     Calendar,
@@ -52,6 +55,7 @@ USE_CLIENT_COMPONENTS = [
     "Calendar",
     "Checkbox",
     "Collapsible",
+    "Image",
 ]
 
 # Components that have "useState"
@@ -97,6 +101,8 @@ ADDITIONAL_IMPORTS_MAPPING = [
     (IconButton, "all", lambda btn: button_imports(btn)),
     (DummyIconButton, "all", lambda btn: button_imports(btn)),
     (RadioGroup, "default_value", lambda _: radio_group_imports()),
+    (StaticImage, "all", lambda img: static_img_imports(img)),
+    (Image, "src", lambda src: image_imports(src)),
 ]
 
 

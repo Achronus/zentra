@@ -21,3 +21,11 @@ VALID_IMPORTS = {
         "horizontal": 'import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"',
     },
 }
+
+
+NEXTJS_VALID_IMPORTS = {
+    "image": {
+        "standard": "import Image from 'next/image'",
+        "static_src": "import Image from 'next/image'\nimport profilePic from './me.png'",
+    }
+}

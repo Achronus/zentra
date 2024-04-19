@@ -1,5 +1,10 @@
 from cli.conf.storage import ComponentDetails
-from cli.templates.jsx import ComponentBuilder, JSXPageBuilder, ParentComponentBuilder
+from cli.templates.jsx import (
+    ComponentBuilder,
+    JSXPageBuilder,
+    NextJSComponentBuilder,
+    ParentComponentBuilder,
+)
 from cli.templates.mappings import JSX_MAPPINGS
 from tests.templates.details import COMPONENT_DETAILS_MAPPING, component_details
 from zentra.core import Component, Page
@@ -15,6 +20,10 @@ def parent_component_builder(component: Component) -> ParentComponentBuilder:
     return ParentComponentBuilder(
         component, mappings=JSX_MAPPINGS, details_dict=COMPONENT_DETAILS_MAPPING
     )
+
+
+def nextjs_component_builder(component: Component) -> NextJSComponentBuilder:
+    return NextJSComponentBuilder(component, mappings=JSX_MAPPINGS)
 
 
 def page_builder(page: Page) -> JSXPageBuilder:

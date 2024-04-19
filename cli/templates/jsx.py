@@ -412,6 +412,87 @@ class ParentComponentBuilder:
                 getattr(self.storage, key).append(getattr(comp_store, key))
 
 
+class NextJSComponentBuilder:
+    """A builder for creating Zentra `NextJS` models as JSX."""
+
+    def __init__(self, component: Component, mappings: JSXMappings) -> None:
+        self.component = component
+        self.maps = mappings
+
+        self.storage = JSXComponentContentStorage()
+        self.attrs = AttributeBuilder(mappings=mappings, component=component)
+        self.content = ContentBuilder(component=component, mappings=mappings)
+
+    def build(self) -> None:
+        """Builds the JSX for the component."""
+        self.storage.imports = self.compress(self.imports())
+        self.storage.attributes = self.compress(self.attrs.build(), chars=" ")
+        self.storage.content = self.compress(
+            self.apply_content_containers(content=self.content.build())
+        )
+
+    def imports(self) -> list[str]:
+        """Builds the imports based on the component attributes and mappings."""
+        imports = [self.core_import()]
+        extra_imports = self.additional_imports()
+
+        if extra_imports:
+            imports.extend(extra_imports)
+
+        return imports
+
+    def core_import(self) -> str:
+        """Creates the core import statement for the component."""
+        name = self.component.classname
+        return f"import {name} from 'next/{name.lower()}'"
+
+    def additional_imports(self) -> list[str]:
+        """Creates the additional imports needed for the component."""
+        results = []
+        for item in self.maps.additional_imports:
+            comp_type, attr_name, imports = item
+            if isinstance(self.component, comp_type):
+                if attr_name == "all":
+                    result = imports(self.component)
+                else:
+                    value = getattr(self.component, attr_name)
+                    result = imports(value)
+
+                if result:
+                    results.extend(result)
+
+        if len(results) == 0:
+            return None
+
+        return results
+
+    def apply_content_containers(self, content: list[str]) -> list[str]:
+        """Wraps the components content in its outer shell and any additional wrappers (if applicable)."""
+        wrapped_content = [f"<{self.component.classname} {self.storage.attributes} />"]
+
+        if len(content) > 0:
+            wrapped_content[0] = wrapped_content[0].replace(" />", ">")
+            wrapped_content.extend(
+                [
+                    *content,
+                    f"</{self.component.classname}>",
+                ]
+            )
+
+        if self.component.classname in self.maps.wrappers.keys():
+            wrapped_content = [
+                f"<div {self.maps.wrappers[self.component.classname]}>",
+                *wrapped_content,
+                "</div>",
+            ]
+
+        return wrapped_content
+
+    def compress(self, items: list[str], chars: str = "\n") -> str:
+        """Concatenates a list of strings into a single string based on the given chars."""
+        return chars.join([item for item in items if item])
+
+
 class ComponentBuilder:
     """A builder for creating Zentra `Component` models as JSX."""
 

@@ -1,3 +1,5 @@
+from zentra.core import Component
+from zentra.core.base import JSIterable
 from zentra.core.html import Div, HTMLContent
 from zentra.ui.control import (
     Button,
@@ -9,13 +11,24 @@ from zentra.ui.control import (
 )
 
 
-def div_content(div: Div) -> list[str]:
-    """Returns a list of strings for the Div content based on the components attributes."""
-    if isinstance(div.items, str):
-        if div.items.startswith("$"):
-            return [f"{{{div.items[1:]}}}"]
+def param_reformat_helper(text: str) -> list[str]:
+    """A helper function to reformat a string of text with parameter values. Returns the new version as a list of strings."""
+    new_text = []
+    for word in text.split(" "):
+        if word.startswith("$"):
+            new_text.append(f"{{{word[1:]}}}")
+        else:
+            new_text.append(word)
 
-        return [div.items]
+    return new_text
+
+
+def div_content(div: Div) -> Component | JSIterable | list:
+    """Returns the required format for Div content based on the components attributes. For example, if `div.items` is a string, it converts it to a list and reformats its `parameter` values if required. If no formatting is required, will return the `Component` model, `JSIterable` model, or `list` of items provided."""
+    if isinstance(div.items, str):
+        return param_reformat_helper(div.items)
+
+    return div.items
 
 
 def checkbox_content(cb: Checkbox) -> list[str]:
@@ -114,15 +127,8 @@ def scroll_area_content(sa: ScrollArea) -> list[str]:
 def text_content(
     text: str | HTMLContent | list[str | HTMLContent],
 ) -> list[str] | HTMLContent:
-    """Returns a list of strings of text content with variable preprocessing (if required) or a HTMLContent object."""
+    """Returns a list of strings of text content with variable preprocessing (if required) or a HTMLContent model."""
     if isinstance(text, str):
-        new_text = []
-        for word in text.split(" "):
-            if word.startswith("$"):
-                new_text.append(f"{{{word[1:]}}}")
-            else:
-                new_text.append(word)
-
-        text = new_text
+        return param_reformat_helper(text)
 
     return text

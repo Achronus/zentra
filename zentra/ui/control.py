@@ -29,7 +29,7 @@ class Button(Component, ShadcnUi):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Button component focusing on text.
 
     Parameters:
-    - `text` (`string`) - the text displayed inside the button
+    - `text` (`string`) - the text displayed inside the button. Can include parameter variables (indicated by starting the variable name with a `$`)
     - `url` (`string, optional`) - the URL the button links to. `None` by default. When `None` removes it from `Button`
     - `variant` (`string, optional`) - the style of the button. Valid options: `['default', 'secondary', 'destructive', 'outline', 'ghost', 'link']`. `default` by default
     - `size` (`string, optional`) - the size of the button. Valid options: `['default', 'sm', 'lg']`. `default` by default
@@ -50,7 +50,7 @@ class IconButton(Component, ShadcnUi):
     Parameters:
     - `icon` (`string`) - the name of the [Lucide React Icon](https://lucide.dev/icons) to add inside the button. Must be in React format (Capitalised camelCase). E.g., `CircleArrowDown` or `Loader`
     - `icon_position` (`string, optional`) - the position of the icon inside the button. When set to `start`, icon appears before the text. When `end`, it appears after the text. `start` by default. Valid options: `['start', 'end']`
-    - `text` (`string, optional`) - the text displayed inside the button. `None` by default. When `None` removes it from `Button`
+    - `text` (`string, optional`) - the text displayed inside the button. Can include parameter variables (indicated by starting the variable name with a `$`). `None` by default. When `None` removes it from `Button`
     - `url` (`string, optional`) - the URL the button links to. `None` by default. When `None` removes it from `Button`
     - `variant` (`string, optional`) - the style of the button. Valid options: `['default', 'secondary', 'destructive', 'outline', 'ghost', 'link']`. `default` by default
     - `size` (`string, optional`) - the size of the button. Valid options: `['default', 'sm', 'lg', 'icon']`. `icon` by default
@@ -350,7 +350,7 @@ class Label(Component, ShadcnUi):
 
     Parameters:
     - `name` (`string`) - an identifier for the component. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
-    - `text` (`string`) - the descriptive text to put into the label
+    - `text` (`string`) - the descriptive text to put into the label. Can include parameter variables (indicated by starting the variable name with a `$`)
     """
 
     name: str = Field(min_length=1, max_length=15)
@@ -374,7 +374,7 @@ class RadioButton(Component, ShadcnUi):
     Parameters:
     - `id` (`string`) - an identifier for the component. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
     - `value` (`string`) - the value for the radio button. Up to a maximum of `30` characters. Must be `lowercase` and a `single word`
-    - `text` (`string`) - the text to display for the radio button
+    - `text` (`string`) - the text to display for the radio button. Can include parameter variables (indicated by starting the variable name with a `$`)
     """
 
     id: str = Field(min_length=1, max_length=15)

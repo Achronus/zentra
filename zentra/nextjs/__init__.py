@@ -121,7 +121,7 @@ class Image(Component, NextJs):
     A Zentra model for the [NextJS Image](https://nextjs.org/docs/app/api-reference/components/image) component.
 
     Parameter:
-    - `src` (`string | HttpUrl | zentra.nextjs.StaticImage`) - a path string to an image represented by the `StaticImage` model, an absolute external URL denoted by 'http', or a parameter, signified by a `$` at the start of the parameter name. Choosing a parameter is useful when using the `Image` inside an `iterable` function like `zentra.js.Map`
+    - `src` (`string | HttpUrl | zentra.nextjs.StaticImage`) - a path string to an image represented by the `StaticImage` model, an absolute external URL denoted by `http`, or a parameter, signified by a `$` at the start of the parameter name. Choosing a parameter is useful when using the `Image` inside an `iterable` function like `zentra.js.Map`
     - `width` (`integer`) - a static width for the image
     - `height` (`integer`) - a static height for the image
     - `alt` (`string`) - an `alt` tag used to describe the image for screen readers and search engines. Also, acts as fallback text if the image is disabled, errors, or fails to load. Can also include parameters, signified by a `$` at the start of the parameter name. This is useful when using the `Image` inside an `iterable` function like `zentra.js.Map`

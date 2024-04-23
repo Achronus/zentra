@@ -113,10 +113,16 @@ def scroll_area_content(sa: ScrollArea) -> list[str]:
 
 def text_content(
     text: str | HTMLContent | list[str | HTMLContent],
-) -> str | HTMLContent:
-    """Returns a list of strings for the text attribute based on the given value."""
+) -> list[str] | HTMLContent:
+    """Returns a list of strings of text content with variable preprocessing (if required) or a HTMLContent object."""
     if isinstance(text, str):
-        if text.startswith("$"):
-            return f"{{{text[1:]}}}"
+        new_text = []
+        for word in text.split(" "):
+            if word.startswith("$"):
+                new_text.append(f"{{{word[1:]}}}")
+            else:
+                new_text.append(word)
+
+        text = new_text
 
     return text

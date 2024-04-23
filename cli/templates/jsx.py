@@ -596,11 +596,16 @@ class JSIterableContentBuilder:
             content = builder.build()
             self.comp_storage = builder.comp_storage
         else:
+            if details is None:
+                raise ValueError(
+                    f"'JSIterableContentBuilder.build(details=None)'. Missing 'ComponentDetails' for provided '{self.model.content.classname}' Component",
+                )
+
             builder = ComponentBuilder(
                 component=self.model.content, mappings=self.maps, details=details
             )
             builder.build()
-            content = builder.storage.content
+            content = builder.storage.content.split("\n")
             self.comp_storage = builder.storage
 
         return [start, *content, end]

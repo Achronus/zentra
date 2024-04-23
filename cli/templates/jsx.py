@@ -6,6 +6,7 @@ from cli.templates.mappings import JSXMappings
 from zentra.core import Component, Page
 from zentra.core.base import HTMLTag, JSIterable
 from zentra.core.html import Div
+from zentra.nextjs import NextJs
 from zentra.ui import Form
 from zentra.ui.control import Button, IconButton, InputOTP
 
@@ -595,15 +596,25 @@ class JSIterableContentBuilder:
             builder = HTMLContentBuilder(model=self.model.content, mappings=self.maps)
             content = builder.build()
             self.comp_storage = builder.comp_storage
+
+        elif isinstance(self.model.content, NextJs):
+            builder = NextJSComponentBuilder(
+                component=self.model.content, mappings=self.maps
+            )
+            builder.build()
+            content = builder.storage.content.split("\n")
+            self.comp_storage = builder.storage
+
         else:
-            if details is None:
-                raise ValueError(
+            try:
+                builder = ComponentBuilder(
+                    component=self.model.content, mappings=self.maps, details=details
+                )
+            except AttributeError:
+                raise AttributeError(
                     f"'JSIterableContentBuilder.build(details=None)'. Missing 'ComponentDetails' for provided '{self.model.content.classname}' Component",
                 )
 
-            builder = ComponentBuilder(
-                component=self.model.content, mappings=self.maps, details=details
-            )
             builder.build()
             content = builder.storage.content.split("\n")
             self.comp_storage = builder.storage

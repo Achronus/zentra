@@ -565,7 +565,9 @@ class HTMLContentBuilder:
         self, model: HTMLTag, content: list[str], attributes: list[str]
     ) -> list[str]:
         """Performs content container wrapping for HTMLTags."""
-        wrapped_content = [f"<{model.classname} {attributes}>"]
+        wrapped_content = [
+            f"<{model.classname}{f" {attributes}" if attributes else ''}>"
+        ]
 
         if len(content) > 0:
             wrapped_content.extend(content)

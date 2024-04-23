@@ -131,4 +131,8 @@ def text_content(
     if isinstance(text, str):
         return param_reformat_helper(text)
 
+    elif isinstance(text, list):
+        for item in text:
+            return text_content(text=item)
+
     return text

@@ -15,10 +15,11 @@ def param_reformat_helper(text: str) -> list[str]:
     """A helper function to reformat a string of text with parameter values. Returns the new version as a list of strings."""
     new_text = []
     for word in text.split(" "):
-        if word.startswith("$"):
-            new_text.append(f"{{{word[1:]}}}")
-        else:
-            new_text.append(word)
+        if word:
+            if word.startswith("$"):
+                new_text.append(f"{{{word[1:]}}}")
+            else:
+                new_text.append(word)
 
     return new_text
 

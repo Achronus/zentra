@@ -24,13 +24,16 @@ def collapsible_attributes(name: str) -> list[str]:
     ]
 
 
-def input_otp_attributes(pattern: str) -> list[str]:
+def input_otp_attributes(pattern: str) -> list[str] | None:
     """Returns a list of strings for the InputOTP attributes based on a given pattern value."""
-    return [
-        f"pattern={{{InputOTPPatterns(pattern).name}}}"
-        if pattern in InputOTPPatterns
-        else f'pattern="{re.compile(pattern).pattern}"'
-    ]
+    if pattern:
+        return [
+            f"pattern={{{InputOTPPatterns(pattern).name}}}"
+            if pattern in InputOTPPatterns
+            else f'pattern="{re.compile(pattern).pattern}"'
+        ]
+
+    return None
 
 
 def nextjs_link_attributes(link: Link) -> list[str]:

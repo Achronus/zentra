@@ -6,7 +6,7 @@ from cli.templates.mappings import JSXMappings
 from cli.templates.ui.content import text_content
 from zentra.core import Component, Page
 from zentra.core.base import HTMLTag, JSIterable
-from zentra.core.html import Div
+from zentra.core.html import Div, FigCaption, Figure
 from zentra.nextjs import NextJs
 from zentra.ui import Form
 from zentra.ui.control import Button, IconButton, InputOTP
@@ -503,9 +503,12 @@ class HTMLContentBuilder:
         self.maps = mappings
 
         self.comp_storage = JSXComponentContentStorage()
+        self.multi_comp_storage = JSXListContentStorage()
         self.inner_content = []
 
-    def build(self, model: HTMLTag = None) -> list[str]:
+    def build(
+        self, model: HTMLTag = None, details: ComponentDetails = None
+    ) -> list[str]:
         """Builds a single item's content and returns it as a list of strings."""
         if model is None:
             model = self.model
@@ -513,6 +516,10 @@ class HTMLContentBuilder:
         if hasattr(model, "text"):
             self.handle_text(text=model.text)
             model.text = self.inner_content
+
+        if isinstance(model, Div):
+            self.build_div_model(item=model.items, details=details)
+            model.items = self.inner_content
 
         if isinstance(model, Figure):
             return self.build_figure_model(model=model)
@@ -539,6 +546,37 @@ class HTMLContentBuilder:
         content.extend(self.build(model=model.caption))
         content.append(shell_end)
         return content
+
+    def build_div_model(
+        self,
+        item: str
+        | Component
+        | JSIterable
+        | list[str | HTMLTag | Component | JSIterable],
+        details: ComponentDetails,
+    ) -> None:
+        """Builds the content for the Div model and stores the content in `self.inner_content` and any component information in `self.multi_comp_storage`."""
+        if isinstance(item, JSIterable):
+            builder = JSIterableContentBuilder(model=item, mappings=self.maps)
+            self.inner_content.extend(builder.build())
+
+        elif isinstance(item, Component):
+            builder = ComponentBuilder(
+                component=item, mappings=self.maps, details=details
+            )
+            builder.build()
+            self.add_to_storage(builder.storage)
+            self.inner_content.extend(builder.storage.content.split("\n"))
+
+        elif isinstance(item, HTMLTag):
+            self.inner_content.extend(self.get_content(model=item))
+
+        elif isinstance(item, str):
+            self.handle_text(text=item)
+
+        elif isinstance(item, list):
+            for i in item:
+                self.build_div_model(item=i, details=details)
 
     def handle_text(self, text: str | HTMLTag | list[str | HTMLTag]) -> None:
         """Handles the content building for the text attribute and stores it in `self.inner_content`."""
@@ -581,6 +619,12 @@ class HTMLContentBuilder:
                 wrapped_content[-1] = "</>"
 
         return wrapped_content
+
+    def add_to_storage(self, comp_store: JSXComponentContentStorage) -> None:
+        """Adds the JSX component items to `self.multi_comp_storage`."""
+        self.multi_comp_storage.imports.append(comp_store.imports)
+        self.multi_comp_storage.logic.append(comp_store.logic)
+        self.multi_comp_storage.content.append(comp_store.content)
 
 
 class JSIterableContentBuilder:

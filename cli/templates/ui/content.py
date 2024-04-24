@@ -21,7 +21,7 @@ def param_reformat_helper(text: str) -> list[str]:
             else:
                 new_text.append(word)
 
-    return new_text
+    return [" ".join(new_text)]
 
 
 def div_content(div: Div) -> Component | JSIterable | list:
@@ -131,9 +131,5 @@ def text_content(
     """Returns a list of strings of text content with variable preprocessing (if required) or a HTMLContent model."""
     if isinstance(text, str):
         return param_reformat_helper(text)
-
-    elif isinstance(text, list):
-        for item in text:
-            return text_content(text=item)
 
     return text

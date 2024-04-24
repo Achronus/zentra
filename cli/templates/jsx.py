@@ -3,6 +3,7 @@ import re
 from cli.conf.format import name_from_camel_case
 from cli.conf.storage import ComponentDetails
 from cli.templates.mappings import JSXMappings
+from cli.templates.ui.content import text_content
 from zentra.core import Component, Page
 from zentra.core.base import HTMLTag, JSIterable
 from zentra.core.html import Div
@@ -548,7 +549,7 @@ class HTMLContentBuilder:
         if isinstance(text, HTMLTag):
             self.inner_content.extend(self.get_content(model=text))
         elif isinstance(text, str):
-            self.inner_content.append(text)
+            self.inner_content.append(text_content(text)[0])
 
     def get_content(self, model: HTMLTag) -> list[str]:
         """A helper function to build the content of the HTMLTag and returns it as a list of strings."""

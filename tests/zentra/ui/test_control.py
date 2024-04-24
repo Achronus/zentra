@@ -910,7 +910,7 @@ class TestScrollArea:
                         caption=FigCaption(
                             styles="pt-2 text-xs text-muted-foreground",
                             text=[
-                                'Photo by{" "}',
+                                "Photo by ",
                                 HTMLContent(
                                     tag="span",
                                     styles="font-semibold text-foreground",

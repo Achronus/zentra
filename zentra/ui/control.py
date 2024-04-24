@@ -490,7 +490,7 @@ class ScrollArea(Component, ShadcnUi):
                 caption=FigCaption(
                     styles="pt-2 text-xs text-muted-foreground",
                     text=[
-                        'Photo by{" "}',
+                        'Photo by ',
                         HTMLContent(
                             tag="span",
                             styles="font-semibold text-foreground",
@@ -524,7 +524,7 @@ class ScrollArea(Component, ShadcnUi):
               />
             </div>
             <figcaption className="pt-2 text-xs text-muted-foreground">
-              Photo by{" "}
+              Photo by
               <span className="font-semibold text-foreground">
                 {artwork.artist}
               </span>

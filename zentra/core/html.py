@@ -63,7 +63,7 @@ class FigCaption(HTMLTag):
 
     Parameters:
     - `text` (`string | zentra.core.html.HTMLContent | list[string | zentra.core.html.HTMLContent]`) - the text to put into the caption. Can either be:
-      1. A single or multi-line `string` of text without any tags wrapped around it
+      1. A single or multi-line `string` of text without any tags wrapped around it. Can include parameter variables (indicated by starting the variable name with a `$`)
       2. A `zentra.core.html.HTMLContent` object for wrapping the text in a `heading`, `paragraph`, or `span` tag
       3. A `list` of combined `string` and `zentra.core.html.HTMLContent` objects for more advanced captions
     - `styles` (`string, optional`) - the CSS styles to apply to the tag. `None` by default
@@ -75,7 +75,7 @@ class FigCaption(HTMLTag):
 
     FigCaption(
         text=[
-            'Photo by{" "}',
+            'Photo by ',
             HTMLContent(
                 tag="span",
                 text="{artwork.artist}",
@@ -88,7 +88,7 @@ class FigCaption(HTMLTag):
     JSX equivalent ->
     ```jsx
     <figcaption className="pt-2 text-xs text-muted-foreground">
-        Photo by{" "}
+        Photo by
         <span className="font-semibold text-foreground">
             {artwork.artist}
         </span>
@@ -126,7 +126,7 @@ class Figure(HTMLTag):
         ),
         caption=FigCaption(
             text=[
-                'Photo by{" "}',
+                'Photo by ',
                 HTMLContent(
                     tag="span",
                     text="$artwork.artist",
@@ -152,7 +152,7 @@ class Figure(HTMLTag):
             />
         </div>
         <figcaption className="pt-2 text-xs text-muted-foreground">
-            Photo by{" "}
+            Photo by
             <span className="font-semibold text-foreground">
             {artwork.artist}
             </span>

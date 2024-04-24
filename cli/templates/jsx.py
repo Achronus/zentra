@@ -876,16 +876,16 @@ class ContentBuilder:
 
         return self.handle_single_quotes(content)
 
-    def handle_icon_button(self, text: str) -> list[str]:
+    def handle_icon_button(self, text: list[str]) -> list[str]:
         """Handles the logic for the icon button."""
         component: IconButton = self.component
         result = []
 
         icon_html = f'<{component.icon} className="mr-2 h-4 w-4"/>'
         if component.icon_position == "start":
-            result.extend([icon_html, text])
+            result.extend([icon_html, *text])
         else:
-            result.extend([text, icon_html])
+            result.extend([*text, icon_html])
 
         if component.url:
             result.insert(0, f'<Link href="{component.url}">')

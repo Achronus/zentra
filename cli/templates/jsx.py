@@ -233,157 +233,38 @@ class ParentComponentBuilder:
         self.component = component
         self.mappings = mappings
         self.details = details_dict
-        self.storage = JSXListContentStorage()
-        self.str_storage = JSXComponentContentStorage()
 
-        self.inner_content = []
-
-    def build(self) -> None:
-        """Builds the JSX for the component."""
-        storage = self.build_component_model(model=self.component)
-        self.storage.content = storage.content.split("\n")
-
-        if not isinstance(self.component.content, str):
-            self.build_inner_content(model=self.component.content, root=True)
-
-            content = storage.content.split("\n")
-            self.storage.content = [
-                content[0],
-                *self.inner_content,
-                *content[1:],
-            ]
-
-        self.fill_str_storage(storage=storage)
-
-    def compress(self, values: list[str]) -> str:
-        """Compresses values into a string."""
-        return "\n".join(values)
-
-    def dedupe(self, values: list[str]) -> list[str]:
-        """Filters out duplicate values from the list."""
-        result = list(set(values))
-        result.sort()
-        return result
-
-    def fill_str_storage(self, storage: JSXComponentContentStorage) -> None:
-        """Fills `self.str_storage` with the required values."""
-        self.str_storage.content = self.compress(self.storage.content)
-        self.str_storage.attributes = storage.attributes
-        self.str_storage.imports = self.compress(self.dedupe(self.storage.imports))
-        self.str_storage.logic = self.compress(self.storage.logic).strip("\n")
-
-    def build_inner_content(
-        self, model: JSIterable | HTMLTag | Component, root: bool = False
-    ) -> None:
-        """Extracts the inner models from the component and returns them as a list."""
-        if root:
-            self.handle_build_start(model=model)
-
-        if isinstance(model, HTMLTag):
-            if not model.shell:
-                self.inner_content.extend(self.build_html(model=model))
-
-        if isinstance(model, Component):
-            content = [self.build_component_model(model=model).content]
-            self.inner_content.extend(content)
-
-        if hasattr(model, "content") and isinstance(model.content, Div):
-            self.handle_div_shell(model_content=model.content)
-
-        if hasattr(model, "items"):
-            for item in model.items:
-                if isinstance(item, HTMLTag):
-                    self.inner_content.extend(self.build_html(model=item))
-
-                elif isinstance(item, JSIterable):
-                    self.build_js_iterable(model=item)
-
-                elif isinstance(item, Component):
-                    content = [self.build_component_model(model=item).content]
-                    self.inner_content.extend(content)
-
-        if root:
-            self.handle_build_end(model=model)
-
-    def handle_build_start(self, model: HTMLTag | Component) -> None:
-        """Handles the logic for the root object. Configuring the required tag at the start of the build if required."""
-        if isinstance(model, Div):
-            if model.shell:
-                self.inner_content.append("<>")
-
-    def handle_build_end(self, model: HTMLTag | Component) -> None:
-        """Handles the logic for the root object. Configuring the required tag at the end of the build if required."""
-        if isinstance(model, Div):
-            if model.shell:
-                self.inner_content.append("</>")
-            else:
-                self.inner_content.append(f"</{model.classname}>")
-
-    def handle_div_shell(self, model_content: Div) -> None:
-        """Handles the logic for the Div model `shell` attribute."""
-        if model_content.shell:
-            self.inner_content.append("<>")
-            self.build_inner_content(model=model_content)
-            self.inner_content.append("</>")
-        else:
-            self.build_inner_content(model=model_content)
-
-    def build_html(self, model: HTMLTag) -> list[str]:
-        """Builds the content for HTMLTag models and returns them as a list of strings."""
-        content, attributes = self.build_html_model(model=model)
-        return self.html_content_container(
-            model=model, content=content, attributes=attributes
+        self.controller = BuildController(
+            mappings=mappings,
+            details_dict=details_dict,
         )
+        self.storage = JSXComponentExtras()
 
-    def build_js_iterable(self, model: JSIterable) -> None:
-        """Builds the content for JSIterable models and adds it to `self.inner_content`."""
-        self.inner_content.append(
-            "{" + f"{model.obj_name}.{model.classname}(({model.param_name}) => ("
-        )
-        self.build_inner_content(model=model)
-        self.inner_content.append("))}")
+    def build(self) -> list[str]:
+        """Builds the JSX for the component and returns the content as a list of strings."""
+        shell, storage = self.controller.build_component(self.component)
+        self.storage = add_to_storage(self.storage, storage)
 
-    def build_html_model(self, model: HTMLTag) -> list[str]:
-        """Builds the content of the HTML and JS model and returns it as a list of strings."""
-        builder = HTMLContentBuilder(
-            tag=model,
-            mappings=self.mappings,
-        )
-        return builder.build()
+        inner_content = self.build_inner_content(self.component.content)
+        return [shell[0], *inner_content, *shell[1:]]
 
-    def build_component_model(self, model: Component) -> JSXComponentContentStorage:
-        """Builds the component model and returns the values and adds them to `self.storage`."""
-        builder = ComponentBuilder(
-            component=model,
-            mappings=self.mappings,
-            details=self.details[model.classname],
-        )
-        builder.build()
-        self.populate_storage(comp_store=builder.storage)
+    def build_inner_content(self, content: Div | str) -> list[str]:
+        """Builds the inner content of the model and returns it as a list of strings."""
+        inner_content = []
 
-        return builder.storage
+        if isinstance(content, Div):
+            content, comp_storage = self.controller.build_html_tag(model=content)
+            inner_content.extend(content)
 
-    def html_content_container(
-        self, model: HTMLTag, content: list[str], attributes: list[str]
-    ) -> list[str]:
-        """Performs content container wrapping for HTMLTags."""
-        wrapped_content = [f"<{model.classname} {attributes}>"]
+            if isinstance(comp_storage, JSXComponentContentStorage):
+                self.storage = add_to_storage(self.storage, comp_storage)
+            elif isinstance(comp_storage, JSXComponentExtras):
+                self.storage = add_to_storage(self.storage, comp_storage, extend=True)
 
-        if len(content) > 0:
-            wrapped_content.extend(
-                [
-                    *content,
-                    f"</{model.classname}>",
-                ]
-            )
+        elif isinstance(content, str):
+            inner_content.append(content)
 
-        return wrapped_content
-
-    def populate_storage(self, comp_store: JSXComponentContentStorage) -> None:
-        """Adds component items to storage."""
-        for key in self.storage.__dict__.keys():
-            if hasattr(comp_store, key):
-                getattr(self.storage, key).append(getattr(comp_store, key))
+        return inner_content
 
 
 class BuildController:

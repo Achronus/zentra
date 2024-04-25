@@ -414,6 +414,60 @@ class ParentComponentBuilder:
                 getattr(self.storage, key).append(getattr(comp_store, key))
 
 
+class BuildController:
+    """A controller for selecting Zentra model JSX builders."""
+
+    def __init__(
+        self, mappings: JSXMappings, details_dict: dict[str, ComponentDetails]
+    ) -> None:
+        self.maps = mappings
+        self.details_dict = details_dict
+
+    def build_component(
+        self, component: Component
+    ) -> tuple[list[str], JSXComponentContentStorage]:
+        """Creates the JSX for a `Component` model and returns its details as a tuple in the form of `(content, comp_storage)`."""
+        builder = ComponentBuilder(
+            component=component,
+            mappings=self.maps,
+            details=self.details_dict[component.classname],
+        )
+        builder.build()
+        return builder.storage.content, builder.storage
+
+    def build_nextjs_component(
+        self, component: Component
+    ) -> tuple[list[str], JSXComponentContentStorage]:
+        """Creates the JSX for a `NextJS` model and returns its details as a tuple in the form of `(content, comp_storage)`."""
+        nextjs = NextJSComponentBuilder(component=component, mappings=self.maps)
+        nextjs.build()
+        return nextjs.storage.content, nextjs.storage
+
+    def build_js_iterable(
+        self, model: JSIterable
+    ) -> tuple[list[str], JSXComponentContentStorage]:
+        """Creates the JSX for a `JSIterable` model and returns its details as a tuple in the form of `(content, comp_storage)`."""
+        builder = JSIterableContentBuilder(
+            model=model,
+            mappings=self.maps,
+            details_dict=self.details_dict,
+        )
+        content = builder.build()
+        return content, builder.comp_storage
+
+    def build_html_tag(
+        self, model: HTMLTag
+    ) -> tuple[list[str], JSXComponentContentStorage | JSXListContentStorage]:
+        """Creates the JSX for a `HTMLTag` model and returns its details as a tuple in the form of `(content, comp_storage | multi_comp_storage)`."""
+        builder = HTMLContentBuilder(
+            model=model,
+            mappings=self.maps,
+            details_dict=self.details_dict,
+        )
+        content, storage = builder.build()
+        return content, storage
+
+
 class NextJSComponentBuilder:
     """A builder for creating Zentra `NextJS` models as JSX."""
 

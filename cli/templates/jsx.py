@@ -56,19 +56,17 @@ class JSXPageContentStorage(BaseModel):
     form_schema: list[str] = None
 
 
-class JSXListContentStorage(BaseModel):
+class JSXComponentExtras(BaseModel):
     """
-    A storage container for the pieces of multiple JSX Zentra `Component` models.
+    A storage container for extra information inside a Zentra model.
 
     Parameters:
     - `imports` (`list[string]`) - a list of strings representing the components import statements
     - `logic` (`list[string]`) - a list of strings representing the component function logic
-    - `content` (`list[string]`) - a list of strings containing the JSX content used in the return statement
     """
 
     imports: list[str] = []
     logic: list[str] = []
-    content: list[str] = []
 
 
 class JSXComponentContentStorage(BaseModel):
@@ -457,7 +455,7 @@ class BuildController:
 
     def build_html_tag(
         self, model: HTMLTag
-    ) -> tuple[list[str], JSXComponentContentStorage | JSXListContentStorage]:
+    ) -> tuple[list[str], JSXComponentContentStorage | JSXComponentExtras]:
         """Creates the JSX for a `HTMLTag` model and returns its details as a tuple in the form of `(content, comp_storage | multi_comp_storage)`."""
         builder = HTMLContentBuilder(
             model=model,
@@ -562,10 +560,10 @@ class HTMLContentBuilder:
         self.maps = mappings
         self.details_dict = details_dict
 
-        self.comp_storage = JSXListContentStorage()
+        self.comp_storage = JSXComponentExtras()
         self.inner_content = []
 
-    def build(self, model: HTMLTag = None) -> tuple[list[str], JSXListContentStorage]:
+    def build(self, model: HTMLTag = None) -> tuple[list[str], JSXComponentExtras]:
         """Builds a single item's content and returns it as a list of strings."""
         if model is None:
             model = self.model
@@ -720,7 +718,7 @@ class JSIterableContentBuilder:
         self.model = model
         self.maps = mappings
         self.details_dict = details_dict
-        self.comp_storage = JSXListContentStorage()
+        self.comp_storage = JSXComponentExtras()
 
     def build(self) -> list[str]:
         """Builds the content for the JSX iterable and returns it as a list of strings. If the the content inside is a component, also stores its information in `self.storage`."""

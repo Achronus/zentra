@@ -591,7 +591,7 @@ class HTMLContentBuilder:
 
     def get_content(self, model: HTMLTag) -> list[str]:
         """A helper function to build the content of the HTMLTag and returns it as a list of strings."""
-        attr_builder = AttributeBuilder(mappings=self.maps, component=model)
+        attr_builder = AttributeBuilder(component=model, mappings=self.maps)
         content_builder = ContentBuilder(component=model, mappings=self.maps)
 
         attributes = " ".join(attr_builder.build())
@@ -689,9 +689,11 @@ class ComponentBuilder:
         self.maps = mappings
 
         self.storage = JSXComponentContentStorage()
-        self.attrs = AttributeBuilder(mappings=mappings, component=component)
+        self.attrs = AttributeBuilder(component=component, mappings=mappings)
         self.imports = ImportBuilder(
-            component=component, mappings=mappings, child_names=details.child_names
+            component=component,
+            mappings=mappings,
+            child_names=details.child_names,
         )
         self.logic = LogicBuilder(component=component, mappings=mappings)
         self.content = ContentBuilder(component=component, mappings=mappings)
@@ -749,9 +751,9 @@ class FormBuilder:
 class AttributeBuilder:
     """A builder for creating Zentra `Component` attributes."""
 
-    def __init__(self, mappings: JSXMappings, component: Component) -> None:
-        self.maps = mappings
+    def __init__(self, component: Component, mappings: JSXMappings) -> None:
         self.component = component
+        self.maps = mappings
 
     def build(self) -> list[str]:
         """Builds the attributes from a mapping for the component."""

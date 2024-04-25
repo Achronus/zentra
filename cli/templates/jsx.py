@@ -245,26 +245,21 @@ class ParentComponentBuilder:
         shell, storage = self.controller.build_component(self.component)
         self.storage = add_to_storage(self.storage, storage)
 
-        inner_content = self.build_inner_content(self.component.content)
-        return [shell[0], *inner_content, *shell[1:]]
+        if isinstance(self.component.content, Div):
+            inner_content = self.build_div_content(self.component.content)
+            return [shell[0], *inner_content, *shell[1:]]
 
-    def build_inner_content(self, content: Div | str) -> list[str]:
-        """Builds the inner content of the model and returns it as a list of strings."""
-        inner_content = []
+        return shell
 
-        if isinstance(content, Div):
-            content, comp_storage = self.controller.build_html_tag(model=content)
-            inner_content.extend(content)
+    def build_div_content(self, content: Div) -> list[str]:
+        """Builds the `Div` content of the model and returns it as a list of strings."""
+        content, comp_storage = self.controller.build_html_tag(model=content)
+        if isinstance(comp_storage, JSXComponentContentStorage):
+            self.storage = add_to_storage(self.storage, comp_storage)
+        elif isinstance(comp_storage, JSXComponentExtras):
+            self.storage = add_to_storage(self.storage, comp_storage, extend=True)
 
-            if isinstance(comp_storage, JSXComponentContentStorage):
-                self.storage = add_to_storage(self.storage, comp_storage)
-            elif isinstance(comp_storage, JSXComponentExtras):
-                self.storage = add_to_storage(self.storage, comp_storage, extend=True)
-
-        elif isinstance(content, str):
-            inner_content.append(content)
-
-        return inner_content
+        return content
 
 
 class BuildController:

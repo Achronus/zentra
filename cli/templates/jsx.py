@@ -498,17 +498,20 @@ class NextJSComponentBuilder:
 class HTMLContentBuilder:
     """A builder for creating Zentra `HTML` model content as JSX."""
 
-    def __init__(self, model: HTMLTag, mappings: JSXMappings) -> None:
+    def __init__(
+        self,
+        model: HTMLTag,
+        mappings: JSXMappings,
+        details_dict: dict[str, ComponentDetails],
+    ) -> None:
         self.model = model
         self.maps = mappings
+        self.details_dict = details_dict
 
-        self.comp_storage = JSXComponentContentStorage()
-        self.multi_comp_storage = JSXListContentStorage()
+        self.comp_storage = JSXListContentStorage()
         self.inner_content = []
 
-    def build(
-        self, model: HTMLTag = None, details: ComponentDetails = None
-    ) -> list[str]:
+    def build(self, model: HTMLTag = None) -> tuple[list[str], JSXListContentStorage]:
         """Builds a single item's content and returns it as a list of strings."""
         if model is None:
             model = self.model
@@ -518,22 +521,23 @@ class HTMLContentBuilder:
             model.text = self.inner_content
 
         if isinstance(model, Div):
-            self.build_div_model(item=model.items, details=details)
+            self.build_div_model(item=model.items)
             model.items = self.inner_content
 
         if isinstance(model, Figure):
-            return self.build_figure_model(model=model)
+            content = self.build_figure_model(model=model)
+            return content, self.comp_storage
 
-        return self.get_content(model=model)
+        return self.get_content(model=model), self.comp_storage
 
     def build_figure_model(self, model: Figure) -> list[str]:
-        """Builds the content for the Figure model and returns it as a list of strings."""
+        """Builds the content for the Figure model, stores any component information in `self.comp_storage` and returns the Figure's contents as a list of strings."""
         content = []
         shell_start, shell_end = self.get_content(model=model)
 
         nextjs = NextJSComponentBuilder(component=model.img, mappings=self.maps)
         nextjs.build()
-        self.comp_storage = nextjs.storage
+        self.add_to_storage(nextjs.storage)
         img_content = [nextjs.storage.content]
 
         content.append(shell_start)
@@ -542,8 +546,11 @@ class HTMLContentBuilder:
             img_content.insert(0, f'<div className="{model.img_container_styles}"')
             img_content.append("</div>")
 
+        fig_content, fig_storage = self.build(model=model.caption)
+        self.add_to_storage(fig_storage, extend=True)
+
         content.extend(img_content)
-        content.extend(self.build(model=model.caption))
+        content.extend(fig_content)
         content.append(shell_end)
         return content
 
@@ -553,16 +560,22 @@ class HTMLContentBuilder:
         | Component
         | JSIterable
         | list[str | HTMLTag | Component | JSIterable],
-        details: ComponentDetails,
     ) -> None:
-        """Builds the content for the Div model and stores the content in `self.inner_content` and any component information in `self.multi_comp_storage`."""
+        """Builds the content for the Div model and stores the content in `self.inner_content` and any component information in `self.comp_storage`."""
         if isinstance(item, JSIterable):
-            builder = JSIterableContentBuilder(model=item, mappings=self.maps)
+            builder = JSIterableContentBuilder(
+                model=item,
+                mappings=self.maps,
+                details_dict=self.details_dict,
+            )
             self.inner_content.extend(builder.build())
+            self.add_to_storage(builder.comp_storage, extend=True)
 
         elif isinstance(item, Component):
             builder = ComponentBuilder(
-                component=item, mappings=self.maps, details=details
+                component=item,
+                mappings=self.maps,
+                details=self.details_dict[item.classname],
             )
             builder.build()
             self.add_to_storage(builder.storage)
@@ -576,7 +589,7 @@ class HTMLContentBuilder:
 
         elif isinstance(item, list):
             for i in item:
-                self.build_div_model(item=i, details=details)
+                self.build_div_model(item=i)
 
     def handle_text(self, text: str | HTMLTag | list[str | HTMLTag]) -> None:
         """Handles the content building for the text attribute and stores it in `self.inner_content`."""
@@ -620,51 +633,79 @@ class HTMLContentBuilder:
 
         return wrapped_content
 
-    def add_to_storage(self, comp_store: JSXComponentContentStorage) -> None:
-        """Adds the JSX component items to `self.multi_comp_storage`."""
-        self.multi_comp_storage.imports.append(comp_store.imports)
-        self.multi_comp_storage.logic.append(comp_store.logic)
-        self.multi_comp_storage.content.append(comp_store.content)
+    def add_to_storage(
+        self, comp_store: JSXComponentContentStorage, extend: bool = False
+    ) -> None:
+        """Adds component items to storage."""
+        for key in self.comp_storage.__dict__.keys():
+            if hasattr(comp_store, key):
+                if extend:
+                    getattr(self.comp_storage, key).extend(getattr(comp_store, key))
+                else:
+                    getattr(self.comp_storage, key).append(getattr(comp_store, key))
+
+        self.comp_storage.imports = self.dedupe(self.comp_storage.imports)
+        self.comp_storage.logic = self.dedupe(self.comp_storage.logic)
+
+    def dedupe(self, values: list[str]) -> list[str]:
+        """Filters out duplicate values from a list of values."""
+        result = list(set(values))
+        result.sort()
+        return result
 
 
 class JSIterableContentBuilder:
     """A builder for creating Zentra `JSIterable` model content as JSX."""
 
-    def __init__(self, model: JSIterable, mappings: JSXMappings) -> None:
+    def __init__(
+        self,
+        model: JSIterable,
+        mappings: JSXMappings,
+        details_dict: dict[str, ComponentDetails],
+    ) -> None:
         self.model = model
         self.maps = mappings
-        self.comp_storage = JSXComponentContentStorage()
+        self.details_dict = details_dict
+        self.comp_storage = JSXListContentStorage()
 
-    def build(self, details: ComponentDetails = None) -> list[str]:
+    def build(self) -> list[str]:
         """Builds the content for the JSX iterable and returns it as a list of strings. If the the content inside is a component, also stores its information in `self.storage`."""
         start, end = self.get_container()
 
         if isinstance(self.model.content, HTMLTag):
-            builder = HTMLContentBuilder(model=self.model.content, mappings=self.maps)
-            content = builder.build()
-            self.comp_storage = builder.comp_storage
+            builder = HTMLContentBuilder(
+                model=self.model.content,
+                mappings=self.maps,
+                details_dict=self.details_dict,
+            )
+            content, storage = builder.build()
+            self.add_to_storage(storage, extend=True)
 
         elif isinstance(self.model.content, NextJs):
             builder = NextJSComponentBuilder(
-                component=self.model.content, mappings=self.maps
+                component=self.model.content,
+                mappings=self.maps,
             )
             builder.build()
             content = builder.storage.content.split("\n")
-            self.comp_storage = builder.storage
+            self.add_to_storage(builder.storage)
 
         else:
             try:
+                component: Component = self.model.content
                 builder = ComponentBuilder(
-                    component=self.model.content, mappings=self.maps, details=details
+                    component=component,
+                    mappings=self.maps,
+                    details=self.details_dict[component.classname],
                 )
             except AttributeError:
                 raise AttributeError(
-                    f"'JSIterableContentBuilder.build(details=None)'. Missing 'ComponentDetails' for provided '{self.model.content.classname}' Component",
+                    f"'JSIterableContentBuilder.build(details=None)'. Missing 'ComponentDetails' for provided '{component.classname}' Component",
                 )
 
             builder.build()
             content = builder.storage.content.split("\n")
-            self.comp_storage = builder.storage
+            self.add_to_storage(builder.storage)
 
         return [start, *content, end]
 
@@ -676,6 +717,26 @@ class JSIterableContentBuilder:
         )
         end = "))}"
         return start, end
+
+    def add_to_storage(
+        self, comp_store: JSXComponentContentStorage, extend: bool = False
+    ) -> None:
+        """Adds component items to storage."""
+        for key in self.comp_storage.__dict__.keys():
+            if hasattr(comp_store, key):
+                if extend:
+                    getattr(self.comp_storage, key).extend(getattr(comp_store, key))
+                else:
+                    getattr(self.comp_storage, key).append(getattr(comp_store, key))
+
+        self.comp_storage.imports = self.dedupe(self.comp_storage.imports)
+        self.comp_storage.logic = self.dedupe(self.comp_storage.logic)
+
+    def dedupe(self, values: list[str]) -> list[str]:
+        """Filters out duplicate values from a list of values."""
+        result = list(set(values))
+        result.sort()
+        return result
 
 
 class ComponentBuilder:

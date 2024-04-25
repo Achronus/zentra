@@ -23,11 +23,8 @@ DIV_VALID_VALS = {
         "multi_items": '<div>\nThis is a\n<span className="red-500">\ncomplete {test}\n</span>\n<Label htmlFor="name">\nFirst name\n</Label>\n{tags.map((tag) => (\n<h4>\nAn epic {tag} heading\n</h4>\n))}\n<Label htmlFor="email">\nEmail address\n</Label>\n</div>',
     },
     "imports": {
-        "label": ['import { Label } from "@/components/ui/label"'],
-        "multi_items": [
-            'import { Label } from "@/components/ui/label"',
-            'import { Label } from "@/components/ui/label"',
-        ],
+        "label": 'import { Label } from "@/components/ui/label"',
+        "multi_items": 'import { Label } from "@/components/ui/label"',
     },
 }
 

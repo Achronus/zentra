@@ -1,9 +1,7 @@
 from pydantic import ValidationError
 import pytest
 
-from cli.conf.storage import ComponentDetails
 from tests.mappings.html import HTML_VALID_VALS_MAP
-from tests.templates.details import COMPONENT_DETAILS_MAPPING
 from tests.templates.helper import html_content_builder
 from zentra.core.base import HTMLTag
 from zentra.core.enums.html import HTMLContentTagType
@@ -22,24 +20,13 @@ class Builder:
         self.builder = html_content_builder(model=model)
 
     def content(self, valid_value: str):
-        result: str = "\n".join(self.builder.build())
-        assert result == valid_value, (result.split("\n"), valid_value.split("\n"))
-
-    def comp_content(self, valid_value: str, details: ComponentDetails = None):
-        result: str = "\n".join(self.builder.build(details=details))
-        assert result == valid_value, (result.split("\n"), valid_value.split("\n"))
+        result, _ = self.builder.build()
+        assert "\n".join(result) == valid_value, (result, valid_value.split("\n"))
 
     def comp_other(self, result_attr: str, valid_value: str):
-        _ = self.builder.build()
-        result: str = getattr(self.builder.comp_storage, result_attr)
-        assert result == valid_value, (result.split("\n"), valid_value.split("\n"))
-
-    def comp_multi_other(
-        self, result_attr: str, valid_value: str, details: ComponentDetails = None
-    ):
-        _ = self.builder.build(details=details)
-        result: list[str] = getattr(self.builder.multi_comp_storage, result_attr)
-        assert result == valid_value, (result, valid_value)
+        _, storage = self.builder.build()
+        result: list[str] = getattr(storage, result_attr)
+        assert "\n".join(result) == valid_value, (result, valid_value)
 
 
 class TestHTMLContent:
@@ -142,35 +129,23 @@ class TestDiv:
     @staticmethod
     def test_content_str_with_label(div_with_label: Div):
         builder = Builder(model=div_with_label)
-        builder.comp_content(
-            HTML_VALID_VALS_MAP["div"]["content"]["label"],
-            COMPONENT_DETAILS_MAPPING["Label"],
-        )
+        builder.content(HTML_VALID_VALS_MAP["div"]["content"]["label"])
 
     @staticmethod
     def test_content_str_with_multi_items(div_with_multi_items: Div):
         builder = Builder(model=div_with_multi_items)
-        builder.comp_content(
-            HTML_VALID_VALS_MAP["div"]["content"]["multi_items"],
-            COMPONENT_DETAILS_MAPPING["Label"],
-        )
+        builder.content(HTML_VALID_VALS_MAP["div"]["content"]["multi_items"])
 
     @staticmethod
     def test_imports_with_label(div_with_label: Div):
         builder = Builder(model=div_with_label)
-        builder.comp_multi_other(
-            "imports",
-            HTML_VALID_VALS_MAP["div"]["imports"]["label"],
-            COMPONENT_DETAILS_MAPPING["Label"],
-        )
+        builder.comp_other("imports", HTML_VALID_VALS_MAP["div"]["imports"]["label"])
 
     @staticmethod
     def test_imports_with_multi_items(div_with_multi_items: Div):
         builder = Builder(model=div_with_multi_items)
-        builder.comp_multi_other(
-            "imports",
-            HTML_VALID_VALS_MAP["div"]["imports"]["multi_items"],
-            COMPONENT_DETAILS_MAPPING["Label"],
+        builder.comp_other(
+            "imports", HTML_VALID_VALS_MAP["div"]["imports"]["multi_items"]
         )
 
     @staticmethod

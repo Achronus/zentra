@@ -1,8 +1,6 @@
 import pytest
 
-from cli.conf.storage import ComponentDetails
 from tests.mappings.js import JS_VALID_VALS_MAP
-from tests.templates.details import COMPONENT_DETAILS_MAPPING
 from tests.templates.helper import js_iterable_content_builder
 
 from zentra.core.base import JSIterable
@@ -24,14 +22,14 @@ class Builder:
         result: str = "\n".join(self.builder.build())
         assert result == valid_value, (result.split("\n"), valid_value.split("\n"))
 
-    def comp_content(self, valid_value: str, details: ComponentDetails):
-        result: str = "\n".join(self.builder.build(details=details))
+    def comp_content(self, valid_value: str):
+        result: str = "\n".join(self.builder.build())
         assert result == valid_value, (result.split("\n"), valid_value.split("\n"))
 
-    def comp_other(self, result_attr: str, valid_value: str, details: ComponentDetails):
-        _ = self.builder.build(details=details)
-        result: str = getattr(self.builder.comp_storage, result_attr)
-        assert result == valid_value, (result.split("\n"), valid_value.split("\n"))
+    def comp_other(self, result_attr: str, valid_value: str):
+        _ = self.builder.build()
+        result: list[str] = getattr(self.builder.comp_storage, result_attr)
+        assert result == valid_value, (result, valid_value)
 
 
 class TestMap:
@@ -94,37 +92,26 @@ class TestMap:
         )
 
     @staticmethod
-    def test_missing_details(js_map_label):
-        with pytest.raises(AttributeError):
-            builder = js_iterable_content_builder(model=js_map_label)
-            builder.build()
-
-    @staticmethod
-    def test_content_str_figure(js_map_figure: JSIterable):
+    def test_content_str_figure(js_map_figure: Map):
         builder = Builder(model=js_map_figure)
         builder.content(JS_VALID_VALS_MAP["map"]["content"]["figure"])
 
     @staticmethod
-    def test_content_str_div(js_map_div: JSIterable):
+    def test_content_str_div(js_map_div: Map):
         builder = Builder(model=js_map_div)
         builder.content(JS_VALID_VALS_MAP["map"]["content"]["div"])
 
     @staticmethod
-    def test_content_str_image(js_map_image: JSIterable):
+    def test_content_str_image(js_map_image: Map):
         builder = Builder(model=js_map_image)
         builder.content(JS_VALID_VALS_MAP["map"]["content"]["image"])
 
     @staticmethod
-    def test_content_str_label(js_map_label: JSIterable):
+    def test_content_str_label(js_map_label: Map):
         builder = Builder(model=js_map_label)
-        builder.comp_content(
-            valid_value=JS_VALID_VALS_MAP["map"]["content"]["label"],
-            details=COMPONENT_DETAILS_MAPPING["Label"],
-        )
+        builder.comp_content(valid_value=JS_VALID_VALS_MAP["map"]["content"]["label"])
 
     @staticmethod
-    def test_additional_imports_image(js_map_image: JSIterable):
+    def test_additional_imports_image(js_map_image: Map):
         builder = Builder(model=js_map_image)
-        builder.comp_other(
-            "imports", JS_VALID_VALS_MAP["map"]["imports"]["image"], details=None
-        )
+        builder.comp_other("imports", JS_VALID_VALS_MAP["map"]["imports"]["image"])

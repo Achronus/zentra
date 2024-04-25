@@ -6,8 +6,8 @@ MAP_VALID_VALS = {
         "image": '{tags.map((tag) => (\n<Image src={test} alt="This is a test image" width={200} height={200} />\n))}',
     },
     "imports": {
-        "none": "",
-        "image": "import Image from 'next/image'",
+        "none": [""],
+        "image": ["import Image from 'next/image'"],
     },
 }
 

@@ -21,7 +21,9 @@ def component_builder(
 
 def parent_component_builder(component: Component) -> ParentComponentBuilder:
     return ParentComponentBuilder(
-        component, mappings=JSX_MAPPINGS, details_dict=COMPONENT_DETAILS_MAPPING
+        component,
+        mappings=JSX_MAPPINGS,
+        details_dict=COMPONENT_DETAILS_MAPPING,
     )
 
 
@@ -30,11 +32,19 @@ def nextjs_component_builder(component: Component) -> NextJSComponentBuilder:
 
 
 def html_content_builder(model: HTMLTag) -> HTMLContentBuilder:
-    return HTMLContentBuilder(model=model, mappings=JSX_MAPPINGS)
-    
+    return HTMLContentBuilder(
+        model=model,
+        mappings=JSX_MAPPINGS,
+        details_dict=COMPONENT_DETAILS_MAPPING,
+    )
+
 
 def js_iterable_content_builder(model: JSIterable) -> JSIterableContentBuilder:
-    return JSIterableContentBuilder(model=model, mappings=JSX_MAPPINGS)
+    return JSIterableContentBuilder(
+        model=model,
+        mappings=JSX_MAPPINGS,
+        details_dict=COMPONENT_DETAILS_MAPPING,
+    )
 
 
 def page_builder(page: Page) -> JSXPageBuilder:

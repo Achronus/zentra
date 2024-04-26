@@ -22,10 +22,6 @@ class Builder:
         result: str = "\n".join(self.builder.build())
         assert result == valid_value, (result.split("\n"), valid_value.split("\n"))
 
-    def comp_content(self, valid_value: str):
-        result: str = "\n".join(self.builder.build())
-        assert result == valid_value, (result.split("\n"), valid_value.split("\n"))
-
     def comp_other(self, result_attr: str, valid_value: str):
         _ = self.builder.build()
         result: list[str] = getattr(self.builder.comp_storage, result_attr)
@@ -109,7 +105,7 @@ class TestMap:
     @staticmethod
     def test_content_str_label(js_map_label: Map):
         builder = Builder(model=js_map_label)
-        builder.comp_content(valid_value=JS_VALID_VALS_MAP["map"]["content"]["label"])
+        builder.content(JS_VALID_VALS_MAP["map"]["content"]["label"])
 
     @staticmethod
     def test_additional_imports_image(js_map_image: Map):

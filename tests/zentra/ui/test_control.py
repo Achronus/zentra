@@ -10,8 +10,8 @@ from cli.conf.storage import ComponentDetails
 from tests.templates.details import COMPONENT_DETAILS_MAPPING
 from tests.templates.dummy import DummyIconButton
 from tests.templates.helper import component_builder, parent_component_builder
-from tests.mappings.ui_attributes import BTN_VALID_ATTRS, ICON_BTN_VALID_ATTRS
-from tests.mappings.ui_content import (
+from tests.mappings.btn_attributes import BTN_VALID_ATTRS, ICON_BTN_VALID_ATTRS
+from tests.mappings.btn_content import (
     BTN_VALID_CONTENT_WITH_LINK,
     BTN_VALID_CONTENT_WITHOUT_LINK,
     ICON_BTN_VALID_CONTENT_WITH_LINK,
@@ -88,7 +88,7 @@ class ComponentFuncWrapper:
             builder = component_builder(component, self.details)
             builder.build()
 
-            result = getattr(builder.storage, result_attr)
+            result: str = getattr(builder.storage, result_attr)
 
             map_value = mapping[idx] if isinstance(mapping, list) else mapping
             if result == map_value:
@@ -114,7 +114,7 @@ class SimpleComponentFuncWrapper:
         builder = component_builder(self.component, details=self.details)
         builder.build()
 
-        result = getattr(builder.storage, result_attr)
+        result: str = getattr(builder.storage, result_attr)
         assert result == valid_value, (result.split("\n"), valid_value.split("\n"))
 
 
@@ -127,12 +127,16 @@ class ParentComponentFuncWrapper:
     ) -> None:
         self.component = component
 
-    def run(self, result_attr: str, valid_value: str):
-        builder = parent_component_builder(self.component)
-        builder.build()
+        self.builder = parent_component_builder(component)
 
-        result: str = getattr(builder.str_storage, result_attr)
-        assert result == valid_value, (result.split("\n"), valid_value.split("\n"))
+    def content(self, valid_value: str):
+        result: list[str] = self.builder.build()
+        assert "\n".join(result) == valid_value, (result, valid_value.split("\n"))
+
+    def comp_other(self, result_attr: str, valid_value: str):
+        _ = self.builder.build()
+        result: list[str] = getattr(self.builder.storage, result_attr)
+        assert "\n".join(result) == valid_value, (result, valid_value.split("\n"))
 
 
 class TestButton:
@@ -941,45 +945,29 @@ class TestScrollArea:
         return ParentComponentFuncWrapper(scroll_area_horizontal)
 
     @staticmethod
-    def test_attr_str(wrapper: ParentComponentFuncWrapper):
-        wrapper.run("attributes", VALID_VALS_MAP["scroll_area"]["attributes"]["simple"])
-
-    @staticmethod
-    def test_attr_str_vertical(wrapper_vertical: ParentComponentFuncWrapper):
-        wrapper_vertical.run(
-            "attributes", VALID_VALS_MAP["scroll_area"]["attributes"]["vertical"]
-        )
-
-    @staticmethod
-    def test_attr_str_horizontal(wrapper_horizontal: ParentComponentFuncWrapper):
-        wrapper_horizontal.run(
-            "attributes", VALID_VALS_MAP["scroll_area"]["attributes"]["horizontal"]
-        )
-
-    @staticmethod
     def test_content_str(wrapper: ParentComponentFuncWrapper):
-        wrapper.run("content", VALID_VALS_MAP["scroll_area"]["content"]["simple"])
+        wrapper.content(VALID_VALS_MAP["scroll_area"]["content"]["simple"])
 
     @staticmethod
     def test_content_str_vertical(wrapper_vertical: ParentComponentFuncWrapper):
-        wrapper_vertical.run(
-            "content", VALID_VALS_MAP["scroll_area"]["content"]["vertical"]
-        )
+        wrapper_vertical.content(VALID_VALS_MAP["scroll_area"]["content"]["vertical"])
 
     @staticmethod
     def test_content_str_horizontal(wrapper_horizontal: ParentComponentFuncWrapper):
-        wrapper_horizontal.run(
-            "content", VALID_VALS_MAP["scroll_area"]["content"]["horizontal"]
+        wrapper_horizontal.content(
+            VALID_VALS_MAP["scroll_area"]["content"]["horizontal"]
         )
 
     @staticmethod
     def test_imports_str(wrapper: ParentComponentFuncWrapper):
-        wrapper.run("imports", VALID_IMPORTS["scroll_area"]["simple"])
+        wrapper.comp_other("imports", VALID_IMPORTS["scroll_area"]["simple"])
 
     @staticmethod
     def test_imports_str_vertical(wrapper_vertical: ParentComponentFuncWrapper):
-        wrapper_vertical.run("imports", VALID_IMPORTS["scroll_area"]["vertical"])
+        wrapper_vertical.comp_other("imports", VALID_IMPORTS["scroll_area"]["vertical"])
 
     @staticmethod
     def test_imports_str_horizontal(wrapper_horizontal: ParentComponentFuncWrapper):
-        wrapper_horizontal.run("imports", VALID_IMPORTS["scroll_area"]["horizontal"])
+        wrapper_horizontal.comp_other(
+            "imports", VALID_IMPORTS["scroll_area"]["horizontal"]
+        )

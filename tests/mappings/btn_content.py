@@ -39,7 +39,7 @@ BTN_VALID_CONTENT_WITH_LINK = [
 
 BTN_VALID_CONTENT_WITHOUT_LINK = [
     "<Button disabled>\ntest\n</Button>",
-    "<Button >\ntest\n</Button>",
+    "<Button>\ntest\n</Button>",
     '<Button size="sm" disabled>\ntest\n</Button>',
     '<Button size="sm">\ntest\n</Button>',
     '<Button size="lg" disabled>\ntest\n</Button>',
@@ -153,7 +153,7 @@ ICON_BTN_VALID_CONTENT_WITH_LINK = [
 
 ICON_BTN_VALID_CONTENT_WITHOUT_LINK = [
     '<Button disabled>\n<Loader className="mr-2 h-4 w-4"/>\ntest\n</Button>',
-    '<Button >\n<Loader className="mr-2 h-4 w-4"/>\ntest\n</Button>',
+    '<Button>\n<Loader className="mr-2 h-4 w-4"/>\ntest\n</Button>',
     '<Button size="sm" disabled>\n<Loader className="mr-2 h-4 w-4"/>\ntest\n</Button>',
     '<Button size="sm">\n<Loader className="mr-2 h-4 w-4"/>\ntest\n</Button>',
     '<Button size="lg" disabled>\n<Loader className="mr-2 h-4 w-4"/>\ntest\n</Button>',
@@ -189,7 +189,7 @@ ICON_BTN_VALID_CONTENT_WITHOUT_LINK = [
     '<Button variant="link" size="lg" disabled>\n<Loader className="mr-2 h-4 w-4"/>\ntest\n</Button>',
     '<Button variant="link" size="lg">\n<Loader className="mr-2 h-4 w-4"/>\ntest\n</Button>',
     '<Button disabled>\ntest\n<Loader className="mr-2 h-4 w-4"/>\n</Button>',
-    '<Button >\ntest\n<Loader className="mr-2 h-4 w-4"/>\n</Button>',
+    '<Button>\ntest\n<Loader className="mr-2 h-4 w-4"/>\n</Button>',
     '<Button size="sm" disabled>\ntest\n<Loader className="mr-2 h-4 w-4"/>\n</Button>',
     '<Button size="sm">\ntest\n<Loader className="mr-2 h-4 w-4"/>\n</Button>',
     '<Button size="lg" disabled>\ntest\n<Loader className="mr-2 h-4 w-4"/>\n</Button>',

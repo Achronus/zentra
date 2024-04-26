@@ -470,6 +470,9 @@ class HTMLContentBuilder:
             self.inner_content.extend(content)
             self.comp_storage = add_to_storage(self.comp_storage, storage)
 
+        elif isinstance(item, Figure):
+            self.inner_content.extend(self.build_figure_model(model=item))
+
         elif isinstance(item, HTMLTag):
             self.inner_content.extend(self.get_content(model=item))
 

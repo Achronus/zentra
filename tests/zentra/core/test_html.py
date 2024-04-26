@@ -137,6 +137,42 @@ class TestDiv:
         builder.content(HTML_VALID_VALS_MAP["div"]["content"]["multi_items"])
 
     @staticmethod
+    def test_content_str_with_multi_items_html():
+        builder = Builder(
+            model=Div(
+                styles="w-8 h-12",
+                items=[
+                    HTMLContent(tag="h1", text="Test h1 $tag"),
+                    Figure(
+                        key="$artwork.artist",
+                        styles="shrink-0",
+                        img_container_styles="overflow-hidden rounded-md",
+                        img=Image(
+                            src="$artwork.art",
+                            alt="Photo by $artwork.artist",
+                            styles="aspect-[3/4] h-fit w-fit object-cover",
+                            width=300,
+                            height=400,
+                        ),
+                        caption=FigCaption(
+                            styles="pt-2 text-xs text-muted-foreground",
+                            text=[
+                                "Photo by ",
+                                HTMLContent(
+                                    tag="span",
+                                    styles="font-semibold text-foreground",
+                                    text="$artwork.artist",
+                                ),
+                            ],
+                        ),
+                    ),
+                    HTMLContent(tag="h2", text="Test h2 tag"),
+                ],
+            )
+        )
+        builder.content(HTML_VALID_VALS_MAP["div"]["content"]["multi_html"])
+
+    @staticmethod
     def test_imports_with_label(div_with_label: Div):
         builder = Builder(model=div_with_label)
         builder.comp_other("imports", HTML_VALID_VALS_MAP["div"]["imports"]["label"])

@@ -4,7 +4,7 @@ from cli.conf.format import name_from_camel_case
 from cli.conf.storage import ComponentDetails
 from cli.templates.mappings import JSXMappings
 from cli.templates.ui.content import text_content
-from cli.templates.utils import dedupe, compress, str_to_list
+from cli.templates.utils import dedupe, compress, str_to_list, remove_none
 from cli.templates.storage import (
     JSXComponentContentStorage,
     JSXComponentExtras,
@@ -670,7 +670,8 @@ class AttributeBuilder:
 
                 if value:
                     attrs.extend(value)
-        return attrs
+
+        return remove_none(attrs)
 
 
 class ImportBuilder:

@@ -100,6 +100,22 @@ def separator_details() -> ComponentDetails:
     )
 
 
+def select_details() -> ComponentDetails:
+    return ComponentDetails(
+        library="ui",
+        filename="select.jsx",
+        name="Select",
+        child_names=[
+            "SelectContent",
+            "SelectGroup",
+            "SelectItem",
+            "SelectLabel",
+            "SelectTrigger",
+            "SelectValue",
+        ],
+    )
+
+
 def component_details() -> list[ComponentDetails]:
     return [
         button_details(),
@@ -113,6 +129,7 @@ def component_details() -> list[ComponentDetails]:
         radio_group_details(),
         scroll_area_details(),
         separator_details(),
+        select_details(),
     ]
 
 
@@ -128,4 +145,5 @@ COMPONENT_DETAILS_MAPPING = {
     "RadioGroup": radio_group_details(),
     "ScrollArea": scroll_area_details(),
     "Separator": separator_details(),
+    "Select": select_details(),
 }

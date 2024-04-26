@@ -8,6 +8,8 @@ from zentra.ui.control import (
     RadioButton,
     RadioGroup,
     ScrollArea,
+    Select,
+    SelectGroup,
 )
 
 
@@ -122,6 +124,37 @@ def scroll_area_content(sa: ScrollArea) -> list[str]:
         content.append(sa.content)
 
     content.append(f'<ScrollBar orientation="{sa.orientation}" />')
+    return content
+
+
+def select_content(select: Select) -> list[str]:
+    """Returns a list of strings for the Select content based on the components attributes."""
+    content = [
+        f'<SelectTrigger className="w-[{select.box_width}px]">',
+        f'<SelectValue placeholder="{select.display_text}" />',
+        "</SelectTrigger>",
+    ]
+
+    if isinstance(select.groups, SelectGroup):
+        select.groups = [select.groups]
+
+    group_content = []
+    for group in select.groups:
+        group_content.extend(
+            ["<SelectGroup>", f"<SelectLabel>{group.label}</SelectLabel>"]
+        )
+        for item in group.items:
+            group_content.append(
+                f'<SelectItem value="{item[0]}">{item[1]}</SelectItem>'
+            )
+        group_content.append("</SelectGroup>")
+
+    if len(select.groups) == 1 and not select.show_label:
+        group_content.pop()
+        group_content.pop(0)
+        group_content.pop(0)
+
+    content.extend(group_content)
     return content
 
 

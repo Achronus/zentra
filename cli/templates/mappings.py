@@ -15,6 +15,7 @@ from cli.templates.ui.content import (
     div_content,
     radio_group_content,
     scroll_area_content,
+    select_content,
     text_content,
 )
 from cli.templates.ui.imports import (
@@ -39,6 +40,7 @@ from zentra.ui.control import (
     Label,
     RadioGroup,
     ScrollArea,
+    Select,
 )
 from zentra.ui.presentation import Separator
 
@@ -117,6 +119,7 @@ COMPONENT_CONTENT_MAPPING = [
     (Button, lambda btn: button_content(btn)),
     (RadioGroup, lambda rg: radio_group_content(rg)),
     (ScrollArea, lambda sa: scroll_area_content(sa)),
+    (Select, lambda select: select_content(select)),
 ]
 
 

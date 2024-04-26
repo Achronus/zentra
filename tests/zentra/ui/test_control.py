@@ -41,6 +41,8 @@ from zentra.ui.control import (
     RadioButton,
     RadioGroup,
     ScrollArea,
+    Select,
+    SelectGroup,
 )
 from zentra.ui.presentation import Separator
 
@@ -971,3 +973,94 @@ class TestScrollArea:
         wrapper_horizontal.comp_other(
             "imports", VALID_IMPORTS["scroll_area"]["horizontal"]
         )
+
+
+class TestSelect:
+    @pytest.fixture
+    def simple_select(self) -> Select:
+        return Select(
+            display_text="Select a fruit",
+            groups=SelectGroup(
+                label="Fruits",
+                items=[
+                    ("apple", "Apple"),
+                    ("banana", "Banana"),
+                ],
+            ),
+        )
+
+    def wrapper(self, select: Select) -> SimpleComponentFuncWrapper:
+        return SimpleComponentFuncWrapper(select, COMPONENT_DETAILS_MAPPING["Select"])
+
+    def test_content_str_single_group(self, simple_select: Select):
+        self.wrapper(simple_select).run(
+            "content", VALID_VALS_MAP["select"]["content"]["single_group"]
+        )
+
+    def test_content_str_single_group_no_label(self):
+        comp = Select(
+            display_text="Select a fruit",
+            groups=SelectGroup(
+                label="Fruits",
+                items=[
+                    ("apple", "Apple"),
+                    ("banana", "Banana"),
+                ],
+            ),
+            show_label=False,
+        )
+        self.wrapper(comp).run(
+            "content", VALID_VALS_MAP["select"]["content"]["single_group_no_label"]
+        )
+
+    def test_content_str_multi_groups(self):
+        comp = Select(
+            display_text="Select a fruit",
+            groups=[
+                SelectGroup(
+                    label="Traditional",
+                    items=[
+                        ("apple", "Apple"),
+                        ("banana", "Banana"),
+                    ],
+                ),
+                SelectGroup(
+                    label="Fancy",
+                    items=[
+                        ("blueberry", "Blueberry"),
+                        ("pineapple", "Pineapple"),
+                    ],
+                ),
+            ],
+        )
+        self.wrapper(comp).run(
+            "content", VALID_VALS_MAP["select"]["content"]["multi_groups"]
+        )
+
+    def test_content_str_multi_groups_no_label(self):
+        comp = Select(
+            display_text="Select a fruit",
+            groups=[
+                SelectGroup(
+                    label="Traditional",
+                    items=[
+                        ("apple", "Apple"),
+                        ("banana", "Banana"),
+                    ],
+                ),
+                SelectGroup(
+                    label="Fancy",
+                    items=[
+                        ("blueberry", "Blueberry"),
+                        ("pineapple", "Pineapple"),
+                    ],
+                ),
+            ],
+            show_label=False,
+        )
+        self.wrapper(comp).run(
+            "content", VALID_VALS_MAP["select"]["content"]["multi_groups"]
+        )
+
+    def test_import_str(self, simple_select: Select):
+        self.wrapper(simple_select).run("imports", VALID_IMPORTS["select"])

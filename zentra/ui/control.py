@@ -369,7 +369,7 @@ class Label(Component, ShadcnUi):
 
 class RadioButton(Component, ShadcnUi):
     """
-    A helper Zentra model for the [shadcn/ui](https://ui.shadcn.com/) RadioGroup component. Cannot be used on its own, must be used inside a `RadioGroup`.
+    A helper Zentra model for the [shadcn/ui](https://ui.shadcn.com/) RadioGroup component. Cannot be used on its own, must be used inside a `RadioGroup` component.
 
     Parameters:
     - `id` (`string`) - an identifier for the component. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
@@ -456,10 +456,9 @@ class ScrollArea(Component, ShadcnUi):
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) ScrollArea component.
 
     Parameters:
-    - `content` (`string | zentra.core.html.Div | zentra.core.Component`) - Can be either:
+    - `content` (`string | zentra.core.html.Div`) - Can be either:
       1. A simple `string` of text
       2. A `zentra.core.html.Div` model (recommended)
-      3. Any `zentra.core.Component` model, such as `zentra.nextjs.Image`
     - `styles` (`string, optional`) - the CSS styles to apply to the `ScrollArea`. Automatically adds them to `className`. `w-96 rounded-md border` by default
     - `orientation` (`string, optional`) - the orientation of the scroll axis. Valid options: `[horizontal, vertical]`. `vertical` by default
 
@@ -615,13 +614,34 @@ class ScrollArea(Component, ShadcnUi):
     orientation: Orientation = "vertical"
 
 
+class SelectGroup(Component, ShadcnUi):
+    """
+    A helper Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Select component. Cannot be used on its own, must be used inside a `Select` component.
+
+    Parameters:
+    - `label` (`string, optional`) - a name for the group
+    - `items` (`list[tuple[string, string]]`) - a list of tuple pairs of strings signifying the `(value, text)` for each `SelectItem`
+    """
+
+    label: str
+    items: list[tuple[str, str]]
+
+
 class Select(Component, ShadcnUi):
     """
     A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Select component.
 
     Parameters:
-    - `name` (`string`) - the name of the component
+    - `display_text` (`string`) - the display text for the `Select` component. Stored in the `SelectValue` placeholder inside the `SelectTrigger`. This text is the first thing people will see
+    - `groups` (`SelectGroup | list[zentra.model.control.SelectGroup]`) - a single or list of `zentra.model.control.SelectGroup` models containing the `SelectItem` values
+    - `box_width` (`integer, optional`) - the size of the `Select` box width in pixels. `280` by default
+    - `show_label` (`boolean, optional`) - a flag for displaying the label for the single `SelectGroup`. Only compatiable with a single `SelectGroup` (`groups=SelectGroup()`). `True` by default
     """
+
+    display_text: str
+    groups: SelectGroup | list[SelectGroup]
+    box_width: int = 280
+    show_label: bool = True
 
 
 class Slider(Component, ShadcnUi):

@@ -78,6 +78,14 @@ SCROLL_AREA_VALID_VALS = {
     },
 }
 
+SELECT_VALID_VALS = {
+    "content": {
+        "single_group": '<Select>\n<SelectTrigger className="w-[280px]">\n<SelectValue placeholder="Select a fruit" />\n</SelectTrigger>\n<SelectGroup>\n<SelectLabel>Fruits</SelectLabel>\n<SelectItem value="apple">Apple</SelectItem>\n<SelectItem value="banana">Banana</SelectItem>\n</SelectGroup>\n</Select>',
+        "single_group_no_label": '<Select>\n<SelectTrigger className="w-[280px]">\n<SelectValue placeholder="Select a fruit" />\n</SelectTrigger>\n<SelectItem value="apple">Apple</SelectItem>\n<SelectItem value="banana">Banana</SelectItem>\n</Select>',
+        "multi_groups": '<Select>\n<SelectTrigger className="w-[280px]">\n<SelectValue placeholder="Select a fruit" />\n</SelectTrigger>\n<SelectGroup>\n<SelectLabel>Traditional</SelectLabel>\n<SelectItem value="apple">Apple</SelectItem>\n<SelectItem value="banana">Banana</SelectItem>\n</SelectGroup>\n<SelectGroup>\n<SelectLabel>Fancy</SelectLabel>\n<SelectItem value="blueberry">Blueberry</SelectItem>\n<SelectItem value="pineapple">Pineapple</SelectItem>\n</SelectGroup>\n</Select>',
+    },
+}
+
 
 VALID_VALS_MAP = {
     "calendar": CALENDAR_VALID_VALS,
@@ -88,6 +96,7 @@ VALID_VALS_MAP = {
     "label": LABEL_VALID_VALS,
     "radio_group": RADIO_GROUP_VALID_VALS,
     "scroll_area": SCROLL_AREA_VALID_VALS,
+    "select": SELECT_VALID_VALS,
 }
 
 # NEXTJS COMPONENTS

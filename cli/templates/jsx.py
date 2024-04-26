@@ -13,7 +13,7 @@ from cli.templates.storage import (
 
 from zentra.core import Component, Page
 from zentra.core.base import HTMLTag, JSIterable
-from zentra.core.html import Div, Figure
+from zentra.core.html import Div, FigCaption, Figure
 from zentra.nextjs import NextJs
 from zentra.ui import Form
 from zentra.ui.control import Button, IconButton, InputOTP
@@ -444,13 +444,26 @@ class HTMLContentBuilder:
             img_content.insert(0, f'<div className="{model.img_container_styles}"')
             img_content.append("</div>")
 
-        fig_content, fig_storage = self.build(model=model.caption)
-        self.comp_storage = add_to_storage(self.comp_storage, fig_storage, extend=True)
-
+        fig_content = self.build_fig_caption(model=model.caption)
         content.extend(img_content)
         content.extend(fig_content)
         content.append(shell_end)
+
+        self.inner_content.extend(content)
         return content
+
+    def build_fig_caption(self, model: FigCaption) -> list[str]:
+        """Builds the content for the `FigCaption` model and and returns it as a list of strings."""
+        start_idx_caption_content = len(self.inner_content)
+        self.handle_text(model.text)
+
+        caption_content = self.inner_content[start_idx_caption_content:]
+        current_content = self.inner_content[:start_idx_caption_content]
+
+        self.inner_content = current_content
+        model.text = caption_content
+
+        return self.get_content(model=model)
 
     def build_div_model(
         self,
@@ -459,7 +472,7 @@ class HTMLContentBuilder:
         | JSIterable
         | list[str | HTMLTag | Component | JSIterable],
     ) -> None:
-        """Builds the content for the Div model and stores the content in `self.inner_content` and any component information in `self.comp_storage`."""
+        """Builds the content for the `Div` model and stores the content in `self.inner_content` and any component information in `self.comp_storage`."""
         if isinstance(item, JSIterable):
             content, storage = self.controller.build_js_iterable(item)
             self.inner_content.extend(content)

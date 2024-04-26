@@ -1,7 +1,7 @@
 import pytest
 
 from tests.mappings.ui_imports import NEXTJS_VALID_IMPORTS
-from tests.mappings.ui_simple import NEXTJS_VALID_VALS_MAP
+from tests.mappings.ui_vals import NEXTJS_VALID_VALS_MAP
 from tests.templates.helper import nextjs_component_builder
 
 from zentra.core import Component

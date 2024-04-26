@@ -18,7 +18,7 @@ from tests.mappings.btn_content import (
     ICON_BTN_VALID_CONTENT_WITHOUT_LINK,
 )
 from tests.mappings.ui_imports import VALID_IMPORTS
-from tests.mappings.ui_simple import VALID_VALS_MAP
+from tests.mappings.ui_vals import VALID_VALS_MAP
 from zentra.core import Component
 from zentra.core.enums.ui import (
     ButtonIconPosition,

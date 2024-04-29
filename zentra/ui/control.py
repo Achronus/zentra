@@ -26,7 +26,7 @@ from pydantic_core import PydanticCustomError
 
 class Button(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Button component focusing on text.
+    A Zentra model for the [Shadcn/ui Button](https://ui.shadcn.com/docs/components/button) component focusing on text.
 
     Parameters:
     - `text` (`string`) - the text displayed inside the button. Can include parameter variables (indicated by starting the variable name with a `$`)
@@ -45,7 +45,7 @@ class Button(Component, ShadcnUi):
 
 class IconButton(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Button component with a [Lucide React Icon](https://lucide.dev/icons).
+    A Zentra model for the [Shadcn/ui Button](https://ui.shadcn.com/docs/components/button) component with a [Lucide React Icon](https://lucide.dev/icons).
 
     Parameters:
     - `icon` (`string`) - the name of the [Lucide React Icon](https://lucide.dev/icons) to add inside the button. Must be in React format (Capitalised camelCase). E.g., `CircleArrowDown` or `Loader`
@@ -84,7 +84,7 @@ class IconButton(Component, ShadcnUi):
 
 class Calendar(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Calendar component.
+    A Zentra model for the [Shadcn/ui Calendar](https://ui.shadcn.com/docs/components/calendar) component.
 
     Parameters:
     - `name` (`string`) - an identifier for the component. Prepended to `get` and `set` for the `useState()` hook. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
@@ -111,7 +111,7 @@ class Calendar(Component, ShadcnUi):
 
 class Checkbox(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Checkbox component.
+    A Zentra model for the [Shadcn/ui Checkbox](https://ui.shadcn.com/docs/components/checkbox) component.
 
     Parameters:
     - `id` (`string`) - an identifier for the component. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
@@ -138,7 +138,7 @@ class Checkbox(Component, ShadcnUi):
 
 class MultiCheckbox(Component, ShadcnUi):
     """
-    A Zentra model for multiple [shadcn/ui](https://ui.shadcn.com/) Checkbox components.
+    A Zentra model for multiple [Shadcn/ui Checkbox](https://ui.shadcn.com/docs/components/checkbox) components.
 
     Parameters:
     - `items` (`list[Checkbox]`) - a list of Checkbox components. Requires a `minimum` of `2` items
@@ -153,7 +153,7 @@ class MultiCheckbox(Component, ShadcnUi):
 
 class Collapsible(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Collapsible component.
+    A Zentra model for the [Shadcn/ui Collapsible](https://ui.shadcn.com/docs/components/collapsible) component.
 
     Parameters:
     - `name` (`string`) - an identifier for the component. Prepended to `get` and `set` for the `useState()` hook. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
@@ -200,7 +200,7 @@ class DatePicker(Component, ShadcnUi):
 
 class Input(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Input component.
+    A Zentra model for the [Shadcn/ui Input](https://ui.shadcn.com/docs/components/input) component.
 
     Inputs are extremely versatile as expressed in the [HTML Input docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/url). We've limited the attributes to the basics for simplicity. Once components are generated, you can edit them in the respective `.tsx` files with additional attributes if needed.
 
@@ -229,7 +229,7 @@ class Input(Component, ShadcnUi):
 
 class InputOTP(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) InputOTP component.
+    A Zentra model for the [Shadcn/ui InputOTP](https://ui.shadcn.com/docs/components/input-otp) component.
 
     Parameters:
     - `num_inputs` (`int`) - the length of the OTP. E.g., 6 = 6 input slots. Must be a minimum of `1`
@@ -346,7 +346,7 @@ class InputOTP(Component, ShadcnUi):
 
 class Label(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Label component.
+    A Zentra model for the [Shadcn/ui Label](https://ui.shadcn.com/docs/components/label) component.
 
     Parameters:
     - `name` (`string`) - an identifier for the component. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
@@ -369,7 +369,7 @@ class Label(Component, ShadcnUi):
 
 class RadioButton(Component, ShadcnUi):
     """
-    A helper Zentra model for the [shadcn/ui](https://ui.shadcn.com/) RadioGroup component. Cannot be used on its own, must be used inside a `RadioGroup` component.
+    A helper Zentra model for the [Shadcn/ui RadioGroup](https://ui.shadcn.com/docs/components/radio-group) component. Cannot be used on its own, must be used inside a `RadioGroup` component.
 
     Parameters:
     - `id` (`string`) - an identifier for the component. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
@@ -404,7 +404,7 @@ class RadioButton(Component, ShadcnUi):
 
 class RadioGroup(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) RadioGroup component.
+    A Zentra model for the [Shadcn/ui RadioGroup](https://ui.shadcn.com/docs/components/radio-group) component.
 
     Parameters:
     - `items` (`list[RadioButton]`) - a list of `zentra.control.RadioButton`
@@ -453,7 +453,7 @@ class RadioGroup(Component, ShadcnUi):
 
 class ScrollArea(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) ScrollArea component.
+    A Zentra model for the [Shadcn/ui ScrollArea](https://ui.shadcn.com/docs/components/scroll-area) component.
 
     Parameters:
     - `content` (`string | zentra.core.html.Div`) - Can be either:
@@ -616,7 +616,7 @@ class ScrollArea(Component, ShadcnUi):
 
 class SelectGroup(Component, ShadcnUi):
     """
-    A helper Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Select component. Cannot be used on its own, must be used inside a `Select` component.
+    A helper Zentra model for the [Shadcn/ui Select](https://ui.shadcn.com/docs/components/select) component. Cannot be used on its own, must be used inside a `Select` component.
 
     Parameters:
     - `label` (`string, optional`) - a name for the group
@@ -629,7 +629,7 @@ class SelectGroup(Component, ShadcnUi):
 
 class Select(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Select component.
+    A Zentra model for the [Shadcn/ui Select](https://ui.shadcn.com/docs/components/select) component.
 
     Parameters:
     - `display_text` (`string`) - the display text for the `Select` component. Stored in the `SelectValue` placeholder inside the `SelectTrigger`. This text is the first thing people will see

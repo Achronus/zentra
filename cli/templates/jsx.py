@@ -44,7 +44,7 @@ export default PageName;
 
 def add_to_storage(
     local: JSXComponentExtras,
-    comp_store: JSXComponentContentStorage,
+    comp_store: JSXComponentContentStorage | JSXComponentExtras,
     extend: bool = False,
 ) -> JSXComponentExtras:
     """A helper function for adding component items to storage. Returns the updated storage."""
@@ -242,7 +242,9 @@ class ParentComponentBuilder:
 
     def build(self) -> list[str]:
         """Builds the JSX for the component and returns the content as a list of strings."""
-        shell, storage = self.controller.build_component(self.component)
+        shell, storage = self.controller.build_component(
+            self.component, full_shell=True
+        )
         self.storage = add_to_storage(self.storage, storage)
 
         if isinstance(self.component.content, Div):
@@ -272,7 +274,7 @@ class BuildController:
         self.details_dict = details_dict
 
     def build_component(
-        self, component: Component
+        self, component: Component, full_shell: bool = False
     ) -> tuple[list[str], JSXComponentContentStorage]:
         """Creates the JSX for a `Component` model and returns its details as a tuple in the form of `(content, comp_storage)`."""
         builder = ComponentBuilder(
@@ -280,7 +282,7 @@ class BuildController:
             mappings=self.maps,
             details=self.details_dict[component.classname],
         )
-        builder.build()
+        builder.build(full_shell=full_shell)
         return str_to_list(builder.storage.content), builder.storage
 
     def build_nextjs_component(
@@ -612,22 +614,26 @@ class ComponentBuilder:
         self.logic = LogicBuilder(component=component, mappings=mappings)
         self.content = ContentBuilder(component=component, mappings=mappings)
 
-    def build(self) -> None:
+    def build(self, full_shell: bool = False) -> None:
         """Builds the JSX for the component."""
         self.storage.imports = compress(self.imports.build())
         self.storage.attributes = compress(self.attrs.build(), chars=" ")
         self.storage.logic = compress(self.logic.build())
         self.storage.content = compress(
-            self.apply_content_containers(content=self.content.build())
+            self.apply_content_containers(
+                content=self.content.build(), full_shell=full_shell
+            )
         )
 
-    def apply_content_containers(self, content: list[str]) -> list[str]:
+    def apply_content_containers(
+        self, content: list[str], full_shell: bool
+    ) -> list[str]:
         """Wraps the components content in its outer shell and any additional wrappers (if applicable)."""
         wrapped_content = [
             f"<{self.component.classname}{f' {self.storage.attributes}' if self.storage.attributes else ''} />"
         ]
 
-        if len(content) > 0:
+        if len(content) > 0 or full_shell:
             wrapped_content[0] = wrapped_content[0].replace(" />", ">")
             wrapped_content.extend(
                 [

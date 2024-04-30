@@ -125,6 +125,15 @@ def slider_details() -> ComponentDetails:
     )
 
 
+def switch_details() -> ComponentDetails:
+    return ComponentDetails(
+        library="ui",
+        filename="switch.jsx",
+        name="Switch",
+        child_names=[],
+    )
+
+
 def component_details() -> list[ComponentDetails]:
     return [
         button_details(),
@@ -140,6 +149,7 @@ def component_details() -> list[ComponentDetails]:
         separator_details(),
         select_details(),
         slider_details(),
+        switch_details(),
     ]
 
 
@@ -157,4 +167,5 @@ COMPONENT_DETAILS_MAPPING = {
     "Separator": separator_details(),
     "Select": select_details(),
     "Slider": slider_details(),
+    "Switch": switch_details(),
 }

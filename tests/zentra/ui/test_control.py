@@ -44,6 +44,7 @@ from zentra.ui.control import (
     Select,
     SelectGroup,
     Slider,
+    Switch,
 )
 from zentra.ui.presentation import Separator
 
@@ -1147,3 +1148,61 @@ class TestSlider:
     @staticmethod
     def test_bar_size_validation_valid_min():
         Slider(value=10, bar_size=0)
+
+
+class TestSwitch:
+    @pytest.fixture
+    def switch(self) -> Switch:
+        return Switch(id="airplaneMode")
+
+    @pytest.fixture
+    def wrapper(self, switch: Switch) -> SimpleComponentFuncWrapper:
+        return SimpleComponentFuncWrapper(switch, COMPONENT_DETAILS_MAPPING["Switch"])
+
+    @staticmethod
+    def test_content_str_simple(wrapper: SimpleComponentFuncWrapper):
+        wrapper.run("content", VALID_VALS_MAP["switch"]["content"]["standard"])
+
+    @staticmethod
+    def test_content_str_checked():
+        wrapper = SimpleComponentFuncWrapper(
+            Switch(id="airplaneMode", checked=True),
+            COMPONENT_DETAILS_MAPPING["Switch"],
+        )
+        wrapper.run("content", VALID_VALS_MAP["switch"]["content"]["checked"])
+
+    @staticmethod
+    def test_content_str_disabled():
+        wrapper = SimpleComponentFuncWrapper(
+            Switch(id="airplaneMode", disabled=True),
+            COMPONENT_DETAILS_MAPPING["Switch"],
+        )
+        wrapper.run("content", VALID_VALS_MAP["switch"]["content"]["disabled"])
+
+    @staticmethod
+    def test_import_str(wrapper: SimpleComponentFuncWrapper):
+        wrapper.run("imports", VALID_IMPORTS["switch"])
+
+    @staticmethod
+    def test_id_validation_whitespace():
+        with pytest.raises(ValidationError):
+            Switch(id="terms conditions")
+
+    @staticmethod
+    def test_id_validation_dashes():
+        with pytest.raises(ValidationError):
+            Switch(id="terms-conditions")
+
+    @staticmethod
+    def test_id_validation_uppercase():
+        with pytest.raises(ValidationError):
+            Switch(id="TERMS")
+
+    @staticmethod
+    def test_id_validation_capitalise():
+        with pytest.raises(ValidationError):
+            Switch(id="Terms")
+
+    @staticmethod
+    def test_id_validation_camelcase():
+        Switch(id="termsConditions")

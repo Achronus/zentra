@@ -696,17 +696,29 @@ class Switch(Component, ShadcnUi):
     A Zentra model for the [Shadcn/ui Switch](https://ui.shadcn.com/docs/components/switch) component.
 
     Parameters:
+    - `id` (`string`) - an identifier for the component. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
+    - `checked` (`boolean, optional`) - a flag that determines whether the switch is selected or not. `False` by default
     - `disabled` (`boolean, optional`) - a flag for disabling the switch component. Default is `False`
-    - `read_only` (`boolean, optional`) - a flag for making the switch read only. Default is `False`. Indicates that the element is not editable, but is otherwise operable. More information on [Read only](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-readonly)
     """
 
+    id: str = Field(min_length=1, max_length=15)
+    checked: bool = False
     disabled: bool = False
-    read_only: bool = False
+
+    @field_validator("id")
+    def validate_id(cls, id: str) -> str:
+        if not has_valid_pattern(pattern=LOWER_CAMELCASE_WITH_DIGITS, value=id):
+            raise PydanticCustomError(
+                "string_pattern_mismatch",
+                "must be lowercase or camelCase",
+                dict(wrong_value=id, pattern=LOWER_CAMELCASE_WITH_DIGITS),
+            )
+        return id
 
 
 class Tabs(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Tabs component.
+    A Zentra model for the [Shadcn/ui](https://ui.shadcn.com/docs/components/) Tabs component.
 
     Parameters:
     - `name` (`string`) - the name of the component

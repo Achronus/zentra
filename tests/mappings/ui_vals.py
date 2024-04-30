@@ -93,6 +93,14 @@ SLIDER_VALID_VALS = {
     },
 }
 
+SWITCH_VALID_VALS = {
+    "content": {
+        "standard": '<Switch id="airplaneMode" checked={false} />',
+        "checked": '<Switch id="airplaneMode" checked={true} />',
+        "disabled": '<Switch id="airplaneMode" disabled checked={false} />',
+    }
+}
+
 VALID_VALS_MAP = {
     "calendar": CALENDAR_VALID_VALS,
     "checkbox": CHECKBOX_VALID_VALS,
@@ -104,6 +112,7 @@ VALID_VALS_MAP = {
     "scroll_area": SCROLL_AREA_VALID_VALS,
     "select": SELECT_VALID_VALS,
     "slider": SLIDER_VALID_VALS,
+    "switch": SWITCH_VALID_VALS,
 }
 
 # NEXTJS COMPONENTS

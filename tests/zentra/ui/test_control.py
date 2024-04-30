@@ -43,6 +43,7 @@ from zentra.ui.control import (
     ScrollArea,
     Select,
     SelectGroup,
+    Slider,
 )
 from zentra.ui.presentation import Separator
 
@@ -1064,3 +1065,85 @@ class TestSelect:
 
     def test_import_str(self, simple_select: Select):
         self.wrapper(simple_select).run("imports", VALID_IMPORTS["select"])
+
+
+class TestSlider:
+    @pytest.fixture
+    def slider(self) -> Slider:
+        return Slider(value=10)
+
+    @pytest.fixture
+    def slider_full(self) -> Slider:
+        return Slider(
+            value=10,
+            min=1,
+            max=50,
+            bar_size=40,
+            name="counts",
+            disabled=True,
+            orientation="vertical",
+        )
+
+    @pytest.fixture
+    def wrapper(self, slider: Slider) -> SimpleComponentFuncWrapper:
+        return SimpleComponentFuncWrapper(slider, COMPONENT_DETAILS_MAPPING["Slider"])
+
+    @pytest.fixture
+    def wrapper_full(self, slider_full: Slider) -> SimpleComponentFuncWrapper:
+        return SimpleComponentFuncWrapper(
+            slider_full, COMPONENT_DETAILS_MAPPING["Slider"]
+        )
+
+    @staticmethod
+    def test_content_str_simple(wrapper: SimpleComponentFuncWrapper):
+        wrapper.run("content", VALID_VALS_MAP["slider"]["content"]["standard"])
+
+    @staticmethod
+    def test_content_str_full(wrapper_full: SimpleComponentFuncWrapper):
+        wrapper_full.run("content", VALID_VALS_MAP["slider"]["content"]["all_params"])
+
+    @staticmethod
+    def test_import_str(wrapper: SimpleComponentFuncWrapper):
+        wrapper.run("imports", VALID_IMPORTS["slider"])
+
+    @staticmethod
+    def test_name_validation_whitespace():
+        with pytest.raises(ValidationError):
+            Slider(value=10, name="terms conditions")
+
+    @staticmethod
+    def test_name_validation_dashes():
+        with pytest.raises(ValidationError):
+            Slider(value=10, name="terms-conditions")
+
+    @staticmethod
+    def test_name_validation_uppercase():
+        with pytest.raises(ValidationError):
+            Slider(value=10, name="TERMS")
+
+    @staticmethod
+    def test_name_validation_capitalise():
+        with pytest.raises(ValidationError):
+            Slider(value=10, name="Terms")
+
+    @staticmethod
+    def test_name_validation_camelcase():
+        Slider(value=10, name="termsConditions")
+
+    @staticmethod
+    def test_bar_size_validation_under_zero():
+        with pytest.raises(ValidationError):
+            Slider(value=10, bar_size=-20)
+
+    @staticmethod
+    def test_bar_size_validation_over_100():
+        with pytest.raises(ValidationError):
+            Slider(value=10, bar_size=120)
+
+    @staticmethod
+    def test_bar_size_validation_valid_max():
+        Slider(value=10, bar_size=100)
+
+    @staticmethod
+    def test_bar_size_validation_valid_min():
+        Slider(value=10, bar_size=0)

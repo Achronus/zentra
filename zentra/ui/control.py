@@ -646,16 +646,52 @@ class Select(Component, ShadcnUi):
 
 class Slider(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Slider component.
+    A Zentra model for the [Shadcn/ui Slider](https://ui.shadcn.com/docs/components/slider) component.
 
     Parameters:
-    - `name` (`string`) - the name of the component
+    - `value` (`integer`) - the default value the slider starts at
+    - `min` - (`integer | string, optional`) - the minimum value of the slider. When a string, acts as a parameter. `0` by default
+    - `max` - (`integer | string, optional`) - the maximum value of the slider. When a string, acts as a parameter. `100` by default
+    - `step` - (`integer | string, optional`) - the step size of the slider. When a string, acts as a parameter. `1` by default
+    - `bar_size` - (`integer, optional`) - the size of the `Slider` as a percentage. Can be any value between `0 - 100`. `60` by default
+    - `name` (`string, optional`) - the name of the `Slider`.  Must be `lowercase` or `camelCase` and up to a maximum of `15` characters. `None` by default
+    - `disabled` (`boolean, optional`) - adds the disabled property, preventing it from being selected. `False` by default
+    - `orientation` (`string, optional`) -  the orientation of the `Slider`. Valid options: `[horizontal, vertical]`. `horizontal` by default
     """
+
+    value: int
+    min: int | str = 0
+    max: int | str = 100
+    step: int | str = 1
+    bar_size: int = 60
+    name: str = None
+    disabled: bool = False
+    orientation: Orientation = "horizontal"
+
+    @field_validator("name")
+    def validate_name(cls, name: str) -> str:
+        if not has_valid_pattern(pattern=LOWER_CAMELCASE_WITH_DIGITS, value=name):
+            raise PydanticCustomError(
+                "string_pattern_mismatch",
+                "must be lowercase or camelCase",
+                dict(wrong_value=name, pattern=LOWER_CAMELCASE_WITH_DIGITS),
+            )
+        return name
+
+    @field_validator("bar_size")
+    def validate_bar_size(cls, size: int) -> int:
+        if not (0 <= size <= 100):
+            raise PydanticCustomError(
+                "out_of_range",
+                "must be between '0' and '100'",
+                dict(wrong_value=size, accepted_min=0, accepted_max=100),
+            )
+        return size
 
 
 class Switch(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Switch component.
+    A Zentra model for the [Shadcn/ui Switch](https://ui.shadcn.com/docs/components/switch) component.
 
     Parameters:
     - `disabled` (`boolean, optional`) - a flag for disabling the switch component. Default is `False`

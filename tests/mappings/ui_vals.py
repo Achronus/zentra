@@ -86,6 +86,12 @@ SELECT_VALID_VALS = {
     },
 }
 
+SLIDER_VALID_VALS = {
+    "content": {
+        "standard": '<Slider defaultValue={[10]} min={0} max={100} step={1} className={cn("w-[60%]", className)} orientation="horizontal" />',
+        "all_params": '<Slider disabled htmlFor="counts" defaultValue={[10]} min={1} max={50} step={1} className={cn("w-[40%]", className)} orientation="vertical" />',
+    },
+}
 
 VALID_VALS_MAP = {
     "calendar": CALENDAR_VALID_VALS,
@@ -97,6 +103,7 @@ VALID_VALS_MAP = {
     "radio_group": RADIO_GROUP_VALID_VALS,
     "scroll_area": SCROLL_AREA_VALID_VALS,
     "select": SELECT_VALID_VALS,
+    "slider": SLIDER_VALID_VALS,
 }
 
 # NEXTJS COMPONENTS

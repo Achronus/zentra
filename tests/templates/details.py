@@ -116,6 +116,15 @@ def select_details() -> ComponentDetails:
     )
 
 
+def slider_details() -> ComponentDetails:
+    return ComponentDetails(
+        library="ui",
+        filename="slider.jsx",
+        name="Slider",
+        child_names=[],
+    )
+
+
 def component_details() -> list[ComponentDetails]:
     return [
         button_details(),
@@ -130,6 +139,7 @@ def component_details() -> list[ComponentDetails]:
         scroll_area_details(),
         separator_details(),
         select_details(),
+        slider_details(),
     ]
 
 
@@ -146,4 +156,5 @@ COMPONENT_DETAILS_MAPPING = {
     "ScrollArea": scroll_area_details(),
     "Separator": separator_details(),
     "Select": select_details(),
+    "Slider": slider_details(),
 }

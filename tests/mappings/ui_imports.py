@@ -21,6 +21,7 @@ VALID_IMPORTS = {
         "horizontal": '''import Image from 'next/image'\nimport { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"''',
     },
     "select": 'import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"',
+    "slider": 'import { Slider } from "@/components/ui/slider"\nimport { cn } from "@/lib/utils"',
 }
 
 

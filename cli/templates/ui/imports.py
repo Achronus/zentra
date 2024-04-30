@@ -50,3 +50,8 @@ def image_imports(src: str | HttpUrl | StaticImage) -> list[str] | None:
         return static_img_imports(img=src)
 
     return None
+
+
+def slider_imports() -> list[str]:
+    """Returns a list of strings for the additional Slider imports."""
+    return ['import { cn } from "@/lib/utils"']

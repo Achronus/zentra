@@ -6,6 +6,7 @@ from cli.templates.ui.attributes import (
     collapsible_attributes,
     input_otp_attributes,
     nextjs_link_attributes,
+    slider_attributes,
     src_attribute,
 )
 from cli.templates.ui.content import (
@@ -24,6 +25,7 @@ from cli.templates.ui.imports import (
     image_imports,
     input_opt_imports,
     radio_group_imports,
+    slider_imports,
     static_img_imports,
 )
 from cli.templates.ui.logic import calendar_logic, collapsible_logic
@@ -41,6 +43,7 @@ from zentra.ui.control import (
     RadioGroup,
     ScrollArea,
     Select,
+    Slider,
 )
 from zentra.ui.presentation import Separator
 
@@ -77,6 +80,7 @@ COMPONENT_ATTR_MAPPING = [
     (RadioGroup, "default_value", lambda dv: [f'defaultValue="{dv}"']),
     (Separator, "orientation", lambda val: [f'orientation="{val}"']),
     (Link, "all", lambda comp: nextjs_link_attributes(comp)),
+    (Slider, "all", lambda slider: slider_attributes(slider)),
 ]
 
 # (attribute_name, lambda_expression)
@@ -109,6 +113,7 @@ ADDITIONAL_IMPORTS_MAPPING = [
     (RadioGroup, "default_value", lambda _: radio_group_imports()),
     (StaticImage, "all", lambda img: static_img_imports(img)),
     (Image, "src", lambda src: image_imports(src)),
+    (Slider, "value", lambda _: slider_imports()),
 ]
 
 

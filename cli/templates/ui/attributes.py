@@ -3,6 +3,7 @@ import re
 from pydantic import HttpUrl
 from zentra.core.enums.ui import InputOTPPatterns
 from zentra.nextjs import Link, StaticImage, Url
+from zentra.ui.control import Slider
 
 
 def calendar_attributes(name: str) -> list[str]:
@@ -98,3 +99,20 @@ def alt_attribute(alt: str) -> str:
         return "alt=" + "{`" + " ".join(new_alt) + "`}"
 
     return f'alt="{" ".join(new_alt)}"'
+
+
+def slider_attributes(slider: Slider) -> list[str]:
+    """Returns a list of strings for the Slider attributes based on its given values."""
+    attrs = [
+        f"defaultValue={{[{slider.value}]}}",
+        f"min={{{slider.min}}}",
+        f"max={{{slider.max}}}",
+        f"step={{{slider.step}}}",
+        'className={cn("w-[' + str(slider.bar_size) + '%]", className)}',
+        f'orientation="{slider.orientation}"',
+    ]
+
+    if slider.name:
+        attrs.insert(0, f'htmlFor="{slider.name}"')
+
+    return attrs

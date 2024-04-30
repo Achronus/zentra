@@ -1,8 +1,6 @@
 from pydantic import HttpUrl
-from tests.templates.dummy import DummyIconButton
 from zentra.core.enums.ui import InputOTPPatterns
 from zentra.nextjs import StaticImage
-from zentra.ui.control import Button, IconButton
 
 
 def collapsible_imports() -> list[str]:
@@ -19,19 +17,6 @@ def input_opt_imports(pattern: str) -> list[str]:
         return ["import { " + InputOTPPatterns(pattern).name + ' } from "input-otp"']
 
     return None
-
-
-def button_imports(btn: Button | IconButton | DummyIconButton) -> list[str]:
-    """Returns a list of strings for the additional Button imports based on the components attributes."""
-    imports = []
-
-    if hasattr(btn, "url") and btn.url:
-        imports.append('import Link from "next/link"')
-
-    if hasattr(btn, "icon") and btn.icon:
-        imports.append("import { " + btn.icon + ' } from "lucide-react"')
-
-    return imports
 
 
 def radio_group_imports() -> list[str]:

@@ -2,6 +2,6 @@ from zentra.ui.control import Button
 
 
 user_btn = Button(
-    text="Click me!",
+    content="Click me!",
     variant="destructive",
 )

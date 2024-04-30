@@ -11,12 +11,14 @@ from cli.templates.storage import (
     JSXPageContentStorage,
 )
 
+from tests.templates.dummy import DummyButton
 from zentra.core import Component, Page
 from zentra.core.base import HTMLTag, JSIterable
 from zentra.core.html import Div, FigCaption, Figure
-from zentra.nextjs import NextJs
+from zentra.core.react import LucideIcon
+from zentra.nextjs import Link, NextJs
 from zentra.ui import Form
-from zentra.ui.control import Button, IconButton, InputOTP
+from zentra.ui.control import Button, InputOTP
 
 
 FORM_SCHEMA_BASE = """
@@ -247,11 +249,27 @@ class ParentComponentBuilder:
         )
         self.storage = add_to_storage(self.storage, storage)
 
-        if isinstance(self.component.content, Div):
-            inner_content = self.build_div_content(self.component.content)
-            return [shell[0], *inner_content, *shell[1:]]
+        content: Div | str | LucideIcon | Component = self.component.content
+        if isinstance(content, Div):
+            inner_content = self.build_div_content(content)
 
-        return shell
+        elif isinstance(self.component, (Button, DummyButton)):
+            inner_content, storage = self.build_btn_content(self.component)
+            self.storage = add_to_storage(self.storage, storage, extend=True)
+
+        elif isinstance(content, str):
+            inner_content: list[str] = text_content(content)
+
+        elif isinstance(content, LucideIcon):
+            inner_content, import_str = self.controller.build_icon(content)
+            self.storage.imports.append(import_str)
+
+        else:
+            inner_content, storage = self.controller.build_component(content)
+            storage.imports = str_to_list(storage.imports)
+            self.storage = add_to_storage(self.storage, storage, extend=True)
+
+        return [shell[0], *inner_content, *shell[1:]]
 
     def build_div_content(self, content: Div) -> list[str]:
         """Builds the `Div` content of the model and returns it as a list of strings."""
@@ -262,6 +280,27 @@ class ParentComponentBuilder:
             self.storage = add_to_storage(self.storage, comp_storage, extend=True)
 
         return content
+
+    def build_btn_content(
+        self, model: Button | DummyButton
+    ) -> tuple[list[str], JSXComponentExtras]:
+        """Creates the JSX for a `Button` models inner content and returns its details as a tuple in the form of `(content, multi_comp_storage)`."""
+        storage = JSXComponentExtras()
+
+        if isinstance(model.content, LucideIcon):
+            content, import_str = self.controller.build_icon(model.content)
+            model.content = compress(content)
+            storage.imports.append(import_str)
+        else:
+            model.content = text_content(model.content)
+
+        if model.url:
+            model.content, link_storage = self.controller.build_nextjs_component(
+                Link(href=model.url, text=model.content)
+            )
+            storage = add_to_storage(storage, link_storage)
+
+        return model.content, storage
 
 
 class BuildController:
@@ -296,7 +335,7 @@ class BuildController:
     def build_js_iterable(
         self, model: JSIterable
     ) -> tuple[list[str], JSXComponentExtras]:
-        """Creates the JSX for a `JSIterable` model and returns its details as a tuple in the form of `(content, comp_storage)`."""
+        """Creates the JSX for a `JSIterable` model and returns its details as a tuple in the form of `(content, multi_comp_storage)`."""
         builder = JSIterableContentBuilder(
             model=model,
             mappings=self.maps,
@@ -306,7 +345,7 @@ class BuildController:
         return content, builder.comp_storage
 
     def build_html_tag(self, model: HTMLTag) -> tuple[list[str], JSXComponentExtras]:
-        """Creates the JSX for a `HTMLTag` model and returns its details as a tuple in the form of `(content, comp_storage | multi_comp_storage)`."""
+        """Creates the JSX for a `HTMLTag` model and returns its details as a tuple in the form of `(content, multi_comp_storage)`."""
         builder = HTMLContentBuilder(
             model=model,
             mappings=self.maps,
@@ -314,6 +353,18 @@ class BuildController:
         )
         content, storage = builder.build()
         return content, storage
+
+    def build_icon(self, model: LucideIcon) -> tuple[list[str], str]:
+        """Creates the JSX for a `LucideIcon` model and returns its details as a tuple in the form of `(content, import_str)`."""
+        result = [f'<{model.name} className="mr-2 h-4 w-4" />']
+
+        if model.text:
+            if model.position == "start":
+                result.append(model.text)
+            else:
+                result.insert(0, model.text)
+
+        return result, model.import_str
 
 
 class NextJSComponentBuilder:
@@ -372,7 +423,9 @@ class NextJSComponentBuilder:
 
     def apply_content_containers(self, content: list[str]) -> list[str]:
         """Wraps the components content in its outer shell and any additional wrappers (if applicable)."""
-        wrapped_content = [f"<{self.component.classname} {self.storage.attributes} />"]
+        wrapped_content = [
+            f"<{self.component.classname}{f' {self.storage.attributes}' if self.storage.attributes else ''} />"
+        ]
 
         if len(content) > 0:
             wrapped_content[0] = wrapped_content[0].replace(" />", ">")
@@ -779,12 +832,7 @@ class ContentBuilder:
                 value = getattr(self.component, attr_name)
                 if value:
                     content_str = condition(value)
-
-                    if attr_name == "text" and not isinstance(self.component, Button):
-                        if hasattr(self.component, "icon_position"):
-                            content.extend(self.handle_icon_button(text=content_str))
-                        else:
-                            content.append(content_str)
+                    content.append(content_str)
 
         for comp_type, condition in self.maps.component_content:
             if isinstance(self.component, comp_type):
@@ -796,23 +844,6 @@ class ContentBuilder:
             return self.handle_single_quotes(*content)
 
         return self.handle_single_quotes(content)
-
-    def handle_icon_button(self, text: list[str]) -> list[str]:
-        """Handles the logic for the icon button."""
-        component: IconButton = self.component
-        result = []
-
-        icon_html = f'<{component.icon} className="mr-2 h-4 w-4"/>'
-        if component.icon_position == "start":
-            result.extend([icon_html, *text])
-        else:
-            result.extend([*text, icon_html])
-
-        if component.url:
-            result.insert(0, f'<Link href="{component.url}">')
-            result.append("</Link>")
-
-        return result
 
     def handle_input_otp(self) -> list[str]:
         """Input OTP is difficult to create with a single list comprehension. Instead, we create it separately here."""

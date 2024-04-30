@@ -20,12 +20,6 @@ class ButtonSize(str, Enum):
     DEFAULT = "default"
     SM = "sm"
     LG = "lg"
-
-
-class IconButtonSize(str, Enum):
-    DEFAULT = "default"
-    SM = "sm"
-    LG = "lg"
     ICON = "icon"
 
 

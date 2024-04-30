@@ -10,7 +10,6 @@ from cli.templates.ui.attributes import (
     src_attribute,
 )
 from cli.templates.ui.content import (
-    button_content,
     checkbox_content,
     collapsible_content,
     div_content,
@@ -20,7 +19,6 @@ from cli.templates.ui.content import (
     text_content,
 )
 from cli.templates.ui.imports import (
-    button_imports,
     collapsible_imports,
     image_imports,
     input_opt_imports,
@@ -29,15 +27,12 @@ from cli.templates.ui.imports import (
     static_img_imports,
 )
 from cli.templates.ui.logic import calendar_logic, collapsible_logic
-from tests.templates.dummy import DummyIconButton
 from zentra.core.html import Div
 from zentra.nextjs import Image, Link, StaticImage
 from zentra.ui.control import (
-    Button,
     Calendar,
     Checkbox,
     Collapsible,
-    IconButton,
     InputOTP,
     Label,
     RadioGroup,
@@ -87,6 +82,7 @@ COMPONENT_ATTR_MAPPING = [
 COMMON_ATTR_MAPPING = [
     ("id", lambda value: f'id="{value}"'),
     ("url", lambda value: "asChild" if value else None),
+    ("href", lambda value: f'href="{value}"' if value else None),
     ("type", lambda value: f'type="{value}"'),
     ("placeholder", lambda value: f'placeholder="{value}"'),
     ("variant", lambda value: f'variant="{value}"' if value != "default" else None),
@@ -108,9 +104,6 @@ COMMON_ATTR_MAPPING = [
 ADDITIONAL_IMPORTS_MAPPING = [
     (Collapsible, "name", lambda _: collapsible_imports()),
     (InputOTP, "pattern", lambda pattern: input_opt_imports(pattern)),
-    (Button, "all", lambda btn: button_imports(btn)),
-    (IconButton, "all", lambda btn: button_imports(btn)),
-    (DummyIconButton, "all", lambda btn: button_imports(btn)),
     (RadioGroup, "default_value", lambda _: radio_group_imports()),
     (StaticImage, "all", lambda img: static_img_imports(img)),
     (Image, "src", lambda src: image_imports(src)),
@@ -122,7 +115,6 @@ COMPONENT_CONTENT_MAPPING = [
     (Div, lambda div: div_content(div)),
     (Checkbox, lambda cb: checkbox_content(cb)),
     (Collapsible, lambda comp: collapsible_content(comp)),
-    (Button, lambda btn: button_content(btn)),
     (RadioGroup, lambda rg: radio_group_content(rg)),
     (ScrollArea, lambda sa: scroll_area_content(sa)),
     (Select, lambda select: select_content(select)),

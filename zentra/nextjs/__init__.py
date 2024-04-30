@@ -289,3 +289,8 @@ class Link(Component, NextJs):
     replace: bool = False
     scroll: bool = True
     prefetch: bool = None
+
+    @property
+    def import_str(self) -> str:
+        """Returns the core import string for the component."""
+        return f'import {self.classname} from "next/{self.classname.lower()}"'

@@ -1,7 +1,5 @@
 import re
-import requests
 
-from cli.conf.format import name_from_camel_case
 from zentra.core import (
     LOWER_CAMELCASE_WITH_DIGITS,
     LOWERCASE_SINGLE_WORD,
@@ -11,13 +9,13 @@ from zentra.core import (
 from zentra.core.enums.ui import (
     ButtonSize,
     ButtonVariant,
-    ButtonIconPosition,
-    IconButtonSize,
     InputOTPPatterns,
     InputTypes,
     Orientation,
+    TextStyle,
 )
 from zentra.core.html import Div
+from zentra.core.react import LucideIcon
 from zentra.ui import ShadcnUi
 
 from pydantic import Field, HttpUrl, PrivateAttr, ValidationInfo, field_validator
@@ -29,57 +27,18 @@ class Button(Component, ShadcnUi):
     A Zentra model for the [Shadcn/ui Button](https://ui.shadcn.com/docs/components/button) component focusing on text.
 
     Parameters:
-    - `text` (`string`) - the text displayed inside the button. Can include parameter variables (indicated by starting the variable name with a `$`)
+    - `content` (`string | zentra.core.react.LucideIcon`) - the information displayed inside the button. Can be a string of text or a `LucideIcon` Zentra model. Can include parameter variables (indicated by starting the variable name with a `$`)
     - `url` (`string, optional`) - the URL the button links to. `None` by default. When `None` removes it from `Button`
     - `variant` (`string, optional`) - the style of the button. Valid options: `['default', 'secondary', 'destructive', 'outline', 'ghost', 'link']`. `default` by default
-    - `size` (`string, optional`) - the size of the button. Valid options: `['default', 'sm', 'lg']`. `default` by default
+    - `size` (`string, optional`) - the size of the button. Valid options: `['default', 'sm', 'lg', 'icon']`. `default` by default
     - `disabled` (`boolean, optional`) - adds the disabled property, preventing it from being clicked. `False` by default
     """
 
-    text: str = Field(min_length=1)
+    content: str | LucideIcon
     url: HttpUrl = None
     variant: ButtonVariant = "default"
     size: ButtonSize = "default"
     disabled: bool = False
-
-
-class IconButton(Component, ShadcnUi):
-    """
-    A Zentra model for the [Shadcn/ui Button](https://ui.shadcn.com/docs/components/button) component with a [Lucide React Icon](https://lucide.dev/icons).
-
-    Parameters:
-    - `icon` (`string`) - the name of the [Lucide React Icon](https://lucide.dev/icons) to add inside the button. Must be in React format (Capitalised camelCase). E.g., `CircleArrowDown` or `Loader`
-    - `icon_position` (`string, optional`) - the position of the icon inside the button. When set to `start`, icon appears before the text. When `end`, it appears after the text. `start` by default. Valid options: `['start', 'end']`
-    - `text` (`string, optional`) - the text displayed inside the button. Can include parameter variables (indicated by starting the variable name with a `$`). `None` by default. When `None` removes it from `Button`
-    - `url` (`string, optional`) - the URL the button links to. `None` by default. When `None` removes it from `Button`
-    - `variant` (`string, optional`) - the style of the button. Valid options: `['default', 'secondary', 'destructive', 'outline', 'ghost', 'link']`. `default` by default
-    - `size` (`string, optional`) - the size of the button. Valid options: `['default', 'sm', 'lg', 'icon']`. `icon` by default
-    - `disabled` (`boolean, optional`) - adds the disabled property, preventing it from being clicked. `False` by default
-    """
-
-    icon: str = Field(min_length=1)
-    icon_position: ButtonIconPosition = "start"
-    text: str = None
-    url: HttpUrl = Field(default=None)
-    variant: ButtonVariant = "default"
-    size: IconButtonSize = "icon"
-    disabled: bool = False
-
-    _classname = PrivateAttr(default="Button")
-
-    @field_validator("icon")
-    def validate_icon(cls, icon: str) -> str:
-        icon_name = name_from_camel_case(icon)
-        response = requests.get(f"https://lucide.dev/icons/{icon_name}")
-
-        if response.status_code != 200:
-            raise PydanticCustomError(
-                "invalid_icon",
-                f"'{icon}' at '{response.url}' does not exist",
-                dict(wrong_value=icon, error_code=response.status_code),
-            )
-
-        return icon
 
 
 class Calendar(Component, ShadcnUi):

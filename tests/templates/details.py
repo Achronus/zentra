@@ -134,6 +134,15 @@ def switch_details() -> ComponentDetails:
     )
 
 
+def textarea_details() -> ComponentDetails:
+    return ComponentDetails(
+        library="ui",
+        filename="textarea.jsx",
+        name="Textarea",
+        child_names=[],
+    )
+
+
 def component_details() -> list[ComponentDetails]:
     return [
         button_details(),
@@ -150,6 +159,7 @@ def component_details() -> list[ComponentDetails]:
         select_details(),
         slider_details(),
         switch_details(),
+        textarea_details(),
     ]
 
 
@@ -168,4 +178,5 @@ COMPONENT_DETAILS_MAPPING = {
     "Select": select_details(),
     "Slider": slider_details(),
     "Switch": switch_details(),
+    "Textarea": textarea_details(),
 }

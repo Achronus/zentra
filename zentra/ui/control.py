@@ -727,16 +727,30 @@ class Tabs(Component, ShadcnUi):
 
 class Textarea(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Textarea component.
+    A Zentra model for the [Shadcn/ui Textarea](https://ui.shadcn.com/docs/components/textarea) component.
 
     Parameters:
-    - `name` (`string`) - the name of the component
+    - `id` (`string`) - an identifier for the component. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
+    - `placeholder` (`string`) - the placeholder text to put into the textarea
     """
+
+    id: str = Field(min_length=1, max_length=15)
+    placeholder: str = Field(min_length=1)
+
+    @field_validator("id")
+    def validate_id(cls, id: str) -> str:
+        if not has_valid_pattern(pattern=LOWER_CAMELCASE_WITH_DIGITS, value=id):
+            raise PydanticCustomError(
+                "string_pattern_mismatch",
+                "must be lowercase or camelCase",
+                dict(wrong_value=id, pattern=LOWER_CAMELCASE_WITH_DIGITS),
+            )
+        return id
 
 
 class Toggle(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Toggle component.
+    A Zentra model for the [Shadcn/ui](https://ui.shadcn.com/docs/components/) Toggle component.
 
     Parameters:
     - `name` (`string`) - the name of the component

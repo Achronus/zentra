@@ -45,6 +45,7 @@ from zentra.ui.control import (
     SelectGroup,
     Slider,
     Switch,
+    Textarea,
 )
 from zentra.ui.presentation import Separator
 
@@ -1206,3 +1207,23 @@ class TestSwitch:
     @staticmethod
     def test_id_validation_camelcase():
         Switch(id="termsConditions")
+
+
+class TestTextarea:
+    @pytest.fixture
+    def textarea(self) -> Textarea:
+        return Textarea(id="message", placeholder="Type your message here.")
+
+    @pytest.fixture
+    def wrapper(self, textarea: Textarea) -> SimpleComponentFuncWrapper:
+        return SimpleComponentFuncWrapper(
+            textarea, COMPONENT_DETAILS_MAPPING["Textarea"]
+        )
+
+    @staticmethod
+    def test_content_str(wrapper: SimpleComponentFuncWrapper):
+        wrapper.run("content", VALID_VALS_MAP["textarea"]["content"])
+
+    @staticmethod
+    def test_import_str(wrapper: SimpleComponentFuncWrapper):
+        wrapper.run("imports", VALID_IMPORTS["textarea"])

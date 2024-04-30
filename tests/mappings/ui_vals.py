@@ -101,6 +101,10 @@ SWITCH_VALID_VALS = {
     }
 }
 
+TEXTAREA_VALID_VALS = {
+    "content": '<Textarea id="message" placeholder="Type your message here." />'
+}
+
 VALID_VALS_MAP = {
     "calendar": CALENDAR_VALID_VALS,
     "checkbox": CHECKBOX_VALID_VALS,
@@ -113,6 +117,7 @@ VALID_VALS_MAP = {
     "select": SELECT_VALID_VALS,
     "slider": SLIDER_VALID_VALS,
     "switch": SWITCH_VALID_VALS,
+    "textarea": TEXTAREA_VALID_VALS,
 }
 
 # NEXTJS COMPONENTS

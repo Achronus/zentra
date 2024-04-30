@@ -23,6 +23,7 @@ VALID_IMPORTS = {
     "select": 'import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"',
     "slider": 'import { Slider } from "@/components/ui/slider"\nimport { cn } from "@/lib/utils"',
     "switch": 'import { Switch } from "@/components/ui/switch"',
+    "textarea": 'import { Textarea } from "@/components/ui/textarea"',
 }
 
 

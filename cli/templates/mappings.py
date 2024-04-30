@@ -101,6 +101,7 @@ COMMON_ATTR_MAPPING = [
     ("alt", lambda alt: alt_attribute(alt) if alt else None),
     ("width", lambda width: f"width={{{width}}}" if width else None),
     ("height", lambda height: f"height={{{height}}}" if height else None),
+    ("checked", lambda checked: f"checked={{{str(checked).lower()}}}"),
 ]
 
 

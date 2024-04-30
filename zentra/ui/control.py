@@ -116,12 +116,14 @@ class Checkbox(Component, ShadcnUi):
     Parameters:
     - `id` (`string`) - an identifier for the component. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
     - `label` (`string`) - the text associated to the checkbox
+    - `checked` (`boolean, optional`) - a flag that determines whether the checkbox is ticked or not. `False` by default
     - `more_info` (`string, optional`) - additional information to add under the checkbox. `None` by default. When `None` removes it from `Checkbox`
     - `disabled` (`boolean, optional`) - adds the disabled property, preventing it from being selected. `False` by default
     """
 
     id: str = Field(min_length=1, max_length=15)
     label: str = Field(min_length=1)
+    checked: bool = False
     more_info: str = None
     disabled: bool = False
 

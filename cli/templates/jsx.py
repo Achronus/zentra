@@ -674,7 +674,7 @@ class AttributeBuilder:
         for attr_name, condition in self.maps.common_attrs:
             if hasattr(self.component, attr_name):
                 value = getattr(self.component, attr_name)
-                if value:
+                if value is not None:
                     attrs.append(condition(value))
 
         for item in self.maps.component_attrs:
@@ -686,7 +686,7 @@ class AttributeBuilder:
                     value = getattr(self.component, attr_name)
                     value = condition(value)
 
-                if value:
+                if value is not None:
                     attrs.extend(value)
 
         return remove_none(attrs)

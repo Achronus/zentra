@@ -4,7 +4,13 @@ from cli.conf.format import name_from_camel_case
 from cli.conf.storage import ComponentDetails
 from cli.templates.mappings import JSXMappings
 from cli.templates.ui.content import text_content
-from cli.templates.utils import dedupe, compress, str_to_list, remove_none
+from cli.templates.utils import (
+    compress_imports,
+    dedupe,
+    compress,
+    str_to_list,
+    remove_none,
+)
 from cli.templates.storage import (
     JSXComponentContentStorage,
     JSXComponentExtras,
@@ -17,7 +23,7 @@ from zentra.core.html import Div, FigCaption, Figure
 from zentra.core.react import LucideIcon
 from zentra.nextjs import Link, NextJs
 from zentra.ui import Form
-from zentra.ui.control import Button, InputOTP
+from zentra.ui.control import Button, InputOTP, ToggleGroup
 
 
 FORM_SCHEMA_BASE = """
@@ -241,26 +247,59 @@ class ParentComponentBuilder:
         )
         self.storage = JSXComponentExtras()
 
-    def build(self) -> list[str]:
+    def build(self, model: Component = None) -> list[str]:
         """Builds the JSX for the component and returns the content as a list of strings."""
-        shell, storage = self.controller.build_component(
-            self.component, full_shell=True
-        )
+        if model is None:
+            model = self.component
+
+        shell, storage = self.controller.build_component(model, full_shell=True)
         self.storage = add_to_storage(self.storage, storage)
 
-        if hasattr(self.component, "content"):
+        if hasattr(model, "content"):
             builder = InnerContentBuilder(
-                component=self.component,
+                component=model,
                 controller=self.controller,
                 storage=self.storage,
             )
             inner_content, storage = builder.build()
             self.storage = add_to_storage(self.storage, storage, extend=True)
 
-        elif hasattr(self.component, "items"):
-            builder = InnerItemsBuilder()
+        elif hasattr(model, "items"):
+            items: list[Component] = model.items
+            inner_content = []
+            for item in items:
+                inner_content.extend(self.build(model=item))
 
+            if isinstance(model, ToggleGroup):
+                inner_content, self.storage = self.handle_toggle_group(
+                    inner_content,
+                    self.storage,
+                )
+
+        self.storage.imports = compress_imports(self.storage.imports)
         return [shell[0], *inner_content, *shell[1:]]
+
+    def handle_toggle_group(
+        self,
+        content: list[str],
+        storage: JSXComponentExtras,
+    ) -> tuple[list[str], JSXComponentExtras]:
+        """Updates the `Toggle` item names in the `ToggleGroup` content to `ToggleGroupItem` and removes `Toggle` from the storage imports. Returns the updated information as a tuple in the form of: `(content, storage)`."""
+        updated_content = []
+        t_start, t_end = "<Toggle", "</Toggle"
+        tg_start, tg_end = "<ToggleGroupItem", "</ToggleGroupItem"
+
+        for item in content:
+            if item.startswith(t_start):
+                updated_content.append(item.replace(t_start, tg_start))
+            elif item.startswith(t_end):
+                updated_content.append(item.replace(t_end, tg_end))
+            else:
+                updated_content.append(item)
+
+        toggle_import = [item for item in storage.imports if '/ui/toggle"' in item][0]
+        storage.imports.remove(toggle_import)
+        return updated_content, storage
 
 
 class BuildController:
@@ -394,10 +433,6 @@ class InnerContentBuilder:
             storage = add_to_storage(storage, link_storage)
 
         return model.content, storage
-
-
-class InnerItemsBuilder:
-    """A builder for creating the inner JSX for Zentra models with the 'items' attribute."""
 
 
 class NextJSComponentBuilder:

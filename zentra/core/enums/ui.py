@@ -62,3 +62,8 @@ class TextStyle(str, Enum):
     OUTLINE = "outline"
     ITALIC = "italic"
     UNDERLINE = "underline"
+
+
+class ToggleType(str, Enum):
+    SINGLE = "single"
+    MULTIPLE = "multiple"

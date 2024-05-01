@@ -13,6 +13,7 @@ from zentra.core.enums.ui import (
     InputTypes,
     Orientation,
     TextStyle,
+    ToggleType,
 )
 from zentra.core.html import Div
 from zentra.core.react import LucideIcon
@@ -728,8 +729,20 @@ class Toggle(Component, ShadcnUi):
 
 class ToggleGroup(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) ToggleGroup component.
+    A Zentra model for the [Shadcn/ui ToggleGroup](https://ui.shadcn.com/docs/components/toggle-group) ToggleGroup component.
 
     Parameters:
-    - `name` (`string`) - the name of the component
+    - `items` (`list[zentra.ui.control.Toggle]`) - a list of `Toggle` models to display in the group
+    - `type` (`string, optional`) - the type of toggle state for the models. Valid options: `['single', 'multiple']`. When `single`, only one `Toggle` can be pressed at a time. When `multiple`, all `Toggles` can be activated simultaneously. `multiple` by default
+    - `disabled` (`boolean, optional`) - adds the disabled property, preventing the group from being selected. `False` by default
+    - `size` (`string, optional`) - the size of the `Toggle` items in the group. Valid options: `['default', 'sm', 'lg', 'icon']`. `default` by default
+    - `variant` (`string, optional`) - the style of the `Toggle` items. Valid options: `['default', 'secondary', 'destructive', 'outline', 'ghost', 'link']`. `default` by default
+    - `orientation` (`string, optional`) - the orientation of the `ToggleGroup`. Valid options: `[horizontal, vertical]`. `horizontal` by default
     """
+
+    items: list[Toggle]
+    type: ToggleType = "multiple"
+    disabled: bool = False
+    size: ButtonSize = "default"
+    variant: ButtonVariant = "default"
+    orientation: Orientation = "horizontal"

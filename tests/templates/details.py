@@ -152,6 +152,15 @@ def toggle_details() -> ComponentDetails:
     )
 
 
+def toggle_group_details() -> ComponentDetails:
+    return ComponentDetails(
+        library="ui",
+        filename="toggle-group.jsx",
+        name="ToggleGroup",
+        child_names=["ToggleGroupItem"],
+    )
+
+
 def component_details() -> list[ComponentDetails]:
     return [
         button_details(),
@@ -170,6 +179,7 @@ def component_details() -> list[ComponentDetails]:
         switch_details(),
         textarea_details(),
         toggle_details(),
+        toggle_group_details(),
     ]
 
 
@@ -190,4 +200,5 @@ COMPONENT_DETAILS_MAPPING = {
     "Switch": switch_details(),
     "Textarea": textarea_details(),
     "Toggle": toggle_details(),
+    "ToggleGroup": toggle_group_details(),
 }

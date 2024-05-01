@@ -30,6 +30,7 @@ from zentra.ui.control import (
     Switch,
     Textarea,
     Toggle,
+    ToggleGroup,
 )
 from zentra.ui.presentation import Separator
 
@@ -1009,3 +1010,64 @@ class TestToggle:
     @staticmethod
     def test_import_str_icon(wrapper_icon: ParentCompBuilder):
         wrapper_icon.comp_other("imports", VALID_IMPORTS["toggle"]["icon"])
+
+
+class TestToggleGroup:
+    @pytest.fixture
+    def toggle_group(self) -> ToggleGroup:
+        return ToggleGroup(
+            items=[
+                Toggle(
+                    content=LucideIcon(name="Italic"),
+                ),
+                Toggle(
+                    content=LucideIcon(name="Bold"),
+                ),
+                Toggle(
+                    content=LucideIcon(name="Underline"),
+                ),
+            ]
+        )
+
+    @pytest.fixture
+    def toggle_group_full(self) -> ToggleGroup:
+        return ToggleGroup(
+            items=[
+                Toggle(
+                    content=LucideIcon(name="Italic", text="italic $text"),
+                    pressed=True,
+                ),
+                Toggle(
+                    content=LucideIcon(name="Bold", text="bold $text", position="end"),
+                    disabled=True,
+                ),
+                Toggle(
+                    content=LucideIcon(name="Underline", text="undeline $text"),
+                ),
+            ],
+            type="single",
+            disabled=True,
+            size="lg",
+            variant="outline",
+            orientation="vertical",
+        )
+
+    @pytest.fixture
+    def wrapper(self, toggle_group: ToggleGroup) -> ParentCompBuilder:
+        return ParentCompBuilder(toggle_group)
+
+    @pytest.fixture
+    def wrapper_full(self, toggle_group_full: ToggleGroup) -> ParentCompBuilder:
+        return ParentCompBuilder(toggle_group_full)
+
+    @staticmethod
+    def test_content_str(wrapper: ParentCompBuilder):
+        wrapper.content(VALID_VALS_MAP["toggle_group"]["content"]["simple"])
+
+    @staticmethod
+    def test_content_str_full(wrapper_full: ParentCompBuilder):
+        wrapper_full.content(VALID_VALS_MAP["toggle_group"]["content"]["full"])
+
+    @staticmethod
+    def test_import_str(wrapper: ParentCompBuilder):
+        wrapper.comp_other("imports", VALID_IMPORTS["toggle_group"])

@@ -28,6 +28,7 @@ VALID_IMPORTS = {
         "simple": 'import { Toggle } from "@/components/ui/toggle"',
         "icon": 'import { Italic } from "lucide-react"\nimport { Toggle } from "@/components/ui/toggle"',
     },
+    "toggle_group": 'import { Bold, Italic, Underline } from "lucide-react"\nimport { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"',
 }
 
 

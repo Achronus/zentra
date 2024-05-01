@@ -43,6 +43,7 @@ from zentra.ui.control import (
     Select,
     Slider,
     Toggle,
+    ToggleGroup,
 )
 from zentra.ui.presentation import Separator
 
@@ -54,6 +55,7 @@ PARENT_COMPONENTS = [
     "Button",
     "ScrollArea",
     "Toggle",
+    "ToggleGroup",
 ]
 
 # Dictionary of components with containers around them
@@ -84,7 +86,7 @@ COMPONENT_ATTR_MAPPING = [
     (InputOTP, "pattern", lambda pattern: input_otp_attributes(pattern)),
     (Label, "name", lambda name: [f'htmlFor="{name}"']),
     (RadioGroup, "default_value", lambda dv: [f'defaultValue="{dv}"']),
-    (Separator, "orientation", lambda val: [f'orientation="{val}"']),
+    (Separator | ToggleGroup, "orientation", lambda val: [f'orientation="{val}"']),
     (Link, "all", lambda comp: nextjs_link_attributes(comp)),
     (Slider, "all", lambda slider: slider_attributes(slider)),
     (Toggle, "all", lambda toggle: toggle_attributes(toggle)),

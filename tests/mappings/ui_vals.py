@@ -114,6 +114,12 @@ TOGGLE_VALID_VALS = {
     },
 }
 
+TOGGLE_GROUP_VALID_VALS = {
+    "content": {
+        "simple": '<ToggleGroup type="multiple" orientation="horizontal">\n<ToggleGroupItem pressed={false} aria-label="Toggle">\n<Italic className="mr-2 h-4 w-4" />\n</ToggleGroupItem>\n<ToggleGroupItem pressed={false} aria-label="Toggle">\n<Bold className="mr-2 h-4 w-4" />\n</ToggleGroupItem>\n<ToggleGroupItem pressed={false} aria-label="Toggle">\n<Underline className="mr-2 h-4 w-4" />\n</ToggleGroupItem>\n</ToggleGroup>',
+        "full": '<ToggleGroup type="single" variant="outline" size="lg" disabled orientation="vertical">\n<ToggleGroupItem pressed={true} aria-label="Toggle">\n<Italic className="mr-2 h-4 w-4" />\nitalic {text}\n</ToggleGroupItem>\n<ToggleGroupItem disabled pressed={false} aria-label="Toggle">\nbold {text}\n<Bold className="mr-2 h-4 w-4" />\n</ToggleGroupItem>\n<ToggleGroupItem pressed={false} aria-label="Toggle">\n<Underline className="mr-2 h-4 w-4" />\nundeline {text}\n</ToggleGroupItem>\n</ToggleGroup>',
+    }
+}
 
 VALID_VALS_MAP = {
     "calendar": CALENDAR_VALID_VALS,
@@ -129,6 +135,7 @@ VALID_VALS_MAP = {
     "switch": SWITCH_VALID_VALS,
     "textarea": TEXTAREA_VALID_VALS,
     "toggle": TOGGLE_VALID_VALS,
+    "toggle_group": TOGGLE_GROUP_VALID_VALS,
 }
 
 

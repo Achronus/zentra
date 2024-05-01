@@ -1,4 +1,5 @@
 VALID_IMPORTS = {
+    # CONTROL COMPONENTS
     "button": {
         "simple": 'import { Button } from "@/components/ui/button"',
         "icon": 'import { Button } from "@/components/ui/button"\nimport { Loader } from "lucide-react"',
@@ -29,6 +30,7 @@ VALID_IMPORTS = {
         "icon": 'import { Italic } from "lucide-react"\nimport { Toggle } from "@/components/ui/toggle"',
     },
     "toggle_group": 'import { Bold, Italic, Underline } from "lucide-react"\nimport { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"',
+    # NOTIFICATION COMPONENTS
 }
 
 

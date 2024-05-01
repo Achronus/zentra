@@ -1,4 +1,4 @@
-# UI COMPONENTS
+# UI CONTROL COMPONENTS
 CALENDAR_VALID_VALS = {
     "attributes": {
         "standard": 'mode="single" selected={monthlyDate} onSelect={monthlySetDate} className="rounded-md border"',
@@ -109,8 +109,8 @@ TOGGLE_VALID_VALS = {
     "content": {
         "simple": '<Toggle pressed={false} aria-label="Toggle">\ntest {text}\n</Toggle>',
         "icon": '<Toggle pressed={false} aria-label="Toggle">\n<Italic className="mr-2 h-4 w-4" />\nicon {text}\n</Toggle>',
-        "simple_full": '<Toggle size="sm" disabled pressed={true} aria-label="Toggle outline">\ntest {text}\n</Toggle>',
-        "icon_full": '<Toggle size="icon" disabled pressed={true} aria-label="Toggle bold">\nicon {text}\n<Italic className="mr-2 h-4 w-4" />\n</Toggle>',
+        "simple_full": '<Toggle variant="outline" size="sm" disabled pressed={true} aria-label="Toggle outline">\ntest {text}\n</Toggle>',
+        "icon_full": '<Toggle size="lg" disabled pressed={true} aria-label="Toggle bold">\nicon {text}\n<Italic className="mr-2 h-4 w-4" />\n</Toggle>',
     },
 }
 
@@ -176,6 +176,7 @@ NEXTJS_VALID_VALS_MAP = {
 }
 
 
+# REACT COMPONENTS
 LUCIDE_ICON_VALID_VALS = {
     "content": {
         "simple": '<Italic className="mr-2 h-4 w-4" />',

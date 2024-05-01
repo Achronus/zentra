@@ -50,7 +50,7 @@ from zentra.ui.presentation import Separator
 from pydantic import BaseModel
 
 
-# Components made up of other Zentra models using a 'content' attribute
+# Components made up of other Zentra models using a 'content' or 'items' attribute
 PARENT_COMPONENTS = [
     "Button",
     "ScrollArea",

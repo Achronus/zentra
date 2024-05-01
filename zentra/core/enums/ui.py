@@ -67,3 +67,14 @@ class TextStyle(str, Enum):
 class ToggleType(str, Enum):
     SINGLE = "single"
     MULTIPLE = "multiple"
+
+
+class ToggleVariant(str, Enum):
+    DEFAULT = "default"
+    OUTLINE = "outline"
+
+
+class ToggleSize(str, Enum):
+    DEFAULT = "default"
+    SM = "sm"
+    LG = "lg"

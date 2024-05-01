@@ -13,7 +13,9 @@ from zentra.core.enums.ui import (
     InputTypes,
     Orientation,
     TextStyle,
+    ToggleSize,
     ToggleType,
+    ToggleVariant,
 )
 from zentra.core.html import Div
 from zentra.core.react import LucideIcon
@@ -714,15 +716,17 @@ class Toggle(Component, ShadcnUi):
 
     Parameters:
     - `content` (`string | zentra.core.react.LucideIcon`) - the information displayed inside the toggle. Can be a string of text or a `LucideIcon` Zentra model. Can include parameter variables (indicated by starting the variable name with a `$`)
-    - `style` (`string, optional`) - the style of the toggle. Valid options: `['default', 'bold', 'outline', 'italic', 'underline']`. `default` by default
-    - `size` (`string, optional`) - the size of the toggle. Valid options: `['default', 'sm', 'lg', 'icon']`. `default` by default
+    - `style` (`string, optional`) - the style of the toggle text (`aria-label`). Valid options: `['default', 'bold', 'outline', 'italic', 'underline']`. `default` by default
+    - `size` (`string, optional`) - the size of the toggle. Valid options: `['default', 'sm', 'lg']`. `default` by default
+    - `variant` (`string, optional`) - the style of the toggle. Valid options: `['default', 'outline']`. `default` by default
     - `pressed` (`boolean, optional`) - a flag for activating the toggle state. `False` by default
     - `disabled` (`boolean, optional`) - adds the disabled property, preventing it from being selected. `False` by default
     """
 
     content: str | LucideIcon
     style: TextStyle = "default"
-    size: ButtonSize = "default"
+    size: ToggleSize = "default"
+    variant: ToggleVariant = "default"
     pressed: bool = False
     disabled: bool = False
 
@@ -735,14 +739,14 @@ class ToggleGroup(Component, ShadcnUi):
     - `items` (`list[zentra.ui.control.Toggle]`) - a list of `Toggle` models to display in the group
     - `type` (`string, optional`) - the type of toggle state for the models. Valid options: `['single', 'multiple']`. When `single`, only one `Toggle` can be pressed at a time. When `multiple`, all `Toggles` can be activated simultaneously. `multiple` by default
     - `disabled` (`boolean, optional`) - adds the disabled property, preventing the group from being selected. `False` by default
-    - `size` (`string, optional`) - the size of the `Toggle` items in the group. Valid options: `['default', 'sm', 'lg', 'icon']`. `default` by default
-    - `variant` (`string, optional`) - the style of the `Toggle` items. Valid options: `['default', 'secondary', 'destructive', 'outline', 'ghost', 'link']`. `default` by default
+    - `size` (`string, optional`) - the size of the `Toggle` items in the group. Valid options: `['default', 'sm', 'lg']`. `default` by default
+    - `variant` (`string, optional`) - the style of the `Toggle` items. Valid options: `['default', 'outline']`. `default` by default
     - `orientation` (`string, optional`) - the orientation of the `ToggleGroup`. Valid options: `[horizontal, vertical]`. `horizontal` by default
     """
 
     items: list[Toggle]
     type: ToggleType = "multiple"
     disabled: bool = False
-    size: ButtonSize = "default"
-    variant: ButtonVariant = "default"
+    size: ToggleSize = "default"
+    variant: ToggleVariant = "default"
     orientation: Orientation = "horizontal"

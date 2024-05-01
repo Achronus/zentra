@@ -970,6 +970,7 @@ class TestToggle:
                 content="test $text",
                 style="outline",
                 size="sm",
+                variant="outline",
                 pressed=True,
                 disabled=True,
             )
@@ -981,7 +982,7 @@ class TestToggle:
             Toggle(
                 content=LucideIcon(name="Italic", text="icon $text", position="end"),
                 style="bold",
-                size="icon",
+                size="lg",
                 disabled=True,
                 pressed=True,
             )

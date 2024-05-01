@@ -359,6 +359,7 @@ class BuildController:
         result = [f'<{model.name} className="mr-2 h-4 w-4" />']
 
         if model.text:
+            model.text = text_content(model.text)[0]
             if model.position == "start":
                 result.append(model.text)
             else:

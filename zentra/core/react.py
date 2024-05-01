@@ -21,18 +21,18 @@ class LucideIcon(BaseModel):
     text: str = None
 
     @field_validator("name")
-    def validate_name(cls, icon: str) -> str:
-        icon_name = name_from_camel_case(icon)
+    def validate_name(cls, name: str) -> str:
+        icon_name = name_from_camel_case(name)
         response = requests.get(f"https://lucide.dev/icons/{icon_name}")
 
         if response.status_code != 200:
             raise PydanticCustomError(
                 "invalid_icon",
-                f"'{icon}' at '{response.url}' does not exist",
-                dict(wrong_value=icon, error_code=response.status_code),
+                f"'{name}' at '{response.url}' does not exist",
+                dict(wrong_value=name, error_code=response.status_code),
             )
 
-        return icon
+        return name
 
     @property
     def import_str(self) -> str:

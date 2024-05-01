@@ -1,13 +1,11 @@
 import pytest
 from pydantic import ValidationError
 
-from cli.conf.storage import ComponentDetails
 from tests.templates.details import COMPONENT_DETAILS_MAPPING
-from tests.templates.helper import component_builder, parent_component_builder
+from tests.templates.helper import SimpleCompBuilder, ParentCompBuilder
 
 from tests.mappings.ui_imports import VALID_IMPORTS
 from tests.mappings.ui_vals import VALID_VALS_MAP
-from zentra.core import Component
 
 from zentra.core.html import Div, FigCaption, Figure, HTMLContent
 from zentra.core.js import Map
@@ -33,44 +31,6 @@ from zentra.ui.control import (
     ToggleGroup,
 )
 from zentra.ui.presentation import Separator
-
-
-class SimpleCompBuilder:
-    """A helper class that handles the logic for keeping simple component test implementations unified."""
-
-    def __init__(
-        self, component: Component, component_details: ComponentDetails
-    ) -> None:
-        self.component = component
-        self.details = component_details
-
-    def run(self, result_attr: str, valid_value: str):
-        builder = component_builder(self.component, details=self.details)
-        builder.build()
-
-        result: str = getattr(builder.storage, result_attr)
-        assert result == valid_value, (result.split("\n"), valid_value.split("\n"))
-
-
-class ParentCompBuilder:
-    """A helper class that handles the logic for keeping parent component test implementations unified."""
-
-    def __init__(
-        self,
-        component: Component,
-    ) -> None:
-        self.component = component
-
-        self.builder = parent_component_builder(component)
-
-    def content(self, valid_value: str):
-        result: list[str] = self.builder.build()
-        assert "\n".join(result) == valid_value, (result, valid_value.split("\n"))
-
-    def comp_other(self, result_attr: str, valid_value: str):
-        _ = self.builder.build()
-        result: list[str] = getattr(self.builder.storage, result_attr)
-        assert "\n".join(result) == valid_value, (result, valid_value.split("\n"))
 
 
 class TestCalendar:

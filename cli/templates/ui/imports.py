@@ -1,5 +1,6 @@
 from pydantic import HttpUrl
 from zentra.core.enums.ui import InputOTPPatterns
+from zentra.core.react import LucideIcon
 from zentra.nextjs import StaticImage
 
 
@@ -40,3 +41,11 @@ def image_imports(src: str | HttpUrl | StaticImage) -> list[str] | None:
 def slider_imports() -> list[str]:
     """Returns a list of strings for the additional Slider imports."""
     return ['import { cn } from "@/lib/utils"']
+
+
+def alert_imports(icon: str) -> list[str] | None:
+    """Returns a list of strings for the additional Image imports based on its attributes."""
+    if icon:
+        return [LucideIcon(name=icon).import_str]
+
+    return None

@@ -121,6 +121,16 @@ TOGGLE_GROUP_VALID_VALS = {
     }
 }
 
+
+# UI NOTIFICATION COMPONENTS
+ALERT_VALID_VALS = {
+    "content": {
+        "simple": "<Alert>\n<AlertTitle>\nHeads up!\n</AlertTitle>\n<AlertDescription>\nYou can add components to your app using the cli.\n</AlertDescription>\n</Alert>",
+        "icon": '<Alert>\n<Terminal className="h-4 w-4" />\n<AlertTitle>\nHeads up!\n</AlertTitle>\n<AlertDescription>\nYou can add components to your app using the cli.\n</AlertDescription>\n</Alert>',
+        "full": '<Alert variant="destructive">\n<AlertCircle className="h-4 w-4" />\n<AlertTitle>\nError\n</AlertTitle>\n<AlertDescription>\nYour session has expired. Please log in again.\n</AlertDescription>\n</Alert>',
+    },
+}
+
 VALID_VALS_MAP = {
     "calendar": CALENDAR_VALID_VALS,
     "checkbox": CHECKBOX_VALID_VALS,
@@ -136,6 +146,7 @@ VALID_VALS_MAP = {
     "textarea": TEXTAREA_VALID_VALS,
     "toggle": TOGGLE_VALID_VALS,
     "toggle_group": TOGGLE_GROUP_VALID_VALS,
+    "alert": ALERT_VALID_VALS,
 }
 
 

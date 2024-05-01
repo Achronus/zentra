@@ -1,6 +1,8 @@
 from zentra.core import Component
 from zentra.core.base import JSIterable
 from zentra.core.html import Div, HTMLContent
+
+from zentra.core.react import LucideIcon
 from zentra.ui.control import (
     Checkbox,
     Collapsible,
@@ -10,6 +12,7 @@ from zentra.ui.control import (
     Select,
     SelectGroup,
 )
+from zentra.ui.notification import Alert
 
 
 def param_reformat_helper(text: str) -> list[str]:
@@ -141,6 +144,23 @@ def select_content(select: Select) -> list[str]:
         group_content.pop(0)
 
     content.extend(group_content)
+    return content
+
+
+def alert_content(alert: Alert) -> list[str]:
+    """Returns a list of strings for the Alert content based on the components attributes."""
+    content = [
+        "<AlertTitle>",
+        alert.title,
+        "</AlertTitle>",
+        "<AlertDescription>",
+        alert.description,
+        "</AlertDescription>",
+    ]
+
+    if alert.icon:
+        content.insert(0, LucideIcon(name=alert.icon).content_str)
+
     return content
 
 

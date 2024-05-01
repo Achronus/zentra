@@ -161,6 +161,15 @@ def toggle_group_details() -> ComponentDetails:
     )
 
 
+def alert_details() -> ComponentDetails:
+    return ComponentDetails(
+        library="ui",
+        filename="alert.jsx",
+        name="Alert",
+        child_names=["AlertTitle", "AlertDescription"],
+    )
+
+
 def component_details() -> list[ComponentDetails]:
     return [
         button_details(),
@@ -180,6 +189,7 @@ def component_details() -> list[ComponentDetails]:
         textarea_details(),
         toggle_details(),
         toggle_group_details(),
+        alert_details(),
     ]
 
 
@@ -201,4 +211,5 @@ COMPONENT_DETAILS_MAPPING = {
     "Textarea": textarea_details(),
     "Toggle": toggle_details(),
     "ToggleGroup": toggle_group_details(),
+    "Alert": alert_details(),
 }

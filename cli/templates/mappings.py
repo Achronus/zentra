@@ -13,6 +13,7 @@ from cli.templates.ui.attributes import (
     toggle_attributes,
 )
 from cli.templates.ui.content import (
+    alert_content,
     checkbox_content,
     collapsible_content,
     div_content,
@@ -22,6 +23,7 @@ from cli.templates.ui.content import (
     text_content,
 )
 from cli.templates.ui.imports import (
+    alert_imports,
     collapsible_imports,
     image_imports,
     input_opt_imports,
@@ -45,6 +47,7 @@ from zentra.ui.control import (
     Toggle,
     ToggleGroup,
 )
+from zentra.ui.notification import Alert
 from zentra.ui.presentation import Separator
 
 from pydantic import BaseModel
@@ -126,6 +129,7 @@ ADDITIONAL_IMPORTS_MAPPING = [
     (StaticImage, "all", lambda img: static_img_imports(img)),
     (Image, "src", lambda src: image_imports(src)),
     (Slider, "value", lambda _: slider_imports()),
+    (Alert, "icon", lambda icon: alert_imports(icon)),
 ]
 
 
@@ -136,6 +140,7 @@ COMPONENT_CONTENT_MAPPING = [
     (RadioGroup, lambda rg: radio_group_content(rg)),
     (ScrollArea, lambda sa: scroll_area_content(sa)),
     (Select, lambda select: select_content(select)),
+    (Alert, lambda alert: alert_content(alert)),
 ]
 
 

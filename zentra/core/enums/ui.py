@@ -78,3 +78,8 @@ class ToggleSize(str, Enum):
     DEFAULT = "default"
     SM = "sm"
     LG = "lg"
+
+
+class AlertVariant(str, Enum):
+    DEFAULT = "default"
+    DESTRUCTIVE = "destructive"

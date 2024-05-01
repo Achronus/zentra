@@ -38,3 +38,8 @@ class LucideIcon(BaseModel):
     def import_str(self) -> str:
         """Returns the core import string for the icon."""
         return "import { " + self.name + ' } from "lucide-react"'
+
+    @property
+    def content_str(self) -> str:
+        """Returns the primary content string for the icon."""
+        return f'<{self.name} className="h-4 w-4" />'

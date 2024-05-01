@@ -31,6 +31,10 @@ VALID_IMPORTS = {
     },
     "toggle_group": 'import { Bold, Italic, Underline } from "lucide-react"\nimport { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"',
     # NOTIFICATION COMPONENTS
+    "alert": {
+        "simple": 'import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"',
+        "icon": 'import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"\nimport { Terminal } from "lucide-react"',
+    },
 }
 
 

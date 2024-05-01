@@ -110,12 +110,7 @@ def radio_group_content(rg: RadioGroup) -> list[str]:
 
 def scroll_area_content(sa: ScrollArea) -> list[str]:
     """Returns a list of strings for the ScrollArea content based on the components attributes."""
-    content = []
-    if isinstance(sa.content, str):
-        content.append(sa.content)
-
-    content.append(f'<ScrollBar orientation="{sa.orientation}" />')
-    return content
+    return [f'<ScrollBar orientation="{sa.orientation}" />']
 
 
 def select_content(select: Select) -> list[str]:

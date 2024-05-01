@@ -32,8 +32,7 @@ from zentra.ui.control import (
 from zentra.ui.presentation import Separator
 
 
-@pytest.fixture
-class SimpleComponentFuncWrapper:
+class SimpleCompBuilder:
     """A helper class that handles the logic for keeping simple component test implementations unified."""
 
     def __init__(
@@ -50,7 +49,7 @@ class SimpleComponentFuncWrapper:
         assert result == valid_value, (result.split("\n"), valid_value.split("\n"))
 
 
-class ParentComponentFuncWrapper:
+class ParentCompBuilder:
     """A helper class that handles the logic for keeping parent component test implementations unified."""
 
     def __init__(
@@ -81,45 +80,43 @@ class TestCalendar:
         return Calendar(name="yearlyCalendar")
 
     @pytest.fixture
-    def wrapper(self, calendar: Calendar) -> SimpleComponentFuncWrapper:
-        return SimpleComponentFuncWrapper(
-            calendar, COMPONENT_DETAILS_MAPPING["Calendar"]
-        )
+    def wrapper(self, calendar: Calendar) -> SimpleCompBuilder:
+        return SimpleCompBuilder(calendar, COMPONENT_DETAILS_MAPPING["Calendar"])
 
     @pytest.fixture
-    def wrapper_long(self, calendar_long_name: Calendar) -> SimpleComponentFuncWrapper:
-        return SimpleComponentFuncWrapper(
+    def wrapper_long(self, calendar_long_name: Calendar) -> SimpleCompBuilder:
+        return SimpleCompBuilder(
             calendar_long_name, COMPONENT_DETAILS_MAPPING["Calendar"]
         )
 
     @staticmethod
-    def test_attr_str(wrapper: SimpleComponentFuncWrapper):
+    def test_attr_str(wrapper: SimpleCompBuilder):
         wrapper.run("attributes", VALID_VALS_MAP["calendar"]["attributes"]["standard"])
 
     @staticmethod
-    def test_attr_str_long_name(wrapper_long: SimpleComponentFuncWrapper):
+    def test_attr_str_long_name(wrapper_long: SimpleCompBuilder):
         wrapper_long.run(
             "attributes", VALID_VALS_MAP["calendar"]["attributes"]["long_name"]
         )
 
     @staticmethod
-    def test_logic_str(wrapper: SimpleComponentFuncWrapper):
+    def test_logic_str(wrapper: SimpleCompBuilder):
         wrapper.run("logic", VALID_VALS_MAP["calendar"]["logic"]["standard"])
 
     @staticmethod
-    def test_logic_str_long_name(wrapper_long: SimpleComponentFuncWrapper):
+    def test_logic_str_long_name(wrapper_long: SimpleCompBuilder):
         wrapper_long.run("logic", VALID_VALS_MAP["calendar"]["logic"]["long_name"])
 
     @staticmethod
-    def test_import_str(wrapper: SimpleComponentFuncWrapper):
+    def test_import_str(wrapper: SimpleCompBuilder):
         wrapper.run("imports", VALID_IMPORTS["calendar"])
 
     @staticmethod
-    def test_content_str(wrapper: SimpleComponentFuncWrapper):
+    def test_content_str(wrapper: SimpleCompBuilder):
         wrapper.run("content", VALID_VALS_MAP["calendar"]["content"]["standard"])
 
     @staticmethod
-    def test_content_str_long_name(wrapper_long: SimpleComponentFuncWrapper):
+    def test_content_str_long_name(wrapper_long: SimpleCompBuilder):
         wrapper_long.run("content", VALID_VALS_MAP["calendar"]["content"]["long_name"])
 
     @staticmethod
@@ -162,39 +159,35 @@ class TestCheckbox:
         )
 
     @pytest.fixture
-    def wrapper(self, checkbox: Checkbox) -> SimpleComponentFuncWrapper:
-        return SimpleComponentFuncWrapper(
-            checkbox, COMPONENT_DETAILS_MAPPING["Checkbox"]
-        )
+    def wrapper(self, checkbox: Checkbox) -> SimpleCompBuilder:
+        return SimpleCompBuilder(checkbox, COMPONENT_DETAILS_MAPPING["Checkbox"])
 
     @pytest.fixture
-    def wrapper_disabled(
-        self, checkbox_with_disabled: Checkbox
-    ) -> SimpleComponentFuncWrapper:
-        return SimpleComponentFuncWrapper(
+    def wrapper_disabled(self, checkbox_with_disabled: Checkbox) -> SimpleCompBuilder:
+        return SimpleCompBuilder(
             checkbox_with_disabled, COMPONENT_DETAILS_MAPPING["Checkbox"]
         )
 
     @staticmethod
-    def test_attr_str(wrapper: SimpleComponentFuncWrapper):
+    def test_attr_str(wrapper: SimpleCompBuilder):
         wrapper.run("attributes", VALID_VALS_MAP["checkbox"]["attributes"]["standard"])
 
     @staticmethod
-    def test_attr_str_disabled(wrapper_disabled: SimpleComponentFuncWrapper):
+    def test_attr_str_disabled(wrapper_disabled: SimpleCompBuilder):
         wrapper_disabled.run(
             "attributes", VALID_VALS_MAP["checkbox"]["attributes"]["with_disabled"]
         )
 
     @staticmethod
-    def test_import_str(wrapper: SimpleComponentFuncWrapper):
+    def test_import_str(wrapper: SimpleCompBuilder):
         wrapper.run("imports", VALID_IMPORTS["checkbox"])
 
     @staticmethod
-    def test_content_str(wrapper: SimpleComponentFuncWrapper):
+    def test_content_str(wrapper: SimpleCompBuilder):
         wrapper.run("content", VALID_VALS_MAP["checkbox"]["content"]["standard"])
 
     @staticmethod
-    def test_content_str_disabled(wrapper_disabled: SimpleComponentFuncWrapper):
+    def test_content_str_disabled(wrapper_disabled: SimpleCompBuilder):
         wrapper_disabled.run(
             "content", VALID_VALS_MAP["checkbox"]["content"]["with_disabled"]
         )
@@ -234,25 +227,23 @@ class TestCollapsible:
         )
 
     @pytest.fixture
-    def wrapper(self, collapsible: Collapsible) -> SimpleComponentFuncWrapper:
-        return SimpleComponentFuncWrapper(
-            collapsible, COMPONENT_DETAILS_MAPPING["Collapsible"]
-        )
+    def wrapper(self, collapsible: Collapsible) -> SimpleCompBuilder:
+        return SimpleCompBuilder(collapsible, COMPONENT_DETAILS_MAPPING["Collapsible"])
 
     @staticmethod
-    def test_attr_str(wrapper: SimpleComponentFuncWrapper):
+    def test_attr_str(wrapper: SimpleCompBuilder):
         wrapper.run("attributes", VALID_VALS_MAP["collapsible"]["attributes"])
 
     @staticmethod
-    def test_logic_str(wrapper: SimpleComponentFuncWrapper):
+    def test_logic_str(wrapper: SimpleCompBuilder):
         wrapper.run("logic", VALID_VALS_MAP["collapsible"]["logic"])
 
     @staticmethod
-    def test_import_str(wrapper: SimpleComponentFuncWrapper):
+    def test_import_str(wrapper: SimpleCompBuilder):
         wrapper.run("imports", VALID_IMPORTS["collapsible"])
 
     @staticmethod
-    def test_content_str(wrapper: SimpleComponentFuncWrapper):
+    def test_content_str(wrapper: SimpleCompBuilder):
         wrapper.run("content", VALID_VALS_MAP["collapsible"]["content"])
 
     @staticmethod
@@ -310,37 +301,35 @@ class TestInput:
         return Input(id="name", type="text", placeholder="Name", disabled=True)
 
     @pytest.fixture
-    def wrapper(self, input: Input) -> SimpleComponentFuncWrapper:
-        return SimpleComponentFuncWrapper(input, COMPONENT_DETAILS_MAPPING["Input"])
+    def wrapper(self, input: Input) -> SimpleCompBuilder:
+        return SimpleCompBuilder(input, COMPONENT_DETAILS_MAPPING["Input"])
 
     @pytest.fixture
-    def wrapper_disabled(
-        self, input_with_disabled: Input
-    ) -> SimpleComponentFuncWrapper:
-        return SimpleComponentFuncWrapper(
+    def wrapper_disabled(self, input_with_disabled: Input) -> SimpleCompBuilder:
+        return SimpleCompBuilder(
             input_with_disabled, COMPONENT_DETAILS_MAPPING["Input"]
         )
 
     @staticmethod
-    def test_attr_str(wrapper: SimpleComponentFuncWrapper):
+    def test_attr_str(wrapper: SimpleCompBuilder):
         wrapper.run("attributes", VALID_VALS_MAP["input"]["attributes"]["standard"])
 
     @staticmethod
-    def test_attr_str_with_disabled(wrapper_disabled: SimpleComponentFuncWrapper):
+    def test_attr_str_with_disabled(wrapper_disabled: SimpleCompBuilder):
         wrapper_disabled.run(
             "attributes", VALID_VALS_MAP["input"]["attributes"]["with_disabled"]
         )
 
     @staticmethod
-    def test_import_str(wrapper: SimpleComponentFuncWrapper):
+    def test_import_str(wrapper: SimpleCompBuilder):
         wrapper.run("imports", VALID_IMPORTS["input"])
 
     @staticmethod
-    def test_content_str(wrapper: SimpleComponentFuncWrapper):
+    def test_content_str(wrapper: SimpleCompBuilder):
         wrapper.run("content", VALID_VALS_MAP["input"]["content"]["standard"])
 
     @staticmethod
-    def test_content_str_with_disabled(wrapper_disabled: SimpleComponentFuncWrapper):
+    def test_content_str_with_disabled(wrapper_disabled: SimpleCompBuilder):
         wrapper_disabled.run(
             "content", VALID_VALS_MAP["input"]["content"]["with_disabled"]
         )
@@ -384,70 +373,68 @@ class TestInputOTP:
         return InputOTP(num_inputs=6, num_groups=3, pattern=r"([\^$.|?*+()\[\]{}])")
 
     @pytest.fixture
-    def wrapper(self, input: InputOTP) -> SimpleComponentFuncWrapper:
-        return SimpleComponentFuncWrapper(input, COMPONENT_DETAILS_MAPPING["InputOtp"])
+    def wrapper(self, input: InputOTP) -> SimpleCompBuilder:
+        return SimpleCompBuilder(input, COMPONENT_DETAILS_MAPPING["InputOtp"])
 
     @pytest.fixture
-    def wrapper_pattern(self, input_pattern: InputOTP) -> SimpleComponentFuncWrapper:
-        return SimpleComponentFuncWrapper(
-            input_pattern, COMPONENT_DETAILS_MAPPING["InputOtp"]
-        )
+    def wrapper_pattern(self, input_pattern: InputOTP) -> SimpleCompBuilder:
+        return SimpleCompBuilder(input_pattern, COMPONENT_DETAILS_MAPPING["InputOtp"])
 
     @pytest.fixture
     def wrapper_custom_pattern(
         self, input_custom_pattern: InputOTP
-    ) -> SimpleComponentFuncWrapper:
-        return SimpleComponentFuncWrapper(
+    ) -> SimpleCompBuilder:
+        return SimpleCompBuilder(
             input_custom_pattern, COMPONENT_DETAILS_MAPPING["InputOtp"]
         )
 
     @staticmethod
-    def test_attr_str(wrapper: SimpleComponentFuncWrapper):
+    def test_attr_str(wrapper: SimpleCompBuilder):
         wrapper.run("attributes", VALID_VALS_MAP["input_otp"]["attributes"]["standard"])
 
     @staticmethod
-    def test_attr_str_pattern(wrapper_pattern: SimpleComponentFuncWrapper):
+    def test_attr_str_pattern(wrapper_pattern: SimpleCompBuilder):
         wrapper_pattern.run(
             "attributes", VALID_VALS_MAP["input_otp"]["attributes"]["pattern"]
         )
 
     @staticmethod
     def test_attr_str_custom_pattern(
-        wrapper_custom_pattern: SimpleComponentFuncWrapper,
+        wrapper_custom_pattern: SimpleCompBuilder,
     ):
         wrapper_custom_pattern.run(
             "attributes", VALID_VALS_MAP["input_otp"]["attributes"]["custom_pattern"]
         )
 
     @staticmethod
-    def test_content_str(wrapper: SimpleComponentFuncWrapper):
+    def test_content_str(wrapper: SimpleCompBuilder):
         wrapper.run("content", VALID_VALS_MAP["input_otp"]["content"]["one_group"])
 
     @staticmethod
-    def test_content_str_pattern(wrapper_pattern: SimpleComponentFuncWrapper):
+    def test_content_str_pattern(wrapper_pattern: SimpleCompBuilder):
         wrapper_pattern.run(
             "content", VALID_VALS_MAP["input_otp"]["content"]["two_groups"]
         )
 
     @staticmethod
     def test_content_str_custom_pattern(
-        wrapper_custom_pattern: SimpleComponentFuncWrapper,
+        wrapper_custom_pattern: SimpleCompBuilder,
     ):
         wrapper_custom_pattern.run(
             "content", VALID_VALS_MAP["input_otp"]["content"]["three_groups"]
         )
 
     @staticmethod
-    def test_imports_str(wrapper: SimpleComponentFuncWrapper):
+    def test_imports_str(wrapper: SimpleCompBuilder):
         wrapper.run("imports", VALID_IMPORTS["input_otp"]["standard"])
 
     @staticmethod
-    def test_imports_str_pattern(wrapper_pattern: SimpleComponentFuncWrapper):
+    def test_imports_str_pattern(wrapper_pattern: SimpleCompBuilder):
         wrapper_pattern.run("imports", VALID_IMPORTS["input_otp"]["pattern"])
 
     @staticmethod
     def test_imports_str_custom_pattern(
-        wrapper_custom_pattern: SimpleComponentFuncWrapper,
+        wrapper_custom_pattern: SimpleCompBuilder,
     ):
         wrapper_custom_pattern.run(
             "imports", VALID_IMPORTS["input_otp"]["custom_pattern"]
@@ -470,19 +457,19 @@ class TestLabel:
         return Label(name="terms", text="Accept terms and conditions.")
 
     @pytest.fixture
-    def wrapper(self, label: Label) -> SimpleComponentFuncWrapper:
-        return SimpleComponentFuncWrapper(label, COMPONENT_DETAILS_MAPPING["Label"])
+    def wrapper(self, label: Label) -> SimpleCompBuilder:
+        return SimpleCompBuilder(label, COMPONENT_DETAILS_MAPPING["Label"])
 
     @staticmethod
-    def test_attr_str(wrapper: SimpleComponentFuncWrapper):
+    def test_attr_str(wrapper: SimpleCompBuilder):
         wrapper.run("attributes", VALID_VALS_MAP["label"]["attributes"])
 
     @staticmethod
-    def test_content_str(wrapper: SimpleComponentFuncWrapper):
+    def test_content_str(wrapper: SimpleCompBuilder):
         wrapper.run("content", VALID_VALS_MAP["label"]["content"])
 
     @staticmethod
-    def test_imports_str(wrapper: SimpleComponentFuncWrapper):
+    def test_imports_str(wrapper: SimpleCompBuilder):
         wrapper.run("imports", VALID_IMPORTS["label"])
 
     @staticmethod
@@ -523,21 +510,19 @@ class TestRadioGroup:
         )
 
     @pytest.fixture
-    def wrapper(self, radio_group: RadioGroup) -> SimpleComponentFuncWrapper:
-        return SimpleComponentFuncWrapper(
-            radio_group, COMPONENT_DETAILS_MAPPING["RadioGroup"]
-        )
+    def wrapper(self, radio_group: RadioGroup) -> SimpleCompBuilder:
+        return SimpleCompBuilder(radio_group, COMPONENT_DETAILS_MAPPING["RadioGroup"])
 
     @staticmethod
-    def test_attr_str(wrapper: SimpleComponentFuncWrapper):
+    def test_attr_str(wrapper: SimpleCompBuilder):
         wrapper.run("attributes", VALID_VALS_MAP["radio_group"]["attributes"])
 
     @staticmethod
-    def test_content_str(wrapper: SimpleComponentFuncWrapper):
+    def test_content_str(wrapper: SimpleCompBuilder):
         wrapper.run("content", VALID_VALS_MAP["radio_group"]["content"])
 
     @staticmethod
-    def test_imports_str(wrapper: SimpleComponentFuncWrapper):
+    def test_imports_str(wrapper: SimpleCompBuilder):
         wrapper.run("imports", VALID_IMPORTS["radio_group"])
 
     @staticmethod
@@ -669,45 +654,43 @@ class TestScrollArea:
         )
 
     @pytest.fixture
-    def wrapper(self, scroll_area: ScrollArea) -> ParentComponentFuncWrapper:
-        return ParentComponentFuncWrapper(scroll_area)
+    def wrapper(self, scroll_area: ScrollArea) -> ParentCompBuilder:
+        return ParentCompBuilder(scroll_area)
 
     @pytest.fixture
-    def wrapper_vertical(
-        self, scroll_area_vertical: ScrollArea
-    ) -> ParentComponentFuncWrapper:
-        return ParentComponentFuncWrapper(scroll_area_vertical)
+    def wrapper_vertical(self, scroll_area_vertical: ScrollArea) -> ParentCompBuilder:
+        return ParentCompBuilder(scroll_area_vertical)
 
     @pytest.fixture
     def wrapper_horizontal(
         self, scroll_area_horizontal: ScrollArea
-    ) -> ParentComponentFuncWrapper:
-        return ParentComponentFuncWrapper(scroll_area_horizontal)
+    ) -> ParentCompBuilder:
+        return ParentCompBuilder(scroll_area_horizontal)
 
     @staticmethod
-    def test_content_str(wrapper: ParentComponentFuncWrapper):
+    def test_content_str(wrapper: ParentCompBuilder):
         wrapper.content(VALID_VALS_MAP["scroll_area"]["content"]["simple"])
 
     @staticmethod
-    def test_content_str_vertical(wrapper_vertical: ParentComponentFuncWrapper):
+    def test_content_str_vertical(wrapper_vertical: ParentCompBuilder):
         wrapper_vertical.content(VALID_VALS_MAP["scroll_area"]["content"]["vertical"])
 
     @staticmethod
-    def test_content_str_horizontal(wrapper_horizontal: ParentComponentFuncWrapper):
+    def test_content_str_horizontal(wrapper_horizontal: ParentCompBuilder):
         wrapper_horizontal.content(
             VALID_VALS_MAP["scroll_area"]["content"]["horizontal"]
         )
 
     @staticmethod
-    def test_imports_str(wrapper: ParentComponentFuncWrapper):
+    def test_imports_str(wrapper: ParentCompBuilder):
         wrapper.comp_other("imports", VALID_IMPORTS["scroll_area"]["simple"])
 
     @staticmethod
-    def test_imports_str_vertical(wrapper_vertical: ParentComponentFuncWrapper):
+    def test_imports_str_vertical(wrapper_vertical: ParentCompBuilder):
         wrapper_vertical.comp_other("imports", VALID_IMPORTS["scroll_area"]["vertical"])
 
     @staticmethod
-    def test_imports_str_horizontal(wrapper_horizontal: ParentComponentFuncWrapper):
+    def test_imports_str_horizontal(wrapper_horizontal: ParentCompBuilder):
         wrapper_horizontal.comp_other(
             "imports", VALID_IMPORTS["scroll_area"]["horizontal"]
         )
@@ -727,8 +710,8 @@ class TestSelect:
             ),
         )
 
-    def wrapper(self, select: Select) -> SimpleComponentFuncWrapper:
-        return SimpleComponentFuncWrapper(select, COMPONENT_DETAILS_MAPPING["Select"])
+    def wrapper(self, select: Select) -> SimpleCompBuilder:
+        return SimpleCompBuilder(select, COMPONENT_DETAILS_MAPPING["Select"])
 
     def test_content_str_single_group(self, simple_select: Select):
         self.wrapper(simple_select).run(
@@ -822,25 +805,23 @@ class TestSlider:
         )
 
     @pytest.fixture
-    def wrapper(self, slider: Slider) -> SimpleComponentFuncWrapper:
-        return SimpleComponentFuncWrapper(slider, COMPONENT_DETAILS_MAPPING["Slider"])
+    def wrapper(self, slider: Slider) -> SimpleCompBuilder:
+        return SimpleCompBuilder(slider, COMPONENT_DETAILS_MAPPING["Slider"])
 
     @pytest.fixture
-    def wrapper_full(self, slider_full: Slider) -> SimpleComponentFuncWrapper:
-        return SimpleComponentFuncWrapper(
-            slider_full, COMPONENT_DETAILS_MAPPING["Slider"]
-        )
+    def wrapper_full(self, slider_full: Slider) -> SimpleCompBuilder:
+        return SimpleCompBuilder(slider_full, COMPONENT_DETAILS_MAPPING["Slider"])
 
     @staticmethod
-    def test_content_str_simple(wrapper: SimpleComponentFuncWrapper):
+    def test_content_str_simple(wrapper: SimpleCompBuilder):
         wrapper.run("content", VALID_VALS_MAP["slider"]["content"]["standard"])
 
     @staticmethod
-    def test_content_str_full(wrapper_full: SimpleComponentFuncWrapper):
+    def test_content_str_full(wrapper_full: SimpleCompBuilder):
         wrapper_full.run("content", VALID_VALS_MAP["slider"]["content"]["all_params"])
 
     @staticmethod
-    def test_import_str(wrapper: SimpleComponentFuncWrapper):
+    def test_import_str(wrapper: SimpleCompBuilder):
         wrapper.run("imports", VALID_IMPORTS["slider"])
 
     @staticmethod
@@ -892,16 +873,16 @@ class TestSwitch:
         return Switch(id="airplaneMode")
 
     @pytest.fixture
-    def wrapper(self, switch: Switch) -> SimpleComponentFuncWrapper:
-        return SimpleComponentFuncWrapper(switch, COMPONENT_DETAILS_MAPPING["Switch"])
+    def wrapper(self, switch: Switch) -> SimpleCompBuilder:
+        return SimpleCompBuilder(switch, COMPONENT_DETAILS_MAPPING["Switch"])
 
     @staticmethod
-    def test_content_str_simple(wrapper: SimpleComponentFuncWrapper):
+    def test_content_str_simple(wrapper: SimpleCompBuilder):
         wrapper.run("content", VALID_VALS_MAP["switch"]["content"]["standard"])
 
     @staticmethod
     def test_content_str_checked():
-        wrapper = SimpleComponentFuncWrapper(
+        wrapper = SimpleCompBuilder(
             Switch(id="airplaneMode", checked=True),
             COMPONENT_DETAILS_MAPPING["Switch"],
         )
@@ -909,14 +890,14 @@ class TestSwitch:
 
     @staticmethod
     def test_content_str_disabled():
-        wrapper = SimpleComponentFuncWrapper(
+        wrapper = SimpleCompBuilder(
             Switch(id="airplaneMode", disabled=True),
             COMPONENT_DETAILS_MAPPING["Switch"],
         )
         wrapper.run("content", VALID_VALS_MAP["switch"]["content"]["disabled"])
 
     @staticmethod
-    def test_import_str(wrapper: SimpleComponentFuncWrapper):
+    def test_import_str(wrapper: SimpleCompBuilder):
         wrapper.run("imports", VALID_IMPORTS["switch"])
 
     @staticmethod
@@ -950,15 +931,13 @@ class TestTextarea:
         return Textarea(id="message", placeholder="Type your message here.")
 
     @pytest.fixture
-    def wrapper(self, textarea: Textarea) -> SimpleComponentFuncWrapper:
-        return SimpleComponentFuncWrapper(
-            textarea, COMPONENT_DETAILS_MAPPING["Textarea"]
-        )
+    def wrapper(self, textarea: Textarea) -> SimpleCompBuilder:
+        return SimpleCompBuilder(textarea, COMPONENT_DETAILS_MAPPING["Textarea"])
 
     @staticmethod
-    def test_content_str(wrapper: SimpleComponentFuncWrapper):
+    def test_content_str(wrapper: SimpleCompBuilder):
         wrapper.run("content", VALID_VALS_MAP["textarea"]["content"])
 
     @staticmethod
-    def test_import_str(wrapper: SimpleComponentFuncWrapper):
+    def test_import_str(wrapper: SimpleCompBuilder):
         wrapper.run("imports", VALID_IMPORTS["textarea"])

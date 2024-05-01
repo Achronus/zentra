@@ -373,7 +373,7 @@ class NextJSComponentBuilder:
         self.maps = mappings
 
         self.storage = JSXComponentContentStorage()
-        self.attrs = AttributeBuilder(mappings=mappings, component=component)
+        self.attrs = AttributeBuilder(component=component, mappings=mappings)
         self.content = ContentBuilder(component=component, mappings=mappings)
 
     def build(self) -> None:

@@ -1,5 +1,7 @@
 from typing import Callable
 
+from pydantic_core import Url
+
 from cli.templates.ui.attributes import (
     alt_attribute,
     calendar_attributes,
@@ -82,7 +84,10 @@ COMPONENT_ATTR_MAPPING = [
 COMMON_ATTR_MAPPING = [
     ("id", lambda value: f'id="{value}"'),
     ("url", lambda value: "asChild" if value else None),
-    ("href", lambda value: f'href="{value}"' if value else None),
+    (
+        "href",
+        lambda value: f'href="{value}"' if isinstance(value, (str, Url)) else None,
+    ),
     ("type", lambda value: f'type="{value}"'),
     ("placeholder", lambda value: f'placeholder="{value}"'),
     ("variant", lambda value: f'variant="{value}"' if value != "default" else None),

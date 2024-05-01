@@ -134,8 +134,8 @@ IMAGE_VALID_VALS = {
 
 LINK_VALID_VALS = {
     "attributes": {
-        "styles": 'className="rounded-md border" href="/dashboard"',
-        "target": 'target="_blank" href="/dashboard"',
+        "styles": 'href="/dashboard" className="rounded-md border"',
+        "target": 'href="/dashboard" target="_blank"',
         "replace": 'href="/dashboard" replace',
         "scroll": 'href="/dashboard" scroll={false}',
         "prefetch_false": 'href="/dashboard" prefetch={false}',

@@ -55,8 +55,6 @@ def nextjs_link_attributes(link: Link) -> list[str]:
                 "}}",
             ]
         )
-    elif isinstance(link.href, str):
-        attributes.append(f'href="{link.href}"')
 
     if link.replace:
         attributes.append("replace")

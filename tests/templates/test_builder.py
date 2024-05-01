@@ -8,7 +8,6 @@ from zentra.ui.control import (
     Calendar,
     Checkbox,
     Collapsible,
-    IconButton,
     Input,
     InputOTP,
     Label,
@@ -24,24 +23,14 @@ def page() -> Page:
             Input(id="zipcode", type="text", placeholder="Zipcode"),
             FileUpload(),
             Button(
-                text="test",
+                content="test",
                 url="http://example.com",
                 variant="secondary",
                 size="sm",
                 disabled=True,
             ),
             Button(
-                text="test",
-            ),
-            IconButton(
-                icon="CircleArrowDown",
-                icon_position="start",
-                text="This icon is in the start position.",
-            ),
-            IconButton(
-                icon="RectangleEllipsis",
-                icon_position="end",
-                text="This icon is in the end position.",
+                content="test",
             ),
             Calendar(name="testCalendar"),
             Checkbox(

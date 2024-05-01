@@ -174,8 +174,9 @@ class TestGenerate:
 
             mock_zentra_module = MagicMock()
             setattr(mock_zentra_module, "zentra", Zentra())
+            # TODO: handle 'Button' as 'ParentComponent' - will error until applied
             mock_zentra_module.zentra.register(
-                [Page(name="ButtonPage", components=[Button(text="Click me!")])]
+                [Page(name="ButtonPage", components=[Button(content="Click me!")])]
             )
 
             with patch("importlib.import_module", return_value=mock_zentra_module):

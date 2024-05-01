@@ -10,6 +10,7 @@ from cli.templates.ui.attributes import (
     nextjs_link_attributes,
     slider_attributes,
     src_attribute,
+    toggle_attributes,
 )
 from cli.templates.ui.content import (
     checkbox_content,
@@ -41,11 +42,19 @@ from zentra.ui.control import (
     ScrollArea,
     Select,
     Slider,
+    Toggle,
 )
 from zentra.ui.presentation import Separator
 
 from pydantic import BaseModel
 
+
+# Components made up of other Zentra models using a 'content' attribute
+PARENT_COMPONENTS = [
+    "Button",
+    "ScrollArea",
+    "Toggle",
+]
 
 # Dictionary of components with containers around them
 # (classname, attributes)
@@ -78,6 +87,7 @@ COMPONENT_ATTR_MAPPING = [
     (Separator, "orientation", lambda val: [f'orientation="{val}"']),
     (Link, "all", lambda comp: nextjs_link_attributes(comp)),
     (Slider, "all", lambda slider: slider_attributes(slider)),
+    (Toggle, "all", lambda toggle: toggle_attributes(toggle)),
 ]
 
 # (attribute_name, lambda_expression)
@@ -103,6 +113,7 @@ COMMON_ATTR_MAPPING = [
     ("width", lambda width: f"width={{{width}}}" if width else None),
     ("height", lambda height: f"height={{{height}}}" if height else None),
     ("checked", lambda checked: f"checked={{{str(checked).lower()}}}"),
+    ("pressed", lambda pressed: f"pressed={{{str(pressed).lower()}}}"),
 ]
 
 

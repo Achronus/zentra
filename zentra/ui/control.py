@@ -709,11 +709,21 @@ class Textarea(Component, ShadcnUi):
 
 class Toggle(Component, ShadcnUi):
     """
-    A Zentra model for the [Shadcn/ui](https://ui.shadcn.com/docs/components/) Toggle component.
+    A Zentra model for the [Shadcn/ui Toggle](https://ui.shadcn.com/docs/components/toggle) component.
 
     Parameters:
-    - `name` (`string`) - the name of the component
+    - `content` (`string | zentra.core.react.LucideIcon`) - the information displayed inside the toggle. Can be a string of text or a `LucideIcon` Zentra model. Can include parameter variables (indicated by starting the variable name with a `$`)
+    - `style` (`string, optional`) - the style of the toggle. Valid options: `['default', 'bold', 'outline', 'italic', 'underline']`. `default` by default
+    - `size` (`string, optional`) - the size of the toggle. Valid options: `['default', 'sm', 'lg', 'icon']`. `default` by default
+    - `pressed` (`boolean, optional`) - a flag for activating the toggle state. `False` by default
+    - `disabled` (`boolean, optional`) - adds the disabled property, preventing it from being selected. `False` by default
     """
+
+    content: str | LucideIcon
+    style: TextStyle = "default"
+    size: ButtonSize = "default"
+    pressed: bool = False
+    disabled: bool = False
 
 
 class ToggleGroup(Component, ShadcnUi):

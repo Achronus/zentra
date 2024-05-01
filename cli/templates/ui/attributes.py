@@ -3,7 +3,7 @@ import re
 from pydantic import HttpUrl
 from zentra.core.enums.ui import InputOTPPatterns
 from zentra.nextjs import Link, StaticImage, Url
-from zentra.ui.control import Slider
+from zentra.ui.control import Slider, Toggle
 
 
 def calendar_attributes(name: str) -> list[str]:
@@ -114,3 +114,10 @@ def slider_attributes(slider: Slider) -> list[str]:
         attrs.insert(0, f'htmlFor="{slider.name}"')
 
     return attrs
+
+
+def toggle_attributes(toggle: Toggle) -> list[str]:
+    """Returns a list of strings for the Toggle attributes based on its given values."""
+    return [
+        f'aria-label="Toggle{f' {toggle.style}' if toggle.style != "default" else ''}"'
+    ]

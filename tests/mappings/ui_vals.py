@@ -105,6 +105,16 @@ TEXTAREA_VALID_VALS = {
     "content": '<Textarea id="message" placeholder="Type your message here." />'
 }
 
+TOGGLE_VALID_VALS = {
+    "content": {
+        "simple": '<Toggle pressed={false} aria-label="Toggle">\ntest {text}\n</Toggle>',
+        "icon": '<Toggle pressed={false} aria-label="Toggle">\n<Italic className="mr-2 h-4 w-4" />\nicon {text}\n</Toggle>',
+        "simple_full": '<Toggle size="sm" disabled pressed={true} aria-label="Toggle outline">\ntest {text}\n</Toggle>',
+        "icon_full": '<Toggle size="icon" disabled pressed={true} aria-label="Toggle bold">\nicon {text}\n<Italic className="mr-2 h-4 w-4" />\n</Toggle>',
+    },
+}
+
+
 VALID_VALS_MAP = {
     "calendar": CALENDAR_VALID_VALS,
     "checkbox": CHECKBOX_VALID_VALS,
@@ -118,7 +128,9 @@ VALID_VALS_MAP = {
     "slider": SLIDER_VALID_VALS,
     "switch": SWITCH_VALID_VALS,
     "textarea": TEXTAREA_VALID_VALS,
+    "toggle": TOGGLE_VALID_VALS,
 }
+
 
 # NEXTJS COMPONENTS
 IMAGE_VALID_VALS = {

@@ -12,6 +12,7 @@ from zentra.core import Component
 from zentra.core.html import Div, FigCaption, Figure, HTMLContent
 from zentra.core.js import Map
 
+from zentra.core.react import LucideIcon
 from zentra.nextjs import Image
 from zentra.ui.control import (
     Calendar,
@@ -28,6 +29,7 @@ from zentra.ui.control import (
     Slider,
     Switch,
     Textarea,
+    Toggle,
 )
 from zentra.ui.presentation import Separator
 
@@ -941,3 +943,69 @@ class TestTextarea:
     @staticmethod
     def test_import_str(wrapper: SimpleCompBuilder):
         wrapper.run("imports", VALID_IMPORTS["textarea"])
+
+
+class TestToggle:
+    @pytest.fixture
+    def toggle(self) -> Toggle:
+        return Toggle(content="test $text")
+
+    @pytest.fixture
+    def toggle_icon(self) -> Toggle:
+        return Toggle(content=LucideIcon(name="Italic", text="icon $text"))
+
+    @pytest.fixture
+    def wrapper(self, toggle: Toggle) -> ParentCompBuilder:
+        return ParentCompBuilder(toggle)
+
+    @pytest.fixture
+    def wrapper_icon(self, toggle_icon: Toggle) -> ParentCompBuilder:
+        return ParentCompBuilder(toggle_icon)
+
+    @pytest.fixture
+    def wrapper_full(self) -> ParentCompBuilder:
+        return ParentCompBuilder(
+            Toggle(
+                content="test $text",
+                style="outline",
+                size="sm",
+                pressed=True,
+                disabled=True,
+            )
+        )
+
+    @pytest.fixture
+    def wrapper_icon_full(self) -> ParentCompBuilder:
+        return ParentCompBuilder(
+            Toggle(
+                content=LucideIcon(name="Italic", text="icon $text", position="end"),
+                style="bold",
+                size="icon",
+                disabled=True,
+                pressed=True,
+            )
+        )
+
+    @staticmethod
+    def test_content_str(wrapper: ParentCompBuilder):
+        wrapper.content(VALID_VALS_MAP["toggle"]["content"]["simple"])
+
+    @staticmethod
+    def test_content_str_icon(wrapper_icon: ParentCompBuilder):
+        wrapper_icon.content(VALID_VALS_MAP["toggle"]["content"]["icon"])
+
+    @staticmethod
+    def test_content_str_full(wrapper_full: ParentCompBuilder):
+        wrapper_full.content(VALID_VALS_MAP["toggle"]["content"]["simple_full"])
+
+    @staticmethod
+    def test_content_str_icon_full(wrapper_icon_full: ParentCompBuilder):
+        wrapper_icon_full.content(VALID_VALS_MAP["toggle"]["content"]["icon_full"])
+
+    @staticmethod
+    def test_import_str(wrapper: ParentCompBuilder):
+        wrapper.comp_other("imports", VALID_IMPORTS["toggle"]["simple"])
+
+    @staticmethod
+    def test_import_str_icon(wrapper_icon: ParentCompBuilder):
+        wrapper_icon.comp_other("imports", VALID_IMPORTS["toggle"]["icon"])

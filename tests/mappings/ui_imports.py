@@ -24,6 +24,10 @@ VALID_IMPORTS = {
     "slider": 'import { Slider } from "@/components/ui/slider"\nimport { cn } from "@/lib/utils"',
     "switch": 'import { Switch } from "@/components/ui/switch"',
     "textarea": 'import { Textarea } from "@/components/ui/textarea"',
+    "toggle": {
+        "simple": 'import { Toggle } from "@/components/ui/toggle"',
+        "icon": 'import { Toggle } from "@/components/ui/toggle"\nimport { Italic } from "lucide-react"',
+    },
 }
 
 

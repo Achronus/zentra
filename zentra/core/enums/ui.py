@@ -54,3 +54,11 @@ class InputOTPPatterns(str, Enum):
 class Orientation(str, Enum):
     VERTICAL = "vertical"
     HORIZONTAL = "horizontal"
+
+
+class TextStyle(str, Enum):
+    DEFAULT = "default"
+    BOLD = "bold"
+    OUTLINE = "outline"
+    ITALIC = "italic"
+    UNDERLINE = "underline"

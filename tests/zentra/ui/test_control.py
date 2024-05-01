@@ -1,40 +1,22 @@
-from functools import partial, reduce
-from itertools import product
-from operator import mul
-from typing import Any
-
 import pytest
 from pydantic import ValidationError
 
 from cli.conf.storage import ComponentDetails
 from tests.templates.details import COMPONENT_DETAILS_MAPPING
-from tests.templates.dummy import DummyIconButton
 from tests.templates.helper import component_builder, parent_component_builder
-from tests.mappings.btn_attributes import BTN_VALID_ATTRS, ICON_BTN_VALID_ATTRS
-from tests.mappings.btn_content import (
-    BTN_VALID_CONTENT_WITH_LINK,
-    BTN_VALID_CONTENT_WITHOUT_LINK,
-    ICON_BTN_VALID_CONTENT_WITH_LINK,
-    ICON_BTN_VALID_CONTENT_WITHOUT_LINK,
-)
+
 from tests.mappings.ui_imports import VALID_IMPORTS
 from tests.mappings.ui_vals import VALID_VALS_MAP
 from zentra.core import Component
-from zentra.core.enums.ui import (
-    ButtonIconPosition,
-    ButtonSize,
-    ButtonVariant,
-    IconButtonSize,
-)
+
 from zentra.core.html import Div, FigCaption, Figure, HTMLContent
 from zentra.core.js import Map
+
 from zentra.nextjs import Image
 from zentra.ui.control import (
-    Button,
     Calendar,
     Checkbox,
     Collapsible,
-    IconButton,
     Input,
     InputOTP,
     Label,
@@ -51,61 +33,6 @@ from zentra.ui.presentation import Separator
 
 
 @pytest.fixture
-def example_btn_values() -> dict:
-    return {
-        "text": "test",
-        "url": "https://example.com/",
-        "variants": [variant.value for variant in ButtonVariant],
-        "sizes": [size.value for size in ButtonSize],
-        "disables": [True, False],
-    }
-
-
-def calc_valid_total(*iterables) -> int:
-    return reduce(mul, (len(iterable) for iterable in iterables))
-
-
-class ComponentFuncWrapper:
-    """A helper class that handles the logic for keeping complicated component test implementations unified."""
-
-    def __init__(
-        self,
-        iterable_dict: dict[list],
-        component_func: callable,
-        component_details: ComponentDetails,
-    ) -> None:
-        self.iterable_dict = iterable_dict
-        self.details = component_details
-        self.comp_func = component_func
-
-    def dict_product(self, d: dict):
-        keys = d.keys()
-        values = d.values()
-        return [dict(zip(keys, items)) for items in product(*values)]
-
-    def run(self, result_attr: str, mapping: list[str] | dict[str, Any]):
-        valid_total = 0
-        items_list = self.dict_product(self.iterable_dict)
-        desired_total = calc_valid_total(items_list)
-
-        for idx, items in enumerate(items_list):
-            component = self.comp_func(**items)
-            builder = component_builder(component, self.details)
-            builder.build()
-
-            result: str = getattr(builder.storage, result_attr)
-
-            map_value = mapping[idx] if isinstance(mapping, list) else mapping
-            if result == map_value:
-                valid_total += 1
-            else:
-                test_fail_result = result
-
-        assert (
-            valid_total == desired_total
-        ), f"({valid_total}/{desired_total}) {test_fail_result} != {map_value}"
-
-
 class SimpleComponentFuncWrapper:
     """A helper class that handles the logic for keeping simple component test implementations unified."""
 
@@ -142,198 +69,6 @@ class ParentComponentFuncWrapper:
         _ = self.builder.build()
         result: list[str] = getattr(self.builder.storage, result_attr)
         assert "\n".join(result) == valid_value, (result, valid_value.split("\n"))
-
-
-class TestButton:
-    @staticmethod
-    def button(**btn_kwargs) -> Button:
-        return Button(**btn_kwargs)
-
-    @pytest.fixture
-    def iterables(self, example_btn_values) -> dict:
-        return {
-            "variant": example_btn_values["variants"],
-            "size": example_btn_values["sizes"],
-            "disabled": example_btn_values["disables"],
-        }
-
-    @pytest.fixture
-    def btn(self, example_btn_values) -> partial:
-        return partial(
-            self.button,
-            text=example_btn_values["text"],
-        )
-
-    @pytest.fixture
-    def btn_with_url(self, example_btn_values) -> partial:
-        return partial(
-            self.button,
-            text=example_btn_values["text"],
-            url=example_btn_values["url"],
-        )
-
-    @pytest.fixture
-    def btn_wrapper(self, iterables, btn) -> ComponentFuncWrapper:
-        return ComponentFuncWrapper(
-            iterable_dict=iterables,
-            component_func=btn,
-            component_details=COMPONENT_DETAILS_MAPPING["Button"],
-        )
-
-    @pytest.fixture
-    def btn_wrapper_url(self, iterables, btn_with_url) -> ComponentFuncWrapper:
-        return ComponentFuncWrapper(
-            iterable_dict=iterables,
-            component_func=btn_with_url,
-            component_details=COMPONENT_DETAILS_MAPPING["Button"],
-        )
-
-    @staticmethod
-    def test_attr_str(btn_wrapper_url: ComponentFuncWrapper):
-        btn_wrapper_url.run(result_attr="attributes", mapping=BTN_VALID_ATTRS)
-
-    @staticmethod
-    def test_content_str(btn_wrapper: ComponentFuncWrapper):
-        btn_wrapper.run(result_attr="content", mapping=BTN_VALID_CONTENT_WITHOUT_LINK)
-
-    @staticmethod
-    def test_content_str_with_url(btn_wrapper_url: ComponentFuncWrapper):
-        btn_wrapper_url.run(result_attr="content", mapping=BTN_VALID_CONTENT_WITH_LINK)
-
-    @staticmethod
-    def test_import_str(btn_wrapper: ComponentFuncWrapper):
-        btn_wrapper.run(result_attr="imports", mapping=VALID_IMPORTS["button"])
-
-    @staticmethod
-    def test_text_empty_str():
-        with pytest.raises(ValidationError):
-            Button(text="")
-
-    @staticmethod
-    def test_invalid_variant():
-        with pytest.raises(ValidationError):
-            Button(text="test", variant="test")
-
-    @staticmethod
-    def test_invalid_size():
-        with pytest.raises(ValidationError):
-            Button(text="test", size="test")
-
-    @staticmethod
-    def test_invalid_url():
-        with pytest.raises(ValidationError):
-            Button(text="test", url="not a url")
-
-
-class TestIconButton:
-    @staticmethod
-    def button(**btn_kwargs) -> DummyIconButton:
-        return DummyIconButton(**btn_kwargs)
-
-    @pytest.fixture
-    def example_values(self, example_btn_values) -> dict:
-        values = {
-            "icon": "Loader",
-            "icon_positions": [pos.value for pos in ButtonIconPosition],
-            **example_btn_values,
-        }
-        values["size"] = [size.value for size in IconButtonSize]
-        return values
-
-    @pytest.fixture
-    def iterables(self, example_values) -> dict:
-        return {
-            "icon_position": example_values["icon_positions"],
-            "variant": example_values["variants"],
-            "size": example_values["sizes"],
-            "disabled": example_values["disables"],
-        }
-
-    @pytest.fixture
-    def btn(self, example_values) -> partial:
-        return partial(
-            self.button,
-            icon=example_values["icon"],
-            text=example_values["text"],
-        )
-
-    @pytest.fixture
-    def btn_with_url(self, example_values) -> partial:
-        return partial(
-            self.button,
-            icon=example_values["icon"],
-            text=example_values["text"],
-            url=example_values["url"],
-        )
-
-    @pytest.fixture
-    def btn_wrapper(self, iterables, btn) -> ComponentFuncWrapper:
-        return ComponentFuncWrapper(
-            iterable_dict=iterables,
-            component_func=btn,
-            component_details=COMPONENT_DETAILS_MAPPING["Button"],
-        )
-
-    @pytest.fixture
-    def btn_wrapper_url(self, iterables, btn_with_url) -> ComponentFuncWrapper:
-        return ComponentFuncWrapper(
-            iterable_dict=iterables,
-            component_func=btn_with_url,
-            component_details=COMPONENT_DETAILS_MAPPING["Button"],
-        )
-
-    @staticmethod
-    def test_attr_str(btn_wrapper_url: ComponentFuncWrapper):
-        btn_wrapper_url.run(result_attr="attributes", mapping=ICON_BTN_VALID_ATTRS)
-
-    @staticmethod
-    def test_content_str(btn_wrapper: ComponentFuncWrapper):
-        btn_wrapper.run(
-            result_attr="content", mapping=ICON_BTN_VALID_CONTENT_WITHOUT_LINK
-        )
-
-    @staticmethod
-    def test_content_str_with_url(btn_wrapper_url: ComponentFuncWrapper):
-        btn_wrapper_url.run(
-            result_attr="content", mapping=ICON_BTN_VALID_CONTENT_WITH_LINK
-        )
-
-    @staticmethod
-    def test_import_str(btn_wrapper: ComponentFuncWrapper):
-        btn_wrapper.run(
-            result_attr="imports", mapping=VALID_IMPORTS["icon_button"]["standard"]
-        )
-
-    @staticmethod
-    def test_import_str_with_url(btn_wrapper_url: ComponentFuncWrapper):
-        btn_wrapper_url.run(
-            result_attr="imports", mapping=VALID_IMPORTS["icon_button"]["with_url"]
-        )
-
-    @staticmethod
-    def test_icon_empty():
-        with pytest.raises(ValidationError):
-            IconButton(icon="")
-
-    @staticmethod
-    def test_icon_str_invalid():
-        with pytest.raises(ValidationError):
-            IconButton(icon="loader is here")
-
-    @staticmethod
-    def test_invalid_variant():
-        with pytest.raises(ValidationError):
-            IconButton(icon="Loader", variant="test")
-
-    @staticmethod
-    def test_invalid_size():
-        with pytest.raises(ValidationError):
-            IconButton(icon="Loader", size="test")
-
-    @staticmethod
-    def test_invalid_url():
-        with pytest.raises(ValidationError):
-            IconButton(icon="Loader", url="not a url")
 
 
 class TestCalendar:

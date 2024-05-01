@@ -155,3 +155,14 @@ NEXTJS_VALID_VALS_MAP = {
     "image": IMAGE_VALID_VALS,
     "link": LINK_VALID_VALS,
 }
+
+
+LUCIDE_ICON_VALID_VALS = {
+    "content": {
+        "simple": '<Italic className="mr-2 h-4 w-4" />',
+        "text": '<Italic className="mr-2 h-4 w-4" />\ntest tag',
+        "text_end": 'test tag\n<Italic className="mr-2 h-4 w-4" />',
+        "text_param": '<Italic className="mr-2 h-4 w-4" />\ntest {tag}',
+        "text_param_end": 'test {tag}\n<Italic className="mr-2 h-4 w-4" />',
+    },
+}

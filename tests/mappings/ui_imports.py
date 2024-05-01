@@ -1,8 +1,8 @@
 VALID_IMPORTS = {
-    "button": 'import { Button } from "@/components/ui/button"',
-    "icon_button": {
-        "standard": 'import { Button } from "@/components/ui/button"\nimport { Loader } from "lucide-react"',
-        "with_url": 'import { Button } from "@/components/ui/button"\nimport Link from "next/link"\nimport { Loader } from "lucide-react"',
+    "button": {
+        "simple": 'import { Button } from "@/components/ui/button"',
+        "icon": 'import { Button } from "@/components/ui/button"\nimport { Loader } from "lucide-react"',
+        "icon_url": '''import Link from 'next/link'\nimport { Button } from "@/components/ui/button"\nimport { Loader } from "lucide-react"''',
     },
     "calendar": 'import { Calendar } from "@/components/ui/calendar"\nimport { useState } from "react"',
     "checkbox": 'import { Checkbox } from "@/components/ui/checkbox"',
@@ -33,4 +33,11 @@ NEXTJS_VALID_IMPORTS = {
         "static_src": "import Image from 'next/image'\nimport profilePic from './me.png'",
     },
     "link": "import Link from 'next/link'",
+}
+
+REACT_VALID_IMPORTS = {
+    "lucide_icon": {
+        "italic": 'import { Italic } from "lucide-react"',
+        "loader": 'import { Loader } from "lucide-react"',
+    }
 }

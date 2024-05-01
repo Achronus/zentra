@@ -1,5 +1,6 @@
 from cli.conf.storage import ComponentDetails
 from cli.templates.jsx import (
+    BuildController,
     ComponentBuilder,
     HTMLContentBuilder,
     JSIterableContentBuilder,
@@ -11,6 +12,13 @@ from cli.templates.mappings import JSX_MAPPINGS
 from tests.templates.details import COMPONENT_DETAILS_MAPPING, component_details
 from zentra.core import Component, Page
 from zentra.core.base import HTMLTag, JSIterable
+
+
+def build_controller() -> BuildController:
+    return BuildController(
+        mappings=JSX_MAPPINGS,
+        details_dict=COMPONENT_DETAILS_MAPPING,
+    )
 
 
 def component_builder(

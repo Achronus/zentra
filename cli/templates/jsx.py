@@ -11,7 +11,6 @@ from cli.templates.storage import (
     JSXPageContentStorage,
 )
 
-from tests.templates.dummy import DummyButton
 from zentra.core import Component, Page
 from zentra.core.base import HTMLTag, JSIterable
 from zentra.core.html import Div, FigCaption, Figure
@@ -253,7 +252,7 @@ class ParentComponentBuilder:
         if isinstance(content, Div):
             inner_content = self.build_div_content(content)
 
-        elif isinstance(self.component, (Button, DummyButton)):
+        elif isinstance(self.component, Button):
             inner_content, storage = self.build_btn_content(self.component)
             self.storage = add_to_storage(self.storage, storage, extend=True)
 
@@ -281,20 +280,18 @@ class ParentComponentBuilder:
 
         return content
 
-    def build_btn_content(
-        self, model: Button | DummyButton
-    ) -> tuple[list[str], JSXComponentExtras]:
+    def build_btn_content(self, model: Button) -> tuple[list[str], JSXComponentExtras]:
         """Creates the JSX for a `Button` models inner content and returns its details as a tuple in the form of `(content, multi_comp_storage)`."""
         storage = JSXComponentExtras()
 
         if isinstance(model.content, LucideIcon):
-            content, import_str = self.controller.build_icon(model.content)
-            model.content = compress(content)
+            model.content, import_str = self.controller.build_icon(model.content)
             storage.imports.append(import_str)
         else:
             model.content = text_content(model.content)
 
         if model.url:
+            model.content = compress(model.content)
             model.content, link_storage = self.controller.build_nextjs_component(
                 Link(href=model.url, text=model.content)
             )

@@ -5,7 +5,7 @@ from tests.mappings.ui_vals import VALID_VALS_MAP
 from tests.templates.details import COMPONENT_DETAILS_MAPPING
 from tests.templates.helper import SimpleCompBuilder
 
-from zentra.ui.notification import Alert
+from zentra.ui.notification import Alert, TextAlertDialog
 
 from pydantic import ValidationError
 
@@ -71,3 +71,25 @@ class TestAlert:
     def test_icon_validation():
         with pytest.raises(ValidationError):
             Alert(title="test", description="test", icon="invalid icon")
+
+
+class TestTextAlertDialog:
+    @pytest.fixture
+    def alert_dialog(self) -> TextAlertDialog:
+        return TextAlertDialog(
+            title="Are you absolutely sure?",
+            description="This action cannot be undone. This will permanently delete your account and remove your data from our servers.",
+            trigger_text="Delete Account",
+        )
+
+    @pytest.fixture
+    def wrapper(self, alert_dialog: TextAlertDialog) -> SimpleCompBuilder:
+        return SimpleCompBuilder(alert_dialog, COMPONENT_DETAILS_MAPPING["AlertDialog"])
+
+    @staticmethod
+    def test_content_str(wrapper: SimpleCompBuilder):
+        wrapper.run("content", VALID_VALS_MAP["alert_dialog"]["content"]["simple"])
+
+    @staticmethod
+    def test_import_str(wrapper: SimpleCompBuilder):
+        wrapper.run("imports", VALID_IMPORTS["alert_dialog"]["simple"])

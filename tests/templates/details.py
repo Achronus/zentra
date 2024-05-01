@@ -170,6 +170,26 @@ def alert_details() -> ComponentDetails:
     )
 
 
+def alert_dialog_details() -> ComponentDetails:
+    return ComponentDetails(
+        library="ui",
+        filename="alert-dialog.jsx",
+        name="AlertDialog",
+        child_names=[
+            "AlertDialogPortal",
+            "AlertDialogOverlay",
+            "AlertDialogTrigger",
+            "AlertDialogContent",
+            "AlertDialogHeader",
+            "AlertDialogFooter",
+            "AlertDialogTitle",
+            "AlertDialogDescription",
+            "AlertDialogAction",
+            "AlertDialogCancel",
+        ],
+    )
+
+
 def component_details() -> list[ComponentDetails]:
     return [
         button_details(),
@@ -190,6 +210,7 @@ def component_details() -> list[ComponentDetails]:
         toggle_details(),
         toggle_group_details(),
         alert_details(),
+        alert_dialog_details(),
     ]
 
 
@@ -212,4 +233,5 @@ COMPONENT_DETAILS_MAPPING = {
     "Toggle": toggle_details(),
     "ToggleGroup": toggle_group_details(),
     "Alert": alert_details(),
+    "AlertDialog": alert_dialog_details(),
 }

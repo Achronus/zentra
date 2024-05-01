@@ -35,6 +35,9 @@ VALID_IMPORTS = {
         "simple": 'import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"',
         "icon": 'import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"\nimport { Terminal } from "lucide-react"',
     },
+    "alert_dialog": {
+        "simple": 'import { AlertDialog, AlertDialogPortal, AlertDialogOverlay, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from "@/components/ui/alert-dialog"'
+    },
 }
 
 

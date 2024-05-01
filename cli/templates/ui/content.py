@@ -12,7 +12,7 @@ from zentra.ui.control import (
     Select,
     SelectGroup,
 )
-from zentra.ui.notification import Alert
+from zentra.ui.notification import Alert, TextAlertDialog
 
 
 def param_reformat_helper(text: str) -> list[str]:
@@ -162,6 +162,35 @@ def alert_content(alert: Alert) -> list[str]:
         content.insert(0, LucideIcon(name=alert.icon).content_str)
 
     return content
+
+
+def text_alert_dialog_content(ad: TextAlertDialog) -> list[str]:
+    """Returns a list of strings for the TextAlertDialog content based on the components attributes."""
+    return [
+        "<AlertDialogTrigger asChild>",
+        '<Button variant="outline">',
+        ad.trigger_text,
+        "</Button>",
+        "</AlertDialogTrigger>",
+        "<AlertDialogContent>",
+        "<AlertDialogHeader>",
+        "<AlertDialogTitle>",
+        ad.title,
+        "</AlertDialogTitle>",
+        "<AlertDialogDescription>",
+        ad.description,
+        "</AlertDialogDescription>",
+        "</AlertDialogHeader>",
+        "<AlertDialogFooter>",
+        "<AlertDialogCancel>",
+        ad.cancel_btn_text,
+        "</AlertDialogCancel>",
+        "<AlertDialogAction>",
+        ad.action_btn_text,
+        "</AlertDialogAction>",
+        "</AlertDialogFooter>",
+        "</AlertDialogContent>",
+    ]
 
 
 def text_content(

@@ -20,6 +20,7 @@ from cli.templates.ui.content import (
     radio_group_content,
     scroll_area_content,
     select_content,
+    text_alert_dialog_content,
     text_content,
 )
 from cli.templates.ui.imports import (
@@ -47,7 +48,7 @@ from zentra.ui.control import (
     Toggle,
     ToggleGroup,
 )
-from zentra.ui.notification import Alert
+from zentra.ui.notification import Alert, TextAlertDialog
 from zentra.ui.presentation import Separator
 
 from pydantic import BaseModel
@@ -141,6 +142,7 @@ COMPONENT_CONTENT_MAPPING = [
     (ScrollArea, lambda sa: scroll_area_content(sa)),
     (Select, lambda select: select_content(select)),
     (Alert, lambda alert: alert_content(alert)),
+    (TextAlertDialog, lambda ad: text_alert_dialog_content(ad)),
 ]
 
 

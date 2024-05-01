@@ -131,6 +131,13 @@ ALERT_VALID_VALS = {
     },
 }
 
+ALERT_DIALOG_VALID_VALS = {
+    "content": {
+        "simple": '<AlertDialog>\n<AlertDialogTrigger asChild>\n<Button variant="outline">\nDelete Account\n</Button>\n</AlertDialogTrigger>\n<AlertDialogContent>\n<AlertDialogHeader>\n<AlertDialogTitle>\nAre you absolutely sure?\n</AlertDialogTitle>\n<AlertDialogDescription>\nThis action cannot be undone. This will permanently delete your account and remove your data from our servers.\n</AlertDialogDescription>\n</AlertDialogHeader>\n<AlertDialogFooter>\n<AlertDialogCancel>\nCancel\n</AlertDialogCancel>\n<AlertDialogAction>\nContinue\n</AlertDialogAction>\n</AlertDialogFooter>\n</AlertDialogContent>\n</AlertDialog>',
+    },
+}
+
+
 VALID_VALS_MAP = {
     "calendar": CALENDAR_VALID_VALS,
     "checkbox": CHECKBOX_VALID_VALS,
@@ -147,6 +154,7 @@ VALID_VALS_MAP = {
     "toggle": TOGGLE_VALID_VALS,
     "toggle_group": TOGGLE_GROUP_VALID_VALS,
     "alert": ALERT_VALID_VALS,
+    "alert_dialog": ALERT_DIALOG_VALID_VALS,
 }
 
 

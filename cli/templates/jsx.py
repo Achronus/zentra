@@ -248,56 +248,19 @@ class ParentComponentBuilder:
         )
         self.storage = add_to_storage(self.storage, storage)
 
-        content: Div | str | LucideIcon | Component = self.component.content
-        if isinstance(content, Div):
-            inner_content = self.build_div_content(content)
-
-        elif isinstance(self.component, Button):
-            inner_content, storage = self.build_btn_content(self.component)
+        if hasattr(self.component, "content"):
+            builder = InnerContentBuilder(
+                component=self.component,
+                controller=self.controller,
+                storage=self.storage,
+            )
+            inner_content, storage = builder.build()
             self.storage = add_to_storage(self.storage, storage, extend=True)
 
-        elif isinstance(content, str):
-            inner_content: list[str] = text_content(content)
-
-        elif isinstance(content, LucideIcon):
-            inner_content, import_str = self.controller.build_icon(content)
-            self.storage.imports.append(import_str)
-
-        else:
-            inner_content, storage = self.controller.build_component(content)
-            storage.imports = str_to_list(storage.imports)
-            self.storage = add_to_storage(self.storage, storage, extend=True)
+        elif hasattr(self.component, "items"):
+            builder = InnerItemsBuilder()
 
         return [shell[0], *inner_content, *shell[1:]]
-
-    def build_div_content(self, content: Div) -> list[str]:
-        """Builds the `Div` content of the model and returns it as a list of strings."""
-        content, comp_storage = self.controller.build_html_tag(model=content)
-        if isinstance(comp_storage, JSXComponentContentStorage):
-            self.storage = add_to_storage(self.storage, comp_storage)
-        elif isinstance(comp_storage, JSXComponentExtras):
-            self.storage = add_to_storage(self.storage, comp_storage, extend=True)
-
-        return content
-
-    def build_btn_content(self, model: Button) -> tuple[list[str], JSXComponentExtras]:
-        """Creates the JSX for a `Button` models inner content and returns its details as a tuple in the form of `(content, multi_comp_storage)`."""
-        storage = JSXComponentExtras()
-
-        if isinstance(model.content, LucideIcon):
-            model.content, import_str = self.controller.build_icon(model.content)
-            storage.imports.append(import_str)
-        else:
-            model.content = text_content(model.content)
-
-        if model.url:
-            model.content = compress(model.content)
-            model.content, link_storage = self.controller.build_nextjs_component(
-                Link(href=model.url, text=model.content)
-            )
-            storage = add_to_storage(storage, link_storage)
-
-        return model.content, storage
 
 
 class BuildController:
@@ -363,6 +326,78 @@ class BuildController:
                 result.insert(0, model.text)
 
         return result, model.import_str
+
+
+class InnerContentBuilder:
+    """A builder for creating the inner JSX for Zentra models with the 'content' attribute."""
+
+    def __init__(
+        self,
+        component: Component,
+        controller: BuildController,
+        storage: JSXComponentExtras,
+    ) -> None:
+        self.component = component
+        self.controller = controller
+        self.storage = storage
+
+        self.content: Div | str | LucideIcon | Component = self.component.content
+
+    def build(self) -> tuple[list[str], JSXComponentExtras]:
+        """Builds the JSX and returns it as a tuple in the form: `(content, multi_comp_storage)`."""
+        if isinstance(self.content, Div):
+            inner_content = self.build_div_content(self.content)
+
+        elif isinstance(self.component, Button):
+            inner_content, storage = self.build_btn_content(self.component)
+            self.storage = add_to_storage(self.storage, storage, extend=True)
+
+        elif isinstance(self.content, str):
+            inner_content: list[str] = text_content(self.content)
+
+        elif isinstance(self.content, LucideIcon):
+            inner_content, import_str = self.controller.build_icon(self.content)
+            self.storage.imports.append(import_str)
+
+        else:
+            inner_content, storage = self.controller.build_component(self.content)
+            storage.imports = str_to_list(storage.imports)
+            self.storage = add_to_storage(self.storage, storage, extend=True)
+
+        return inner_content, self.storage
+
+    def build_div_content(self, content: Div) -> list[str]:
+        """Builds the `Div` content of the model and returns it as a list of strings."""
+        content, comp_storage = self.controller.build_html_tag(model=content)
+        if isinstance(comp_storage, JSXComponentContentStorage):
+            self.storage = add_to_storage(self.storage, comp_storage)
+        elif isinstance(comp_storage, JSXComponentExtras):
+            self.storage = add_to_storage(self.storage, comp_storage, extend=True)
+
+        return content
+
+    def build_btn_content(self, model: Button) -> tuple[list[str], JSXComponentExtras]:
+        """Creates the JSX for a `Button` models inner content and returns its details as a tuple in the form of `(content, multi_comp_storage)`."""
+        storage = JSXComponentExtras()
+
+        if isinstance(model.content, LucideIcon):
+            model.content, import_str = self.controller.build_icon(model.content)
+            storage.imports.append(import_str)
+        else:
+            model.content = text_content(model.content)
+
+        if model.url:
+            model.content = compress(model.content)
+            model.content, link_storage = self.controller.build_nextjs_component(
+                Link(href=model.url, text=model.content)
+            )
+            storage = add_to_storage(storage, link_storage)
+
+        return model.content, storage
+
+
+class InnerItemsBuilder:
+    """A builder for creating the inner JSX for Zentra models with the 'items' attribute."""
 
 
 class NextJSComponentBuilder:

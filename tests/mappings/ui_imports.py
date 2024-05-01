@@ -26,7 +26,7 @@ VALID_IMPORTS = {
     "textarea": 'import { Textarea } from "@/components/ui/textarea"',
     "toggle": {
         "simple": 'import { Toggle } from "@/components/ui/toggle"',
-        "icon": 'import { Toggle } from "@/components/ui/toggle"\nimport { Italic } from "lucide-react"',
+        "icon": 'import { Italic } from "lucide-react"\nimport { Toggle } from "@/components/ui/toggle"',
     },
 }
 

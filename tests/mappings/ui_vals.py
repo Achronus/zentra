@@ -178,13 +178,13 @@ LINK_VALID_VALS = {
         "scroll": 'href="/dashboard" scroll={false}',
         "prefetch_false": 'href="/dashboard" prefetch={false}',
         "prefetch_true": 'href="/dashboard" prefetch={true}',
-        "href_url": 'href={{ pathname: "/dashboard", query: { name: "test" }, }}',
-        "href_url_multi_query": 'href={{ pathname: "/dashboard", query: { name: "test", second: "test2" }, }}',
+        "href_url": 'href={{ pathname: "/dashboard", query: { name: "test", }, }}',
+        "href_url_multi_query": 'href={{ pathname: "/dashboard", query: { name: "test", second: "test2", }, }}',
     },
     "content": {
         "standard": '<Link href="/dashboard" />',
         "with_text": '<Link href="/dashboard">\nDashboard\n</Link>',
-        "full": '<Link target="_blank" className="rounded-md border" href={{ pathname: "/dashboard", query: { name: "test" }, }} replace scroll={false} prefetch={false}>\nDashboard\n</Link>',
+        "full": '<Link target="_blank" className="rounded-md border" href={{ pathname: "/dashboard", query: { name: "test", }, }} replace scroll={false} prefetch={false}>\nDashboard\n</Link>',
     },
 }
 

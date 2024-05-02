@@ -7,9 +7,12 @@ from cli.templates.ui.attributes import (
     calendar_attributes,
     collapsible_attributes,
     input_otp_attributes,
+    param_attr,
     nextjs_link_attributes,
+    size_attribute,
     slider_attributes,
     src_attribute,
+    str_attr,
     toggle_attributes,
 )
 from cli.templates.ui.content import (
@@ -88,9 +91,13 @@ COMPONENT_ATTR_MAPPING = [
     (Calendar, "name", lambda name: calendar_attributes(name)),
     (Collapsible, "name", lambda name: collapsible_attributes(name)),
     (InputOTP, "pattern", lambda pattern: input_otp_attributes(pattern)),
-    (Label, "name", lambda name: [f'htmlFor="{name}"']),
-    (RadioGroup, "default_value", lambda dv: [f'defaultValue="{dv}"']),
-    (Separator | ToggleGroup, "orientation", lambda val: [f'orientation="{val}"']),
+    (Label, "name", lambda name: [str_attr("htmlFor", name)]),
+    (RadioGroup, "default_value", lambda dv: [str_attr("defaultValue", dv)]),
+    (
+        Separator | ToggleGroup,
+        "orientation",
+        lambda val: [str_attr("orientation", val)],
+    ),
     (Link, "all", lambda comp: nextjs_link_attributes(comp)),
     (Slider, "all", lambda slider: slider_attributes(slider)),
     (Toggle, "all", lambda toggle: toggle_attributes(toggle)),
@@ -98,28 +105,33 @@ COMPONENT_ATTR_MAPPING = [
 
 # (attribute_name, lambda_expression)
 COMMON_ATTR_MAPPING = [
-    ("id", lambda value: f'id="{value}"'),
+    ("id", lambda value: str_attr("id", value)),
     ("url", lambda value: "asChild" if value else None),
     (
         "href",
-        lambda value: f'href="{value}"' if isinstance(value, (str, Url)) else None,
+        lambda value: str_attr("href", value)
+        if isinstance(value, (str, Url))
+        else None,
     ),
-    ("type", lambda value: f'type="{value}"'),
-    ("placeholder", lambda value: f'placeholder="{value}"'),
-    ("variant", lambda value: f'variant="{value}"' if value != "default" else None),
-    ("size", lambda value: f'size="{value}"' if value != "default" else None),
+    ("type", lambda value: str_attr("type", value)),
+    ("placeholder", lambda value: str_attr("placeholder", value)),
+    (
+        "variant",
+        lambda value: str_attr("variant", value) if value != "default" else None,
+    ),
+    ("size", lambda value: size_attribute(value) if value else None),
     ("disabled", lambda value: "disabled" if value else None),
-    ("apiEndpoint", lambda value: f'apiEndpoint="{value}"'),
-    ("num_inputs", lambda value: f"maxLength={{{value}}}"),
-    ("key", lambda key: f"key={{{key[1:]}}}" if key else None),
-    ("target", lambda value: f'target="{value}"' if value else None),
-    ("styles", lambda value: f'className="{value}"' if value else None),
+    ("apiEndpoint", lambda value: str_attr("apiEndpoint", value)),
+    ("num_inputs", lambda value: param_attr("maxLength", value)),
+    ("key", lambda key: param_attr("key", key[1:]) if key else None),
+    ("target", lambda value: str_attr("target", value) if value else None),
+    ("styles", lambda value: str_attr("className", value) if value else None),
     ("src", lambda value: src_attribute(value) if value else None),
     ("alt", lambda alt: alt_attribute(alt) if alt else None),
-    ("width", lambda width: f"width={{{width}}}" if width else None),
-    ("height", lambda height: f"height={{{height}}}" if height else None),
-    ("checked", lambda checked: f"checked={{{str(checked).lower()}}}"),
-    ("pressed", lambda pressed: f"pressed={{{str(pressed).lower()}}}"),
+    ("width", lambda width: param_attr("width", width) if width else None),
+    ("height", lambda height: param_attr("height", height) if height else None),
+    ("checked", lambda checked: param_attr("checked", str(checked).lower())),
+    ("pressed", lambda pressed: param_attr("pressed", str(pressed).lower())),
 ]
 
 

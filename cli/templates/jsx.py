@@ -354,17 +354,10 @@ class BuildController:
         return content, storage
 
     def build_icon(self, model: LucideIcon) -> tuple[list[str], str]:
-        """Creates the JSX for a `LucideIcon` model and returns its details as a tuple in the form of `(content, import_str)`."""
-        result = [f'<{model.name} className="mr-2 h-4 w-4" />']
-
-        if model.text:
-            model.text = text_content(model.text)[0]
-            if model.position == "start":
-                result.append(model.text)
-            else:
-                result.insert(0, model.text)
-
-        return result, model.import_str
+        """Creates the JSX for a `LucideIcon` model and returns its details as a tuple in the form of: `(content, import_str)`."""
+        builder = IconBuilder(model=model, mappings=self.maps)
+        content, import_str = builder.build()
+        return content, import_str
 
 
 class InnerContentBuilder:
@@ -433,6 +426,41 @@ class InnerContentBuilder:
             storage = add_to_storage(storage, link_storage)
 
         return model.content, storage
+
+
+class IconBuilder:
+    """A builder for creating the JSX for `LucideIcon` Zentra models."""
+
+    def __init__(self, model: LucideIcon, mappings: JSXMappings) -> None:
+        self.model = model
+        self.maps = mappings
+
+        self.attrs = AttributeBuilder(component=model, mappings=mappings)
+
+    def build(self) -> tuple[list[str], str]:
+        """Creates the JSX for the model and return its details as a tuple in the form of: `(content, import_str)`."""
+        content = self.create_container()
+        content = self.handle_text(content)
+
+        return content, self.model.import_str
+
+    def handle_text(self, content: list[str]) -> list[str]:
+        """Manages the text location and preprocessing inside the `content` list. Returns the updated list."""
+        if self.model.text:
+            self.model.text = text_content(self.model.text)[0]
+            if self.model.position == "start":
+                content.append(self.model.text)
+            else:
+                content.insert(0, self.model.text)
+
+        return content
+
+    def create_container(self) -> list[str]:
+        """Creates the icon container and applies the attributes to it. Returns it as a list of strings."""
+        attrs_str = compress(self.attrs.build(), chars=" ")
+        return [
+            f'<{self.model.name} className="mr-2 h-4 w-4"{f' {attrs_str}' if attrs_str else ''} />'
+        ]
 
 
 class NextJSComponentBuilder:

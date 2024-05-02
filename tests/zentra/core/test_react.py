@@ -1,4 +1,3 @@
-from pydantic import ValidationError
 import pytest
 
 from tests.mappings.ui_imports import REACT_VALID_IMPORTS
@@ -6,44 +5,74 @@ from tests.mappings.ui_vals import LUCIDE_ICON_VALID_VALS
 from tests.templates.helper import build_controller
 from zentra.core.react import LucideIcon
 
+from pydantic import ValidationError
+
 
 class TestLucideIcon:
+    @pytest.fixture
+    def italic_icon(self) -> LucideIcon:
+        return LucideIcon(name="Italic")
+
+    @pytest.fixture
+    def italic_icon_text(self) -> LucideIcon:
+        return LucideIcon(name="Italic", text="test tag")
+
+    @pytest.fixture
+    def italic_icon_param(self) -> LucideIcon:
+        return LucideIcon(name="Italic", text="test $tag")
+
+    @pytest.fixture
+    def italic_icon_position(self) -> LucideIcon:
+        return LucideIcon(name="Italic", text="test tag", position="end")
+
+    @pytest.fixture
+    def italic_icon_param_position(self) -> LucideIcon:
+        return LucideIcon(name="Italic", text="test $tag", position="end")
+
+    @pytest.fixture
+    def italic_icon_full(self) -> LucideIcon:
+        return LucideIcon(
+            name="Italic",
+            text="test $tag",
+            position="end",
+            size=24,
+            color="red",
+            stroke_width=2,
+        )
+
     @staticmethod
-    def test_content_simple():
-        result, _ = build_controller().build_icon(model=LucideIcon(name="Italic"))
+    def test_content_simple(italic_icon: LucideIcon):
+        result, _ = build_controller().build_icon(italic_icon)
         assert result[0] == LUCIDE_ICON_VALID_VALS["content"]["simple"]
 
     @staticmethod
-    def test_content_text():
-        result, _ = build_controller().build_icon(
-            model=LucideIcon(name="Italic", text="test tag")
-        )
+    def test_content_text(italic_icon_text: LucideIcon):
+        result, _ = build_controller().build_icon(italic_icon_text)
         assert "\n".join(result) == LUCIDE_ICON_VALID_VALS["content"]["text"]
 
     @staticmethod
-    def test_content_text_position():
-        result, _ = build_controller().build_icon(
-            model=LucideIcon(name="Italic", text="test tag", position="end")
-        )
-        assert "\n".join(result) == LUCIDE_ICON_VALID_VALS["content"]["text_end"]
-
-    @staticmethod
-    def test_content_text_param():
-        result, _ = build_controller().build_icon(
-            model=LucideIcon(name="Italic", text="test $tag")
-        )
+    def test_content_text_param(italic_icon_param: LucideIcon):
+        result, _ = build_controller().build_icon(italic_icon_param)
         assert "\n".join(result) == LUCIDE_ICON_VALID_VALS["content"]["text_param"]
 
     @staticmethod
-    def test_content_text_param_position():
-        result, _ = build_controller().build_icon(
-            model=LucideIcon(name="Italic", text="test $tag", position="end")
-        )
+    def test_content_text_position(italic_icon_position: LucideIcon):
+        result, _ = build_controller().build_icon(italic_icon_position)
+        assert "\n".join(result) == LUCIDE_ICON_VALID_VALS["content"]["text_end"]
+
+    @staticmethod
+    def test_content_text_param_position(italic_icon_param_position: LucideIcon):
+        result, _ = build_controller().build_icon(italic_icon_param_position)
         assert "\n".join(result) == LUCIDE_ICON_VALID_VALS["content"]["text_param_end"]
 
     @staticmethod
-    def test_import_str_italic():
-        _, result = build_controller().build_icon(model=LucideIcon(name="Italic"))
+    def test_content_full(italic_icon_full: LucideIcon):
+        result, _ = build_controller().build_icon(italic_icon_full)
+        assert "\n".join(result) == LUCIDE_ICON_VALID_VALS["content"]["full"]
+
+    @staticmethod
+    def test_import_str_italic(italic_icon: LucideIcon):
+        _, result = build_controller().build_icon(italic_icon)
         assert result == REACT_VALID_IMPORTS["lucide_icon"]["italic"]
 
     @staticmethod

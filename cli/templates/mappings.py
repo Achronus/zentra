@@ -132,6 +132,8 @@ COMMON_ATTR_MAPPING = [
     ("height", lambda height: param_attr("height", height) if height else None),
     ("checked", lambda checked: param_attr("checked", str(checked).lower())),
     ("pressed", lambda pressed: param_attr("pressed", str(pressed).lower())),
+    ("color", lambda value: str_attr("color", value) if value else None),
+    ("stroke_width", lambda value: param_attr("strokeWidth", value) if value else None),
 ]
 
 

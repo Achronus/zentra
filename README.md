@@ -35,8 +35,8 @@ Core component libraries and custom models in development:
 - [X] [Lucide React Icons](https://lucide.dev/guide/packages/lucide-react) (1/1 - 1 component for all icons)
 
 Future component libraries:
-- Clerk
-- Tremor
+- [Clerk](https://clerk.com/)
+- [Tremor](https://www.tremor.so/)
 - And more...
 
 ## Example Usage

@@ -222,5 +222,6 @@ LUCIDE_ICON_VALID_VALS = {
         "text_param": '<Italic className="mr-2 h-4 w-4" />\ntest {tag}',
         "text_param_end": 'test {tag}\n<Italic className="mr-2 h-4 w-4" />',
         "full": 'test {tag}\n<Italic className="mr-2 h-4 w-4" size={24} color="red" strokeWidth={2} />',
+        "full_no_text": '<Italic className="mr-2 h-4 w-4" size={24} color="red" strokeWidth={2} />',
     },
 }

@@ -474,7 +474,9 @@ class IconBuilder:
     def build(self) -> tuple[list[str], str]:
         """Creates the JSX for the model and return its details as a tuple in the form of: `(content, import_str)`."""
         content = self.create_container()
-        content = self.handle_text(content)
+
+        if hasattr(self.model, "text"):
+            content = self.handle_text(content)
 
         return content, self.model.import_str
 

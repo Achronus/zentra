@@ -13,7 +13,7 @@ from tests.mappings.ui_imports import VALID_IMPORTS
 from tests.templates.details import COMPONENT_DETAILS_MAPPING
 from tests.templates.helper import parent_component_builder
 from zentra.ui.control import Button
-from zentra.core.react import LucideIcon
+from zentra.core.react import LucideIconWithText
 from zentra.core.enums.ui import ButtonSize, ButtonVariant
 
 
@@ -90,7 +90,7 @@ class TestButton:
     def btn_icon(self) -> partial:
         return partial(
             self.button,
-            content=LucideIcon(name="Italic", text="test $tag"),
+            content=LucideIconWithText(name="Italic", text="test $tag"),
         )
 
     @pytest.fixture
@@ -101,7 +101,7 @@ class TestButton:
     def btn_icon_url(self) -> partial:
         return partial(
             self.button,
-            content=LucideIcon(name="Italic", text="test $tag"),
+            content=LucideIconWithText(name="Italic", text="test $tag"),
             url="https://example.com/",
         )
 
@@ -164,7 +164,7 @@ class TestButton:
     @staticmethod
     def test_import_str_icon(btn_text_wrapper: BtnCompBuilder):
         btn_text_wrapper.comp_other(
-            Button(content=LucideIcon(name="Loader")),
+            Button(content=LucideIconWithText(name="Loader")),
             "imports",
             VALID_IMPORTS["button"]["icon"],
         )
@@ -172,7 +172,9 @@ class TestButton:
     @staticmethod
     def test_import_str_icon_url(btn_text_wrapper: BtnCompBuilder):
         btn_text_wrapper.comp_other(
-            Button(content=LucideIcon(name="Loader"), url="https://example.com/"),
+            Button(
+                content=LucideIconWithText(name="Loader"), url="https://example.com/"
+            ),
             "imports",
             VALID_IMPORTS["button"]["icon_url"],
         )

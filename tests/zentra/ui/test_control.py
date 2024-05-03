@@ -10,7 +10,7 @@ from tests.mappings.ui_vals import VALID_VALS_MAP
 from zentra.core.html import Div, FigCaption, Figure, HTMLContent
 from zentra.core.js import Map
 
-from zentra.core.react import LucideIcon
+from zentra.core.react import LucideIconWithText
 from zentra.nextjs import Image
 from zentra.ui.control import (
     Calendar,
@@ -913,7 +913,7 @@ class TestToggle:
 
     @pytest.fixture
     def toggle_icon(self) -> Toggle:
-        return Toggle(content=LucideIcon(name="Italic", text="icon $text"))
+        return Toggle(content=LucideIconWithText(name="Italic", text="icon $text"))
 
     @pytest.fixture
     def wrapper(self, toggle: Toggle) -> ParentCompBuilder:
@@ -940,7 +940,9 @@ class TestToggle:
     def wrapper_icon_full(self) -> ParentCompBuilder:
         return ParentCompBuilder(
             Toggle(
-                content=LucideIcon(name="Italic", text="icon $text", position="end"),
+                content=LucideIconWithText(
+                    name="Italic", text="icon $text", position="end"
+                ),
                 style="bold",
                 size="lg",
                 disabled=True,
@@ -979,13 +981,13 @@ class TestToggleGroup:
         return ToggleGroup(
             items=[
                 Toggle(
-                    content=LucideIcon(name="Italic"),
+                    content=LucideIconWithText(name="Italic"),
                 ),
                 Toggle(
-                    content=LucideIcon(name="Bold"),
+                    content=LucideIconWithText(name="Bold"),
                 ),
                 Toggle(
-                    content=LucideIcon(name="Underline"),
+                    content=LucideIconWithText(name="Underline"),
                 ),
             ]
         )
@@ -995,15 +997,17 @@ class TestToggleGroup:
         return ToggleGroup(
             items=[
                 Toggle(
-                    content=LucideIcon(name="Italic", text="italic $text"),
+                    content=LucideIconWithText(name="Italic", text="italic $text"),
                     pressed=True,
                 ),
                 Toggle(
-                    content=LucideIcon(name="Bold", text="bold $text", position="end"),
+                    content=LucideIconWithText(
+                        name="Bold", text="bold $text", position="end"
+                    ),
                     disabled=True,
                 ),
                 Toggle(
-                    content=LucideIcon(name="Underline", text="undeline $text"),
+                    content=LucideIconWithText(name="Underline", text="undeline $text"),
                 ),
             ],
             type="single",

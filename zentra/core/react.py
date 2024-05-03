@@ -12,16 +12,12 @@ class LucideIcon(BaseModel):
 
     Parameters:
     - `name` (`string`) - the name of the [Lucide React Icon](https://lucide.dev/icons). Must be in React format (PascalCase). E.g., `CircleArrowDown` or `Loader`
-    - `position` (`string, optional`) - the position of the icon. When set to `start`, icon appears before a components text. When `end`, it appears after the text.  Valid options: `['start', 'end']`. `start` by default
-    - `text` (`string, optional`) - the text displayed alongside the icon. Can include parameter variables (indicated by starting the variable name with a `$`). `None` by default
     - `size` (`integer, optional`) - a custom size for the icon. `None` by default
     - `color` (`string, optional`) - a custom colour for the icon. `None` by default
     - `stroke_width` (`integer, optional`) - a custom stroke width for the icon. `None` by default
     """
 
     name: str = Field(min_length=1)
-    position: ButtonIconPosition = "start"
-    text: str = None
     size: int = None
     color: str = None
     stroke_width: int = None
@@ -49,3 +45,20 @@ class LucideIcon(BaseModel):
     def content_str(self) -> str:
         """Returns the primary content string for the icon."""
         return f'<{self.name} className="h-4 w-4" />'
+
+
+class LucideIconWithText(LucideIcon):
+    """
+    A Zentra model dedicated to [Lucide React Icons](https://lucide.dev/icons) with text, based on the [Lucide React Package](https://lucide.dev/guide/packages/lucide-react).
+
+    Parameters:
+    - `name` (`string`) - the name of the [Lucide React Icon](https://lucide.dev/icons). Must be in React format (PascalCase). E.g., `CircleArrowDown` or `Loader`
+    - `position` (`string, optional`) - the position of the icon. When set to `start`, icon appears before a components text. When `end`, it appears after the text.  Valid options: `['start', 'end']`. `start` by default
+    - `text` (`string, optional`) - the text displayed alongside the icon. Can include parameter variables (indicated by starting the variable name with a `$`). `None` by default
+    - `size` (`integer, optional`) - a custom size for the icon. `None` by default
+    - `color` (`string, optional`) - a custom colour for the icon. `None` by default
+    - `stroke_width` (`integer, optional`) - a custom stroke width for the icon. `None` by default
+    """
+
+    position: ButtonIconPosition = "start"
+    text: str = None

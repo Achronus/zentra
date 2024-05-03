@@ -91,7 +91,10 @@ class ParentCompBuilder:
         result: list[str] = self.builder.build()
         assert "\n".join(result) == valid_value, (result, valid_value.split("\n"))
 
-    def comp_other(self, result_attr: str, valid_value: str):
+    def comp_other(self, result_attr: str, valid_value: str, list_output: bool = False):
         _ = self.builder.build()
         result: list[str] = getattr(self.builder.storage, result_attr)
-        assert "\n".join(result) == valid_value, (result, valid_value.split("\n"))
+        if list_output:
+            assert result == valid_value, (result, valid_value.split("\n"))
+        else:
+            assert "\n".join(result) == valid_value, (result, valid_value.split("\n"))

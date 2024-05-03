@@ -149,5 +149,9 @@ class Tooltip(Component, ShadcnUi):
     A Zentra model for the [Shadcn/ui Tooltip](https://ui.shadcn.com/docs/components/tooltip) component.
 
     Parameters:
-    - `name` (`str`) - the name of the component
+    - `text` (`str`) - the text to display inside the tooltip
+    - `trigger` (`zentra.core.Component`) - the component to apply the tooltip to
     """
+
+    text: str
+    trigger: Component

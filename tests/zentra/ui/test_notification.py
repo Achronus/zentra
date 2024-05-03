@@ -3,9 +3,11 @@ import pytest
 from tests.mappings.ui_imports import VALID_IMPORTS
 from tests.mappings.ui_vals import VALID_VALS_MAP
 from tests.templates.details import COMPONENT_DETAILS_MAPPING
-from tests.templates.helper import SimpleCompBuilder
+from tests.templates.helper import SimpleCompBuilder, ParentCompBuilder
 
-from zentra.ui.notification import Alert, TextAlertDialog
+from zentra.nextjs import Image
+from zentra.ui.control import Button, Label
+from zentra.ui.notification import Alert, TextAlertDialog, Tooltip
 
 from pydantic import ValidationError
 
@@ -93,3 +95,64 @@ class TestTextAlertDialog:
     @staticmethod
     def test_import_str(wrapper: SimpleCompBuilder):
         wrapper.run("imports", VALID_IMPORTS["alert_dialog"]["simple"])
+
+
+class TestTooltip:
+    @pytest.fixture
+    def tooltip_btn(self) -> Tooltip:
+        return Tooltip(
+            text="Add to Library",
+            trigger=Button(content="Hover", variant="outline"),
+        )
+
+    @pytest.fixture
+    def tooltip_label(self) -> Tooltip:
+        return Tooltip(
+            text="A cheeky label",
+            trigger=Label(name="library", text="UI Library"),
+        )
+
+    @pytest.fixture
+    def tooltip_image(self) -> Tooltip:
+        return Tooltip(
+            text="A cool image",
+            trigger=Image(src="/img.jpg", width=200, height=200, alt="A cool image"),
+        )
+
+    @pytest.fixture
+    def wrapper_btn(self, tooltip_btn: Tooltip) -> ParentCompBuilder:
+        return ParentCompBuilder(tooltip_btn)
+
+    @pytest.fixture
+    def wrapper_label(self, tooltip_label: Tooltip) -> ParentCompBuilder:
+        return ParentCompBuilder(tooltip_label)
+
+    @pytest.fixture
+    def wrapper_image(self, tooltip_image: Tooltip) -> ParentCompBuilder:
+        return ParentCompBuilder(tooltip_image)
+
+    @staticmethod
+    def test_content_str_btn(wrapper_btn: ParentCompBuilder):
+        wrapper_btn.content(VALID_VALS_MAP["tooltip"]["content"]["button"])
+
+    @staticmethod
+    def test_content_str_label(wrapper_label: ParentCompBuilder):
+        wrapper_label.content(VALID_VALS_MAP["tooltip"]["content"]["label"])
+
+    @staticmethod
+    def test_content_str_image(wrapper_image: ParentCompBuilder):
+        wrapper_image.content(VALID_VALS_MAP["tooltip"]["content"]["image"])
+
+    @staticmethod
+    def test_import_str_btn(wrapper_btn: ParentCompBuilder):
+        wrapper_btn.comp_other("imports", VALID_IMPORTS["tooltip"]["button"])
+
+    @staticmethod
+    def test_import_str_label(wrapper_label: ParentCompBuilder):
+        wrapper_label.comp_other("imports", VALID_IMPORTS["tooltip"]["label"])
+
+    @staticmethod
+    def test_import_str_image(wrapper_image: ParentCompBuilder):
+        wrapper_image.comp_other(
+            "imports", VALID_IMPORTS["tooltip"]["image"], list_output=True
+        )

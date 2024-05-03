@@ -190,6 +190,15 @@ def alert_dialog_details() -> ComponentDetails:
     )
 
 
+def tooltip_details() -> ComponentDetails:
+    return ComponentDetails(
+        library="ui",
+        filename="tooltip.jsx",
+        name="Tooltip",
+        child_names=["TooltipTrigger", "TooltipContent", "TooltipProvider"],
+    )
+
+
 def component_details() -> list[ComponentDetails]:
     return [
         button_details(),
@@ -202,7 +211,6 @@ def component_details() -> list[ComponentDetails]:
         file_upload_details(),
         radio_group_details(),
         scroll_area_details(),
-        separator_details(),
         select_details(),
         slider_details(),
         switch_details(),
@@ -211,6 +219,8 @@ def component_details() -> list[ComponentDetails]:
         toggle_group_details(),
         alert_details(),
         alert_dialog_details(),
+        separator_details(),
+        tooltip_details(),
     ]
 
 
@@ -225,7 +235,6 @@ COMPONENT_DETAILS_MAPPING = {
     "FileUpload": file_upload_details(),
     "RadioGroup": radio_group_details(),
     "ScrollArea": scroll_area_details(),
-    "Separator": separator_details(),
     "Select": select_details(),
     "Slider": slider_details(),
     "Switch": switch_details(),
@@ -234,4 +243,6 @@ COMPONENT_DETAILS_MAPPING = {
     "ToggleGroup": toggle_group_details(),
     "Alert": alert_details(),
     "AlertDialog": alert_dialog_details(),
+    "Separator": separator_details(),
+    "Tooltip": tooltip_details(),
 }

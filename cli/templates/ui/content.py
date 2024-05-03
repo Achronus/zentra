@@ -12,7 +12,7 @@ from zentra.ui.control import (
     Select,
     SelectGroup,
 )
-from zentra.ui.notification import Alert, TextAlertDialog
+from zentra.ui.notification import Alert, TextAlertDialog, Tooltip
 
 
 def param_reformat_helper(text: str) -> list[str]:
@@ -190,6 +190,17 @@ def text_alert_dialog_content(ad: TextAlertDialog) -> list[str]:
         "</AlertDialogAction>",
         "</AlertDialogFooter>",
         "</AlertDialogContent>",
+    ]
+
+
+def tooltip_content(tt: Tooltip) -> list[str]:
+    """Returns a list of strings for the Tooltip content based on the components attributes."""
+    return [
+        "<TooltipTrigger asChild>",
+        "</TooltipTrigger>",
+        "<TooltipContent>",
+        f"<p>{tt.text}</p>",
+        "</TooltipContent>",
     ]
 
 

@@ -137,6 +137,13 @@ ALERT_DIALOG_VALID_VALS = {
     },
 }
 
+TOOLTIP_VALID_VALS = {
+    "content": {
+        "button": '<TooltipProvider>\n<Tooltip>\n<TooltipTrigger asChild>\n<Button variant="outline">\nHover\n</Button>\n</TooltipTrigger>\n<TooltipContent>\n<p>Add to Library</p>\n</TooltipContent>\n</Tooltip>\n</TooltipProvider>',
+        "label": '<TooltipProvider>\n<Tooltip>\n<TooltipTrigger asChild>\n<Label htmlFor="library">\nUI Library\n</Label>\n</TooltipTrigger>\n<TooltipContent>\n<p>A cheeky label</p>\n</TooltipContent>\n</Tooltip>\n</TooltipProvider>',
+        "image": '<TooltipProvider>\n<Tooltip>\n<TooltipTrigger asChild>\n<Image src="/img.jpg" alt="A cool image" width={200} height={200} />\n</TooltipTrigger>\n<TooltipContent>\n<p>A cool image</p>\n</TooltipContent>\n</Tooltip>\n</TooltipProvider>',
+    },
+}
 
 # UI PRESENTATION COMPONENTS
 SEPARATOR_VALID_VALS = {
@@ -164,6 +171,7 @@ VALID_VALS_MAP = {
     "alert": ALERT_VALID_VALS,
     "alert_dialog": ALERT_DIALOG_VALID_VALS,
     "separator": SEPARATOR_VALID_VALS,
+    "tooltip": TOOLTIP_VALID_VALS,
 }
 
 

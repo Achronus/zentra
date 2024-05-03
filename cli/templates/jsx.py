@@ -24,6 +24,7 @@ from zentra.core.react import LucideIcon
 from zentra.nextjs import Link, NextJs
 from zentra.ui import Form
 from zentra.ui.control import Button, InputOTP, ToggleGroup
+from zentra.ui.notification import Tooltip
 
 
 FORM_SCHEMA_BASE = """
@@ -276,6 +277,9 @@ class ParentComponentBuilder:
                     self.storage,
                 )
 
+        if isinstance(model, Tooltip):
+            return self.handle_tooltip_content(model, shell)
+
         self.storage.imports = compress_imports(self.storage.imports)
         return [shell[0], *inner_content, *shell[1:]]
 
@@ -300,6 +304,30 @@ class ParentComponentBuilder:
         toggle_import = [item for item in storage.imports if '/ui/toggle"' in item][0]
         storage.imports.remove(toggle_import)
         return updated_content, storage
+
+    def handle_tooltip_content(self, model: Tooltip, shell: list[str]) -> list[str]:
+        """Updates the `Tooltip` component content by wrapping the `Tooltip` in a `TooltipProvider` and adds the trigger component content into the `TooltipTrigger`. Returns the updated content list."""
+        trigger_open = shell[:2]
+        trigger_close = shell[2:]
+
+        if model.trigger.classname in self.mappings.parent_components:
+            trigger_content = self.build(model.trigger)
+        elif isinstance(model.trigger, NextJs):
+            trigger_content, storage = self.controller.build_nextjs_component(
+                model.trigger
+            )
+            self.storage = add_to_storage(self.storage, storage)
+        else:
+            trigger_content, storage = self.controller.build_component(model.trigger)
+            self.storage = add_to_storage(self.storage, storage)
+
+        return [
+            "<TooltipProvider>",
+            *trigger_open,
+            *trigger_content,
+            *trigger_close,
+            "</TooltipProvider>",
+        ]
 
 
 class BuildController:
@@ -935,6 +963,9 @@ class ContentBuilder:
                 if value:
                     content_str = condition(value)
                     content.append(content_str)
+
+                    if attr_name == "text" and isinstance(self.component, Tooltip):
+                        content.pop()
 
         for comp_type, condition in self.maps.component_content:
             if isinstance(self.component, comp_type):

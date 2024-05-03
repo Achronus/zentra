@@ -38,6 +38,14 @@ VALID_IMPORTS = {
     "alert_dialog": {
         "simple": 'import { AlertDialog, AlertDialogPortal, AlertDialogOverlay, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from "@/components/ui/alert-dialog"'
     },
+    "tooltip": {
+        "button": 'import { Button } from "@/components/ui/button"\nimport { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"',
+        "label": 'import { Label } from "@/components/ui/label"\nimport { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"',
+        "image": [
+            "import Image from 'next/image'",
+            'import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"',
+        ],
+    },
     # PRESENTATION COMPONENTS
     "separator": 'import { Separator } from "@/components/ui/separator"',
 }

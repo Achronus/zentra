@@ -25,6 +25,7 @@ from cli.templates.ui.content import (
     select_content,
     text_alert_dialog_content,
     text_content,
+    tooltip_content,
 )
 from cli.templates.ui.imports import (
     alert_imports,
@@ -51,7 +52,7 @@ from zentra.ui.control import (
     Toggle,
     ToggleGroup,
 )
-from zentra.ui.notification import Alert, TextAlertDialog
+from zentra.ui.notification import Alert, TextAlertDialog, Tooltip
 from zentra.ui.presentation import Separator
 
 from pydantic import BaseModel
@@ -63,6 +64,7 @@ PARENT_COMPONENTS = [
     "ScrollArea",
     "Toggle",
     "ToggleGroup",
+    "Tooltip",
 ]
 
 # Dictionary of components with containers around them
@@ -157,6 +159,7 @@ COMPONENT_CONTENT_MAPPING = [
     (Select, lambda select: select_content(select)),
     (Alert, lambda alert: alert_content(alert)),
     (TextAlertDialog, lambda ad: text_alert_dialog_content(ad)),
+    (Tooltip, lambda tt: tooltip_content(tt)),
 ]
 
 
@@ -183,6 +186,7 @@ class JSXMappings(BaseModel):
     use_state_map: list[str]
     additional_imports: list[tuple]
     wrappers: dict[str, str]
+    parent_components: list[str]
 
 
 MAPPING_DICT = {
@@ -195,6 +199,7 @@ MAPPING_DICT = {
     "use_state_map": USE_STATE_COMPONENTS,
     "additional_imports": ADDITIONAL_IMPORTS_MAPPING,
     "wrappers": COMPONENTS_TO_WRAP,
+    "parent_components": PARENT_COMPONENTS,
 }
 
 JSX_MAPPINGS = JSXMappings(**MAPPING_DICT)

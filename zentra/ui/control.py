@@ -142,7 +142,7 @@ class Collapsible(Component, ShadcnUi):
 
 class Combobox(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Combobox component.
+    A Zentra model for the [Shadcn/ui Combobox](https://ui.shadcn.com/docs/components/combobox) component.
 
     Parameters:
     - `name` (`string`) - the name of the component
@@ -153,7 +153,7 @@ class Combobox(Component, ShadcnUi):
 
 class DatePicker(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) DatePicker component.
+    A Zentra model for the [Shadcn/ui DatePicker](https://ui.shadcn.com/docs/components/date-picker) component.
 
     Parameters:
     - `name` (`string`) - the name of the component
@@ -680,11 +680,13 @@ class Switch(Component, ShadcnUi):
 
 class Tabs(Component, ShadcnUi):
     """
-    A Zentra model for the [Shadcn/ui](https://ui.shadcn.com/docs/components/) Tabs component.
+    A Zentra model for the [Shadcn/ui Tabs](https://ui.shadcn.com/docs/components/tabs) component.
 
     Parameters:
     - `name` (`string`) - the name of the component
     """
+
+    # TODO: complete after simple
 
 
 class Textarea(Component, ShadcnUi):

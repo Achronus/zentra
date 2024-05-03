@@ -128,7 +128,7 @@ class AlertDialog(Component, ShadcnUi):
 
 class Sonner(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Sonner component.
+    A Zentra model for the [Shadcn/ui Sonner](https://ui.shadcn.com/docs/components/sonner) component.
 
     Parameters:
     - `name` (`str`) - the name of the component
@@ -137,7 +137,7 @@ class Sonner(Component, ShadcnUi):
 
 class Toast(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Toast component.
+    A Zentra model for the [Shadcn/ui Toast](https://ui.shadcn.com/docs/components/toast) component.
 
     Parameters:
     - `name` (`str`) - the name of the component
@@ -146,7 +146,7 @@ class Toast(Component, ShadcnUi):
 
 class Tooltip(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Tooltip component.
+    A Zentra model for the [Shadcn/ui Tooltip](https://ui.shadcn.com/docs/components/tooltip) component.
 
     Parameters:
     - `name` (`str`) - the name of the component

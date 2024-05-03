@@ -5,7 +5,7 @@ from zentra.ui import ShadcnUi
 
 class Accordion(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Accordion component.
+    A Zentra model for the [Shadcn/ui Accordion](https://ui.shadcn.com/docs/components/accordion) component.
 
     Parameters:
     - `name` (`str`) - the name of the component
@@ -14,7 +14,7 @@ class Accordion(Component, ShadcnUi):
 
 class AspectRatio(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) AspectRatio component.
+    A Zentra model for the [Shadcn/ui AspectRatio](https://ui.shadcn.com/docs/components/aspect-ratio) component.
 
     Parameters:
     - `name` (`str`) - the name of the component
@@ -23,7 +23,7 @@ class AspectRatio(Component, ShadcnUi):
 
 class Avatar(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Avatar component.
+    A Zentra model for the [Shadcn/ui Avatar](https://ui.shadcn.com/docs/components/avatar) component.
 
     Parameters:
     - `name` (`str`) - the name of the component
@@ -32,7 +32,7 @@ class Avatar(Component, ShadcnUi):
 
 class Badge(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Badge component.
+    A Zentra model for the [Shadcn/ui Badge](https://ui.shadcn.com/docs/components/badge) component.
 
     Parameters:
     - `name` (`str`) - the name of the component
@@ -41,7 +41,7 @@ class Badge(Component, ShadcnUi):
 
 class Card(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Card component.
+    A Zentra model for the [Shadcn/ui Card](https://ui.shadcn.com/docs/components/card) component.
 
     Parameters:
     - `name` (`str`) - the name of the component
@@ -55,7 +55,7 @@ class Card(Component, ShadcnUi):
 
 class Carousel(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Carousel component.
+    A Zentra model for the [Shadcn/ui Carousel](https://ui.shadcn.com/docs/components/carousel) component.
 
     Parameters:
     - `name` (`str`) - the name of the component
@@ -64,7 +64,7 @@ class Carousel(Component, ShadcnUi):
 
 class DataTable(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) DataTable component.
+    A Zentra model for the [Shadcn/ui DataTable](https://ui.shadcn.com/docs/components/data-table) component.
 
     Parameters:
     - `name` (`str`) - the name of the component
@@ -73,7 +73,7 @@ class DataTable(Component, ShadcnUi):
 
 class HoverCard(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) HoverCard component.
+    A Zentra model for the [Shadcn/ui HoverCard](https://ui.shadcn.com/docs/components/hover-card) component.
 
     Parameters:
     - `name` (`str`) - the name of the component
@@ -82,7 +82,7 @@ class HoverCard(Component, ShadcnUi):
 
 class Progress(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Progress component.
+    A Zentra model for the [Shadcn/ui Progress](https://ui.shadcn.com/docs/components/progress) component.
 
     Parameters:
     - `name` (`str`) - the name of the component
@@ -91,7 +91,7 @@ class Progress(Component, ShadcnUi):
 
 class Resizeable(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Resizeable component.
+    A Zentra model for the [Shadcn/ui Resizeable](https://ui.shadcn.com/docs/components/resizeable) component.
 
     Parameters:
     - `name` (`str`) - the name of the component
@@ -100,7 +100,7 @@ class Resizeable(Component, ShadcnUi):
 
 class Separator(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Separator component.
+    A Zentra model for the [Shadcn/ui Separator](https://ui.shadcn.com/docs/components/separator) component.
 
     Parameters:
     - `styles` (`string, optional`) - an optional set of CSS classes. `None` by default
@@ -113,7 +113,7 @@ class Separator(Component, ShadcnUi):
 
 class Skeleton(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Skeleton component.
+    A Zentra model for the [Shadcn/ui Skeleton](https://ui.shadcn.com/docs/components/skeleton) component.
 
     Parameters:
     - `name` (`str`) - the name of the component
@@ -122,7 +122,7 @@ class Skeleton(Component, ShadcnUi):
 
 class Table(Component, ShadcnUi):
     """
-    A Zentra model for the [shadcn/ui](https://ui.shadcn.com/) Table component.
+    A Zentra model for the [Shadcn/ui Table](https://ui.shadcn.com/docs/components/table) component.
 
     Parameters:
     - `name` (`str`) - the name of the component

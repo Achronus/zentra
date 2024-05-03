@@ -87,6 +87,17 @@ class TestImage:
         builder.run("content", NEXTJS_VALID_VALS_MAP["image"]["content"]["with_url"])
 
     @staticmethod
+    def test_content_static_basic_path():
+        img = Image(
+            src="/profile.png",
+            alt="Photo by author",
+            width=300,
+            height=400,
+        )
+        builder = Builder(img)
+        builder.run("content", NEXTJS_VALID_VALS_MAP["image"]["content"]["basic_path"])
+
+    @staticmethod
     def test_content_static_alt_text():
         img = Image(
             src="http://example.com",

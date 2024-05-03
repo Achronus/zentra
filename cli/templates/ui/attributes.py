@@ -69,10 +69,10 @@ def size_attribute(value: str | int, attr_name: str = "size") -> str:
 def src_attribute(value: str | HttpUrl | StaticImage, attr_name: str = "src") -> str:
     """Returns a string for the `src` attribute based on its given value."""
     if isinstance(value, str):
-        if value.startswith("http"):
-            return str_attr(attr_name, value)
-        elif value.startswith("$"):
+        if value.startswith("$"):
             return param_attr(attr_name, value[1:])
+        else:
+            return str_attr(attr_name, value)
 
     else:
         return param_attr(attr_name, value.name)

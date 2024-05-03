@@ -175,6 +175,7 @@ IMAGE_VALID_VALS = {
         "no_styles": "<Image src={artwork.art} alt={`Photo by {artwork.artist}`} width={300} height={400} />",
         "with_url": '<Image src="http://example.com" alt={`Photo by {artwork.artist}`} width={300} height={400} />',
         "basic_alt": '<Image src="http://example.com" alt="Photo by author" width={300} height={400} />',
+        "basic_path": '<Image src="/profile.png" alt="Photo by author" width={300} height={400} />',
         "static_img_src": "<Image src={profilePic} alt={`Photo by {artwork.artist}`} width={300} height={400} />",
     },
 }

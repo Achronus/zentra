@@ -79,7 +79,7 @@ class Url(BaseModel, NextJs):
 
 class StaticImage(BaseModel, NextJs):
     """
-    A model for [NextJS local images] used within the [NextJS Image](https://nextjs.org/docs/app/api-reference/components/image) component.
+    A model for [NextJS local images](https://nextjs.org/docs/app/building-your-application/optimizing/images#local-images) used within the [NextJS Image](https://nextjs.org/docs/app/api-reference/components/image) component.
 
     Parameter:
     - `name` (`string`) - the import variable name for the image. Must be `lowercase` or `camelCase`, a `single world` and up to a maximum of `30` characters
@@ -121,7 +121,11 @@ class Image(Component, NextJs):
     A Zentra model for the [NextJS Image](https://nextjs.org/docs/app/api-reference/components/image) component.
 
     Parameter:
-    - `src` (`string | HttpUrl | zentra.nextjs.StaticImage`) - a path string to an image represented by the `StaticImage` model, an absolute external URL denoted by `http`, or a parameter, signified by a `$` at the start of the parameter name. Choosing a parameter is useful when using the `Image` inside an `iterable` function like `zentra.js.Map`
+    - `src` (`string | HttpUrl | zentra.nextjs.StaticImage`) - can be either:
+        1. A path string (e.g., `/profile.png`)
+        2. A statically imported image file represented by a `StaticImage` model
+        3. An absolute external URL denoted by `http`
+        4. Or a parameter, signified by a `$` at the start of the parameter name. Parameters are useful when using the `Image` inside an `iterable` function like `zentra.js.Map`
     - `width` (`integer`) - a static width for the image
     - `height` (`integer`) - a static height for the image
     - `alt` (`string`) - an `alt` tag used to describe the image for screen readers and search engines. Also, acts as fallback text if the image is disabled, errors, or fails to load. Can also include parameters, signified by a `$` at the start of the parameter name. This is useful when using the `Image` inside an `iterable` function like `zentra.js.Map`
@@ -148,7 +152,7 @@ class Image(Component, NextJs):
     />
     ```
 
-    2. Using a remote image or path string.
+    2. Using an external URL.
     ```python
     from zentra.nextjs import Image
 
@@ -182,6 +186,23 @@ class Image(Component, NextJs):
         height={500}
         alt={`Picture of the ${author} ${name}`}
     />
+
+    4. Using a path string.
+    ```python
+    from zentra.nextjs import Image
+
+    Image(src='/profile.png', width=500, height=500, alt='Picture of the author')
+    ```
+    JSX equivalent ->
+    ```jsx
+    import Image from 'next/image'
+
+    <Image
+        src="/profile.png"
+        width={500}
+        height={500}
+        alt="Picture of the author"
+    />
     ```
     """
 
@@ -196,10 +217,10 @@ class Image(Component, NextJs):
     def validate_src(
         cls, src: str | HttpUrl | StaticImage
     ) -> str | HttpUrl | StaticImage:
-        if isinstance(src, str) and not src.startswith(("$", "http")):
+        if isinstance(src, str) and not src.startswith(("$", "http", "/")):
             raise PydanticCustomError(
                 "invalid_string_value",
-                "when 'string' must be a 'parameter' (start with '$') or 'url' (start with 'http')\n",
+                "when 'string' must be a 'parameter' (start with '$'), a path string (start with '/'), or 'url' (start with 'http')\n",
                 dict(wrong_value=src),
             )
 

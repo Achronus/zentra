@@ -392,7 +392,13 @@ class InnerContentBuilder:
             self.storage.imports.append(import_str)
 
         else:
-            inner_content, storage = self.controller.build_component(self.content)
+            if isinstance(self.content, NextJs):
+                inner_content, storage = self.controller.build_nextjs_component(
+                    self.content
+                )
+            else:
+                inner_content, storage = self.controller.build_component(self.content)
+
             storage.imports = str_to_list(storage.imports)
             self.storage = add_to_storage(self.storage, storage, extend=True)
 

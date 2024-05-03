@@ -138,6 +138,14 @@ ALERT_DIALOG_VALID_VALS = {
 }
 
 
+# UI PRESENTATION COMPONENTS
+SEPARATOR_VALID_VALS = {
+    "content": {
+        "simple": '<Separator orientation="vertical" />',
+        "full": '<Separator className="mx-4" orientation="horizontal" />',
+    }
+}
+
 VALID_VALS_MAP = {
     "calendar": CALENDAR_VALID_VALS,
     "checkbox": CHECKBOX_VALID_VALS,
@@ -155,6 +163,7 @@ VALID_VALS_MAP = {
     "toggle_group": TOGGLE_GROUP_VALID_VALS,
     "alert": ALERT_VALID_VALS,
     "alert_dialog": ALERT_DIALOG_VALID_VALS,
+    "separator": SEPARATOR_VALID_VALS,
 }
 
 

@@ -38,6 +38,8 @@ VALID_IMPORTS = {
     "alert_dialog": {
         "simple": 'import { AlertDialog, AlertDialogPortal, AlertDialogOverlay, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from "@/components/ui/alert-dialog"'
     },
+    # PRESENTATION COMPONENTS
+    "separator": 'import { Separator } from "@/components/ui/separator"',
 }
 
 

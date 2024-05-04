@@ -1,6 +1,6 @@
 ## THIS TOOL IS A WORK IN PROGRESS, PLEASE WAIT UNTIL A VERSION RELEASE.
 
-_Last updated 02/05/2024_
+_Last updated 04/05/2024_
 
 ![Logo](/docs/assets/imgs/zentra-logo.jpg)
 
@@ -29,7 +29,7 @@ Core component libraries and custom models in development:
 - [X] Custom HTML Models (4/4)
 - [ ] Custom JavaScript Models (1/2)
 - [ ] Custom Form Models (0/13)
-- [ ] [Shadcn/ui](https://ui.shadcn.com/) (16/48)
+- [ ] [Shadcn/ui](https://ui.shadcn.com/) (18/48)
 - [ ] [NextJS](https://nextjs.org/docs/app/api-reference/components) (2/4)
 - [X] [Uploadthing](https://docs.uploadthing.com/getting-started/appdir) (1/1)
 - [X] [Lucide React Icons](https://lucide.dev/guide/packages/lucide-react) (1/1 - 1 component for all icons)
@@ -155,7 +155,7 @@ In the future, `blocks` will be used for `3` and a custom `Data` model for `2`.
 
 ## When Will Zentra Be Officially Released?
 
-We are working hard to release an official version (`v0.0.1`) by the end of `May/June 2024`. This will include the full core functionality listed in the [components](#components) section above, plus a working CLI, and detailed API documentation.
+We are working hard to release an official version (`v0.1.0`) by the end of `May/June 2024`. This will include the full core functionality listed in the [components](#components) section above, plus a working CLI, and detailed API documentation.
 
 Our goal is to provide a quality open-source product that works 'out-of-the-box' that everyone can experiment with, and then gradually fix unexpected bugs and introduce more component libraries on the road to a `v1.0.0` release.
 

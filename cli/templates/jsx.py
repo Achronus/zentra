@@ -25,6 +25,7 @@ from zentra.nextjs import Link, NextJs
 from zentra.ui import Form
 from zentra.ui.control import Button, InputOTP, ToggleGroup
 from zentra.ui.notification import Tooltip
+from zentra.ui.presentation import Avatar
 
 
 FORM_SCHEMA_BASE = """
@@ -256,6 +257,8 @@ class ParentComponentBuilder:
         shell, storage = self.controller.build_component(model, full_shell=True)
         self.storage = add_to_storage(self.storage, storage)
 
+        # TODO: refactor to remove need for attributes + specific models
+        # Need better DRY code!
         if hasattr(model, "content"):
             builder = InnerContentBuilder(
                 component=model,
@@ -279,6 +282,11 @@ class ParentComponentBuilder:
 
         if isinstance(model, Tooltip):
             return self.handle_tooltip_content(model, shell)
+
+        elif isinstance(model, Avatar):
+            inner_content, storage = self.handle_avatar_content(model)
+            self.storage = add_to_storage(self.storage, storage)
+        # Refactor end
 
         self.storage.imports = compress_imports(self.storage.imports)
         return [shell[0], *inner_content, *shell[1:]]
@@ -328,6 +336,12 @@ class ParentComponentBuilder:
             *trigger_close,
             "</TooltipProvider>",
         ]
+
+    def handle_avatar_content(self, model: Avatar) -> list[str]:
+        """Creates the inner content for the `Avatar` model. Returns the content with the storage container as a tuple: `(content, multi_comp_storage)`."""
+        inner_content, storage = self.controller.build_component(model.img)
+        inner_content[0] = inner_content[0].replace("Avatar", "AvatarImage")
+        return inner_content, storage
 
 
 class BuildController:
@@ -862,6 +876,9 @@ class AttributeBuilder:
         """Builds the attributes from a mapping for the component."""
         attrs = []
 
+        # TODO: refactor mappings from list[tuple] -> dict[str, callable]
+        # + reduce iterations to available model parameters only
+        # E.g., mapping[attr_name](value)
         for attr_name, condition in self.maps.common_attrs:
             if hasattr(self.component, attr_name):
                 value = getattr(self.component, attr_name)
@@ -879,6 +896,7 @@ class AttributeBuilder:
 
                 if value is not None:
                     attrs.extend(value)
+        # refactor end
 
         return remove_none(attrs)
 

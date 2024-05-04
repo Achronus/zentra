@@ -199,6 +199,15 @@ def tooltip_details() -> ComponentDetails:
     )
 
 
+def avatar_details() -> ComponentDetails:
+    return ComponentDetails(
+        library="ui",
+        filename="avatar.jsx",
+        name="Avatar",
+        child_names=["AvatarImage", "AvatarFallback"],
+    )
+
+
 def component_details() -> list[ComponentDetails]:
     return [
         button_details(),
@@ -221,6 +230,7 @@ def component_details() -> list[ComponentDetails]:
         alert_dialog_details(),
         separator_details(),
         tooltip_details(),
+        avatar_details(),
     ]
 
 
@@ -245,4 +255,5 @@ COMPONENT_DETAILS_MAPPING = {
     "AlertDialog": alert_dialog_details(),
     "Separator": separator_details(),
     "Tooltip": tooltip_details(),
+    "Avatar": avatar_details(),
 }

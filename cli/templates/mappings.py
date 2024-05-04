@@ -17,6 +17,7 @@ from cli.templates.ui.attributes import (
 )
 from cli.templates.ui.content import (
     alert_content,
+    avatar_content,
     checkbox_content,
     collapsible_content,
     div_content,
@@ -53,7 +54,7 @@ from zentra.ui.control import (
     ToggleGroup,
 )
 from zentra.ui.notification import Alert, TextAlertDialog, Tooltip
-from zentra.ui.presentation import Separator
+from zentra.ui.presentation import Avatar, AvatarImage, Separator
 
 from pydantic import BaseModel
 
@@ -144,7 +145,7 @@ ADDITIONAL_IMPORTS_MAPPING = [
     (InputOTP, "pattern", lambda pattern: input_opt_imports(pattern)),
     (RadioGroup, "default_value", lambda _: radio_group_imports()),
     (StaticImage, "all", lambda img: static_img_imports(img)),
-    (Image, "src", lambda src: image_imports(src)),
+    (Image | AvatarImage, "src", lambda src: image_imports(src)),
     (Slider, "value", lambda _: slider_imports()),
     (Alert, "icon", lambda icon: alert_imports(icon)),
 ]
@@ -160,6 +161,7 @@ COMPONENT_CONTENT_MAPPING = [
     (Alert, lambda alert: alert_content(alert)),
     (TextAlertDialog, lambda ad: text_alert_dialog_content(ad)),
     (Tooltip, lambda tt: tooltip_content(tt)),
+    (Avatar, lambda avatar: avatar_content(avatar)),
 ]
 
 

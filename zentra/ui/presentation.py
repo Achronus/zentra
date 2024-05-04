@@ -1,5 +1,8 @@
+from pydantic import Field, HttpUrl, PrivateAttr, field_validator
+from pydantic_core import PydanticCustomError
 from zentra.core import Component
 from zentra.core.enums.ui import Orientation
+from zentra.nextjs import StaticImage
 from zentra.ui import ShadcnUi
 
 
@@ -21,13 +24,53 @@ class AspectRatio(Component, ShadcnUi):
     """
 
 
+class AvatarImage(Component, ShadcnUi):
+    """
+    A helper Zentra model for the [Shadcn/ui Avatar](https://ui.shadcn.com/docs/components/avatar) component. Creates the image for the `Avatar`.
+
+    Parameters:
+    - `src` (`string | HttpUrl | zentra.nextjs.StaticImage`) - can be either:
+        1. A path string (e.g., `/profile.png`)
+        2. A statically imported image file represented by a `StaticImage` model
+        3. An absolute external URL denoted by `http`
+        4. Or a parameter, signified by a `$` at the start of the parameter name
+    - `alt` (`string`) - an `alt` tag used to describe the image for screen readers and search engines. Also, acts as fallback text if the image is disabled, errors, or fails to load. Can also include parameters, signified by a `$` at the start of the parameter name
+    """
+
+    src: str | HttpUrl | StaticImage
+    alt: str
+
+    _classname = PrivateAttr(default="Avatar")
+
+    @field_validator("src")
+    def validate_src(
+        cls, src: str | HttpUrl | StaticImage
+    ) -> str | HttpUrl | StaticImage:
+        if isinstance(src, str) and not src.startswith(("$", "http", "/")):
+            raise PydanticCustomError(
+                "invalid_string_value",
+                "when 'string' must be a 'parameter' (start with '$'), a path string (start with '/'), or 'url' (start with 'http')\n",
+                dict(wrong_value=src),
+            )
+
+        return src
+
+
 class Avatar(Component, ShadcnUi):
     """
     A Zentra model for the [Shadcn/ui Avatar](https://ui.shadcn.com/docs/components/avatar) component.
 
     Parameters:
-    - `name` (`str`) - the name of the component
+    - `img` (`zentra.ui.presentation.AvatarImg`) - an `AvatarImage` Zentra model
+    - `fallback_text` (`string`) - the fallback text if the avatar image doesn't load. Up to a maximum of `2` characters
     """
+
+    img: AvatarImage
+    fallback_text: str = Field(min_length=1, max_length=2)
+
+    @field_validator("fallback_text")
+    def validate_fallback_text(cls, text: str) -> str:
+        return text.upper()
 
 
 class Badge(Component, ShadcnUi):

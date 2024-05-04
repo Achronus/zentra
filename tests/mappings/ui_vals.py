@@ -153,6 +153,14 @@ SEPARATOR_VALID_VALS = {
     }
 }
 
+AVATAR_VALID_VALS = {
+    "content": {
+        "url": '<Avatar>\n<AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />\n<AvatarFallback>CN</AvatarFallback>\n</Avatar>',
+        "path": '<Avatar>\n<AvatarImage src="/profile.png" alt={`Awesome photo of {me}`} />\n<AvatarFallback>AA</AvatarFallback>\n</Avatar>',
+        "static_img": "<Avatar>\n<AvatarImage src={profilePic} alt={`Awesome photo of {me}`} />\n<AvatarFallback>AA</AvatarFallback>\n</Avatar>",
+    }
+}
+
 VALID_VALS_MAP = {
     "calendar": CALENDAR_VALID_VALS,
     "checkbox": CHECKBOX_VALID_VALS,
@@ -172,6 +180,7 @@ VALID_VALS_MAP = {
     "alert_dialog": ALERT_DIALOG_VALID_VALS,
     "separator": SEPARATOR_VALID_VALS,
     "tooltip": TOOLTIP_VALID_VALS,
+    "avatar": AVATAR_VALID_VALS,
 }
 
 

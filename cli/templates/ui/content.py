@@ -13,6 +13,7 @@ from zentra.ui.control import (
     SelectGroup,
 )
 from zentra.ui.notification import Alert, TextAlertDialog, Tooltip
+from zentra.ui.presentation import Avatar
 
 
 def param_reformat_helper(text: str) -> list[str]:
@@ -202,6 +203,11 @@ def tooltip_content(tt: Tooltip) -> list[str]:
         f"<p>{tt.text}</p>",
         "</TooltipContent>",
     ]
+
+
+def avatar_content(avatar: Avatar) -> list[str]:
+    """Returns a list of strings for the Avatar content based on the components attributes."""
+    return [f"<AvatarFallback>{avatar.fallback_text}</AvatarFallback>"]
 
 
 def text_content(

@@ -83,3 +83,10 @@ class ToggleSize(str, Enum):
 class AlertVariant(str, Enum):
     DEFAULT = "default"
     DESTRUCTIVE = "destructive"
+
+
+class BadgeVariant(str, Enum):
+    DEFAULT = "default"
+    SECONDARY = "secondary"
+    DESTRUCTIVE = "destructive"
+    OUTLINE = "outline"

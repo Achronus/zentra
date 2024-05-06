@@ -6,7 +6,7 @@ from tests.templates.details import COMPONENT_DETAILS_MAPPING
 from tests.templates.helper import SimpleCompBuilder, ParentCompBuilder
 
 from zentra.nextjs import StaticImage
-from zentra.ui.presentation import Avatar, AvatarImage, Separator
+from zentra.ui.presentation import Avatar, AvatarImage, Badge, Separator
 
 
 class TestSeparator:
@@ -101,3 +101,33 @@ class TestAvatar:
         wrapper_static.comp_other(
             "imports", VALID_IMPORTS["avatar"]["static_img"], list_output=True
         )
+
+
+class TestBadge:
+    @pytest.fixture
+    def badge(self) -> Badge:
+        return Badge(text="Badge")
+
+    @pytest.fixture
+    def badge_outline(self) -> Badge:
+        return Badge(text="Badge", variant="outline")
+
+    @pytest.fixture
+    def wrapper(self, badge: Badge) -> SimpleCompBuilder:
+        return SimpleCompBuilder(badge, COMPONENT_DETAILS_MAPPING["Badge"])
+
+    @pytest.fixture
+    def wrapper_outline(self, badge_outline: Badge) -> SimpleCompBuilder:
+        return SimpleCompBuilder(badge_outline, COMPONENT_DETAILS_MAPPING["Badge"])
+
+    @staticmethod
+    def test_content_str(wrapper: SimpleCompBuilder):
+        wrapper.run("content", VALID_VALS_MAP["badge"]["content"]["simple"])
+
+    @staticmethod
+    def test_content_str_outline(wrapper_outline: SimpleCompBuilder):
+        wrapper_outline.run("content", VALID_VALS_MAP["badge"]["content"]["variant"])
+
+    @staticmethod
+    def test_import_str(wrapper: SimpleCompBuilder):
+        wrapper.run("imports", VALID_IMPORTS["badge"])

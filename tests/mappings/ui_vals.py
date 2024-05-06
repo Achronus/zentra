@@ -161,6 +161,13 @@ AVATAR_VALID_VALS = {
     }
 }
 
+BADGE_VALID_VALS = {
+    "content": {
+        "simple": "<Badge>\nBadge\n</Badge>",
+        "variant": '<Badge variant="outline">\nBadge\n</Badge>',
+    }
+}
+
 VALID_VALS_MAP = {
     "calendar": CALENDAR_VALID_VALS,
     "checkbox": CHECKBOX_VALID_VALS,
@@ -181,6 +188,7 @@ VALID_VALS_MAP = {
     "separator": SEPARATOR_VALID_VALS,
     "tooltip": TOOLTIP_VALID_VALS,
     "avatar": AVATAR_VALID_VALS,
+    "badge": BADGE_VALID_VALS,
 }
 
 

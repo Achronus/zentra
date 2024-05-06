@@ -208,6 +208,15 @@ def avatar_details() -> ComponentDetails:
     )
 
 
+def badge_details() -> ComponentDetails:
+    return ComponentDetails(
+        library="ui",
+        filename="badge.jsx",
+        name="Badge",
+        child_names=[],
+    )
+
+
 def component_details() -> list[ComponentDetails]:
     return [
         button_details(),
@@ -231,6 +240,7 @@ def component_details() -> list[ComponentDetails]:
         separator_details(),
         tooltip_details(),
         avatar_details(),
+        badge_details(),
     ]
 
 
@@ -256,4 +266,5 @@ COMPONENT_DETAILS_MAPPING = {
     "Separator": separator_details(),
     "Tooltip": tooltip_details(),
     "Avatar": avatar_details(),
+    "Badge": badge_details(),
 }

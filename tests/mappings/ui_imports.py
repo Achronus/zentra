@@ -55,6 +55,7 @@ VALID_IMPORTS = {
             "import { Avatar, AvatarFallback, AvatarImage } from './me.png'",
         ],
     },
+    "badge": 'import { Badge } from "@/components/ui/badge"',
 }
 
 

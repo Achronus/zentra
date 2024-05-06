@@ -1,7 +1,7 @@
 from pydantic import Field, HttpUrl, PrivateAttr, field_validator
 from pydantic_core import PydanticCustomError
 from zentra.core import Component
-from zentra.core.enums.ui import Orientation
+from zentra.core.enums.ui import BadgeVariant, Orientation
 from zentra.nextjs import StaticImage
 from zentra.ui import ShadcnUi
 
@@ -78,8 +78,12 @@ class Badge(Component, ShadcnUi):
     A Zentra model for the [Shadcn/ui Badge](https://ui.shadcn.com/docs/components/badge) component.
 
     Parameters:
-    - `name` (`str`) - the name of the component
+    - `text` (`string`) - the descriptive text to put into the badge. Can include parameter variables (indicated by starting the variable name with a `$`)
+    - `variant` (`string, optional`) - the style of the badge. Valid options: `['default', 'secondary', 'destructive', 'outline']`. `default` by default
     """
+
+    text: str = Field(min_length=1)
+    variant: BadgeVariant = "default"
 
 
 class Card(Component, ShadcnUi):

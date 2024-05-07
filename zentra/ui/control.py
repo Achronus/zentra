@@ -60,6 +60,10 @@ class Calendar(Component, ShadcnUi):
 
     name: str = Field(min_length=1, max_length=15)
 
+    @property
+    def custom_common_attributes(self) -> list[str]:
+        return ["name"]
+
     @field_validator("name")
     def validate_id(cls, name: str) -> str:
         if not has_valid_pattern(pattern=LOWER_CAMELCASE_WITH_DIGITS, value=name):
@@ -128,6 +132,10 @@ class Collapsible(Component, ShadcnUi):
     name: str = Field(min_length=1, max_length=15)
     title: str = Field(min_length=1)
     items: list[str] = Field(min_length=1)
+
+    @property
+    def custom_common_attributes(self) -> list[str]:
+        return ["name"]
 
     @field_validator("name")
     def validate_id(cls, name: str) -> str:
@@ -281,6 +289,10 @@ class InputOTP(Component, ShadcnUi):
     num_inputs: int = Field(ge=1)
     num_groups: int = Field(default=1, ge=1)
     pattern: InputOTPPatterns | str = None
+
+    @property
+    def custom_common_attributes(self) -> list[str]:
+        return ["pattern"]
 
     @field_validator("num_groups")
     def validate_num_groups(num_groups: int, info: ValidationInfo) -> int:
@@ -631,6 +643,10 @@ class Slider(Component, ShadcnUi):
     name: str = None
     disabled: bool = False
     orientation: Orientation = "horizontal"
+
+    @property
+    def custom_common_attributes(self) -> list[str]:
+        return ["value"]
 
     @field_validator("name")
     def validate_name(cls, name: str) -> str:

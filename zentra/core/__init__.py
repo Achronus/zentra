@@ -39,6 +39,16 @@ class Component(BaseModel):
         """Stores the classname for the JSX builder."""
         return self._classname if self._classname else self.__class__.__name__
 
+    @property
+    def inner_attributes(self) -> list[str]:
+        """Returns a list of the attributes that are used in the components sub-components."""
+        return []
+
+    @property
+    def custom_common_attributes(self) -> list[str]:
+        """Returns a list of the attributes that use the same name as a common attribute, but act differently with this specific component."""
+        return []
+
 
 class DataArray(BaseModel):
     """

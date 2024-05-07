@@ -8,8 +8,8 @@ from cli.templates.utils import (
     compress_imports,
     dedupe,
     compress,
-    str_to_list,
     remove_none,
+    str_to_list,
 )
 from cli.templates.storage import (
     JSXComponentContentStorage,
@@ -483,7 +483,11 @@ class IconBuilder:
         self.model = model
         self.maps = mappings
 
-        self.attrs = AttributeBuilder(component=model, mappings=mappings)
+        self.attrs = AttributeBuilder(
+            component=model,
+            common_mapping=mappings.common_attrs,
+            component_mapping=mappings.component_attrs,
+        )
 
     def build(self) -> tuple[list[str], str]:
         """Creates the JSX for the model and return its details as a tuple in the form of: `(content, import_str)`."""
@@ -521,7 +525,11 @@ class NextJSComponentBuilder:
         self.maps = mappings
 
         self.storage = JSXComponentContentStorage()
-        self.attrs = AttributeBuilder(component=component, mappings=mappings)
+        self.attrs = AttributeBuilder(
+            component=component,
+            common_mapping=mappings.common_attrs,
+            component_mapping=mappings.component_attrs,
+        )
         self.content = ContentBuilder(component=component, mappings=mappings)
 
     def build(self) -> None:
@@ -710,7 +718,11 @@ class HTMLContentBuilder:
 
     def get_content(self, model: HTMLTag) -> list[str]:
         """A helper function to build the content of the HTMLTag and returns it as a list of strings."""
-        attr_builder = AttributeBuilder(component=model, mappings=self.maps)
+        attr_builder = AttributeBuilder(
+            component=model,
+            common_mapping=self.maps.common_attrs,
+            component_mapping=self.maps.component_attrs,
+        )
         content_builder = ContentBuilder(component=model, mappings=self.maps)
 
         attributes = " ".join(attr_builder.build())
@@ -804,7 +816,11 @@ class ComponentBuilder:
         self.maps = mappings
 
         self.storage = JSXComponentContentStorage()
-        self.attrs = AttributeBuilder(component=component, mappings=mappings)
+        self.attrs = AttributeBuilder(
+            component=component,
+            common_mapping=mappings.common_attrs,
+            component_mapping=mappings.component_attrs,
+        )
         self.imports = ImportBuilder(
             component=component,
             mappings=mappings,
@@ -866,37 +882,49 @@ class FormBuilder:
 
 
 class AttributeBuilder:
-    """A builder for creating Zentra `Component` attributes."""
+    """
+    A builder for creating Zentra `Component` attributes.
 
-    def __init__(self, component: Component, mappings: JSXMappings) -> None:
+    Parameters:
+    - `component` (`zentra.core.Component`) - any Zentra Component model
+    - `common_mapping` (`dictionary[string, callable]`) - a mapping containing common attributes across all components. With a `{key: value}` pair = `{attr_name, attr_func}`
+    - `component_mapping` (`dictionary[string, callable]`) - a mapping containing unique component specific logic. With a `{key: value}` pair = `{component_name: attr_func}`.
+    """
+
+    def __init__(
+        self,
+        component: Component,
+        common_mapping: dict[str, callable],
+        component_mapping: dict[str, callable],
+    ) -> None:
         self.component = component
-        self.maps = mappings
+        self.common_map = common_mapping
+        self.component_map = component_mapping
+
+    def get_common_attr(self, key: str, value: int | str | bool) -> str:
+        """Retrieves an attribute string from the common attribute mapping given a key, value pair."""
+        return self.common_map[key](value)
+
+    def get_component_attrs(self, component: Component) -> list[str]:
+        """Retrieves a list of unique attribute strings for a given component from the component attribute mapping."""
+        return self.component_map[component.classname](component)
 
     def build(self) -> list[str]:
         """Builds the attributes from a mapping for the component."""
         attrs = []
 
-        # TODO: refactor mappings from list[tuple] -> dict[str, callable]
-        # + reduce iterations to available model parameters only
-        # E.g., mapping[attr_name](value)
-        for attr_name, condition in self.maps.common_attrs:
-            if hasattr(self.component, attr_name):
-                value = getattr(self.component, attr_name)
-                if value is not None:
-                    attrs.append(condition(value))
+        for attr_name, value in self.component.model_dump().items():
+            if value is not None:
+                if attr_name in self.common_map.keys() and (
+                    attr_name not in self.component.inner_attributes
+                    and attr_name not in self.component.custom_common_attributes
+                ):
+                    attr_str = self.get_common_attr(attr_name, value)
+                    attrs.append(attr_str)
 
-        for item in self.maps.component_attrs:
-            comp_type, attr_name, condition = item
-            if isinstance(self.component, comp_type):
-                if attr_name == "all":
-                    value = condition(self.component)
-                else:
-                    value = getattr(self.component, attr_name)
-                    value = condition(value)
-
-                if value is not None:
-                    attrs.extend(value)
-        # refactor end
+        if self.component.classname in self.component_map.keys():
+            attr_list = self.get_component_attrs(self.component)
+            attrs.extend(attr_list)
 
         return remove_none(attrs)
 

@@ -1,5 +1,4 @@
 from typing import Callable
-
 from pydantic_core import Url
 
 from cli.templates.ui.attributes import (
@@ -39,22 +38,19 @@ from cli.templates.ui.imports import (
 )
 from cli.templates.ui.logic import calendar_logic, collapsible_logic
 from zentra.core.html import Div
-from zentra.nextjs import Image, Link, StaticImage
+from zentra.nextjs import Image, StaticImage
 from zentra.ui.control import (
     Calendar,
     Checkbox,
     Collapsible,
     InputOTP,
-    Label,
     RadioGroup,
     ScrollArea,
     Select,
     Slider,
-    Toggle,
-    ToggleGroup,
 )
 from zentra.ui.notification import Alert, TextAlertDialog, Tooltip
-from zentra.ui.presentation import Avatar, AvatarImage, Separator
+from zentra.ui.presentation import Avatar
 
 from pydantic import BaseModel
 
@@ -89,55 +85,48 @@ USE_STATE_COMPONENTS = [
     "Collapsible",
 ]
 
-# (component_type, attribute_name, lambda_expression)
-COMPONENT_ATTR_MAPPING = [
-    (Calendar, "name", lambda name: calendar_attributes(name)),
-    (Collapsible, "name", lambda name: collapsible_attributes(name)),
-    (InputOTP, "pattern", lambda pattern: input_otp_attributes(pattern)),
-    (Label, "name", lambda name: [str_attr("htmlFor", name)]),
-    (RadioGroup, "default_value", lambda dv: [str_attr("defaultValue", dv)]),
-    (
-        Separator | ToggleGroup,
-        "orientation",
-        lambda val: [str_attr("orientation", val)],
-    ),
-    (Link, "all", lambda comp: nextjs_link_attributes(comp)),
-    (Slider, "all", lambda slider: slider_attributes(slider)),
-    (Toggle, "all", lambda toggle: toggle_attributes(toggle)),
-]
 
-# (attribute_name, lambda_expression)
-COMMON_ATTR_MAPPING = [
-    ("id", lambda value: str_attr("id", value)),
-    ("url", lambda value: "asChild" if value else None),
-    (
-        "href",
-        lambda value: str_attr("href", value)
-        if isinstance(value, (str, Url))
-        else None,
-    ),
-    ("type", lambda value: str_attr("type", value)),
-    ("placeholder", lambda value: str_attr("placeholder", value)),
-    (
-        "variant",
-        lambda value: str_attr("variant", value) if value != "default" else None,
-    ),
-    ("size", lambda value: size_attribute(value) if value else None),
-    ("disabled", lambda value: "disabled" if value else None),
-    ("apiEndpoint", lambda value: str_attr("apiEndpoint", value)),
-    ("num_inputs", lambda value: param_attr("maxLength", value)),
-    ("key", lambda key: param_attr("key", key[1:]) if key else None),
-    ("target", lambda value: str_attr("target", value) if value else None),
-    ("styles", lambda value: str_attr("className", value) if value else None),
-    ("src", lambda value: src_attribute(value) if value else None),
-    ("alt", lambda alt: alt_attribute(alt) if alt else None),
-    ("width", lambda width: param_attr("width", width) if width else None),
-    ("height", lambda height: param_attr("height", height) if height else None),
-    ("checked", lambda checked: param_attr("checked", str(checked).lower())),
-    ("pressed", lambda pressed: param_attr("pressed", str(pressed).lower())),
-    ("color", lambda value: str_attr("color", value) if value else None),
-    ("stroke_width", lambda value: param_attr("strokeWidth", value) if value else None),
-]
+COMPONENT_ATTR_MAPPING = {
+    "Calendar": lambda comp: calendar_attributes(comp),
+    "Collapsible": lambda comp: collapsible_attributes(comp),
+    "InputOTP": lambda comp: input_otp_attributes(comp),
+    "Link": lambda comp: nextjs_link_attributes(comp),
+    "Slider": lambda comp: slider_attributes(comp),
+    "Toggle": lambda comp: toggle_attributes(comp),
+}
+
+
+COMMON_ATTR_MAPPING = {
+    "id": lambda value: str_attr("id", value),
+    "url": lambda _: "asChild",
+    "href": lambda value: str_attr("href", value)
+    if isinstance(value, (str, Url))
+    else None,
+    "name": lambda value: str_attr("htmlFor", value),
+    "type": lambda value: str_attr("type", value),
+    "placeholder": lambda value: str_attr("placeholder", value),
+    "variant": lambda value: str_attr("variant", value) if value != "default" else None,
+    "size": lambda value: size_attribute(value),
+    "disabled": lambda _: "disabled",
+    "apiEndpoint": lambda value: str_attr("apiEndpoint", value),
+    "num_inputs": lambda value: param_attr("maxLength", value),
+    "key": lambda key: param_attr("key", key),
+    "target": lambda value: str_attr("target", value),
+    "styles": lambda value: str_attr("className", value),
+    "src": lambda value: src_attribute(value),
+    "alt": lambda alt: alt_attribute(alt),
+    "width": lambda width: param_attr("width", width),
+    "height": lambda height: param_attr("height", height),
+    "checked": lambda checked: param_attr("checked", checked),
+    "pressed": lambda pressed: param_attr("pressed", pressed),
+    "color": lambda value: str_attr("color", value),
+    "stroke_width": lambda value: param_attr("strokeWidth", value),
+    "min": lambda value: param_attr("min", value),
+    "max": lambda value: param_attr("max", value),
+    "step": lambda value: param_attr("step", value),
+    "orientation": lambda value: str_attr("orientation", value),
+    "default_value": lambda value: str_attr("defaultValue", value),
+}
 
 
 ADDITIONAL_IMPORTS_MAPPING = [
@@ -145,7 +134,7 @@ ADDITIONAL_IMPORTS_MAPPING = [
     (InputOTP, "pattern", lambda pattern: input_opt_imports(pattern)),
     (RadioGroup, "default_value", lambda _: radio_group_imports()),
     (StaticImage, "all", lambda img: static_img_imports(img)),
-    (Image | AvatarImage, "src", lambda src: image_imports(src)),
+    (Image | Avatar, "src", lambda src: image_imports(src)),
     (Slider, "value", lambda _: slider_imports()),
     (Alert, "icon", lambda icon: alert_imports(icon)),
 ]
@@ -179,8 +168,8 @@ COMMON_LOGIC_MAPPING = [
 class JSXMappings(BaseModel):
     """A storage container for JSX mappings."""
 
-    common_attrs: list[tuple[str, Callable]]
-    component_attrs: list[tuple]
+    common_attrs: dict[str, Callable]
+    component_attrs: dict[str, Callable]
     common_content: list[tuple]
     component_content: list[tuple]
     common_logic: list[tuple]

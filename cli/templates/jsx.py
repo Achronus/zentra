@@ -522,7 +522,8 @@ class NextJSComponentBuilder:
         )
         self.import_builder = ImportBuilder(
             component=component,
-            mappings=mappings,
+            additional_imports_mapping=mappings.additional_imports,
+            use_state_mapping=mappings.use_state_map,
             child_names=[],
         )
         self.content = ContentBuilder(component=component, mappings=mappings)
@@ -798,10 +799,14 @@ class ComponentBuilder:
         )
         self.imports = ImportBuilder(
             component=component,
-            mappings=mappings,
+            additional_imports_mapping=mappings.additional_imports,
+            use_state_mapping=mappings.use_state_map,
             child_names=details.child_names,
         )
-        self.logic = LogicBuilder(component=component, mappings=mappings)
+        self.logic = LogicBuilder(
+            component=component,
+            logic_mapping=mappings.common_logic,
+        )
         self.content = ContentBuilder(component=component, mappings=mappings)
 
     def build(self, full_shell: bool = False) -> None:
@@ -930,11 +935,15 @@ class ImportBuilder:
     """A builder for creating Zentra `Component` import statements."""
 
     def __init__(
-        self, component: Component, mappings: JSXMappings, child_names: list[str]
+        self,
+        component: Component,
+        additional_imports_mapping: dict[str, Callable],
+        use_state_mapping: dict[str, Callable],
+        child_names: list[str],
     ) -> None:
         self.component = component
-        self.additional_map = mappings.additional_imports
-        self.use_state_map = mappings.use_state_map
+        self.additional_map = additional_imports_mapping
+        self.use_state_map = use_state_mapping
         self.child_names = child_names
 
     def build(self) -> list[str]:
@@ -958,7 +967,7 @@ class ImportBuilder:
             "'", " "
         )
 
-    def get_imports_from_map(self) -> str:
+    def get_imports_from_map(self) -> list[str]:
         """A helper function to retrieve the additional imports from the `additional_map` for the component."""
         return self.additional_map[self.component.classname](self.component)
 
@@ -970,10 +979,10 @@ class ImportBuilder:
             isinstance(self.component, Component)
             and self.component.classname in self.additional_map.keys()
         ):
-            attr_list = self.get_imports_from_map()
+            import_list = self.get_imports_from_map()
 
-            if attr_list is not None:
-                imports.extend(attr_list)
+            if import_list is not None:
+                imports.extend(import_list)
 
         if len(imports) == 0:
             return None
@@ -1068,19 +1077,27 @@ class ContentBuilder:
 class LogicBuilder:
     """A builder for creating the Zentra `Component` function logic created above the `return` statement."""
 
-    def __init__(self, component: Component, mappings: JSXMappings) -> None:
+    def __init__(
+        self, component: Component, logic_mapping: dict[str, Callable]
+    ) -> None:
         self.component = component
-        self.maps = mappings
+        self.logic_map = logic_mapping
+
+    def get_logic_list(self) -> list[str]:
+        """A helper function to retrieve the logic statements from the `logic_map` for the component."""
+        return self.logic_map[self.component.classname](self.component)
 
     def build(self) -> list[str]:
         """Builds the function logic for the component."""
         logic = []
 
-        for item in self.maps.common_logic:
-            comp_type, attr_name, condition = item
-            if isinstance(self.component, comp_type):
-                value = getattr(self.component, attr_name)
-                if value:
-                    logic.extend(condition(value))
+        if (
+            isinstance(self.component, Component)
+            and self.component.classname in self.logic_map.keys()
+        ):
+            logic_list = self.get_logic_list()
+
+            if logic_list is not None:
+                logic.extend(logic_list)
 
         return logic

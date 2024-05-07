@@ -39,7 +39,6 @@ from cli.templates.ui.imports import (
 from cli.templates.ui.logic import calendar_logic, collapsible_logic
 from zentra.core.html import Div
 from zentra.ui.control import (
-    Calendar,
     Checkbox,
     Collapsible,
     RadioGroup,
@@ -157,10 +156,10 @@ COMMON_CONTENT_MAPPING = [
 ]
 
 
-COMMON_LOGIC_MAPPING = [
-    (Calendar, "name", lambda name: calendar_logic(name)),
-    (Collapsible, "name", lambda name: collapsible_logic(name)),
-]
+COMMON_LOGIC_MAPPING = {
+    "Calendar": lambda comp: calendar_logic(comp),
+    "Collapsible": lambda comp: collapsible_logic(comp),
+}
 
 
 class JSXMappings(BaseModel):
@@ -170,11 +169,11 @@ class JSXMappings(BaseModel):
     component_attrs: dict[str, Callable]
     common_content: list[tuple]
     component_content: list[tuple]
-    common_logic: list[tuple]
-    use_client_map: list[str]
-    use_state_map: list[str]
+    common_logic: dict[str, Callable]
     additional_imports: dict[str, Callable]
     wrappers: dict[str, str]
+    use_client_map: list[str]
+    use_state_map: list[str]
     parent_components: list[str]
 
 
@@ -184,10 +183,10 @@ MAPPING_DICT = {
     "common_content": COMMON_CONTENT_MAPPING,
     "component_content": COMPONENT_CONTENT_MAPPING,
     "common_logic": COMMON_LOGIC_MAPPING,
-    "use_client_map": USE_CLIENT_COMPONENTS,
-    "use_state_map": USE_STATE_COMPONENTS,
     "additional_imports": ADDITIONAL_IMPORTS_MAPPING,
     "wrappers": COMPONENTS_TO_WRAP,
+    "use_client_map": USE_CLIENT_COMPONENTS,
+    "use_state_map": USE_STATE_COMPONENTS,
     "parent_components": PARENT_COMPONENTS,
 }
 

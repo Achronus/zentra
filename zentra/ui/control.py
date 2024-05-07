@@ -589,6 +589,10 @@ class ScrollArea(Component, ShadcnUi):
     styles: str = "w-96 rounded-md border"
     orientation: Orientation = "vertical"
 
+    @property
+    def inner_attributes(self) -> list[str]:
+        return ["orientation"]
+
 
 class SelectGroup(Component, ShadcnUi):
     """

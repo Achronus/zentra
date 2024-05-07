@@ -17,11 +17,11 @@ CALENDAR_VALID_VALS = {
 CHECKBOX_VALID_VALS = {
     "attributes": {
         "standard": 'id="terms" checked={false}',
-        "with_disabled": 'id="terms" disabled checked={false}',
+        "with_disabled": 'id="terms" checked={false} disabled',
     },
     "content": {
         "standard": '<div className="flex items-top space-x-2">\n<Checkbox id="terms" checked={false}>\n<div className="grid gap-1.5 leading-none">\n<label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">\nAccept the terms and conditions.\n</label>\n</div>\n</Checkbox>\n</div>',
-        "with_disabled": '<div className="flex items-top space-x-2">\n<Checkbox id="terms" disabled checked={false}>\n<div className="grid gap-1.5 leading-none">\n<label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">\nAccept the terms and conditions.\n</label>\n<p className="text-sm text-muted-foreground">\nPretty please!\n</p>\n</div>\n</Checkbox>\n</div>',
+        "with_disabled": '<div className="flex items-top space-x-2">\n<Checkbox id="terms" checked={false} disabled>\n<div className="grid gap-1.5 leading-none">\n<label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">\nAccept the terms and conditions.\n</label>\n<p className="text-sm text-muted-foreground">\nPretty please!\n</p>\n</div>\n</Checkbox>\n</div>',
     },
 }
 
@@ -73,8 +73,8 @@ SCROLL_AREA_VALID_VALS = {
     },
     "content": {
         "simple": '<ScrollArea className="w-96 rounded-md border">\nThis is some text that is extremely simple.\n<ScrollBar orientation="vertical" />\n</ScrollArea>',
-        "vertical": '<ScrollArea className="h-72 w-48 rounded-md border">\n<div className="p-4">\n<h4 className="mb-4 text-sm font-medium leading-none">\nTags\n</h4>\n{tags.map((tag) => (\n<>\n<div key={tag} className="text-sm">\n{tag}\n</div>\n<Separator className="my-2" orientation="vertical" />\n</>\n))}\n</div>\n<ScrollBar orientation="vertical" />\n</ScrollArea>',
-        "horizontal": '<ScrollArea className="w-96 whitespace-nowrap rounded-md border">\n<div className="flex w-max space-x-4 p-4">\n{works.map((artwork) => (\n<figure key={artwork.artist} className="shrink-0">\n<div className="overflow-hidden rounded-md"\n<Image className="aspect-[3/4] h-fit w-fit object-cover" src={artwork.art} alt={`Photo by {artwork.artist}`} width={300} height={400} />\n</div>\n<figcaption className="pt-2 text-xs text-muted-foreground">\nPhoto by\n<span className="font-semibold text-foreground">\n{artwork.artist}\n</span>\n</figcaption>\n</figure>\n))}\n</div>\n<ScrollBar orientation="horizontal" />\n</ScrollArea>',
+        "vertical": '<ScrollArea className="h-72 w-48 rounded-md border">\n<div className="p-4">\n<h4 className="mb-4 text-sm font-medium leading-none">\nTags\n</h4>\n{tags.map((tag) => (\n<>\n<div className="text-sm" key={tag}>\n{tag}\n</div>\n<Separator className="my-2" orientation="vertical" />\n</>\n))}\n</div>\n<ScrollBar orientation="vertical" />\n</ScrollArea>',
+        "horizontal": '<ScrollArea className="w-96 whitespace-nowrap rounded-md border">\n<div className="flex w-max space-x-4 p-4">\n{works.map((artwork) => (\n<figure className="shrink-0" key={artwork.artist}>\n<div className="overflow-hidden rounded-md"\n<Image src={artwork.art} width={300} height={400} alt={`Photo by {artwork.artist}`} className="aspect-[3/4] h-fit w-fit object-cover" />\n</div>\n<figcaption className="pt-2 text-xs text-muted-foreground">\nPhoto by\n<span className="font-semibold text-foreground">\n{artwork.artist}\n</span>\n</figcaption>\n</figure>\n))}\n</div>\n<ScrollBar orientation="horizontal" />\n</ScrollArea>',
     },
 }
 
@@ -88,8 +88,8 @@ SELECT_VALID_VALS = {
 
 SLIDER_VALID_VALS = {
     "content": {
-        "standard": '<Slider defaultValue={[10]} min={0} max={100} step={1} className={cn("w-[60%]", className)} orientation="horizontal" />',
-        "all_params": '<Slider disabled htmlFor="counts" defaultValue={[10]} min={1} max={50} step={1} className={cn("w-[40%]", className)} orientation="vertical" />',
+        "standard": '<Slider min={0} max={100} step={1} orientation="horizontal" defaultValue={[10]} className={cn("w-[60%]", className)} />',
+        "all_params": '<Slider min={1} max={50} step={1} htmlFor="counts" disabled orientation="vertical" defaultValue={[10]} className={cn("w-[40%]", className)} />',
     },
 }
 
@@ -97,7 +97,7 @@ SWITCH_VALID_VALS = {
     "content": {
         "standard": '<Switch id="airplaneMode" checked={false} />',
         "checked": '<Switch id="airplaneMode" checked={true} />',
-        "disabled": '<Switch id="airplaneMode" disabled checked={false} />',
+        "disabled": '<Switch id="airplaneMode" checked={false} disabled />',
     }
 }
 
@@ -109,15 +109,15 @@ TOGGLE_VALID_VALS = {
     "content": {
         "simple": '<Toggle pressed={false} aria-label="Toggle">\ntest {text}\n</Toggle>',
         "icon": '<Toggle pressed={false} aria-label="Toggle">\n<Italic className="mr-2 h-4 w-4" />\nicon {text}\n</Toggle>',
-        "simple_full": '<Toggle variant="outline" size="sm" disabled pressed={true} aria-label="Toggle outline">\ntest {text}\n</Toggle>',
-        "icon_full": '<Toggle size="lg" disabled pressed={true} aria-label="Toggle bold">\nicon {text}\n<Italic className="mr-2 h-4 w-4" />\n</Toggle>',
+        "simple_full": '<Toggle size="sm" variant="outline" pressed={true} disabled aria-label="Toggle outline">\ntest {text}\n</Toggle>',
+        "icon_full": '<Toggle size="lg" pressed={true} disabled aria-label="Toggle bold">\nicon {text}\n<Italic className="mr-2 h-4 w-4" />\n</Toggle>',
     },
 }
 
 TOGGLE_GROUP_VALID_VALS = {
     "content": {
         "simple": '<ToggleGroup type="multiple" orientation="horizontal">\n<ToggleGroupItem pressed={false} aria-label="Toggle">\n<Italic className="mr-2 h-4 w-4" />\n</ToggleGroupItem>\n<ToggleGroupItem pressed={false} aria-label="Toggle">\n<Bold className="mr-2 h-4 w-4" />\n</ToggleGroupItem>\n<ToggleGroupItem pressed={false} aria-label="Toggle">\n<Underline className="mr-2 h-4 w-4" />\n</ToggleGroupItem>\n</ToggleGroup>',
-        "full": '<ToggleGroup type="single" variant="outline" size="lg" disabled orientation="vertical">\n<ToggleGroupItem pressed={true} aria-label="Toggle">\n<Italic className="mr-2 h-4 w-4" />\nitalic {text}\n</ToggleGroupItem>\n<ToggleGroupItem disabled pressed={false} aria-label="Toggle">\nbold {text}\n<Bold className="mr-2 h-4 w-4" />\n</ToggleGroupItem>\n<ToggleGroupItem pressed={false} aria-label="Toggle">\n<Underline className="mr-2 h-4 w-4" />\nundeline {text}\n</ToggleGroupItem>\n</ToggleGroup>',
+        "full": '<ToggleGroup type="single" disabled size="lg" variant="outline" orientation="vertical">\n<ToggleGroupItem pressed={true} aria-label="Toggle">\n<Italic className="mr-2 h-4 w-4" />\nitalic {text}\n</ToggleGroupItem>\n<ToggleGroupItem pressed={false} disabled aria-label="Toggle">\nbold {text}\n<Bold className="mr-2 h-4 w-4" />\n</ToggleGroupItem>\n<ToggleGroupItem pressed={false} aria-label="Toggle">\n<Underline className="mr-2 h-4 w-4" />\nundeline {text}\n</ToggleGroupItem>\n</ToggleGroup>',
     }
 }
 
@@ -141,7 +141,7 @@ TOOLTIP_VALID_VALS = {
     "content": {
         "button": '<TooltipProvider>\n<Tooltip>\n<TooltipTrigger asChild>\n<Button variant="outline">\nHover\n</Button>\n</TooltipTrigger>\n<TooltipContent>\n<p>Add to Library</p>\n</TooltipContent>\n</Tooltip>\n</TooltipProvider>',
         "label": '<TooltipProvider>\n<Tooltip>\n<TooltipTrigger asChild>\n<Label htmlFor="library">\nUI Library\n</Label>\n</TooltipTrigger>\n<TooltipContent>\n<p>A cheeky label</p>\n</TooltipContent>\n</Tooltip>\n</TooltipProvider>',
-        "image": '<TooltipProvider>\n<Tooltip>\n<TooltipTrigger asChild>\n<Image src="/img.jpg" alt="A cool image" width={200} height={200} />\n</TooltipTrigger>\n<TooltipContent>\n<p>A cool image</p>\n</TooltipContent>\n</Tooltip>\n</TooltipProvider>',
+        "image": '<TooltipProvider>\n<Tooltip>\n<TooltipTrigger asChild>\n<Image src="/img.jpg" width={200} height={200} alt="A cool image" />\n</TooltipTrigger>\n<TooltipContent>\n<p>A cool image</p>\n</TooltipContent>\n</Tooltip>\n</TooltipProvider>',
     },
 }
 
@@ -194,14 +194,14 @@ VALID_VALS_MAP = {
 
 # NEXTJS COMPONENTS
 IMAGE_VALID_VALS = {
-    "attributes": 'className="aspect-[3/4] h-fit w-fit object-cover" src={artwork.art} alt={`Photo by {artwork.artist}`} width={300} height={400}',
+    "attributes": 'src={artwork.art} width={300} height={400} alt={`Photo by {artwork.artist}`} className="aspect-[3/4] h-fit w-fit object-cover"',
     "content": {
-        "standard": '<Image className="aspect-[3/4] h-fit w-fit object-cover" src={artwork.art} alt={`Photo by {artwork.artist}`} width={300} height={400} />',
-        "no_styles": "<Image src={artwork.art} alt={`Photo by {artwork.artist}`} width={300} height={400} />",
-        "with_url": '<Image src="http://example.com" alt={`Photo by {artwork.artist}`} width={300} height={400} />',
-        "basic_alt": '<Image src="http://example.com" alt="Photo by author" width={300} height={400} />',
-        "basic_path": '<Image src="/profile.png" alt="Photo by author" width={300} height={400} />',
-        "static_img_src": "<Image src={profilePic} alt={`Photo by {artwork.artist}`} width={300} height={400} />",
+        "standard": '<Image src={artwork.art} width={300} height={400} alt={`Photo by {artwork.artist}`} className="aspect-[3/4] h-fit w-fit object-cover" />',
+        "no_styles": "<Image src={artwork.art} width={300} height={400} alt={`Photo by {artwork.artist}`} />",
+        "with_url": '<Image src="http://example.com" width={300} height={400} alt={`Photo by {artwork.artist}`} />',
+        "basic_alt": '<Image src="http://example.com" width={300} height={400} alt="Photo by author" />',
+        "basic_path": '<Image src="/profile.png" width={300} height={400} alt="Photo by author" />',
+        "static_img_src": "<Image src={profilePic} width={300} height={400} alt={`Photo by {artwork.artist}`} />",
     },
 }
 
@@ -219,7 +219,7 @@ LINK_VALID_VALS = {
     "content": {
         "standard": '<Link href="/dashboard" />',
         "with_text": '<Link href="/dashboard">\nDashboard\n</Link>',
-        "full": '<Link target="_blank" className="rounded-md border" href={{ pathname: "/dashboard", query: { name: "test", }, }} replace scroll={false} prefetch={false}>\nDashboard\n</Link>',
+        "full": '<Link className="rounded-md border" target="_blank" href={{ pathname: "/dashboard", query: { name: "test", }, }} replace scroll={false} prefetch={false}>\nDashboard\n</Link>',
     },
 }
 

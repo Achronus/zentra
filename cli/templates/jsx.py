@@ -934,7 +934,9 @@ class AttributeBuilder:
             and self.component.classname in self.component_map.keys()
         ):
             attr_list = self.get_component_attrs(self.component)
-            attrs.extend(attr_list)
+
+            if attr_list is not None:
+                attrs.extend(attr_list)
 
         return remove_none(attrs)
 

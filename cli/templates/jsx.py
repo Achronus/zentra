@@ -898,20 +898,39 @@ class AttributeBuilder:
         """Retrieves a list of unique attribute strings for a given component from the component attribute mapping."""
         return self.component_map[component.classname](component)
 
+    def common_checks(self, attr_name: str) -> bool:
+        """Performs checks for model attributes to confirm whether it should use the `common_map`. These include:
+          1. When the `attr_name` is not an `inner_attribute`
+          2. When the `attr_name` is not a `custom_common_attribute`
+
+        If both checks are valid, returns `True`. Otherwise, returns `False`.
+        """
+        not_inner_attr = attr_name not in self.component.inner_attributes
+        not_custom_attr = attr_name not in self.component.custom_common_attributes
+
+        if not_inner_attr and not_custom_attr:
+            return True
+
+        return False
+
     def build(self) -> list[str]:
         """Builds the attributes from a mapping for the component."""
         attrs = []
+        include_common = True
 
         for attr_name, value in self.component.model_dump().items():
             if value is not None:
-                if attr_name in self.common_map.keys() and (
-                    attr_name not in self.component.inner_attributes
-                    and attr_name not in self.component.custom_common_attributes
-                ):
+                if isinstance(self.component, (Component, LucideIcon)):
+                    include_common = self.common_checks(attr_name)
+
+                if attr_name in self.common_map.keys() and include_common:
                     attr_str = self.get_common_attr(attr_name, value)
                     attrs.append(attr_str)
 
-        if self.component.classname in self.component_map.keys():
+        if (
+            isinstance(self.component, Component)
+            and self.component.classname in self.component_map.keys()
+        ):
             attr_list = self.get_component_attrs(self.component)
             attrs.extend(attr_list)
 

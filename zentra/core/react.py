@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 from pydantic_core import PydanticCustomError
 import requests
 
@@ -21,6 +21,18 @@ class LucideIcon(BaseModel):
     size: int = None
     color: str = None
     stroke_width: int = None
+
+    model_config = ConfigDict(use_enum_values=True)
+
+    @property
+    def inner_attributes(self) -> list[str]:
+        """Returns a list of the attributes that are used in the components sub-components."""
+        return []
+
+    @property
+    def custom_common_attributes(self) -> list[str]:
+        """Returns a list of the attributes that use the same name as a common attribute, but act differently with this specific component."""
+        return ["name"]
 
     @field_validator("name")
     def validate_name(cls, name: str) -> str:

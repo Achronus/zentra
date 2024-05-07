@@ -5,6 +5,7 @@ from itertools import product
 from operator import mul
 from typing import Any
 
+from cli.conf.logger import test_logger
 from cli.conf.storage import ComponentDetails
 from cli.templates.utils import compress
 from tests.mappings.btn_content import BTN_VALID_VALS_MAP
@@ -57,6 +58,8 @@ class BtnCompBuilder:
             else:
                 test_fail_result = content
 
+            test_logger.debug(f"{content}")
+
         assert (
             valid_total == desired_total
         ), f"({valid_total}/{desired_total}) {test_fail_result} != {map_value}"
@@ -66,6 +69,7 @@ class BtnCompBuilder:
         _ = builder.build()
 
         result: list[str] = getattr(builder.storage, result_attr)
+        test_logger.debug(f"Result: {result}, Valid: {valid_value}")
         assert "\n".join(result) == valid_value, (result, valid_value.split("\n"))
 
 

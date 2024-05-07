@@ -107,7 +107,7 @@ COMMON_ATTR_MAPPING = {
     "placeholder": lambda value: str_attr("placeholder", value),
     "variant": lambda value: str_attr("variant", value) if value != "default" else None,
     "size": lambda value: size_attribute(value),
-    "disabled": lambda _: "disabled",
+    "disabled": lambda value: "disabled" if value else None,
     "apiEndpoint": lambda value: str_attr("apiEndpoint", value),
     "num_inputs": lambda value: param_attr("maxLength", value),
     "key": lambda key: param_attr("key", key),

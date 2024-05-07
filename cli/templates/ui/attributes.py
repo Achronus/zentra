@@ -142,8 +142,6 @@ def nextjs_link_attributes(link: Link) -> list[str]:
             "query": link.href.query,
         }
         attributes.append(param_attr("href", query_attr(queries)))
-    else:
-        attributes.append(param_attr("href", link.href))
 
     if link.replace:
         attributes.append("replace")

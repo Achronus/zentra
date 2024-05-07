@@ -94,3 +94,4 @@ zentra_missing_logger = DebugLogger(
     "ZentraMissing.log",
     LOGGING_ACTIVE,
 )
+test_logger = DebugLogger("UnitTestLogger", "UnitTest.log", False)

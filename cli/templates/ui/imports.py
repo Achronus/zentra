@@ -1,7 +1,8 @@
-from pydantic import HttpUrl
 from zentra.core.enums.ui import InputOTPPatterns
 from zentra.core.react import LucideIcon
-from zentra.nextjs import StaticImage
+from zentra.nextjs import Image, StaticImage
+from zentra.ui.control import InputOTP
+from zentra.ui.notification import Alert
 
 
 def collapsible_imports() -> list[str]:
@@ -12,10 +13,12 @@ def collapsible_imports() -> list[str]:
     ]
 
 
-def input_opt_imports(pattern: str) -> list[str]:
+def input_opt_imports(comp: InputOTP) -> list[str] | None:
     """Returns a list of strings for the additional InputOTP imports based on a given pattern value."""
-    if pattern in InputOTPPatterns:
-        return ["import { " + InputOTPPatterns(pattern).name + ' } from "input-otp"']
+    if comp.pattern in InputOTPPatterns:
+        return [
+            "import { " + InputOTPPatterns(comp.pattern).name + ' } from "input-otp"'
+        ]
 
     return None
 
@@ -30,10 +33,10 @@ def static_img_imports(img: StaticImage) -> list[str]:
     return [f"import {img.name} from '{img.path}'"]
 
 
-def image_imports(src: str | HttpUrl | StaticImage) -> list[str] | None:
+def image_imports(img: Image) -> list[str] | None:
     """Returns a list of strings for the additional Image imports based on its attributes."""
-    if isinstance(src, StaticImage):
-        return static_img_imports(img=src)
+    if isinstance(img.src, StaticImage):
+        return static_img_imports(img.src)
 
     return None
 
@@ -43,9 +46,9 @@ def slider_imports() -> list[str]:
     return ['import { cn } from "@/lib/utils"']
 
 
-def alert_imports(icon: str) -> list[str] | None:
+def alert_imports(alert: Alert) -> list[str] | None:
     """Returns a list of strings for the additional Image imports based on its attributes."""
-    if icon:
-        return [LucideIcon(name=icon).import_str]
+    if alert.icon:
+        return [LucideIcon(name=alert.icon).import_str]
 
     return None

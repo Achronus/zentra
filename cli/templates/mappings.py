@@ -38,16 +38,13 @@ from cli.templates.ui.imports import (
 )
 from cli.templates.ui.logic import calendar_logic, collapsible_logic
 from zentra.core.html import Div
-from zentra.nextjs import Image, StaticImage
 from zentra.ui.control import (
     Calendar,
     Checkbox,
     Collapsible,
-    InputOTP,
     RadioGroup,
     ScrollArea,
     Select,
-    Slider,
 )
 from zentra.ui.notification import Alert, TextAlertDialog, Tooltip
 from zentra.ui.presentation import Avatar
@@ -129,15 +126,16 @@ COMMON_ATTR_MAPPING = {
 }
 
 
-ADDITIONAL_IMPORTS_MAPPING = [
-    (Collapsible, "name", lambda _: collapsible_imports()),
-    (InputOTP, "pattern", lambda pattern: input_opt_imports(pattern)),
-    (RadioGroup, "default_value", lambda _: radio_group_imports()),
-    (StaticImage, "all", lambda img: static_img_imports(img)),
-    (Image | Avatar, "src", lambda src: image_imports(src)),
-    (Slider, "value", lambda _: slider_imports()),
-    (Alert, "icon", lambda icon: alert_imports(icon)),
-]
+ADDITIONAL_IMPORTS_MAPPING = {
+    "Collapsible": lambda _: collapsible_imports(),
+    "InputOTP": lambda comp: input_opt_imports(comp),
+    "RadioGroup": lambda _: radio_group_imports(),
+    "StaticImage": lambda img: static_img_imports(img),
+    "Image": lambda comp: image_imports(comp),
+    "Avatar": lambda comp: image_imports(comp),
+    "Slider": lambda _: slider_imports(),
+    "Alert": lambda comp: alert_imports(comp),
+}
 
 
 COMPONENT_CONTENT_MAPPING = [
@@ -175,7 +173,7 @@ class JSXMappings(BaseModel):
     common_logic: list[tuple]
     use_client_map: list[str]
     use_state_map: list[str]
-    additional_imports: list[tuple]
+    additional_imports: dict[str, Callable]
     wrappers: dict[str, str]
     parent_components: list[str]
 

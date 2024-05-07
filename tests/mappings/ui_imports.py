@@ -49,10 +49,10 @@ VALID_IMPORTS = {
     # PRESENTATION COMPONENTS
     "separator": 'import { Separator } from "@/components/ui/separator"',
     "avatar": {
-        "path_n_url": 'import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"',
+        "path_n_url": 'import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"',
         "static_img": [
-            'import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"',
-            "import { Avatar, AvatarFallback, AvatarImage } from './me.png'",
+            'import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"',
+            "import profilePic from './me.png'",
         ],
     },
     "badge": 'import { Badge } from "@/components/ui/badge"',

@@ -1,7 +1,8 @@
+from cli.templates.ui.attributes import alt_attribute, src_attribute
+
 from zentra.core import Component
 from zentra.core.base import JSIterable
 from zentra.core.html import Div, HTMLContent
-
 from zentra.core.react import LucideIcon
 from zentra.ui.control import (
     Checkbox,
@@ -207,7 +208,13 @@ def tooltip_content(tt: Tooltip) -> list[str]:
 
 def avatar_content(avatar: Avatar) -> list[str]:
     """Returns a list of strings for the Avatar content based on the components attributes."""
-    return [f"<AvatarFallback>{avatar.fallback_text}</AvatarFallback>"]
+    src = src_attribute(avatar.src)
+    alt = alt_attribute(avatar.alt)
+
+    return [
+        f"<AvatarImage {src} {alt} />",
+        f"<AvatarFallback>{avatar.fallback_text}</AvatarFallback>",
+    ]
 
 
 def text_content(

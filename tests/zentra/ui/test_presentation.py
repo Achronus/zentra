@@ -3,10 +3,10 @@ import pytest
 from tests.mappings.ui_imports import VALID_IMPORTS
 from tests.mappings.ui_vals import VALID_VALS_MAP
 from tests.templates.details import COMPONENT_DETAILS_MAPPING
-from tests.templates.helper import SimpleCompBuilder, ParentCompBuilder
+from tests.templates.helper import SimpleCompBuilder
 
 from zentra.nextjs import StaticImage
-from zentra.ui.presentation import Avatar, AvatarImage, Badge, Separator
+from zentra.ui.presentation import Avatar, Badge, Separator
 
 
 class TestSeparator:
@@ -43,62 +43,62 @@ class TestAvatar:
     @pytest.fixture
     def avatar_url(self) -> Avatar:
         return Avatar(
-            img=AvatarImage(src="https://github.com/shadcn.png", alt="@shadcn"),
+            src="https://github.com/shadcn.png",
+            alt="@shadcn",
             fallback_text="CN",
         )
 
     @pytest.fixture
     def avatar_path(self) -> Avatar:
         return Avatar(
-            img=AvatarImage(src="/profile.png", alt="Awesome photo of $me"),
+            src="/profile.png",
+            alt="Awesome photo of $me",
             fallback_text="AA",
         )
 
     @pytest.fixture
     def avatar_static(self) -> Avatar:
         return Avatar(
-            img=AvatarImage(
-                src=StaticImage(name="profilePic", path="./me.png"),
-                alt="Awesome photo of $me",
-            ),
+            src=StaticImage(name="profilePic", path="./me.png"),
+            alt="Awesome photo of $me",
             fallback_text="AA",
         )
 
     @pytest.fixture
-    def wrapper_url(self, avatar_url: Avatar) -> ParentCompBuilder:
-        return ParentCompBuilder(avatar_url)
+    def wrapper_url(self, avatar_url: Avatar) -> SimpleCompBuilder:
+        return SimpleCompBuilder(avatar_url, COMPONENT_DETAILS_MAPPING["Avatar"])
 
     @pytest.fixture
-    def wrapper_path(self, avatar_path: Avatar) -> ParentCompBuilder:
-        return ParentCompBuilder(avatar_path)
+    def wrapper_path(self, avatar_path: Avatar) -> SimpleCompBuilder:
+        return SimpleCompBuilder(avatar_path, COMPONENT_DETAILS_MAPPING["Avatar"])
 
     @pytest.fixture
-    def wrapper_static(self, avatar_static: Avatar) -> ParentCompBuilder:
-        return ParentCompBuilder(avatar_static)
+    def wrapper_static(self, avatar_static: Avatar) -> SimpleCompBuilder:
+        return SimpleCompBuilder(avatar_static, COMPONENT_DETAILS_MAPPING["Avatar"])
 
     @staticmethod
-    def test_content_str_url(wrapper_url: ParentCompBuilder):
-        wrapper_url.content(VALID_VALS_MAP["avatar"]["content"]["url"])
+    def test_content_str_url(wrapper_url: SimpleCompBuilder):
+        wrapper_url.run("content", VALID_VALS_MAP["avatar"]["content"]["url"])
 
     @staticmethod
-    def test_content_str_path(wrapper_path: ParentCompBuilder):
-        wrapper_path.content(VALID_VALS_MAP["avatar"]["content"]["path"])
+    def test_content_str_path(wrapper_path: SimpleCompBuilder):
+        wrapper_path.run("content", VALID_VALS_MAP["avatar"]["content"]["path"])
 
     @staticmethod
-    def test_content_str_static(wrapper_static: ParentCompBuilder):
-        wrapper_static.content(VALID_VALS_MAP["avatar"]["content"]["static_img"])
+    def test_content_str_static(wrapper_static: SimpleCompBuilder):
+        wrapper_static.run("content", VALID_VALS_MAP["avatar"]["content"]["static_img"])
 
     @staticmethod
-    def test_import_str_url(wrapper_url: ParentCompBuilder):
-        wrapper_url.comp_other("imports", VALID_IMPORTS["avatar"]["path_n_url"])
+    def test_import_str_url(wrapper_url: SimpleCompBuilder):
+        wrapper_url.run("imports", VALID_IMPORTS["avatar"]["path_n_url"])
 
     @staticmethod
-    def test_import_str_path(wrapper_path: ParentCompBuilder):
-        wrapper_path.comp_other("imports", VALID_IMPORTS["avatar"]["path_n_url"])
+    def test_import_str_path(wrapper_path: SimpleCompBuilder):
+        wrapper_path.run("imports", VALID_IMPORTS["avatar"]["path_n_url"])
 
     @staticmethod
-    def test_import_str_static(wrapper_static: ParentCompBuilder):
-        wrapper_static.comp_other(
+    def test_import_str_static(wrapper_static: SimpleCompBuilder):
+        wrapper_static.run(
             "imports", VALID_IMPORTS["avatar"]["static_img"], list_output=True
         )
 

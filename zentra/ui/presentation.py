@@ -1,4 +1,4 @@
-from pydantic import Field, HttpUrl, PrivateAttr, field_validator
+from pydantic import Field, HttpUrl, field_validator
 from pydantic_core import PydanticCustomError
 from zentra.core import Component
 from zentra.core.enums.ui import BadgeVariant, Orientation
@@ -24,9 +24,9 @@ class AspectRatio(Component, ShadcnUi):
     """
 
 
-class AvatarImage(Component, ShadcnUi):
+class Avatar(Component, ShadcnUi):
     """
-    A helper Zentra model for the [Shadcn/ui Avatar](https://ui.shadcn.com/docs/components/avatar) component. Creates the image for the `Avatar`.
+    A Zentra model for the [Shadcn/ui Avatar](https://ui.shadcn.com/docs/components/avatar) component.
 
     Parameters:
     - `src` (`string | HttpUrl | zentra.nextjs.StaticImage`) - can be either:
@@ -35,12 +35,16 @@ class AvatarImage(Component, ShadcnUi):
         3. An absolute external URL denoted by `http`
         4. Or a parameter, signified by a `$` at the start of the parameter name
     - `alt` (`string`) - an `alt` tag used to describe the image for screen readers and search engines. Also, acts as fallback text if the image is disabled, errors, or fails to load. Can also include parameters, signified by a `$` at the start of the parameter name
+    - `fallback_text` (`string`) - the fallback text if the avatar image doesn't load. Up to a maximum of `2` characters
     """
 
     src: str | HttpUrl | StaticImage
     alt: str
+    fallback_text: str = Field(min_length=1, max_length=2)
 
-    _classname = PrivateAttr(default="Avatar")
+    @property
+    def inner_attributes(self) -> list[str]:
+        return ["src", "alt"]
 
     @field_validator("src")
     def validate_src(
@@ -54,19 +58,6 @@ class AvatarImage(Component, ShadcnUi):
             )
 
         return src
-
-
-class Avatar(Component, ShadcnUi):
-    """
-    A Zentra model for the [Shadcn/ui Avatar](https://ui.shadcn.com/docs/components/avatar) component.
-
-    Parameters:
-    - `img` (`zentra.ui.presentation.AvatarImg`) - an `AvatarImage` Zentra model
-    - `fallback_text` (`string`) - the fallback text if the avatar image doesn't load. Up to a maximum of `2` characters
-    """
-
-    img: AvatarImage
-    fallback_text: str = Field(min_length=1, max_length=2)
 
     @field_validator("fallback_text")
     def validate_fallback_text(cls, text: str) -> str:

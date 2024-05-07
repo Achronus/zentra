@@ -68,12 +68,19 @@ class SimpleCompBuilder:
         self.component = component
         self.details = component_details
 
-    def run(self, result_attr: str, valid_value: str):
+    def run(self, result_attr: str, valid_value: str, list_output: bool = False):
         builder = component_builder(self.component, details=self.details)
         builder.build()
 
         result: str = getattr(builder.storage, result_attr)
-        assert result == valid_value, (result.split("\n"), valid_value.split("\n"))
+
+        if list_output:
+            result = result.split("\n")
+
+        assert result == valid_value, (
+            result if list_output else result.split("\n"),
+            valid_value if list_output else valid_value.split("\n"),
+        )
 
 
 class ParentCompBuilder:

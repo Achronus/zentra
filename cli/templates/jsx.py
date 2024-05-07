@@ -1,4 +1,5 @@
 import re
+from typing import Callable
 
 from cli.conf.format import name_from_camel_case
 from cli.conf.storage import ComponentDetails
@@ -883,8 +884,8 @@ class AttributeBuilder:
     def __init__(
         self,
         component: Component,
-        common_mapping: dict[str, callable],
-        component_mapping: dict[str, callable],
+        common_mapping: dict[str, Callable],
+        component_mapping: dict[str, Callable],
     ) -> None:
         self.component = component
         self.common_map = common_mapping
@@ -917,8 +918,9 @@ class AttributeBuilder:
         """Builds the attributes from a mapping for the component."""
         attrs = []
         include_common = True
+        model_dict = self.component.__dict__
 
-        for attr_name, value in self.component.model_dump().items():
+        for attr_name, value in model_dict.items():
             if value is not None:
                 if isinstance(self.component, (Component, LucideIcon)):
                     include_common = self.common_checks(attr_name)

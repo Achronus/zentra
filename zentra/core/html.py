@@ -12,13 +12,13 @@ class HTMLContent(HTMLTag):
     A model dedicated to HTML content tags, including `headings`, `paragraphs`, and `span`.
 
     Parameters:
-    - `text` (`string`) - the text inside the tag. Can also include parameters, signified by a `$` at the start of the parameter name. This is useful when using the `Image` inside an `iterable` function like `map`
     - `tag` (`string`) - the type of tag to wrap around the `text` attribute. Valid options: `['h1', 'h2', 'h3', 'h4', 'h5', h6', 'p', 'span']`
+    - `text` (`string`) - the text inside the tag. Can also include parameters, signified by a `$` at the start of the parameter name. This is useful when using the `Image` inside an `iterable` function like `map`
     - `styles` (`string, optional`) - the CSS styles to apply to the tag. `None` by default
     """
 
-    text: str
     tag: HTMLContentTagType
+    text: str
 
     model_config = ConfigDict(use_enum_values=True)
 

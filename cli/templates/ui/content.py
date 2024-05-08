@@ -1,8 +1,6 @@
 from cli.templates.ui.attributes import alt_attribute, src_attribute
 
-from zentra.core import Component
-from zentra.core.base import JSIterable
-from zentra.core.html import Div
+from cli.templates.utils import handle_single_quotes
 from zentra.core.react import LucideIcon
 from zentra.ui.control import (
     Checkbox,
@@ -28,15 +26,8 @@ def param_reformat_helper(text: str) -> list[str]:
             else:
                 new_text.append(word)
 
+    new_text = handle_single_quotes(new_text)
     return [" ".join(new_text)]
-
-
-def div_content(div: Div) -> Component | JSIterable | list:
-    """Returns the required format for Div content based on the components attributes. For example, if `div.items` is a string, it converts it to a list and reformats its `parameter` values if required. If no formatting is required, will return the `Component` model, `JSIterable` model, or `list` of items provided."""
-    if isinstance(div.items, str):
-        return param_reformat_helper(div.items)
-
-    return div.items
 
 
 def checkbox_content(cb: Checkbox) -> list[str]:
@@ -242,7 +233,7 @@ def input_otp_content(otp: InputOTP) -> list[str]:
 
 def text_content(text: str | list[str]) -> list[str]:
     """Returns a list of strings of text content with variable preprocessing
-    (if required) or a HTMLContent model."""
+    (if required)."""
     if isinstance(text, str):
         return param_reformat_helper(text)
 

@@ -272,11 +272,7 @@ class InnerContentBuilder:
     def build_div_content(self, content: Div) -> list[str]:
         """Builds the `Div` content of the model and returns it as a list of strings."""
         content, comp_storage = self.controller.build_html_tag(model=content)
-        if isinstance(comp_storage, JSXComponentContentStorage):
-            self.storage = add_to_storage(self.storage, comp_storage)
-        elif isinstance(comp_storage, JSXComponentExtras):
-            self.storage = add_to_storage(self.storage, comp_storage, extend=True)
-
+        self.storage = add_to_storage(self.storage, comp_storage, extend=True)
         return content
 
     def build_btn_content(self, model: Button) -> tuple[list[str], JSXComponentExtras]:
@@ -558,16 +554,13 @@ class DivBuilder:
         self.storage = JSXComponentExtras()
         self.inner_content = []
 
-    def build(self, model: Div = None) -> tuple[list[str], JSXComponentExtras]:
+    def build(self) -> tuple[list[str], JSXComponentExtras]:
         """Builds the JSX content and returns it as a tuple in the form: `(content, storage)`."""
-        if model is None:
-            model = self.model
+        if not isinstance(self.model.items, list):
+            self.model.items = [self.model.items]
 
-        if not isinstance(model.items, list):
-            model.items = [model.items]
-
-        shell_start, shell_end = get_html_content(model, self.maps)
-        self.build_content(model.items)
+        shell_start, shell_end = get_html_content(self.model, self.maps)
+        self.build_content(self.model.items)
         content = [shell_start, *self.inner_content, shell_end]
 
         return content, self.storage
@@ -605,8 +598,10 @@ class DivBuilder:
             self.inner_content.extend(content)
 
         elif isinstance(item, Div):
-            content, _ = self.build(item)
-            self.inner_content.extend(content)
+            shell_start, shell_end = get_html_content(item, self.maps)
+            self.inner_content.append(shell_start)
+            self.build_content(item.items)
+            self.inner_content.append(shell_end)
 
         elif isinstance(item, str):
             self.inner_content.extend(text_content(item))

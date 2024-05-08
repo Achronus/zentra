@@ -114,7 +114,7 @@ class MultiCheckbox(Component, ShadcnUi):
 
     items: list[Checkbox] = Field(min_length=2)
 
-    _classname = PrivateAttr(default="Checkbox")
+    _container_name = PrivateAttr(default="Checkbox")
 
     # TODO: add logic specific to `Forms`
 

@@ -31,13 +31,18 @@ class Component(BaseModel):
     A Zentra model for all React components.
     """
 
-    _classname = PrivateAttr(default=None)
+    _container_name = PrivateAttr(default=None)
     model_config = ConfigDict(use_enum_values=True)
 
     @property
     def classname(self) -> str:
         """Stores the classname for the JSX builder."""
-        return self._classname if self._classname else self.__class__.__name__
+        return self.__class__.__name__
+
+    @property
+    def container_name(self) -> str:
+        """Stores the container name for the JSX builder."""
+        return self._container_name if self._container_name else self.classname
 
     @property
     def inner_attributes(self) -> list[str]:

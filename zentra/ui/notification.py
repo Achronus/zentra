@@ -99,7 +99,7 @@ class TextAlertDialog(Component, ShadcnUi):
     cancel_btn_text: str = "Cancel"
     action_btn_text: str = "Continue"
 
-    _classname = PrivateAttr(default="AlertDialog")
+    _container_name = PrivateAttr(default="AlertDialog")
 
 
 class AlertDialog(Component, ShadcnUi):

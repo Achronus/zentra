@@ -20,10 +20,10 @@ from cli.templates.storage import (
 from zentra.core import Component, Page
 from zentra.core.base import HTMLTag, JSIterable
 from zentra.core.html import Div, FigCaption, Figure
-from zentra.core.react import LucideIcon
+from zentra.core.react import LucideIcon, LucideIconWithText
 from zentra.nextjs import Link, NextJs
 from zentra.ui import Form
-from zentra.ui.control import Button, InputOTP, ToggleGroup
+from zentra.ui.control import Button, ToggleGroup
 from zentra.ui.notification import Tooltip
 
 
@@ -468,7 +468,9 @@ class InnerContentBuilder:
 class IconBuilder:
     """A builder for creating the JSX for `LucideIcon` Zentra models."""
 
-    def __init__(self, model: LucideIcon, mappings: JSXMappings) -> None:
+    def __init__(
+        self, model: LucideIcon | LucideIconWithText, mappings: JSXMappings
+    ) -> None:
         self.model = model
         self.maps = mappings
 
@@ -482,7 +484,7 @@ class IconBuilder:
         """Creates the JSX for the model and return its details as a tuple in the form of: `(content, import_str)`."""
         content = self.create_container()
 
-        if hasattr(self.model, "text"):
+        if isinstance(self.model, LucideIconWithText):
             content = self.handle_text(content)
 
         return content, self.model.import_str
@@ -523,6 +525,7 @@ class NextJSComponentBuilder:
             component=component,
             additional_imports_mapping=mappings.additional_imports,
             use_state_mapping=mappings.use_state_map,
+            core_name=component.container_name,
             child_names=[],
         )
         self.content = ContentBuilder(
@@ -757,23 +760,23 @@ class JSIterableContentBuilder:
     def build(self) -> list[str]:
         """Builds the content for the JSX iterable and returns it as a list of strings. If the the content inside is a component, also stores its information in `self.storage`."""
         start, end = self.get_container()
-        model: HTMLTag | Component = self.model.content
+        inner_model: HTMLTag | Component = self.model.content
 
-        if isinstance(model, HTMLTag):
-            content, storage = self.controller.build_html_tag(model)
+        if isinstance(inner_model, HTMLTag):
+            content, storage = self.controller.build_html_tag(inner_model)
             self.comp_storage = add_to_storage(self.comp_storage, storage, extend=True)
 
-        elif isinstance(model, NextJs):
-            content, storage = self.controller.build_nextjs_component(model)
+        elif isinstance(inner_model, NextJs):
+            content, storage = self.controller.build_nextjs_component(inner_model)
             self.comp_storage = add_to_storage(self.comp_storage, storage)
 
         else:
             try:
-                content, storage = self.controller.build_component(model)
+                content, storage = self.controller.build_component(inner_model)
                 self.comp_storage = add_to_storage(self.comp_storage, storage)
             except AttributeError:
                 raise AttributeError(
-                    f"'JSIterableContentBuilder.build(details=None)'. Missing 'ComponentDetails' for provided '{model.classname}' Component",
+                    f"'JSIterableContentBuilder.build(details=None)'. Missing 'ComponentDetails' for provided '{inner_model.classname}' Component",
                 )
 
         return [start, *content, end]
@@ -808,6 +811,7 @@ class ComponentBuilder:
             component=component,
             additional_imports_mapping=mappings.additional_imports,
             use_state_mapping=mappings.use_state_map,
+            core_name=details.name,
             child_names=details.child_names,
         )
         self.logic = LogicBuilder(
@@ -836,7 +840,7 @@ class ComponentBuilder:
     ) -> list[str]:
         """Wraps the components content in its outer shell and any additional wrappers (if applicable)."""
         wrapped_content = [
-            f"<{self.component.classname}{f' {self.storage.attributes}' if self.storage.attributes else ''} />"
+            f"<{self.component.container_name}{f' {self.storage.attributes}' if self.storage.attributes else ''} />"
         ]
 
         if len(content) > 0 or full_shell:
@@ -844,7 +848,7 @@ class ComponentBuilder:
             wrapped_content.extend(
                 [
                     *content,
-                    f"</{self.component.classname}>",
+                    f"</{self.component.container_name}>",
                 ]
             )
 
@@ -922,11 +926,11 @@ class AttributeBuilder:
         model_dict = self.component.__dict__
 
         for attr_name, value in model_dict.items():
-            if value is not None:
+            if value is not None and attr_name in self.common_map.keys():
                 if isinstance(self.component, (Component, LucideIcon)):
                     include_common = self.common_checks(attr_name)
 
-                if attr_name in self.common_map.keys() and include_common:
+                if include_common:
                     attr_str = self.get_common_attr(attr_name, value)
                     attrs.append(attr_str)
 
@@ -950,11 +954,13 @@ class ImportBuilder:
         component: Component,
         additional_imports_mapping: MappingDict,
         use_state_mapping: MappingDict,
+        core_name: str,
         child_names: list[str],
     ) -> None:
         self.component = component
         self.additional_map = additional_imports_mapping
         self.use_state_map = use_state_mapping
+        self.core_name = core_name
         self.child_names = child_names
 
     def build(self) -> list[str]:
@@ -973,7 +979,7 @@ class ImportBuilder:
 
     def core_import(self) -> str:
         """Creates the core import statement for the component."""
-        filename = name_from_camel_case(self.component.classname)
+        filename = name_from_camel_case(self.core_name)
         return f'import {{ {self.core_import_pieces()} }} from "@/components/{self.component.library}/{filename}"'.replace(
             "'", " "
         )
@@ -1002,7 +1008,7 @@ class ImportBuilder:
 
     def core_import_pieces(self) -> str:
         """Creates the core import pieces including the main component and its children (if required)."""
-        return ", ".join([self.component.classname] + self.child_names)
+        return ", ".join([self.core_name] + self.child_names)
 
     def use_state(self) -> list[str]:
         """Adds React's `useState` import if the component requires it."""

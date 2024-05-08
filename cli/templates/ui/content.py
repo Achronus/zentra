@@ -2,11 +2,12 @@ from cli.templates.ui.attributes import alt_attribute, src_attribute
 
 from zentra.core import Component
 from zentra.core.base import JSIterable
-from zentra.core.html import Div, HTMLContent
+from zentra.core.html import Div
 from zentra.core.react import LucideIcon
 from zentra.ui.control import (
     Checkbox,
     Collapsible,
+    InputOTP,
     RadioButton,
     RadioGroup,
     ScrollArea,
@@ -217,10 +218,31 @@ def avatar_content(avatar: Avatar) -> list[str]:
     ]
 
 
-def text_content(
-    text: str | HTMLContent | list[str | HTMLContent],
-) -> list[str] | HTMLContent:
-    """Returns a list of strings of text content with variable preprocessing (if required) or a HTMLContent model."""
+def input_otp_content(otp: InputOTP) -> list[str]:
+    """Returns a list of strings for the Avatar content based on the components attributes."""
+    content = []
+
+    slot_group_size = otp.num_inputs // otp.num_groups
+    slot_idx = 0
+
+    group_tag = "InputOTPGroup>"
+
+    for group_idx in range(otp.num_groups):
+        content.append(f"<{group_tag}")
+        for _ in range(slot_group_size):
+            content.append(f"<InputOTPSlot index={{{slot_idx}}} />")
+            slot_idx += 1
+        content.append(f"</{group_tag}")
+
+        if otp.num_groups > 1 and group_idx + 1 != otp.num_groups:
+            content.append("<InputOTPSeparator />")
+
+    return content
+
+
+def text_content(text: str | list[str]) -> list[str]:
+    """Returns a list of strings of text content with variable preprocessing
+    (if required) or a HTMLContent model."""
     if isinstance(text, str):
         return param_reformat_helper(text)
 

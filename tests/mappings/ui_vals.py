@@ -121,7 +121,6 @@ TOGGLE_GROUP_VALID_VALS = {
     }
 }
 
-
 # UI NOTIFICATION COMPONENTS
 ALERT_VALID_VALS = {
     "content": {
@@ -167,6 +166,7 @@ BADGE_VALID_VALS = {
         "variant": '<Badge variant="outline">\nBadge\n</Badge>',
     }
 }
+
 
 VALID_VALS_MAP = {
     "calendar": CALENDAR_VALID_VALS,

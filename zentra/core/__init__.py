@@ -49,6 +49,11 @@ class Component(BaseModel):
         """Returns a list of the attributes that use the same name as a common attribute, but act differently with this specific component."""
         return []
 
+    @property
+    def custom_common_content(self) -> list[str]:
+        """Returns a list of the content that use the same name as a common content, but act differently with this specific component."""
+        return []
+
 
 class DataArray(BaseModel):
     """

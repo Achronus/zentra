@@ -19,6 +19,11 @@ class HTMLTag(BaseModel):
         """Stores the classname for the JSX builder."""
         return self.__class__.__name__.lower()
 
+    @property
+    def custom_common_content(self) -> list[str]:
+        """Returns a list of the content that use the same name as a common content, but act differently with this specific model."""
+        return []
+
 
 class JSIterable(BaseModel):
     """

@@ -155,3 +155,7 @@ class Tooltip(Component, ShadcnUi):
 
     text: str
     trigger: Component
+
+    @property
+    def custom_common_content(self) -> list[str]:
+        return ["text"]

@@ -1,14 +1,13 @@
-import re
-from typing import Callable
-
 from cli.conf.format import name_from_camel_case
 from cli.conf.storage import ComponentDetails
+from cli.conf.types import MappingDict
 from cli.templates.mappings import JSXMappings
 from cli.templates.ui.content import text_content
 from cli.templates.utils import (
     compress_imports,
     dedupe,
     compress,
+    handle_single_quotes,
     remove_none,
     str_to_list,
 )
@@ -526,7 +525,11 @@ class NextJSComponentBuilder:
             use_state_mapping=mappings.use_state_map,
             child_names=[],
         )
-        self.content = ContentBuilder(component=component, mappings=mappings)
+        self.content = ContentBuilder(
+            model=component,
+            model_mapping=mappings.component_content,
+            common_mapping=mappings.common_content,
+        )
 
     def build(self) -> None:
         """Builds the JSX for the component."""
@@ -699,7 +702,11 @@ class HTMLContentBuilder:
             common_mapping=self.maps.common_attrs,
             component_mapping=self.maps.component_attrs,
         )
-        content_builder = ContentBuilder(component=model, mappings=self.maps)
+        content_builder = ContentBuilder(
+            model=model,
+            model_mapping=self.maps.component_content,
+            common_mapping=self.maps.common_content,
+        )
 
         attributes = " ".join(attr_builder.build())
         content = content_builder.build()
@@ -807,7 +814,11 @@ class ComponentBuilder:
             component=component,
             logic_mapping=mappings.common_logic,
         )
-        self.content = ContentBuilder(component=component, mappings=mappings)
+        self.content = ContentBuilder(
+            model=component,
+            model_mapping=mappings.component_content,
+            common_mapping=mappings.common_content,
+        )
 
     def build(self, full_shell: bool = False) -> None:
         """Builds the JSX for the component."""
@@ -874,8 +885,8 @@ class AttributeBuilder:
     def __init__(
         self,
         component: Component,
-        common_mapping: dict[str, Callable],
-        component_mapping: dict[str, Callable],
+        common_mapping: MappingDict,
+        component_mapping: MappingDict,
     ) -> None:
         self.component = component
         self.common_map = common_mapping
@@ -937,8 +948,8 @@ class ImportBuilder:
     def __init__(
         self,
         component: Component,
-        additional_imports_mapping: dict[str, Callable],
-        use_state_mapping: dict[str, Callable],
+        additional_imports_mapping: MappingDict,
+        use_state_mapping: MappingDict,
         child_names: list[str],
     ) -> None:
         self.component = component
@@ -1003,83 +1014,53 @@ class ImportBuilder:
 class ContentBuilder:
     """A builder for creating Zentra `Component` content."""
 
-    def __init__(self, component: Component, mappings: JSXMappings) -> None:
-        self.component = component
-        self.maps = mappings
+    def __init__(
+        self,
+        model: Component | HTMLTag,
+        model_mapping: MappingDict,
+        common_mapping: MappingDict,
+    ) -> None:
+        self.model = model
+
+        self.model_map = model_mapping
+        self.common_map = common_mapping
+
+    def get_common(self, attr_name: str, value: str | list[str]) -> list[str]:
+        """A helper function to retrieve the content from the `common_map` for the zentra model."""
+        return self.common_map[attr_name](value)
+
+    def get_content(self) -> list[str]:
+        """A helper function to retrieve the content from the `model_map` for the zentra model."""
+        return self.model_map[self.model.classname](self.model)
 
     def build(self) -> list[str]:
         """Builds the content for the component."""
         content = []
 
-        for attr_name, condition in self.maps.common_content:
-            if isinstance(self.component, InputOTP):
-                content.extend(self.handle_input_otp())
+        if isinstance(self.model, (Component, HTMLTag)):
+            if self.model.classname in self.model_map.keys():
+                inner_content = self.get_content()
 
-            elif hasattr(self.component, attr_name):
-                value = getattr(self.component, attr_name)
-                if value:
-                    content_str = condition(value)
-                    content.append(content_str)
+                if inner_content is not None:
+                    content.extend(inner_content)
 
-                    if attr_name == "text" and isinstance(self.component, Tooltip):
-                        content.pop()
+            model_dict = self.model.__dict__
+            for attr_name, value in model_dict.items():
+                if (
+                    value is not None
+                    and attr_name in self.common_map.keys()
+                    and attr_name not in self.model.custom_common_content
+                ):
+                    inner_content = self.get_common(attr_name, value)
+                    content.extend(inner_content)
 
-        for comp_type, condition in self.maps.component_content:
-            if isinstance(self.component, comp_type):
-                content_str = condition(self.component)
-                if content_str:
-                    content.extend(content_str)
-
-        if len(content) > 0 and isinstance(content[0], list):
-            return self.handle_single_quotes(*content)
-
-        return self.handle_single_quotes(content)
-
-    def handle_input_otp(self) -> list[str]:
-        """Input OTP is difficult to create with a single list comprehension. Instead, we create it separately here."""
-        content = []
-        component: InputOTP = self.component
-
-        slot_group_size = component.num_inputs // component.num_groups
-        slot_idx = 0
-
-        group_tag = "InputOTPGroup>"
-
-        for group_idx in range(component.num_groups):
-            content.append(f"<{group_tag}")
-            for _ in range(slot_group_size):
-                content.append(f"<InputOTPSlot index={{{slot_idx}}} />")
-                slot_idx += 1
-            content.append(f"</{group_tag}")
-
-            if component.num_groups > 1 and group_idx + 1 != component.num_groups:
-                content.append("<InputOTPSeparator />")
-
-        return content
-
-    def handle_single_quotes(self, content: list[str]) -> list[str]:
-        """Checks for `'` in a content list. If the item is a string without JSX tags, it will update the text into a suitable format for JSX processing. Returns the updated content list or unmodified version."""
-        single_quote_pattern = re.compile(r"\b\w*'\w*\b")
-
-        for idx, line in enumerate(content):
-            sq_matches = single_quote_pattern.findall(line)
-
-            if sq_matches:
-                for match in sq_matches:
-                    wrapped = "{`" + match + "`}"
-                    content[idx] = re.sub(
-                        r"\b" + re.escape(match) + r"\b", wrapped, line
-                    )
-
-        return content
+        return handle_single_quotes(content)
 
 
 class LogicBuilder:
     """A builder for creating the Zentra `Component` function logic created above the `return` statement."""
 
-    def __init__(
-        self, component: Component, logic_mapping: dict[str, Callable]
-    ) -> None:
+    def __init__(self, component: Component, logic_mapping: MappingDict) -> None:
         self.component = component
         self.logic_map = logic_mapping
 

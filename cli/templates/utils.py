@@ -1,3 +1,6 @@
+import re
+
+
 def compress(values: list[str], chars: str = "\n") -> str:
     """Compresses values into a string."""
     return chars.join(values)
@@ -48,3 +51,18 @@ def compress_imports(imports: list[str]) -> list[str]:
         merged_imports.append(f"import {comps} from {module}")
 
     return merged_imports
+
+
+def handle_single_quotes(content: list[str]) -> list[str]:
+    """Checks for `'` in a content list. If the item is a string without JSX tags, it will update the text into a suitable format for JSX processing. Returns the updated content list or unmodified version."""
+    single_quote_pattern = re.compile(r"\b\w*'\w*\b")
+
+    for idx, line in enumerate(content):
+        sq_matches = single_quote_pattern.findall(line)
+
+        if sq_matches:
+            for match in sq_matches:
+                wrapped = "{`" + match + "`}"
+                content[idx] = re.sub(r"\b" + re.escape(match) + r"\b", wrapped, line)
+
+    return content

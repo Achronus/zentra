@@ -1,6 +1,4 @@
-from typing import Callable
-from pydantic_core import Url
-
+from cli.conf.types import MappingDict
 from cli.templates.ui.attributes import (
     alt_attribute,
     calendar_attributes,
@@ -20,6 +18,7 @@ from cli.templates.ui.content import (
     checkbox_content,
     collapsible_content,
     div_content,
+    input_otp_content,
     radio_group_content,
     scroll_area_content,
     select_content,
@@ -37,18 +36,9 @@ from cli.templates.ui.imports import (
     static_img_imports,
 )
 from cli.templates.ui.logic import calendar_logic, collapsible_logic
-from zentra.core.html import Div
-from zentra.ui.control import (
-    Checkbox,
-    Collapsible,
-    RadioGroup,
-    ScrollArea,
-    Select,
-)
-from zentra.ui.notification import Alert, TextAlertDialog, Tooltip
-from zentra.ui.presentation import Avatar
 
 from pydantic import BaseModel
+from zentra.nextjs import Url
 
 
 # Components made up of other Zentra models using a 'content' or 'items' attribute
@@ -137,23 +127,24 @@ ADDITIONAL_IMPORTS_MAPPING = {
 }
 
 
-COMPONENT_CONTENT_MAPPING = [
-    (Div, lambda div: div_content(div)),
-    (Checkbox, lambda cb: checkbox_content(cb)),
-    (Collapsible, lambda comp: collapsible_content(comp)),
-    (RadioGroup, lambda rg: radio_group_content(rg)),
-    (ScrollArea, lambda sa: scroll_area_content(sa)),
-    (Select, lambda select: select_content(select)),
-    (Alert, lambda alert: alert_content(alert)),
-    (TextAlertDialog, lambda ad: text_alert_dialog_content(ad)),
-    (Tooltip, lambda tt: tooltip_content(tt)),
-    (Avatar, lambda avatar: avatar_content(avatar)),
-]
+COMPONENT_CONTENT_MAPPING = {
+    "Div": lambda div: div_content(div),
+    "Checkbox": lambda cb: checkbox_content(cb),
+    "Collapsible": lambda comp: collapsible_content(comp),
+    "RadioGroup": lambda rg: radio_group_content(rg),
+    "ScrollArea": lambda sa: scroll_area_content(sa),
+    "Select": lambda select: select_content(select),
+    "Alert": lambda alert: alert_content(alert),
+    "TextAlertDialog": lambda ad: text_alert_dialog_content(ad),
+    "Tooltip": lambda tt: tooltip_content(tt),
+    "Avatar": lambda avatar: avatar_content(avatar),
+    "InputOTP": lambda otp: input_otp_content(otp),
+}
 
 
-COMMON_CONTENT_MAPPING = [
-    ("text", lambda value: text_content(value)),
-]
+COMMON_CONTENT_MAPPING = {
+    "text": lambda value: text_content(value),
+}
 
 
 COMMON_LOGIC_MAPPING = {
@@ -165,12 +156,12 @@ COMMON_LOGIC_MAPPING = {
 class JSXMappings(BaseModel):
     """A storage container for JSX mappings."""
 
-    common_attrs: dict[str, Callable]
-    component_attrs: dict[str, Callable]
-    common_content: list[tuple]
-    component_content: list[tuple]
-    common_logic: dict[str, Callable]
-    additional_imports: dict[str, Callable]
+    common_attrs: MappingDict
+    component_attrs: MappingDict
+    common_content: MappingDict
+    component_content: MappingDict
+    common_logic: MappingDict
+    additional_imports: MappingDict
     wrappers: dict[str, str]
     use_client_map: list[str]
     use_state_map: list[str]

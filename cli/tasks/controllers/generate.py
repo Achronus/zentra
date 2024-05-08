@@ -1,7 +1,7 @@
 from cli.conf.storage import ModelFileStorage, ModelStorage, GeneratePathStorage
 from cli.conf.types import LibraryNamePairs
 from cli.tasks.controllers.base import BaseController, status
-from cli.templates.builder import LocalBuilder
+from cli.templates.builders.local import LocalBuilder
 from cli.templates.extract import LocalExtractor
 
 from zentra.core import Zentra

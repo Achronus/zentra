@@ -1,13 +1,13 @@
 from cli.conf.storage import ComponentDetails
-from cli.templates.jsx import (
+from cli.templates.builders.model import (
     BuildController,
     ComponentBuilder,
     HTMLContentBuilder,
     JSIterableContentBuilder,
-    JSXPageBuilder,
     NextJSComponentBuilder,
     ParentComponentBuilder,
 )
+from cli.templates.builders.structural import JSXPageBuilder
 from cli.templates.mappings import JSX_MAPPINGS
 from tests.templates.details import COMPONENT_DETAILS_MAPPING, component_details
 from zentra.core import Component, Page

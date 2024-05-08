@@ -1,6 +1,6 @@
 import pytest
 
-from cli.templates.jsx import JSXPageBuilder
+from cli.templates.builders.structural import JSXPageBuilder
 from tests.templates.helper import page_builder
 from zentra.core import Page
 from zentra.ui.control import (

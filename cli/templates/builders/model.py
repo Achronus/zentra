@@ -1,232 +1,82 @@
-from cli.conf.format import name_from_camel_case
 from cli.conf.storage import ComponentDetails
-from cli.conf.types import MappingDict
+from cli.templates.builders import add_to_storage
+from cli.templates.builders.jsx import (
+    AttributeBuilder,
+    ContentBuilder,
+    ImportBuilder,
+    LogicBuilder,
+)
 from cli.templates.mappings import JSXMappings
+from cli.templates.storage import JSXComponentContentStorage, JSXComponentExtras
 from cli.templates.ui.content import text_content
-from cli.templates.utils import (
-    compress_imports,
-    dedupe,
-    compress,
-    handle_single_quotes,
-    remove_none,
-    str_to_list,
-)
-from cli.templates.storage import (
-    JSXComponentContentStorage,
-    JSXComponentExtras,
-    JSXPageContentStorage,
-)
+from cli.templates.utils import compress, compress_imports, str_to_list
 
-from zentra.core import Component, Page
+from zentra.core import Component
 from zentra.core.base import HTMLTag, JSIterable
 from zentra.core.html import Div, FigCaption, Figure
 from zentra.core.react import LucideIcon, LucideIconWithText
+
 from zentra.nextjs import Link, NextJs
-from zentra.ui import Form
 from zentra.ui.control import Button, ToggleGroup
 from zentra.ui.notification import Tooltip
 
 
-FORM_SCHEMA_BASE = """
-const FormSchema = z.object({
-  **form_schema**
-});
-"""
-
-JSX_BASE = """**imports**
-
-type Props = {
-  **props**
-}
-**form_schema**
-const PageName = (**prop_params**: Props) => {
-  **logic**
-  return (
-      **content**
-  );
-};
-
-export default PageName;
-"""
-
-
-def add_to_storage(
-    local: JSXComponentExtras,
-    comp_store: JSXComponentContentStorage | JSXComponentExtras,
-    extend: bool = False,
-) -> JSXComponentExtras:
-    """A helper function for adding component items to storage. Returns the updated storage."""
-    for key in local.__dict__.keys():
-        if hasattr(comp_store, key):
-            value = getattr(comp_store, key)
-            if value:
-                local_values: list[str] = getattr(local, key)
-                local_values.extend(value) if extend else local_values.append(value)
-
-    local.imports = dedupe(local.imports)
-    local.logic = dedupe(local.logic)
-    return local
-
-
-class JSXPageBuilder:
-    """A builder for creating Zentra `Page` models as JSX."""
+class BuildController:
+    """A controller for selecting Zentra model JSX builders."""
 
     def __init__(
-        self,
-        page: Page,
-        mappings: JSXMappings,
-        component_details: list[ComponentDetails],
+        self, mappings: JSXMappings, details_dict: dict[str, ComponentDetails]
     ) -> None:
-        self.page = page
-        self.mappings = mappings
-        self.component_details = component_details
+        self.maps = mappings
+        self.details_dict = details_dict
 
-        self.storage = JSXPageContentStorage()
-        self.use_client = False
-        self.form_schema_base = FORM_SCHEMA_BASE
-        self.jsx = JSX_BASE
+    def build_component(
+        self, component: Component, full_shell: bool = False
+    ) -> tuple[list[str], JSXComponentContentStorage]:
+        """Creates the JSX for a `Component` model and returns its details as a tuple in the form of `(content, comp_storage)`."""
+        builder = ComponentBuilder(
+            component=component,
+            mappings=self.maps,
+            details=self.details_dict[component.classname],
+        )
+        builder.build(full_shell=full_shell)
+        return str_to_list(builder.storage.content), builder.storage
 
-    def get_details(self, component: Component) -> ComponentDetails:
-        """Retrieves the component details for the component."""
-        for details in self.component_details:
-            if component.classname == details.name:
-                return details
+    def build_nextjs_component(
+        self, component: Component
+    ) -> tuple[list[str], JSXComponentContentStorage]:
+        """Creates the JSX for a `NextJS` model and returns its details as a tuple in the form of `(content, comp_storage)`."""
+        nextjs = NextJSComponentBuilder(component=component, mappings=self.maps)
+        nextjs.build()
+        return str_to_list(nextjs.storage.content), nextjs.storage
 
-    def build(self) -> None:
-        """Builds the JSX for the page."""
+    def build_js_iterable(
+        self, model: JSIterable
+    ) -> tuple[list[str], JSXComponentExtras]:
+        """Creates the JSX for a `JSIterable` model and returns its details as a tuple in the form of `(content, multi_comp_storage)`."""
+        builder = JSIterableContentBuilder(
+            model=model,
+            mappings=self.maps,
+            details_dict=self.details_dict,
+        )
+        content = builder.build()
+        return content, builder.comp_storage
 
-        for component in self.page.components:
-            self.check_for_use_client(component=component)
-            details = self.get_details(component=component)
-            builder = ComponentBuilder(
-                component=component,
-                mappings=self.mappings,
-                details=details,
-            )
-            builder.build()
-            self.populate_storage(comp_store=builder.storage)
+    def build_html_tag(self, model: HTMLTag) -> tuple[list[str], JSXComponentExtras]:
+        """Creates the JSX for a `HTMLTag` model and returns its details as a tuple in the form of `(content, multi_comp_storage)`."""
+        builder = HTMLContentBuilder(
+            model=model,
+            mappings=self.maps,
+            details_dict=self.details_dict,
+        )
+        content, storage = builder.build()
+        return content, storage
 
-        self.fill_jsx()
-
-        if self.use_client:
-            self.jsx = f'"use_client"\n\n{self.jsx}'
-
-    def check_for_use_client(self, component: Component) -> None:
-        """Performs a check to enable `use_client` at the top of the page if any required components exist."""
-        if component.classname in self.mappings.use_client_map:
-            self.use_client = True
-
-    def populate_storage(self, comp_store: JSXComponentContentStorage) -> None:
-        """Adds component items to storage."""
-        for key in self.storage.__dict__.keys():
-            if hasattr(comp_store, key):
-                getattr(self.storage, key).append(getattr(comp_store, key))
-
-    def fill_jsx(self) -> None:
-        """Concatenates the lists of JSX content into strings, removes duplicate imports and redundant logic statements, and adds them to the appropriate areas in the JSX template."""
-        imports = self.set_imports(self.storage.imports)
-        logic = self.set_logic(self.storage.logic)
-        content = self.set_content(self.storage.content)
-        form_schema = self.set_form_schema(self.storage.form_schema)
-        props, prop_params = self.set_props(self.storage.props)
-
-        self.jsx = self.jsx.replace("PageName", self.page.name)
-        self.jsx = self.jsx.replace("**imports**", imports)
-        self.jsx = self.jsx.replace("**logic**", logic)
-        self.jsx = self.jsx.replace("**content**", content)
-        self.jsx = self.jsx.replace("**form_schema**", form_schema)
-        self.jsx = self.jsx.replace("**props**", props)
-        self.jsx = self.jsx.replace("**prop_params**", prop_params)
-
-    def unpack_additional_imports(self, imports_list: list[str]) -> list[str]:
-        """Unpacks additional import values if a newline character is present in the list."""
-        unpacked_imports = []
-        for import_str in imports_list:
-            if "\n" in import_str:
-                unpacked_imports.extend(import_str.split("\n"))
-            else:
-                unpacked_imports.append(import_str)
-        return unpacked_imports
-
-    def compress_lucide_react(self, imports: list[str]) -> list[str]:
-        """Combines `lucide-react` imports into a single statement (if applicable). Returns the updated/unedited list."""
-        seen_lucide, new_imports = [], []
-        lucide_base = 'import { **parts** } from "lucide-react"'
-
-        for statement in imports:
-            if "lucide-react" in statement:
-                icon = statement.split(" ")[2]
-                if icon not in seen_lucide:
-                    seen_lucide.append(icon)
-            else:
-                new_imports.append(statement)
-
-        if len(seen_lucide) > 0:
-            parts = ", ".join(seen_lucide)
-            lucide_base = lucide_base.replace("**parts**", parts)
-            new_imports.append(lucide_base)
-            return new_imports
-
-        return imports
-
-    def group_imports(self, imports: list[str]) -> list[str]:
-        """Splits import statements into groups for better readability. Returns an updated import list."""
-        non_components, components = [], []
-
-        for statement in imports:
-            if "@/components" not in statement:
-                non_components.append(statement)
-            else:
-                components.append(statement)
-
-        if len(non_components) > 0:
-            non_components.append("")
-            return non_components + components
-
-        return imports
-
-    def compress(self, values: list[str]) -> str:
-        """Compresses values into a string."""
-        return "\n".join(values)
-
-    def dedupe(self, values: list[str]) -> list[str]:
-        """Filters out duplicate values from the list."""
-        result = list(set(values))
-        result.sort()
-        return result
-
-    def set_form_schema(self, form_schema: list[str]) -> str:
-        """Sets the form schema depending on if a form exists in the page. If one does, uses `form_schema_base` to populate the values and returns it. Otherwise, returns an empty string."""
-        if form_schema:
-            form_schema = self.compress(self.storage.form_schema)
-            return self.form_schema_base.replace("**form_schema**", form_schema)
-        else:
-            return ""
-
-    def set_imports(self, imports: list[str]) -> str:
-        """Sets the import statements depending on the values stored in storage and returns them as a compiled string."""
-        imports = self.unpack_additional_imports(imports)
-        imports = self.compress_lucide_react(imports)
-        imports = self.group_imports(self.dedupe(imports))
-        return self.compress(imports)
-
-    def set_logic(self, logic: list[str]) -> str:
-        """Sets the page logic depending on the values stored in storage and returns them as a compiled string."""
-        return self.compress(logic).strip("\n")
-
-    def set_content(self, content: list[str]) -> str:
-        """Sets the page JSX content depending on the values stored in storage and returns them as a compiled string."""
-        content.insert(0, "<>")
-        content.append("</>")
-        return self.compress(content)
-
-    def set_props(self, props: list[str]) -> tuple[str, str]:
-        """Sets the prop content and prop parameters depending on the values stored in storage and returns them as a compiled string."""
-        if props:
-            # TODO: update logic here
-            return self.compress(props), self.compress(props)
-        else:
-            return "", "props"
+    def build_icon(self, model: LucideIcon) -> tuple[list[str], str]:
+        """Creates the JSX for a `LucideIcon` model and returns its details as a tuple in the form of: `(content, import_str)`."""
+        builder = IconBuilder(model=model, mappings=self.maps)
+        content, import_str = builder.build()
+        return content, import_str
 
 
 class ParentComponentBuilder:
@@ -331,64 +181,6 @@ class ParentComponentBuilder:
             *trigger_close,
             "</TooltipProvider>",
         ]
-
-
-class BuildController:
-    """A controller for selecting Zentra model JSX builders."""
-
-    def __init__(
-        self, mappings: JSXMappings, details_dict: dict[str, ComponentDetails]
-    ) -> None:
-        self.maps = mappings
-        self.details_dict = details_dict
-
-    def build_component(
-        self, component: Component, full_shell: bool = False
-    ) -> tuple[list[str], JSXComponentContentStorage]:
-        """Creates the JSX for a `Component` model and returns its details as a tuple in the form of `(content, comp_storage)`."""
-        builder = ComponentBuilder(
-            component=component,
-            mappings=self.maps,
-            details=self.details_dict[component.classname],
-        )
-        builder.build(full_shell=full_shell)
-        return str_to_list(builder.storage.content), builder.storage
-
-    def build_nextjs_component(
-        self, component: Component
-    ) -> tuple[list[str], JSXComponentContentStorage]:
-        """Creates the JSX for a `NextJS` model and returns its details as a tuple in the form of `(content, comp_storage)`."""
-        nextjs = NextJSComponentBuilder(component=component, mappings=self.maps)
-        nextjs.build()
-        return str_to_list(nextjs.storage.content), nextjs.storage
-
-    def build_js_iterable(
-        self, model: JSIterable
-    ) -> tuple[list[str], JSXComponentExtras]:
-        """Creates the JSX for a `JSIterable` model and returns its details as a tuple in the form of `(content, multi_comp_storage)`."""
-        builder = JSIterableContentBuilder(
-            model=model,
-            mappings=self.maps,
-            details_dict=self.details_dict,
-        )
-        content = builder.build()
-        return content, builder.comp_storage
-
-    def build_html_tag(self, model: HTMLTag) -> tuple[list[str], JSXComponentExtras]:
-        """Creates the JSX for a `HTMLTag` model and returns its details as a tuple in the form of `(content, multi_comp_storage)`."""
-        builder = HTMLContentBuilder(
-            model=model,
-            mappings=self.maps,
-            details_dict=self.details_dict,
-        )
-        content, storage = builder.build()
-        return content, storage
-
-    def build_icon(self, model: LucideIcon) -> tuple[list[str], str]:
-        """Creates the JSX for a `LucideIcon` model and returns its details as a tuple in the form of: `(content, import_str)`."""
-        builder = IconBuilder(model=model, mappings=self.maps)
-        content, import_str = builder.build()
-        return content, import_str
 
 
 class InnerContentBuilder:
@@ -860,231 +652,3 @@ class ComponentBuilder:
             ]
 
         return wrapped_content
-
-
-class FormBuilder:
-    """A builder for creating Zentra `Form` models as JSX."""
-
-    def __init__(self, form: Form) -> None:
-        self.form = form
-
-    def build(self) -> str:
-        """Builds the JSX for the form."""
-        for field in self.form:
-            # TODO: access sub-components
-            # field.content
-            pass
-
-
-class AttributeBuilder:
-    """
-    A builder for creating Zentra `Component` attributes.
-
-    Parameters:
-    - `component` (`zentra.core.Component`) - any Zentra Component model
-    - `common_mapping` (`dictionary[string, callable]`) - a mapping containing common attributes across all components. With a `{key: value}` pair = `{attr_name, attr_func}`
-    - `component_mapping` (`dictionary[string, callable]`) - a mapping containing unique component specific logic. With a `{key: value}` pair = `{component_name: attr_func}`.
-    """
-
-    def __init__(
-        self,
-        component: Component,
-        common_mapping: MappingDict,
-        component_mapping: MappingDict,
-    ) -> None:
-        self.component = component
-        self.common_map = common_mapping
-        self.component_map = component_mapping
-
-    def get_common_attr(self, key: str, value: int | str | bool) -> str:
-        """Retrieves an attribute string from the common attribute mapping given a key, value pair."""
-        return self.common_map[key](value)
-
-    def get_component_attrs(self) -> list[str]:
-        """Retrieves a list of unique attribute strings for the component from the component attribute mapping."""
-        return self.component_map[self.component.classname](self.component)
-
-    def common_checks(self, attr_name: str) -> bool:
-        """Performs checks for model attributes to confirm whether it should use the `common_map`. These include:
-          1. When the `attr_name` is not an `inner_attribute`
-          2. When the `attr_name` is not a `custom_common_attribute`
-
-        If both checks are valid, returns `True`. Otherwise, returns `False`.
-        """
-        not_inner_attr = attr_name not in self.component.inner_attributes
-        not_custom_attr = attr_name not in self.component.custom_common_attributes
-
-        if not_inner_attr and not_custom_attr:
-            return True
-
-        return False
-
-    def build(self) -> list[str]:
-        """Builds the attributes from a mapping for the component."""
-        attrs = []
-        include_common = True
-        model_dict = self.component.__dict__
-
-        for attr_name, value in model_dict.items():
-            if value is not None and attr_name in self.common_map.keys():
-                if isinstance(self.component, (Component, LucideIcon)):
-                    include_common = self.common_checks(attr_name)
-
-                if include_common:
-                    attr_str = self.get_common_attr(attr_name, value)
-                    attrs.append(attr_str)
-
-        if (
-            isinstance(self.component, Component)
-            and self.component.classname in self.component_map.keys()
-        ):
-            attr_list = self.get_component_attrs()
-
-            if attr_list is not None:
-                attrs.extend(attr_list)
-
-        return remove_none(attrs)
-
-
-class ImportBuilder:
-    """A builder for creating Zentra `Component` import statements."""
-
-    def __init__(
-        self,
-        component: Component,
-        additional_imports_mapping: MappingDict,
-        use_state_mapping: MappingDict,
-        core_name: str,
-        child_names: list[str],
-    ) -> None:
-        self.component = component
-        self.additional_map = additional_imports_mapping
-        self.use_state_map = use_state_mapping
-        self.core_name = core_name
-        self.child_names = child_names
-
-    def build(self) -> list[str]:
-        """Builds the import statements for the component."""
-        additional_imports = self.additional_imports()
-        use_state = self.use_state()
-        imports = [self.core_import()]
-
-        if use_state:
-            imports.extend(use_state)
-
-        if additional_imports:
-            imports.extend(additional_imports)
-
-        return [item for item in imports if item]
-
-    def core_import(self) -> str:
-        """Creates the core import statement for the component."""
-        filename = name_from_camel_case(self.core_name)
-        return f'import {{ {self.core_import_pieces()} }} from "@/components/{self.component.library}/{filename}"'.replace(
-            "'", " "
-        )
-
-    def get_imports_from_map(self) -> list[str]:
-        """A helper function to retrieve the additional imports from the `additional_map` for the component."""
-        return self.additional_map[self.component.classname](self.component)
-
-    def additional_imports(self) -> list[str]:
-        """Creates the additional imports needed for the component."""
-        imports = []
-
-        if (
-            isinstance(self.component, Component)
-            and self.component.classname in self.additional_map.keys()
-        ):
-            import_list = self.get_imports_from_map()
-
-            if import_list is not None:
-                imports.extend(import_list)
-
-        if len(imports) == 0:
-            return None
-
-        return imports
-
-    def core_import_pieces(self) -> str:
-        """Creates the core import pieces including the main component and its children (if required)."""
-        return ", ".join([self.core_name] + self.child_names)
-
-    def use_state(self) -> list[str]:
-        """Adds React's `useState` import if the component requires it."""
-        if self.component.classname in self.use_state_map:
-            return ['import { useState } from "react"']
-        return None
-
-
-class ContentBuilder:
-    """A builder for creating Zentra `Component` content."""
-
-    def __init__(
-        self,
-        model: Component | HTMLTag,
-        model_mapping: MappingDict,
-        common_mapping: MappingDict,
-    ) -> None:
-        self.model = model
-
-        self.model_map = model_mapping
-        self.common_map = common_mapping
-
-    def get_common(self, attr_name: str, value: str | list[str]) -> list[str]:
-        """A helper function to retrieve the content from the `common_map` for the zentra model."""
-        return self.common_map[attr_name](value)
-
-    def get_content(self) -> list[str]:
-        """A helper function to retrieve the content from the `model_map` for the zentra model."""
-        return self.model_map[self.model.classname](self.model)
-
-    def build(self) -> list[str]:
-        """Builds the content for the component."""
-        content = []
-
-        if isinstance(self.model, (Component, HTMLTag)):
-            if self.model.classname in self.model_map.keys():
-                inner_content = self.get_content()
-
-                if inner_content is not None:
-                    content.extend(inner_content)
-
-            model_dict = self.model.__dict__
-            for attr_name, value in model_dict.items():
-                if (
-                    value is not None
-                    and attr_name in self.common_map.keys()
-                    and attr_name not in self.model.custom_common_content
-                ):
-                    inner_content = self.get_common(attr_name, value)
-                    content.extend(inner_content)
-
-        return handle_single_quotes(content)
-
-
-class LogicBuilder:
-    """A builder for creating the Zentra `Component` function logic created above the `return` statement."""
-
-    def __init__(self, component: Component, logic_mapping: MappingDict) -> None:
-        self.component = component
-        self.logic_map = logic_mapping
-
-    def get_logic_list(self) -> list[str]:
-        """A helper function to retrieve the logic statements from the `logic_map` for the component."""
-        return self.logic_map[self.component.classname](self.component)
-
-    def build(self) -> list[str]:
-        """Builds the function logic for the component."""
-        logic = []
-
-        if (
-            isinstance(self.component, Component)
-            and self.component.classname in self.logic_map.keys()
-        ):
-            logic_list = self.get_logic_list()
-
-            if logic_list is not None:
-                logic.extend(logic_list)
-
-        return logic

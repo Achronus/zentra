@@ -80,6 +80,47 @@ class BuildController:
         return content, import_str
 
 
+class HTMLBuildController:
+    """A build controller for creating Zentra `HTMLTag` models as JSX."""
+
+    def __init__(
+        self,
+        model: HTMLTag,
+        mappings: JSXMappings,
+        details_dict: dict[str, ComponentDetails],
+    ) -> None:
+        self.model = model
+        self.maps = mappings
+        self.details_dict = details_dict
+
+        self.storage = JSXComponentExtras()
+
+    def build(self) -> tuple[list[str], JSXComponentExtras]:
+        """Builds the models JSX content and returns it as a tuple in the form: `(content, storage)`"""
+
+        if isinstance(self.model, Div):
+            builder = DivBuilder(
+                model=self.model,
+                mappings=self.maps,
+                details_dict=self.details_dict,
+            )
+        elif isinstance(self.model, HTMLContent):
+            builder = HTMLContentBuilder(self.model, self.maps)
+
+        elif isinstance(self.model, Figure):
+            builder = FigureBuilder(
+                model=self.model,
+                mappings=self.maps,
+                details_dict=self.details_dict,
+            )
+        else:
+            raise TypeError(f"'{type(self.model)}' not supported.")
+
+        content, storage = builder.build()
+        self.storage = add_to_storage(self.storage, storage, extend=True)
+        return content, self.storage
+
+
 class ParentComponentBuilder:
     """A builder for creating Zentra `Component` model JSX for components that have other components inside of them."""
 
@@ -576,47 +617,6 @@ class DivBuilder:
 
         else:
             raise TypeError(f"'{type(item)}' not supported.")
-
-
-class HTMLBuildController:
-    """A build controller for creating Zentra `HTMLTag` models as JSX."""
-
-    def __init__(
-        self,
-        model: HTMLTag,
-        mappings: JSXMappings,
-        details_dict: dict[str, ComponentDetails],
-    ) -> None:
-        self.model = model
-        self.maps = mappings
-        self.details_dict = details_dict
-
-        self.storage = JSXComponentExtras()
-
-    def build(self) -> tuple[list[str], JSXComponentExtras]:
-        """Builds the models JSX content and returns it as a tuple in the form: `(content, storage)`"""
-
-        if isinstance(self.model, Div):
-            builder = DivBuilder(
-                model=self.model,
-                mappings=self.maps,
-                details_dict=self.details_dict,
-            )
-        elif isinstance(self.model, HTMLContent):
-            builder = HTMLContentBuilder(self.model, self.maps)
-
-        elif isinstance(self.model, Figure):
-            builder = FigureBuilder(
-                model=self.model,
-                mappings=self.maps,
-                details_dict=self.details_dict,
-            )
-        else:
-            raise TypeError(f"'{type(self.model)}' not supported.")
-
-        content, storage = builder.build()
-        self.storage = add_to_storage(self.storage, storage, extend=True)
-        return content, self.storage
 
 
 class HTMLContentBuilder:

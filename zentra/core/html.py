@@ -3,7 +3,7 @@ from zentra.core.base import HTMLTag, JSIterable
 from zentra.core.enums.html import HTMLContentTagType
 from zentra.nextjs import Image
 
-from pydantic import ConfigDict, field_validator
+from pydantic import field_validator
 from pydantic_core import PydanticCustomError
 
 
@@ -19,8 +19,6 @@ class HTMLContent(HTMLTag):
 
     tag: HTMLContentTagType
     text: str
-
-    model_config = ConfigDict(use_enum_values=True)
 
     @property
     def classname(self) -> str:

@@ -17,7 +17,6 @@ from cli.templates.ui.content import (
     avatar_content,
     checkbox_content,
     collapsible_content,
-    div_content,
     input_otp_content,
     radio_group_content,
     scroll_area_content,
@@ -128,7 +127,6 @@ ADDITIONAL_IMPORTS_MAPPING = {
 
 
 COMPONENT_CONTENT_MAPPING = {
-    "Div": lambda div: div_content(div),
     "Checkbox": lambda cb: checkbox_content(cb),
     "Collapsible": lambda comp: collapsible_content(comp),
     "RadioGroup": lambda rg: radio_group_content(rg),

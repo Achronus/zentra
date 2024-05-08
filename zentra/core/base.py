@@ -1,4 +1,4 @@
-from pydantic import BaseModel, field_validator, Field
+from pydantic import BaseModel, ConfigDict, field_validator, Field
 from pydantic_core import PydanticCustomError
 
 from zentra.core import LOWER_CAMELCASE_SINGLE_WORD, has_valid_pattern
@@ -13,6 +13,8 @@ class HTMLTag(BaseModel):
     """
 
     styles: str = None
+
+    model_config = ConfigDict(use_enum_values=True)
 
     @property
     def classname(self) -> str:
@@ -35,6 +37,8 @@ class JSIterable(BaseModel):
 
     obj_name: str = Field(min_length=1, max_length=20)
     param_name: str = Field(min_length=1, max_length=20)
+
+    model_config = ConfigDict(use_enum_values=True)
 
     @property
     def classname(self) -> str:

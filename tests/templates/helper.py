@@ -2,7 +2,8 @@ from cli.conf.storage import ComponentDetails
 from cli.templates.builders.model import (
     BuildController,
     ComponentBuilder,
-    HTMLContentBuilder,
+    FigCaptionBuilder,
+    HTMLBuildController,
     JSIterableContentBuilder,
     NextJSComponentBuilder,
     ParentComponentBuilder,
@@ -12,6 +13,7 @@ from cli.templates.mappings import JSX_MAPPINGS
 from tests.templates.details import COMPONENT_DETAILS_MAPPING, component_details
 from zentra.core import Component, Page
 from zentra.core.base import HTMLTag, JSIterable
+from zentra.core.html import FigCaption
 
 
 def build_controller() -> BuildController:
@@ -39,12 +41,16 @@ def nextjs_component_builder(component: Component) -> NextJSComponentBuilder:
     return NextJSComponentBuilder(component, mappings=JSX_MAPPINGS)
 
 
-def html_content_builder(model: HTMLTag) -> HTMLContentBuilder:
-    return HTMLContentBuilder(
+def html_content_builder(model: HTMLTag) -> HTMLBuildController:
+    return HTMLBuildController(
         model=model,
         mappings=JSX_MAPPINGS,
         details_dict=COMPONENT_DETAILS_MAPPING,
     )
+
+
+def fig_caption_builder(model: FigCaption) -> FigCaptionBuilder:
+    return FigCaptionBuilder(model=model, mappings=JSX_MAPPINGS)
 
 
 def js_iterable_content_builder(model: JSIterable) -> JSIterableContentBuilder:

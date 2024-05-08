@@ -2,7 +2,7 @@ from pydantic import ValidationError
 import pytest
 
 from tests.mappings.html import HTML_VALID_VALS_MAP
-from tests.templates.helper import html_content_builder
+from tests.templates.helper import html_content_builder, fig_caption_builder
 from zentra.core.base import HTMLTag
 from zentra.core.enums.html import HTMLContentTagType
 from zentra.core.html import Div, FigCaption, Figure, HTMLContent
@@ -16,7 +16,6 @@ class Builder:
 
     def __init__(self, model: HTMLTag) -> None:
         self.model = model
-
         self.builder = html_content_builder(model=model)
 
     def content(self, valid_value: str):
@@ -27,6 +26,18 @@ class Builder:
         _, storage = self.builder.build()
         result: list[str] = getattr(storage, result_attr)
         assert "\n".join(result) == valid_value, (result, valid_value)
+
+
+class CaptionBuilder:
+    """A helper class that handles the logic for the `FigCaption` model test implementations."""
+
+    def __init__(self, model: FigCaption) -> None:
+        self.model = model
+        self.builder = fig_caption_builder(model=model)
+
+    def content(self, valid_value: str):
+        result = self.builder.build()
+        assert "\n".join(result) == valid_value, (result, valid_value.split("\n"))
 
 
 class TestHTMLContent:
@@ -193,7 +204,7 @@ class TestDiv:
 class TestFigCaption:
     @staticmethod
     def test_content_multi_text():
-        builder = Builder(
+        builder = CaptionBuilder(
             model=FigCaption(
                 styles="pt-2 text-xs text-muted-foreground",
                 text=[
@@ -210,7 +221,7 @@ class TestFigCaption:
 
     @staticmethod
     def test_content_text_html_content():
-        builder = Builder(
+        builder = CaptionBuilder(
             model=FigCaption(
                 styles="pt-2 text-xs text-muted-foreground",
                 text=HTMLContent(text="test $here", tag="h1"),
@@ -222,7 +233,7 @@ class TestFigCaption:
 
     @staticmethod
     def test_content_text_str_standard():
-        builder = Builder(
+        builder = CaptionBuilder(
             model=FigCaption(
                 styles="pt-2 text-xs text-muted-foreground",
                 text="Photo by author",
@@ -232,7 +243,7 @@ class TestFigCaption:
 
     @staticmethod
     def test_content_text_str_params():
-        builder = Builder(
+        builder = CaptionBuilder(
             model=FigCaption(
                 styles="pt-2 text-xs text-muted-foreground",
                 text="Photo by $author",
@@ -244,7 +255,7 @@ class TestFigCaption:
 
     @staticmethod
     def test_content_text_str_standard_no_styles():
-        builder = Builder(
+        builder = CaptionBuilder(
             model=FigCaption(
                 text="Photo by author",
             )

@@ -1,5 +1,6 @@
 from cli.conf.storage import ComponentDetails
 from cli.templates.builders import add_to_storage
+from cli.templates.builders.utils import get_html_content
 from cli.templates.builders.jsx import (
     AttributeBuilder,
     ContentBuilder,
@@ -13,7 +14,7 @@ from cli.templates.utils import compress, compress_imports, str_to_list
 
 from zentra.core import Component
 from zentra.core.base import HTMLTag, JSIterable
-from zentra.core.html import Div, FigCaption, Figure
+from zentra.core.html import Div, FigCaption, Figure, HTMLContent
 from zentra.core.react import LucideIcon, LucideIconWithText
 
 from zentra.nextjs import Link, NextJs
@@ -64,7 +65,7 @@ class BuildController:
 
     def build_html_tag(self, model: HTMLTag) -> tuple[list[str], JSXComponentExtras]:
         """Creates the JSX for a `HTMLTag` model and returns its details as a tuple in the form of `(content, multi_comp_storage)`."""
-        builder = HTMLContentBuilder(
+        builder = HTMLBuildController(
             model=model,
             mappings=self.maps,
             details_dict=self.details_dict,
@@ -346,13 +347,13 @@ class NextJSComponentBuilder:
 
     def core_import(self) -> str:
         """Creates the core import statement for the component."""
-        name = self.component.classname
+        name = self.component.container_name
         return f"import {name} from 'next/{name.lower()}'"
 
     def apply_content_containers(self, content: list[str]) -> list[str]:
         """Wraps the components content in its outer shell and any additional wrappers (if applicable)."""
         wrapped_content = [
-            f"<{self.component.classname}{f' {self.storage.attributes}' if self.storage.attributes else ''} />"
+            f"<{self.component.container_name}{f' {self.storage.attributes}' if self.storage.attributes else ''} />"
         ]
 
         if len(content) > 0:
@@ -360,7 +361,7 @@ class NextJSComponentBuilder:
             wrapped_content.extend(
                 [
                     *content,
-                    f"</{self.component.classname}>",
+                    f"</{self.component.container_name}>",
                 ]
             )
 
@@ -370,162 +371,6 @@ class NextJSComponentBuilder:
                 *wrapped_content,
                 "</div>",
             ]
-
-        return wrapped_content
-
-
-class HTMLContentBuilder:
-    """A builder for creating Zentra `HTML` model content as JSX."""
-
-    def __init__(
-        self,
-        model: HTMLTag,
-        mappings: JSXMappings,
-        details_dict: dict[str, ComponentDetails],
-    ) -> None:
-        self.model = model
-        self.maps = mappings
-        self.details_dict = details_dict
-
-        self.controller = BuildController(
-            mappings=mappings,
-            details_dict=details_dict,
-        )
-        self.comp_storage = JSXComponentExtras()
-        self.inner_content = []
-
-    def build(self, model: HTMLTag = None) -> tuple[list[str], JSXComponentExtras]:
-        """Builds a single item's content and returns it as a list of strings."""
-        if model is None:
-            model = self.model
-
-        if hasattr(model, "text"):
-            self.handle_text(text=model.text)
-            model.text = self.inner_content
-
-        if isinstance(model, Div):
-            self.build_div_model(item=model.items)
-            model.items = self.inner_content
-
-        if isinstance(model, Figure):
-            content = self.build_figure_model(model=model)
-            return content, self.comp_storage
-
-        return self.get_content(model=model), self.comp_storage
-
-    def build_figure_model(self, model: Figure) -> list[str]:
-        """Builds the content for the Figure model, stores any component information in `self.comp_storage` and returns the Figure's contents as a list of strings."""
-        content = []
-        shell_start, shell_end = self.get_content(model=model)
-
-        img_content, nextjs_storage = self.controller.build_nextjs_component(model.img)
-        self.comp_storage = add_to_storage(self.comp_storage, nextjs_storage)
-
-        content.append(shell_start)
-
-        if model.img_container_styles:
-            img_content.insert(0, f'<div className="{model.img_container_styles}"')
-            img_content.append("</div>")
-
-        fig_content = self.build_fig_caption(model=model.caption)
-        content.extend(img_content)
-        content.extend(fig_content)
-        content.append(shell_end)
-
-        self.inner_content.extend(content)
-        return content
-
-    def build_fig_caption(self, model: FigCaption) -> list[str]:
-        """Builds the content for the `FigCaption` model and and returns it as a list of strings."""
-        start_idx_caption_content = len(self.inner_content)
-        self.handle_text(model.text)
-
-        caption_content = self.inner_content[start_idx_caption_content:]
-        current_content = self.inner_content[:start_idx_caption_content]
-
-        self.inner_content = current_content
-        model.text = caption_content
-
-        return self.get_content(model=model)
-
-    def build_div_model(
-        self,
-        item: str
-        | Component
-        | JSIterable
-        | list[str | HTMLTag | Component | JSIterable],
-    ) -> None:
-        """Builds the content for the `Div` model and stores the content in `self.inner_content` and any component information in `self.comp_storage`."""
-        if isinstance(item, JSIterable):
-            content, storage = self.controller.build_js_iterable(item)
-            self.inner_content.extend(content)
-            self.comp_storage = add_to_storage(self.comp_storage, storage, extend=True)
-
-        elif isinstance(item, Component):
-            content, storage = self.controller.build_component(item)
-            self.inner_content.extend(content)
-            self.comp_storage = add_to_storage(self.comp_storage, storage)
-
-        elif isinstance(item, Figure):
-            self.inner_content.extend(self.build_figure_model(model=item))
-
-        elif isinstance(item, HTMLTag):
-            self.inner_content.extend(self.get_content(model=item))
-
-        elif isinstance(item, str):
-            self.handle_text(text=item)
-
-        elif isinstance(item, list):
-            for i in item:
-                self.build_div_model(item=i)
-
-    def handle_text(self, text: str | HTMLTag | list[str | HTMLTag]) -> None:
-        """Handles the content building for the text attribute and stores it in `self.inner_content`."""
-        if isinstance(text, list):
-            for item in text:
-                self.handle_text(text=item)
-
-        if isinstance(text, HTMLTag):
-            self.inner_content.extend(self.get_content(model=text))
-        elif isinstance(text, str):
-            self.inner_content.append(text_content(text)[0])
-
-    def get_content(self, model: HTMLTag) -> list[str]:
-        """A helper function to build the content of the HTMLTag and returns it as a list of strings."""
-        attr_builder = AttributeBuilder(
-            component=model,
-            common_mapping=self.maps.common_attrs,
-            component_mapping=self.maps.component_attrs,
-        )
-        content_builder = ContentBuilder(
-            model=model,
-            model_mapping=self.maps.component_content,
-            common_mapping=self.maps.common_content,
-        )
-
-        attributes = " ".join(attr_builder.build())
-        content = content_builder.build()
-        return self.html_content_container(
-            model=model, content=content, attributes=attributes
-        )
-
-    def html_content_container(
-        self, model: HTMLTag, content: list[str], attributes: list[str]
-    ) -> list[str]:
-        """Performs content container wrapping for HTMLTags."""
-        wrapped_content = [
-            f"<{model.classname}{f" {attributes}" if attributes else ''}>"
-        ]
-
-        if len(content) > 0:
-            wrapped_content.extend(content)
-
-        wrapped_content.append(f"</{model.classname}>")
-
-        if isinstance(model, Div):
-            if model.shell:
-                wrapped_content[0] = "<>"
-                wrapped_content[-1] = "</>"
 
         return wrapped_content
 
@@ -652,3 +497,205 @@ class ComponentBuilder:
             ]
 
         return wrapped_content
+
+
+class DivBuilder:
+    """A builder for creating the `Div` Zentra HTML model content as JSX."""
+
+    def __init__(
+        self,
+        model: Div,
+        mappings: JSXMappings,
+        details_dict: dict[str, ComponentDetails],
+    ) -> None:
+        self.model = model
+        self.maps = mappings
+        self.details_dict = details_dict
+
+        self.controller = BuildController(mappings=mappings, details_dict=details_dict)
+
+        self.storage = JSXComponentExtras()
+        self.inner_content = []
+
+    def build(self, model: Div = None) -> tuple[list[str], JSXComponentExtras]:
+        """Builds the JSX content and returns it as a tuple in the form: `(content, storage)`."""
+        if model is None:
+            model = self.model
+
+        if not isinstance(model.items, list):
+            model.items = [model.items]
+
+        shell_start, shell_end = get_html_content(model, self.maps)
+        self.build_content(model.items)
+        content = [shell_start, *self.inner_content, shell_end]
+
+        return content, self.storage
+
+    def build_content(
+        self,
+        item: str
+        | Component
+        | JSIterable
+        | list[str | HTMLTag | Component | JSIterable],
+    ) -> None:
+        """Builds the content for the `Div` model and stores the content in `self.inner_content` and any component information in `self.storage`."""
+        if isinstance(item, JSIterable):
+            content, storage = self.controller.build_js_iterable(item)
+            self.inner_content.extend(content)
+            self.storage = add_to_storage(self.storage, storage, extend=True)
+
+        elif isinstance(item, Component):
+            content, storage = self.controller.build_component(item)
+            self.inner_content.extend(content)
+            self.storage = add_to_storage(self.storage, storage)
+
+        elif isinstance(item, Figure):
+            builder = FigureBuilder(
+                model=item,
+                mappings=self.maps,
+                details_dict=self.details_dict,
+            )
+            content, storage = builder.build()
+            self.inner_content.extend(content)
+            self.storage = add_to_storage(self.storage, storage, extend=True)
+
+        elif isinstance(item, HTMLContent):
+            content, _ = HTMLContentBuilder(model=item, mappings=self.maps).build()
+            self.inner_content.extend(content)
+
+        elif isinstance(item, Div):
+            content, _ = self.build(item)
+            self.inner_content.extend(content)
+
+        elif isinstance(item, str):
+            self.inner_content.extend(text_content(item))
+
+        elif isinstance(item, list):
+            for i in item:
+                self.build_content(item=i)
+
+        else:
+            raise TypeError(f"'{type(item)}' not supported.")
+
+
+class HTMLBuildController:
+    """A build controller for creating Zentra `HTMLTag` models as JSX."""
+
+    def __init__(
+        self,
+        model: HTMLTag,
+        mappings: JSXMappings,
+        details_dict: dict[str, ComponentDetails],
+    ) -> None:
+        self.model = model
+        self.maps = mappings
+        self.details_dict = details_dict
+
+        self.storage = JSXComponentExtras()
+
+    def build(self) -> tuple[list[str], JSXComponentExtras]:
+        """Builds the models JSX content and returns it as a tuple in the form: `(content, storage)`"""
+
+        if isinstance(self.model, Div):
+            builder = DivBuilder(
+                model=self.model,
+                mappings=self.maps,
+                details_dict=self.details_dict,
+            )
+        elif isinstance(self.model, HTMLContent):
+            builder = HTMLContentBuilder(self.model, self.maps)
+
+        elif isinstance(self.model, Figure):
+            builder = FigureBuilder(
+                model=self.model,
+                mappings=self.maps,
+                details_dict=self.details_dict,
+            )
+        else:
+            raise TypeError(f"'{type(self.model)}' not supported.")
+
+        content, storage = builder.build()
+        self.storage = add_to_storage(self.storage, storage, extend=True)
+        return content, self.storage
+
+
+class HTMLContentBuilder:
+    """A builder for creating the `HTMLContent` Zentra HTML model content as JSX."""
+
+    def __init__(self, model: HTMLContent, mappings: JSXMappings) -> None:
+        self.model = model
+        self.maps = mappings
+
+        self.storage = JSXComponentExtras()
+
+    def build(self) -> tuple[list[str], JSXComponentExtras]:
+        """Builds the JSX content and returns it as a tuple in the form: `(content, storage)`."""
+        content = get_html_content(model=self.model, mappings=self.maps)
+        return content, self.storage
+
+
+class FigureBuilder:
+    """A builder for creating the `Figure` Zentra HTML model content as JSX."""
+
+    def __init__(
+        self,
+        model: Figure,
+        mappings: JSXMappings,
+        details_dict: dict[str, ComponentDetails],
+    ) -> None:
+        self.model = model
+        self.maps = mappings
+        self.details_dict = details_dict
+
+        self.controller = BuildController(mappings=mappings, details_dict=details_dict)
+
+        self.storage = JSXComponentExtras()
+
+    def build(self) -> tuple[list[str], JSXComponentExtras]:
+        """Builds the JSX content and returns it as a tuple in the form: `(content, storage)`."""
+        content = []
+        shell_start, shell_end = get_html_content(model=self.model, mappings=self.maps)
+
+        fig_content = FigCaptionBuilder(
+            model=self.model.caption,
+            mappings=self.maps,
+        ).build()
+        img_content, nextjs_storage = self.controller.build_nextjs_component(
+            component=self.model.img
+        )
+        self.storage = add_to_storage(self.storage, nextjs_storage)
+
+        if self.model.img_container_styles:
+            img_content.insert(0, f'<div className="{self.model.img_container_styles}"')
+            img_content.append("</div>")
+
+        content.extend(img_content)
+        content.extend(fig_content)
+
+        content.insert(0, shell_start)
+        content.append(shell_end)
+
+        return content, self.storage
+
+
+class FigCaptionBuilder:
+    """A builder for creating the `FigCaption` Zentra HTML model content as JSX."""
+
+    def __init__(self, model: FigCaption, mappings: JSXMappings) -> None:
+        self.model = model
+        self.maps = mappings
+
+    def build(self) -> list[str]:
+        """Builds the JSX content and returns it as a list of strings."""
+        if not isinstance(self.model.text, list):
+            self.model.text = [self.model.text]
+
+        inner_content = []
+        for item in self.model.text:
+            if isinstance(item, HTMLTag):
+                inner_content.extend(get_html_content(model=item, mappings=self.maps))
+            elif isinstance(item, str):
+                inner_content.append(text_content(item)[0])
+
+        self.model.text = inner_content
+        return get_html_content(self.model, self.maps)

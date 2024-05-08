@@ -1,3 +1,4 @@
+from pydantic_core import Url
 from cli.conf.types import MappingDict
 from cli.templates.ui.attributes import (
     alt_attribute,
@@ -37,7 +38,6 @@ from cli.templates.ui.imports import (
 from cli.templates.ui.logic import calendar_logic, collapsible_logic
 
 from pydantic import BaseModel
-from zentra.nextjs import Url
 
 
 # Components made up of other Zentra models using a 'content' or 'items' attribute

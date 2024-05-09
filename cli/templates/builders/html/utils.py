@@ -1,20 +1,20 @@
 from cli.templates.builders.jsx import AttributeBuilder, ContentBuilder
-from cli.templates.mappings import JSXMappings
+from cli.templates.ui.mappings.storage import HTMLShellMappings
 from zentra.core.base import HTMLTag
 from zentra.core.html import Div
 
 
-def get_html_content(model: HTMLTag, mappings: JSXMappings) -> list[str]:
+def get_html_content(model: HTMLTag, mappings: HTMLShellMappings) -> list[str]:
     """A helper function to build the content of a HTMLTag and returns it as a list of strings."""
     attr_builder = AttributeBuilder(
         component=model,
-        common_mapping=mappings.common_attrs,
-        component_mapping=mappings.component_attrs,
+        common_mapping=mappings.attribute.common,
+        component_mapping=mappings.attribute.model,
     )
     content_builder = ContentBuilder(
         model=model,
-        model_mapping=mappings.component_content,
-        common_mapping=mappings.common_content,
+        model_mapping=mappings.content.model,
+        common_mapping=mappings.content.common,
     )
 
     attributes = " ".join(attr_builder.build())

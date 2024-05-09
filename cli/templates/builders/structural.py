@@ -1,8 +1,10 @@
 from cli.conf.storage import ComponentDetails
+
 from cli.templates.builders import FORM_SCHEMA_BASE, JSX_BASE
-from cli.templates.builders.model import ComponentBuilder
-from cli.templates.mappings import JSXMappings
+from cli.templates.builders.component import ComponentBuilder
+from cli.templates.ui.mappings.storage import JSXMappings
 from cli.templates.storage import JSXComponentContentStorage, JSXPageContentStorage
+
 from zentra.core import Component, Page
 
 

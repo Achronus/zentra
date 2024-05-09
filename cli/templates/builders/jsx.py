@@ -1,7 +1,6 @@
 from cli.conf.format import name_from_camel_case
 from cli.conf.types import MappingDict
-from cli.templates.ui.content import text_content
-from cli.templates.utils import remove_none
+from cli.templates.utils import remove_none, text_content
 
 from zentra.core import Component
 from zentra.core.base import HTMLTag

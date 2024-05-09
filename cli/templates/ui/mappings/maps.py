@@ -1,5 +1,5 @@
 from pydantic_core import Url
-from cli.conf.types import MappingDict
+
 from cli.templates.ui.attributes import (
     alt_attribute,
     calendar_attributes,
@@ -36,8 +36,6 @@ from cli.templates.ui.imports import (
     static_img_imports,
 )
 from cli.templates.ui.logic import calendar_logic, collapsible_logic
-
-from pydantic import BaseModel
 
 
 # Components made up of other Zentra models using a 'content' or 'items' attribute
@@ -114,7 +112,7 @@ COMMON_ATTR_MAPPING = {
 }
 
 
-ADDITIONAL_IMPORTS_MAPPING = {
+EXTRA_IMPORTS_MAPPING = {
     "Collapsible": lambda _: collapsible_imports(),
     "InputOTP": lambda comp: input_opt_imports(comp),
     "RadioGroup": lambda _: radio_group_imports(),
@@ -145,25 +143,10 @@ COMMON_CONTENT_MAPPING = {
 }
 
 
-COMMON_LOGIC_MAPPING = {
+LOGIC_MAPPING = {
     "Calendar": lambda comp: calendar_logic(comp),
     "Collapsible": lambda comp: collapsible_logic(comp),
 }
-
-
-class JSXMappings(BaseModel):
-    """A storage container for JSX mappings."""
-
-    common_attrs: MappingDict
-    component_attrs: MappingDict
-    common_content: MappingDict
-    component_content: MappingDict
-    common_logic: MappingDict
-    additional_imports: MappingDict
-    wrappers: dict[str, str]
-    use_client_map: list[str]
-    use_state_map: list[str]
-    parent_components: list[str]
 
 
 MAPPING_DICT = {
@@ -171,12 +154,25 @@ MAPPING_DICT = {
     "component_attrs": COMPONENT_ATTR_MAPPING,
     "common_content": COMMON_CONTENT_MAPPING,
     "component_content": COMPONENT_CONTENT_MAPPING,
-    "common_logic": COMMON_LOGIC_MAPPING,
-    "additional_imports": ADDITIONAL_IMPORTS_MAPPING,
+    "common_logic": LOGIC_MAPPING,
+    "additional_imports": EXTRA_IMPORTS_MAPPING,
     "wrappers": COMPONENTS_TO_WRAP,
     "use_client_map": USE_CLIENT_COMPONENTS,
     "use_state_map": USE_STATE_COMPONENTS,
     "parent_components": PARENT_COMPONENTS,
 }
 
-JSX_MAPPINGS = JSXMappings(**MAPPING_DICT)
+ATTR_DICT = {
+    "common": COMMON_ATTR_MAPPING,
+    "model": COMPONENT_ATTR_MAPPING,
+}
+
+CONTENT_DICT = {
+    "common": COMMON_CONTENT_MAPPING,
+    "model": COMPONENT_CONTENT_MAPPING,
+}
+
+IMPORT_DICT = {
+    "extra": EXTRA_IMPORTS_MAPPING,
+    "use_state": USE_STATE_COMPONENTS,
+}

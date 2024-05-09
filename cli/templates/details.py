@@ -146,4 +146,10 @@ COMPONENT_DETAILS_DICT = {
         name="Badge",
         child_names=[],
     ),
+    "Switch": ComponentDetails(
+        library="ui",
+        filename="switch.jsx",
+        name="Switch",
+        child_names=[],
+    ),
 }

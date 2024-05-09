@@ -333,18 +333,18 @@ class TestInputOTP:
 
     @pytest.fixture
     def wrapper(self, input: InputOTP) -> SimpleCompBuilder:
-        return SimpleCompBuilder(input, COMPONENT_DETAILS_DICT["InputOtp"])
+        return SimpleCompBuilder(input, COMPONENT_DETAILS_DICT["InputOTP"])
 
     @pytest.fixture
     def wrapper_pattern(self, input_pattern: InputOTP) -> SimpleCompBuilder:
-        return SimpleCompBuilder(input_pattern, COMPONENT_DETAILS_DICT["InputOtp"])
+        return SimpleCompBuilder(input_pattern, COMPONENT_DETAILS_DICT["InputOTP"])
 
     @pytest.fixture
     def wrapper_custom_pattern(
         self, input_custom_pattern: InputOTP
     ) -> SimpleCompBuilder:
         return SimpleCompBuilder(
-            input_custom_pattern, COMPONENT_DETAILS_DICT["InputOtp"]
+            input_custom_pattern, COMPONENT_DETAILS_DICT["InputOTP"]
         )
 
     @staticmethod

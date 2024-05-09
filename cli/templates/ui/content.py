@@ -1,8 +1,10 @@
 from cli.templates.ui.attributes import alt_attribute, src_attribute
 
-from cli.templates.utils import handle_single_quotes
+from cli.templates.utils import text_content
+
 from zentra.core.react import LucideIcon
 from zentra.ui.control import (
+    Button,
     Checkbox,
     Collapsible,
     InputOTP,
@@ -16,22 +18,8 @@ from zentra.ui.notification import Alert, TextAlertDialog, Tooltip
 from zentra.ui.presentation import Avatar
 
 
-def param_reformat_helper(text: str) -> list[str]:
-    """A helper function to reformat a string of text with parameter values. Returns the new version as a list of strings."""
-    new_text = []
-    for word in text.split(" "):
-        if word:
-            if word.startswith("$"):
-                new_text.append(f"{{{word[1:]}}}")
-            else:
-                new_text.append(word)
-
-    new_text = handle_single_quotes(new_text)
-    return [" ".join(new_text)]
-
-
 def checkbox_content(cb: Checkbox) -> list[str]:
-    """Returns a list of strings for the Checkbox content based on the components attributes."""
+    """Returns a list of strings for the `Checkbox` content based on the components attributes."""
     content = [
         '<div className="grid gap-1.5 leading-none">',
         f'<label htmlFor="{cb.id}" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">',
@@ -49,7 +37,7 @@ def checkbox_content(cb: Checkbox) -> list[str]:
 
 
 def collapsible_content(comp: Collapsible) -> list[str]:
-    """Returns a list of strings for the Collapsible content based on the components attributes."""
+    """Returns a list of strings for the `Collapsible` content based on the components attributes."""
     content = [
         '<div className="flex items-center justify-between space-x-4 px-4">',
         '<h4 className="text-sm font-semibold">',
@@ -85,7 +73,7 @@ def collapsible_content(comp: Collapsible) -> list[str]:
 
 
 def radio_button_content(rb: RadioButton) -> list[str]:
-    """Returns a list of strings for the RadioButton content based on the components attributes."""
+    """Returns a list of strings for the `RadioButton` content based on the components attributes."""
     return [
         '<div className="flex items-center space-x-2">',
         f'<RadioGroupItem value="{rb.value}" id="{rb.id}" />',
@@ -97,7 +85,7 @@ def radio_button_content(rb: RadioButton) -> list[str]:
 
 
 def radio_group_content(rg: RadioGroup) -> list[str]:
-    """Returns a list of strings for the RadioGroup content based on the components attributes."""
+    """Returns a list of strings for the `RadioGroup` content based on the components attributes."""
     content = []
     for rb in rg.items:
         content.extend(radio_button_content(rb))
@@ -106,12 +94,12 @@ def radio_group_content(rg: RadioGroup) -> list[str]:
 
 
 def scroll_area_content(sa: ScrollArea) -> list[str]:
-    """Returns a list of strings for the ScrollArea content based on the components attributes."""
+    """Returns a list of strings for the `ScrollArea` content based on the components attributes."""
     return [f'<ScrollBar orientation="{sa.orientation}" />']
 
 
 def select_content(select: Select) -> list[str]:
-    """Returns a list of strings for the Select content based on the components attributes."""
+    """Returns a list of strings for the `Select` content based on the components attributes."""
     content = [
         f'<SelectTrigger className="w-[{select.box_width}px]">',
         f'<SelectValue placeholder="{select.display_text}" />',
@@ -142,7 +130,7 @@ def select_content(select: Select) -> list[str]:
 
 
 def alert_content(alert: Alert) -> list[str]:
-    """Returns a list of strings for the Alert content based on the components attributes."""
+    """Returns a list of strings for the `Alert` content based on the components attributes."""
     content = [
         "<AlertTitle>",
         alert.title,
@@ -159,7 +147,7 @@ def alert_content(alert: Alert) -> list[str]:
 
 
 def text_alert_dialog_content(ad: TextAlertDialog) -> list[str]:
-    """Returns a list of strings for the TextAlertDialog content based on the components attributes."""
+    """Returns a list of strings for the `TextAlertDialog` content based on the components attributes."""
     return [
         "<AlertDialogTrigger asChild>",
         '<Button variant="outline">',
@@ -188,7 +176,7 @@ def text_alert_dialog_content(ad: TextAlertDialog) -> list[str]:
 
 
 def tooltip_content(tt: Tooltip) -> list[str]:
-    """Returns a list of strings for the Tooltip content based on the components attributes."""
+    """Returns a list of strings for the `Tooltip` content based on the components attributes."""
     return [
         "<TooltipTrigger asChild>",
         "</TooltipTrigger>",
@@ -199,7 +187,7 @@ def tooltip_content(tt: Tooltip) -> list[str]:
 
 
 def avatar_content(avatar: Avatar) -> list[str]:
-    """Returns a list of strings for the Avatar content based on the components attributes."""
+    """Returns a list of strings for the `Avatar` content based on the components attributes."""
     src = src_attribute(avatar.src)
     alt = alt_attribute(avatar.alt)
 
@@ -210,7 +198,7 @@ def avatar_content(avatar: Avatar) -> list[str]:
 
 
 def input_otp_content(otp: InputOTP) -> list[str]:
-    """Returns a list of strings for the Avatar content based on the components attributes."""
+    """Returns a list of strings for the `InputOTP` content based on the components attributes."""
     content = []
 
     slot_group_size = otp.num_inputs // otp.num_groups
@@ -229,12 +217,3 @@ def input_otp_content(otp: InputOTP) -> list[str]:
             content.append("<InputOTPSeparator />")
 
     return content
-
-
-def text_content(text: str | list[str]) -> list[str]:
-    """Returns a list of strings of text content with variable preprocessing
-    (if required)."""
-    if isinstance(text, str):
-        return param_reformat_helper(text)
-
-    return text

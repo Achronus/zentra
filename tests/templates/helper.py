@@ -1,26 +1,23 @@
 from cli.conf.storage import ComponentDetails
+
 from cli.templates.builders.model import (
-    BuildController,
     ComponentBuilder,
     FigCaptionBuilder,
     HTMLBuildController,
+    IconBuilder,
     JSIterableContentBuilder,
     NextJSComponentBuilder,
     ParentComponentBuilder,
 )
 from cli.templates.builders.structural import JSXPageBuilder
 from cli.templates.mappings import JSX_MAPPINGS
+
 from tests.templates.details import COMPONENT_DETAILS_MAPPING, component_details
+
 from zentra.core import Component, Page
 from zentra.core.base import HTMLTag, JSIterable
 from zentra.core.html import FigCaption
-
-
-def build_controller() -> BuildController:
-    return BuildController(
-        mappings=JSX_MAPPINGS,
-        details_dict=COMPONENT_DETAILS_MAPPING,
-    )
+from zentra.core.react import LucideIcon
 
 
 def component_builder(
@@ -59,6 +56,10 @@ def js_iterable_content_builder(model: JSIterable) -> JSIterableContentBuilder:
         mappings=JSX_MAPPINGS,
         details_dict=COMPONENT_DETAILS_MAPPING,
     )
+
+
+def icon_builder(model: LucideIcon) -> IconBuilder:
+    return IconBuilder(model=model, mappings=JSX_MAPPINGS)
 
 
 def page_builder(page: Page) -> JSXPageBuilder:

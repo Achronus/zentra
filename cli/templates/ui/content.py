@@ -1,8 +1,9 @@
+from cli.templates.builders.controller import BuildController
 from cli.templates.ui.attributes import alt_attribute, src_attribute
-
-from cli.templates.utils import text_content
+from cli.templates.utils import compress, text_content
 
 from zentra.core.react import LucideIcon
+from zentra.nextjs import Link
 from zentra.ui.control import (
     Button,
     Checkbox,
@@ -16,6 +17,16 @@ from zentra.ui.control import (
 )
 from zentra.ui.notification import Alert, TextAlertDialog, Tooltip
 from zentra.ui.presentation import Avatar
+
+
+def controller() -> BuildController:
+    """A helper function to create a `BuildController`."""
+    from cli.templates.ui.mappings import CONTROLLER_MAPPINGS
+    from cli.templates.details import COMPONENT_DETAILS_DICT
+
+    return BuildController(
+        mappings=CONTROLLER_MAPPINGS, details_dict=COMPONENT_DETAILS_DICT
+    )
 
 
 def checkbox_content(cb: Checkbox) -> list[str]:
@@ -217,3 +228,21 @@ def input_otp_content(otp: InputOTP) -> list[str]:
             content.append("<InputOTPSeparator />")
 
     return content
+
+
+def button_content(btn: Button) -> list[str]:
+    """Returns a list of strings for the `Button` content based on the components attributes."""
+    if isinstance(btn.content, str):
+        text = text_content(btn.content)
+    else:
+        from cli.templates.builders.icon import IconBuilder
+        from cli.templates.ui.mappings import ATTRIBUTE_MAPPINGS
+
+        text, _ = IconBuilder(model=btn.content, mappings=ATTRIBUTE_MAPPINGS).build()
+
+    if btn.url:
+        text, _ = controller().build_nextjs_component(
+            Link(href=btn.url, text=compress(text))
+        )
+
+    return text

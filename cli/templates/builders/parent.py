@@ -4,14 +4,14 @@ from cli.templates.builders.controller import BuildController
 from cli.templates.storage import JSXComponentExtras
 from cli.templates.ui.content import text_content
 from cli.templates.ui.mappings.storage import ParentMappings
-from cli.templates.utils import compress, compress_imports, str_to_list
+from cli.templates.utils import compress_imports, str_to_list
 
 from zentra.core import Component
 from zentra.core.html import Div
 from zentra.core.react import LucideIcon
 
-from zentra.nextjs import Link, NextJs
-from zentra.ui.control import Button, ToggleGroup
+from zentra.nextjs import NextJs
+from zentra.ui.control import ToggleGroup
 from zentra.ui.notification import Tooltip
 
 
@@ -139,10 +139,6 @@ class InnerContentBuilder:
         if isinstance(self.content, Div):
             inner_content = self.build_div_content(self.content)
 
-        elif isinstance(self.component, Button):
-            inner_content, storage = self.build_btn_content(self.component)
-            self.storage = add_to_storage(self.storage, storage, extend=True)
-
         elif isinstance(self.content, str):
             inner_content: list[str] = text_content(self.content)
 
@@ -168,22 +164,3 @@ class InnerContentBuilder:
         content, comp_storage = self.controller.build_html_tag(model=content)
         self.storage = add_to_storage(self.storage, comp_storage, extend=True)
         return content
-
-    def build_btn_content(self, model: Button) -> tuple[list[str], JSXComponentExtras]:
-        """Creates the JSX for a `Button` models inner content and returns its details as a tuple in the form of `(content, multi_comp_storage)`."""
-        storage = JSXComponentExtras()
-
-        if isinstance(model.content, LucideIcon):
-            model.content, import_str = self.controller.build_icon(model.content)
-            storage.imports.append(import_str)
-        else:
-            model.content = text_content(model.content)
-
-        if model.url:
-            model.content = compress(model.content)
-            model.content, link_storage = self.controller.build_nextjs_component(
-                Link(href=model.url, text=model.content)
-            )
-            storage = add_to_storage(storage, link_storage)
-
-        return model.content, storage

@@ -3,7 +3,11 @@ VALID_IMPORTS = {
     "button": {
         "simple": 'import { Button } from "@/components/ui/button"',
         "icon": 'import { Button } from "@/components/ui/button"\nimport { Loader } from "lucide-react"',
-        "icon_url": '''import Link from 'next/link'\nimport { Button } from "@/components/ui/button"\nimport { Loader } from "lucide-react"''',
+        "icon_url": [
+            'import { Button } from "@/components/ui/button"',
+            'import Link from "next/link"',
+            'import { Loader } from "lucide-react"',
+        ],
     },
     "calendar": 'import { Calendar } from "@/components/ui/calendar"\nimport { useState } from "react"',
     "checkbox": 'import { Checkbox } from "@/components/ui/checkbox"',

@@ -1,6 +1,6 @@
 from zentra.core.enums.ui import InputOTPPatterns
 from zentra.core.react import LucideIcon, LucideIconWithText
-from zentra.nextjs import Image, StaticImage
+from zentra.nextjs import Image, Link, StaticImage
 from zentra.ui.control import Button, InputOTP
 from zentra.ui.notification import Alert
 
@@ -52,3 +52,15 @@ def alert_imports(alert: Alert) -> list[str] | None:
         return [LucideIcon(name=alert.icon).import_str]
 
     return None
+
+
+def button_imports(btn: Button) -> list[str]:
+    """Returns a list of strings for the additional `Button` imports based on its attributes."""
+    imports = []
+    if btn.url:
+        imports.append(Link(href=btn.url).import_str)
+
+    if isinstance(btn.content, LucideIconWithText):
+        imports.append(btn.content.import_str)
+
+    return imports

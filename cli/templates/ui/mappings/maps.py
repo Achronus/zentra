@@ -16,6 +16,7 @@ from cli.templates.ui.attributes import (
 from cli.templates.ui.content import (
     alert_content,
     avatar_content,
+    button_content,
     checkbox_content,
     collapsible_content,
     input_otp_content,
@@ -28,6 +29,7 @@ from cli.templates.ui.content import (
 )
 from cli.templates.ui.imports import (
     alert_imports,
+    button_imports,
     collapsible_imports,
     image_imports,
     input_opt_imports,
@@ -40,7 +42,6 @@ from cli.templates.ui.logic import calendar_logic, collapsible_logic
 
 # Components made up of other Zentra models using a 'content' or 'items' attribute
 PARENT_COMPONENTS = [
-    "Button",
     "ScrollArea",
     "Toggle",
     "ToggleGroup",
@@ -121,6 +122,7 @@ EXTRA_IMPORTS_MAPPING = {
     "Avatar": lambda comp: image_imports(comp),
     "Slider": lambda _: slider_imports(),
     "Alert": lambda comp: alert_imports(comp),
+    "Button": lambda comp: button_imports(comp),
 }
 
 
@@ -135,6 +137,7 @@ COMPONENT_CONTENT_MAPPING = {
     "Tooltip": lambda tt: tooltip_content(tt),
     "Avatar": lambda avatar: avatar_content(avatar),
     "InputOTP": lambda otp: input_otp_content(otp),
+    "Button": lambda btn: button_content(btn),
 }
 
 

@@ -12,7 +12,7 @@ from cli.templates.details import COMPONENT_DETAILS_DICT
 from tests.mappings.btn_content import BTN_VALID_VALS_MAP
 from tests.mappings.ui_imports import VALID_IMPORTS
 from tests.templates.helper import component_builder
-from tests.templates.helper import parent_component_builder
+
 from zentra.ui.control import Button
 from zentra.core.react import LucideIconWithText
 from zentra.core.enums.ui import ButtonSize, ButtonVariant
@@ -48,9 +48,9 @@ class BtnCompBuilder:
 
         for idx, items in enumerate(items_list):
             component = self.comp_func(**items)
-            builder = parent_component_builder(component)
-            content: list[str] = builder.build()
-            content = compress(content)
+            builder = component_builder(component, self.details)
+            builder.build()
+            content = builder.storage.content
 
             map_value = mapping[idx] if isinstance(mapping, list) else mapping
             if content == map_value:
@@ -64,13 +64,26 @@ class BtnCompBuilder:
             valid_total == desired_total
         ), f"({valid_total}/{desired_total}) {test_fail_result} != {map_value}"
 
-    def comp_other(self, component: Button, result_attr: str, valid_value: str):
-        builder = parent_component_builder(component)
-        _ = builder.build()
+    def comp_other(
+        self,
+        component: Button,
+        result_attr: str,
+        valid_value: str,
+        list_output: bool = False,
+    ):
+        builder = component_builder(component, self.details)
+        builder.build()
 
-        result: list[str] = getattr(builder.storage, result_attr)
+        result: str = getattr(builder.storage, result_attr)
+
+        if list_output:
+            result = result.split("\n")
+
         test_logger.debug(f"Result: {result}, Valid: {valid_value}")
-        assert "\n".join(result) == valid_value, (result, valid_value.split("\n"))
+        assert result == valid_value, (
+            result if list_output else result.split("\n"),
+            valid_value if list_output else valid_value.split("\n"),
+        )
 
 
 class TestButton:
@@ -181,6 +194,7 @@ class TestButton:
             ),
             "imports",
             VALID_IMPORTS["button"]["icon_url"],
+            list_output=True,
         )
 
     @staticmethod

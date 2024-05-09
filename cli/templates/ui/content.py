@@ -2,7 +2,7 @@ from cli.templates.builders.controller import BuildController
 from cli.templates.ui.attributes import alt_attribute, src_attribute
 from cli.templates.utils import compress, text_content
 
-from zentra.core.react import LucideIcon
+from zentra.core.react import LucideIcon, LucideIconWithText
 from zentra.nextjs import Link
 from zentra.ui.control import (
     Button,
@@ -14,6 +14,8 @@ from zentra.ui.control import (
     ScrollArea,
     Select,
     SelectGroup,
+    Toggle,
+    ToggleGroup,
 )
 from zentra.ui.notification import Alert, TextAlertDialog, Tooltip
 from zentra.ui.presentation import Avatar
@@ -27,6 +29,19 @@ def controller() -> BuildController:
     return BuildController(
         mappings=CONTROLLER_MAPPINGS, details_dict=COMPONENT_DETAILS_DICT
     )
+
+
+def string_icon_content(content: str | LucideIconWithText) -> list[str]:
+    """A helper function to handle the `content` attribute when it is a string or `LucideIconWithText`. Returns the content as a list of strings."""
+    if isinstance(content, str):
+        text = text_content(content)
+    else:
+        from cli.templates.builders.icon import IconBuilder
+        from cli.templates.ui.mappings import ATTRIBUTE_MAPPINGS
+
+        text, _ = IconBuilder(model=content, mappings=ATTRIBUTE_MAPPINGS).build()
+
+    return text
 
 
 def checkbox_content(cb: Checkbox) -> list[str]:
@@ -232,13 +247,7 @@ def input_otp_content(otp: InputOTP) -> list[str]:
 
 def button_content(btn: Button) -> list[str]:
     """Returns a list of strings for the `Button` content based on the components attributes."""
-    if isinstance(btn.content, str):
-        text = text_content(btn.content)
-    else:
-        from cli.templates.builders.icon import IconBuilder
-        from cli.templates.ui.mappings import ATTRIBUTE_MAPPINGS
-
-        text, _ = IconBuilder(model=btn.content, mappings=ATTRIBUTE_MAPPINGS).build()
+    text = string_icon_content(btn.content)
 
     if btn.url:
         text, _ = controller().build_nextjs_component(
@@ -246,3 +255,26 @@ def button_content(btn: Button) -> list[str]:
         )
 
     return text
+
+
+def toggle_content(toggle: Toggle) -> list[str]:
+    """Returns a list of strings for the `Toggle` content based on the components attributes."""
+    return string_icon_content(toggle.content)
+
+
+def toggle_group_content(tg: ToggleGroup) -> list[str]:
+    """Returns a list of strings for the `ToggleGroup` content based on the components attributes."""
+    content = []
+
+    for item in tg.items:
+        inner_content, _ = controller().build_component(item, full_shell=True)
+
+        # Update `<Toggle>` to `<ToggleGroupItem>`
+        inner_content = (
+            compress(inner_content)
+            .replace("<Toggle", "<ToggleGroupItem")
+            .replace("</Toggle", "</ToggleGroupItem")
+        )
+        content.append(inner_content)
+
+    return content

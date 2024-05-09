@@ -31,9 +31,9 @@ VALID_IMPORTS = {
     "textarea": 'import { Textarea } from "@/components/ui/textarea"',
     "toggle": {
         "simple": 'import { Toggle } from "@/components/ui/toggle"',
-        "icon": 'import { Italic } from "lucide-react"\nimport { Toggle } from "@/components/ui/toggle"',
+        "icon": 'import { Toggle } from "@/components/ui/toggle"\nimport { Italic } from "lucide-react"',
     },
-    "toggle_group": 'import { Bold, Italic, Underline } from "lucide-react"\nimport { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"',
+    "toggle_group": 'import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"\nimport { Bold, Italic, Underline } from "lucide-react"',
     # NOTIFICATION COMPONENTS
     "alert": {
         "simple": 'import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"',
@@ -43,7 +43,7 @@ VALID_IMPORTS = {
         "simple": 'import { AlertDialog, AlertDialogPortal, AlertDialogOverlay, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from "@/components/ui/alert-dialog"'
     },
     "tooltip": {
-        "button": 'import { Button } from "@/components/ui/button"\nimport { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"',
+        "button": 'import { Button } from "@/components/ui/button"\nimport { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"',
         "label": 'import { Label } from "@/components/ui/label"\nimport { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"',
         "image": [
             "import Image from 'next/image'",

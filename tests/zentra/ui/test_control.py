@@ -912,16 +912,16 @@ class TestToggle:
         return Toggle(content=LucideIconWithText(name="Italic", text="icon $text"))
 
     @pytest.fixture
-    def wrapper(self, toggle: Toggle) -> ParentCompBuilder:
-        return ParentCompBuilder(toggle)
+    def wrapper(self, toggle: Toggle) -> SimpleCompBuilder:
+        return SimpleCompBuilder(toggle, COMPONENT_DETAILS_DICT["Toggle"])
 
     @pytest.fixture
-    def wrapper_icon(self, toggle_icon: Toggle) -> ParentCompBuilder:
-        return ParentCompBuilder(toggle_icon)
+    def wrapper_icon(self, toggle_icon: Toggle) -> SimpleCompBuilder:
+        return SimpleCompBuilder(toggle_icon, COMPONENT_DETAILS_DICT["Toggle"])
 
     @pytest.fixture
-    def wrapper_full(self) -> ParentCompBuilder:
-        return ParentCompBuilder(
+    def wrapper_full(self) -> SimpleCompBuilder:
+        return SimpleCompBuilder(
             Toggle(
                 content="test $text",
                 style="outline",
@@ -929,12 +929,13 @@ class TestToggle:
                 variant="outline",
                 pressed=True,
                 disabled=True,
-            )
+            ),
+            COMPONENT_DETAILS_DICT["Toggle"],
         )
 
     @pytest.fixture
-    def wrapper_icon_full(self) -> ParentCompBuilder:
-        return ParentCompBuilder(
+    def wrapper_icon_full(self) -> SimpleCompBuilder:
+        return SimpleCompBuilder(
             Toggle(
                 content=LucideIconWithText(
                     name="Italic", text="icon $text", position="end"
@@ -943,32 +944,35 @@ class TestToggle:
                 size="lg",
                 disabled=True,
                 pressed=True,
-            )
+            ),
+            COMPONENT_DETAILS_DICT["Toggle"],
         )
 
     @staticmethod
-    def test_content_str(wrapper: ParentCompBuilder):
-        wrapper.content(VALID_VALS_MAP["toggle"]["content"]["simple"])
+    def test_content_str(wrapper: SimpleCompBuilder):
+        wrapper.run("content", VALID_VALS_MAP["toggle"]["content"]["simple"])
 
     @staticmethod
-    def test_content_str_icon(wrapper_icon: ParentCompBuilder):
-        wrapper_icon.content(VALID_VALS_MAP["toggle"]["content"]["icon"])
+    def test_content_str_icon(wrapper_icon: SimpleCompBuilder):
+        wrapper_icon.run("content", VALID_VALS_MAP["toggle"]["content"]["icon"])
 
     @staticmethod
-    def test_content_str_full(wrapper_full: ParentCompBuilder):
-        wrapper_full.content(VALID_VALS_MAP["toggle"]["content"]["simple_full"])
+    def test_content_str_full(wrapper_full: SimpleCompBuilder):
+        wrapper_full.run("content", VALID_VALS_MAP["toggle"]["content"]["simple_full"])
 
     @staticmethod
-    def test_content_str_icon_full(wrapper_icon_full: ParentCompBuilder):
-        wrapper_icon_full.content(VALID_VALS_MAP["toggle"]["content"]["icon_full"])
+    def test_content_str_icon_full(wrapper_icon_full: SimpleCompBuilder):
+        wrapper_icon_full.run(
+            "content", VALID_VALS_MAP["toggle"]["content"]["icon_full"]
+        )
 
     @staticmethod
-    def test_import_str(wrapper: ParentCompBuilder):
-        wrapper.comp_other("imports", VALID_IMPORTS["toggle"]["simple"])
+    def test_import_str(wrapper: SimpleCompBuilder):
+        wrapper.run("imports", VALID_IMPORTS["toggle"]["simple"])
 
     @staticmethod
-    def test_import_str_icon(wrapper_icon: ParentCompBuilder):
-        wrapper_icon.comp_other("imports", VALID_IMPORTS["toggle"]["icon"])
+    def test_import_str_icon(wrapper_icon: SimpleCompBuilder):
+        wrapper_icon.run("imports", VALID_IMPORTS["toggle"]["icon"])
 
 
 class TestToggleGroup:
@@ -1014,21 +1018,23 @@ class TestToggleGroup:
         )
 
     @pytest.fixture
-    def wrapper(self, toggle_group: ToggleGroup) -> ParentCompBuilder:
-        return ParentCompBuilder(toggle_group)
+    def wrapper(self, toggle_group: ToggleGroup) -> SimpleCompBuilder:
+        return SimpleCompBuilder(toggle_group, COMPONENT_DETAILS_DICT["ToggleGroup"])
 
     @pytest.fixture
-    def wrapper_full(self, toggle_group_full: ToggleGroup) -> ParentCompBuilder:
-        return ParentCompBuilder(toggle_group_full)
+    def wrapper_full(self, toggle_group_full: ToggleGroup) -> SimpleCompBuilder:
+        return SimpleCompBuilder(
+            toggle_group_full, COMPONENT_DETAILS_DICT["ToggleGroup"]
+        )
 
     @staticmethod
-    def test_content_str(wrapper: ParentCompBuilder):
-        wrapper.content(VALID_VALS_MAP["toggle_group"]["content"]["simple"])
+    def test_content_str(wrapper: SimpleCompBuilder):
+        wrapper.run("content", VALID_VALS_MAP["toggle_group"]["content"]["simple"])
 
     @staticmethod
-    def test_content_str_full(wrapper_full: ParentCompBuilder):
-        wrapper_full.content(VALID_VALS_MAP["toggle_group"]["content"]["full"])
+    def test_content_str_full(wrapper_full: SimpleCompBuilder):
+        wrapper_full.run("content", VALID_VALS_MAP["toggle_group"]["content"]["full"])
 
     @staticmethod
-    def test_import_str(wrapper: ParentCompBuilder):
-        wrapper.comp_other("imports", VALID_IMPORTS["toggle_group"])
+    def test_import_str(wrapper: SimpleCompBuilder):
+        wrapper.run("imports", VALID_IMPORTS["toggle_group"])

@@ -1,7 +1,9 @@
+from cli.templates.utils import compress_imports
+
 from zentra.core.enums.ui import InputOTPPatterns
 from zentra.core.react import LucideIcon, LucideIconWithText
 from zentra.nextjs import Image, Link, StaticImage
-from zentra.ui.control import Button, InputOTP
+from zentra.ui.control import Button, InputOTP, Toggle, ToggleGroup
 from zentra.ui.notification import Alert
 
 
@@ -64,3 +66,21 @@ def button_imports(btn: Button) -> list[str]:
         imports.append(btn.content.import_str)
 
     return imports
+
+
+def toggle_imports(toggle: Toggle) -> list[str]:
+    """Returns a list of strings for the additional `Toggle` imports based on its attributes."""
+    if isinstance(toggle.content, LucideIconWithText):
+        return [toggle.content.import_str]
+
+    return []
+
+
+def toggle_group_imports(tg: ToggleGroup) -> list[str]:
+    """Returns a list of strings for the additional `ToggleGroup` imports based on its attributes."""
+    imports = []
+
+    for item in tg.items:
+        imports.extend(toggle_imports(item))
+
+    return compress_imports(imports)

@@ -25,6 +25,8 @@ from cli.templates.ui.content import (
     select_content,
     text_alert_dialog_content,
     text_content,
+    toggle_content,
+    toggle_group_content,
     tooltip_content,
 )
 from cli.templates.ui.imports import (
@@ -36,6 +38,8 @@ from cli.templates.ui.imports import (
     radio_group_imports,
     slider_imports,
     static_img_imports,
+    toggle_group_imports,
+    toggle_imports,
 )
 from cli.templates.ui.logic import calendar_logic, collapsible_logic
 
@@ -43,8 +47,6 @@ from cli.templates.ui.logic import calendar_logic, collapsible_logic
 # Components made up of other Zentra models using a 'content' or 'items' attribute
 PARENT_COMPONENTS = [
     "ScrollArea",
-    "Toggle",
-    "ToggleGroup",
     "Tooltip",
 ]
 
@@ -123,6 +125,8 @@ EXTRA_IMPORTS_MAPPING = {
     "Slider": lambda _: slider_imports(),
     "Alert": lambda comp: alert_imports(comp),
     "Button": lambda comp: button_imports(comp),
+    "Toggle": lambda comp: toggle_imports(comp),
+    "ToggleGroup": lambda comp: toggle_group_imports(comp),
 }
 
 
@@ -138,6 +142,8 @@ COMPONENT_CONTENT_MAPPING = {
     "Avatar": lambda avatar: avatar_content(avatar),
     "InputOTP": lambda otp: input_otp_content(otp),
     "Button": lambda btn: button_content(btn),
+    "Toggle": lambda comp: toggle_content(comp),
+    "ToggleGroup": lambda comp: toggle_group_content(comp),
 }
 
 

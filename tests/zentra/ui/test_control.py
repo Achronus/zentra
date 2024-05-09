@@ -1,9 +1,9 @@
 import pytest
 from pydantic import ValidationError
 
-from tests.templates.details import COMPONENT_DETAILS_MAPPING
-from tests.templates.helper import SimpleCompBuilder, ParentCompBuilder
+from cli.templates.details import COMPONENT_DETAILS_DICT
 
+from tests.templates.helper import SimpleCompBuilder, ParentCompBuilder
 from tests.mappings.ui_imports import VALID_IMPORTS
 from tests.mappings.ui_vals import VALID_VALS_MAP
 
@@ -44,13 +44,11 @@ class TestCalendar:
 
     @pytest.fixture
     def wrapper(self, calendar: Calendar) -> SimpleCompBuilder:
-        return SimpleCompBuilder(calendar, COMPONENT_DETAILS_MAPPING["Calendar"])
+        return SimpleCompBuilder(calendar, COMPONENT_DETAILS_DICT["Calendar"])
 
     @pytest.fixture
     def wrapper_long(self, calendar_long_name: Calendar) -> SimpleCompBuilder:
-        return SimpleCompBuilder(
-            calendar_long_name, COMPONENT_DETAILS_MAPPING["Calendar"]
-        )
+        return SimpleCompBuilder(calendar_long_name, COMPONENT_DETAILS_DICT["Calendar"])
 
     @staticmethod
     def test_attr_str(wrapper: SimpleCompBuilder):
@@ -123,12 +121,12 @@ class TestCheckbox:
 
     @pytest.fixture
     def wrapper(self, checkbox: Checkbox) -> SimpleCompBuilder:
-        return SimpleCompBuilder(checkbox, COMPONENT_DETAILS_MAPPING["Checkbox"])
+        return SimpleCompBuilder(checkbox, COMPONENT_DETAILS_DICT["Checkbox"])
 
     @pytest.fixture
     def wrapper_disabled(self, checkbox_with_disabled: Checkbox) -> SimpleCompBuilder:
         return SimpleCompBuilder(
-            checkbox_with_disabled, COMPONENT_DETAILS_MAPPING["Checkbox"]
+            checkbox_with_disabled, COMPONENT_DETAILS_DICT["Checkbox"]
         )
 
     @staticmethod
@@ -191,7 +189,7 @@ class TestCollapsible:
 
     @pytest.fixture
     def wrapper(self, collapsible: Collapsible) -> SimpleCompBuilder:
-        return SimpleCompBuilder(collapsible, COMPONENT_DETAILS_MAPPING["Collapsible"])
+        return SimpleCompBuilder(collapsible, COMPONENT_DETAILS_DICT["Collapsible"])
 
     @staticmethod
     def test_attr_str(wrapper: SimpleCompBuilder):
@@ -265,13 +263,11 @@ class TestInput:
 
     @pytest.fixture
     def wrapper(self, input: Input) -> SimpleCompBuilder:
-        return SimpleCompBuilder(input, COMPONENT_DETAILS_MAPPING["Input"])
+        return SimpleCompBuilder(input, COMPONENT_DETAILS_DICT["Input"])
 
     @pytest.fixture
     def wrapper_disabled(self, input_with_disabled: Input) -> SimpleCompBuilder:
-        return SimpleCompBuilder(
-            input_with_disabled, COMPONENT_DETAILS_MAPPING["Input"]
-        )
+        return SimpleCompBuilder(input_with_disabled, COMPONENT_DETAILS_DICT["Input"])
 
     @staticmethod
     def test_attr_str(wrapper: SimpleCompBuilder):
@@ -337,18 +333,18 @@ class TestInputOTP:
 
     @pytest.fixture
     def wrapper(self, input: InputOTP) -> SimpleCompBuilder:
-        return SimpleCompBuilder(input, COMPONENT_DETAILS_MAPPING["InputOtp"])
+        return SimpleCompBuilder(input, COMPONENT_DETAILS_DICT["InputOtp"])
 
     @pytest.fixture
     def wrapper_pattern(self, input_pattern: InputOTP) -> SimpleCompBuilder:
-        return SimpleCompBuilder(input_pattern, COMPONENT_DETAILS_MAPPING["InputOtp"])
+        return SimpleCompBuilder(input_pattern, COMPONENT_DETAILS_DICT["InputOtp"])
 
     @pytest.fixture
     def wrapper_custom_pattern(
         self, input_custom_pattern: InputOTP
     ) -> SimpleCompBuilder:
         return SimpleCompBuilder(
-            input_custom_pattern, COMPONENT_DETAILS_MAPPING["InputOtp"]
+            input_custom_pattern, COMPONENT_DETAILS_DICT["InputOtp"]
         )
 
     @staticmethod
@@ -421,7 +417,7 @@ class TestLabel:
 
     @pytest.fixture
     def wrapper(self, label: Label) -> SimpleCompBuilder:
-        return SimpleCompBuilder(label, COMPONENT_DETAILS_MAPPING["Label"])
+        return SimpleCompBuilder(label, COMPONENT_DETAILS_DICT["Label"])
 
     @staticmethod
     def test_attr_str(wrapper: SimpleCompBuilder):
@@ -474,7 +470,7 @@ class TestRadioGroup:
 
     @pytest.fixture
     def wrapper(self, radio_group: RadioGroup) -> SimpleCompBuilder:
-        return SimpleCompBuilder(radio_group, COMPONENT_DETAILS_MAPPING["RadioGroup"])
+        return SimpleCompBuilder(radio_group, COMPONENT_DETAILS_DICT["RadioGroup"])
 
     @staticmethod
     def test_attr_str(wrapper: SimpleCompBuilder):
@@ -674,7 +670,7 @@ class TestSelect:
         )
 
     def wrapper(self, select: Select) -> SimpleCompBuilder:
-        return SimpleCompBuilder(select, COMPONENT_DETAILS_MAPPING["Select"])
+        return SimpleCompBuilder(select, COMPONENT_DETAILS_DICT["Select"])
 
     def test_content_str_single_group(self, simple_select: Select):
         self.wrapper(simple_select).run(
@@ -769,11 +765,11 @@ class TestSlider:
 
     @pytest.fixture
     def wrapper(self, slider: Slider) -> SimpleCompBuilder:
-        return SimpleCompBuilder(slider, COMPONENT_DETAILS_MAPPING["Slider"])
+        return SimpleCompBuilder(slider, COMPONENT_DETAILS_DICT["Slider"])
 
     @pytest.fixture
     def wrapper_full(self, slider_full: Slider) -> SimpleCompBuilder:
-        return SimpleCompBuilder(slider_full, COMPONENT_DETAILS_MAPPING["Slider"])
+        return SimpleCompBuilder(slider_full, COMPONENT_DETAILS_DICT["Slider"])
 
     @staticmethod
     def test_content_str_simple(wrapper: SimpleCompBuilder):
@@ -837,7 +833,7 @@ class TestSwitch:
 
     @pytest.fixture
     def wrapper(self, switch: Switch) -> SimpleCompBuilder:
-        return SimpleCompBuilder(switch, COMPONENT_DETAILS_MAPPING["Switch"])
+        return SimpleCompBuilder(switch, COMPONENT_DETAILS_DICT["Switch"])
 
     @staticmethod
     def test_content_str_simple(wrapper: SimpleCompBuilder):
@@ -847,7 +843,7 @@ class TestSwitch:
     def test_content_str_checked():
         wrapper = SimpleCompBuilder(
             Switch(id="airplaneMode", checked=True),
-            COMPONENT_DETAILS_MAPPING["Switch"],
+            COMPONENT_DETAILS_DICT["Switch"],
         )
         wrapper.run("content", VALID_VALS_MAP["switch"]["content"]["checked"])
 
@@ -855,7 +851,7 @@ class TestSwitch:
     def test_content_str_disabled():
         wrapper = SimpleCompBuilder(
             Switch(id="airplaneMode", disabled=True),
-            COMPONENT_DETAILS_MAPPING["Switch"],
+            COMPONENT_DETAILS_DICT["Switch"],
         )
         wrapper.run("content", VALID_VALS_MAP["switch"]["content"]["disabled"])
 
@@ -895,7 +891,7 @@ class TestTextarea:
 
     @pytest.fixture
     def wrapper(self, textarea: Textarea) -> SimpleCompBuilder:
-        return SimpleCompBuilder(textarea, COMPONENT_DETAILS_MAPPING["Textarea"])
+        return SimpleCompBuilder(textarea, COMPONENT_DETAILS_DICT["Textarea"])
 
     @staticmethod
     def test_content_str(wrapper: SimpleCompBuilder):

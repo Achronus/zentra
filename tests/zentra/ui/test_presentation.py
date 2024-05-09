@@ -1,8 +1,9 @@
 import pytest
 
+from cli.templates.details import COMPONENT_DETAILS_DICT
+
 from tests.mappings.ui_imports import VALID_IMPORTS
 from tests.mappings.ui_vals import VALID_VALS_MAP
-from tests.templates.details import COMPONENT_DETAILS_MAPPING
 from tests.templates.helper import SimpleCompBuilder
 
 from zentra.nextjs import StaticImage
@@ -20,11 +21,11 @@ class TestSeparator:
 
     @pytest.fixture
     def wrapper(self, separator: Separator) -> SimpleCompBuilder:
-        return SimpleCompBuilder(separator, COMPONENT_DETAILS_MAPPING["Separator"])
+        return SimpleCompBuilder(separator, COMPONENT_DETAILS_DICT["Separator"])
 
     @pytest.fixture
     def wrapper_full(self, separator_full: Separator) -> SimpleCompBuilder:
-        return SimpleCompBuilder(separator_full, COMPONENT_DETAILS_MAPPING["Separator"])
+        return SimpleCompBuilder(separator_full, COMPONENT_DETAILS_DICT["Separator"])
 
     @staticmethod
     def test_content_str(wrapper: SimpleCompBuilder):
@@ -66,15 +67,15 @@ class TestAvatar:
 
     @pytest.fixture
     def wrapper_url(self, avatar_url: Avatar) -> SimpleCompBuilder:
-        return SimpleCompBuilder(avatar_url, COMPONENT_DETAILS_MAPPING["Avatar"])
+        return SimpleCompBuilder(avatar_url, COMPONENT_DETAILS_DICT["Avatar"])
 
     @pytest.fixture
     def wrapper_path(self, avatar_path: Avatar) -> SimpleCompBuilder:
-        return SimpleCompBuilder(avatar_path, COMPONENT_DETAILS_MAPPING["Avatar"])
+        return SimpleCompBuilder(avatar_path, COMPONENT_DETAILS_DICT["Avatar"])
 
     @pytest.fixture
     def wrapper_static(self, avatar_static: Avatar) -> SimpleCompBuilder:
-        return SimpleCompBuilder(avatar_static, COMPONENT_DETAILS_MAPPING["Avatar"])
+        return SimpleCompBuilder(avatar_static, COMPONENT_DETAILS_DICT["Avatar"])
 
     @staticmethod
     def test_content_str_url(wrapper_url: SimpleCompBuilder):
@@ -114,11 +115,11 @@ class TestBadge:
 
     @pytest.fixture
     def wrapper(self, badge: Badge) -> SimpleCompBuilder:
-        return SimpleCompBuilder(badge, COMPONENT_DETAILS_MAPPING["Badge"])
+        return SimpleCompBuilder(badge, COMPONENT_DETAILS_DICT["Badge"])
 
     @pytest.fixture
     def wrapper_outline(self, badge_outline: Badge) -> SimpleCompBuilder:
-        return SimpleCompBuilder(badge_outline, COMPONENT_DETAILS_MAPPING["Badge"])
+        return SimpleCompBuilder(badge_outline, COMPONENT_DETAILS_DICT["Badge"])
 
     @staticmethod
     def test_content_str(wrapper: SimpleCompBuilder):

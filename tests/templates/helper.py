@@ -9,6 +9,7 @@ from cli.templates.builders.nextjs import NextJSComponentBuilder
 from cli.templates.builders.parent import ParentComponentBuilder
 from cli.templates.builders.structural import JSXPageBuilder
 
+from cli.templates.details import COMPONENT_DETAILS_DICT
 from cli.templates.ui.mappings import (
     ATTRIBUTE_MAPPINGS,
     COMPONENT_MAPPINGS,
@@ -18,7 +19,7 @@ from cli.templates.ui.mappings import (
     JSX_MAPPINGS,
     PARENT_MAPPINGS,
 )
-from tests.templates.details import COMPONENT_DETAILS_MAPPING, component_details
+from tests.templates.details import component_details
 
 from zentra.core import Component, Page
 from zentra.core.base import HTMLTag, JSIterable
@@ -36,7 +37,7 @@ def parent_component_builder(component: Component) -> ParentComponentBuilder:
     return ParentComponentBuilder(
         component,
         mappings=PARENT_MAPPINGS,
-        details_dict=COMPONENT_DETAILS_MAPPING,
+        details_dict=COMPONENT_DETAILS_DICT,
     )
 
 
@@ -48,7 +49,7 @@ def html_content_builder(model: HTMLTag) -> HTMLBuildController:
     return HTMLBuildController(
         model=model,
         mappings=DIV_MAPPINGS,
-        details_dict=COMPONENT_DETAILS_MAPPING,
+        details_dict=COMPONENT_DETAILS_DICT,
     )
 
 
@@ -60,7 +61,7 @@ def js_iterable_content_builder(model: JSIterable) -> JSIterableBuilder:
     return JSIterableBuilder(
         model=model,
         mappings=JS_ITERABLE_MAPPINGS,
-        details_dict=COMPONENT_DETAILS_MAPPING,
+        details_dict=COMPONENT_DETAILS_DICT,
     )
 
 

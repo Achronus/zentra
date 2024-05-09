@@ -7,11 +7,11 @@ from typing import Any
 
 from cli.conf.logger import test_logger
 from cli.conf.storage import ComponentDetails
-from cli.templates.utils import compress
-from tests.mappings.btn_content import BTN_VALID_VALS_MAP
+from cli.templates.details import COMPONENT_DETAILS_DICT
 
+from tests.mappings.btn_content import BTN_VALID_VALS_MAP
 from tests.mappings.ui_imports import VALID_IMPORTS
-from tests.templates.details import COMPONENT_DETAILS_MAPPING
+from tests.templates.helper import component_builder
 from tests.templates.helper import parent_component_builder
 from zentra.ui.control import Button
 from zentra.core.react import LucideIconWithText
@@ -114,7 +114,7 @@ class TestButton:
         return BtnCompBuilder(
             iterable_dict=iterables,
             component_func=btn_text,
-            component_details=COMPONENT_DETAILS_MAPPING["Button"],
+            component_details=COMPONENT_DETAILS_DICT["Button"],
         )
 
     @pytest.fixture
@@ -122,7 +122,7 @@ class TestButton:
         return BtnCompBuilder(
             iterable_dict=iterables,
             component_func=btn_icon,
-            component_details=COMPONENT_DETAILS_MAPPING["Button"],
+            component_details=COMPONENT_DETAILS_DICT["Button"],
         )
 
     @pytest.fixture
@@ -130,7 +130,7 @@ class TestButton:
         return BtnCompBuilder(
             iterable_dict=iterables,
             component_func=btn_text_url,
-            component_details=COMPONENT_DETAILS_MAPPING["Button"],
+            component_details=COMPONENT_DETAILS_DICT["Button"],
         )
 
     @pytest.fixture
@@ -138,7 +138,7 @@ class TestButton:
         return BtnCompBuilder(
             iterable_dict=iterables,
             component_func=btn_icon_url,
-            component_details=COMPONENT_DETAILS_MAPPING["Button"],
+            component_details=COMPONENT_DETAILS_DICT["Button"],
         )
 
     @staticmethod

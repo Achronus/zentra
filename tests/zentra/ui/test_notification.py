@@ -1,8 +1,9 @@
 import pytest
 
+from cli.templates.details import COMPONENT_DETAILS_DICT
+
 from tests.mappings.ui_imports import VALID_IMPORTS
 from tests.mappings.ui_vals import VALID_VALS_MAP
-from tests.templates.details import COMPONENT_DETAILS_MAPPING
 from tests.templates.helper import SimpleCompBuilder, ParentCompBuilder
 
 from zentra.nextjs import Image
@@ -39,15 +40,15 @@ class TestAlert:
 
     @pytest.fixture
     def wrapper(self, alert: Alert) -> SimpleCompBuilder:
-        return SimpleCompBuilder(alert, COMPONENT_DETAILS_MAPPING["Alert"])
+        return SimpleCompBuilder(alert, COMPONENT_DETAILS_DICT["Alert"])
 
     @pytest.fixture
     def wrapper_icon(self, alert_icon: Alert) -> SimpleCompBuilder:
-        return SimpleCompBuilder(alert_icon, COMPONENT_DETAILS_MAPPING["Alert"])
+        return SimpleCompBuilder(alert_icon, COMPONENT_DETAILS_DICT["Alert"])
 
     @pytest.fixture
     def wrapper_full(self, alert_full: Alert) -> SimpleCompBuilder:
-        return SimpleCompBuilder(alert_full, COMPONENT_DETAILS_MAPPING["Alert"])
+        return SimpleCompBuilder(alert_full, COMPONENT_DETAILS_DICT["Alert"])
 
     @staticmethod
     def test_content_str(wrapper: SimpleCompBuilder):
@@ -86,7 +87,7 @@ class TestTextAlertDialog:
 
     @pytest.fixture
     def wrapper(self, alert_dialog: TextAlertDialog) -> SimpleCompBuilder:
-        return SimpleCompBuilder(alert_dialog, COMPONENT_DETAILS_MAPPING["AlertDialog"])
+        return SimpleCompBuilder(alert_dialog, COMPONENT_DETAILS_DICT["AlertDialog"])
 
     @staticmethod
     def test_content_str(wrapper: SimpleCompBuilder):

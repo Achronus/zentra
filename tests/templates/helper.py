@@ -6,7 +6,6 @@ from cli.templates.builders.html.figure import FigCaptionBuilder
 from cli.templates.builders.icon import IconBuilder
 from cli.templates.builders.js import JSIterableBuilder
 from cli.templates.builders.nextjs import NextJSComponentBuilder
-from cli.templates.builders.parent import ParentComponentBuilder
 from cli.templates.builders.structural import JSXPageBuilder
 
 from cli.templates.details import COMPONENT_DETAILS_DICT
@@ -17,7 +16,6 @@ from cli.templates.ui.mappings import (
     HTML_SHELL_MAPPINGS,
     JS_ITERABLE_MAPPINGS,
     JSX_MAPPINGS,
-    PARENT_MAPPINGS,
 )
 from tests.templates.details import component_details
 
@@ -31,14 +29,6 @@ def component_builder(
     component: Component, details: ComponentDetails
 ) -> ComponentBuilder:
     return ComponentBuilder(component, mappings=COMPONENT_MAPPINGS, details=details)
-
-
-def parent_component_builder(component: Component) -> ParentComponentBuilder:
-    return ParentComponentBuilder(
-        component,
-        mappings=PARENT_MAPPINGS,
-        details_dict=COMPONENT_DETAILS_DICT,
-    )
 
 
 def nextjs_component_builder(component: Component) -> NextJSComponentBuilder:
@@ -95,27 +85,3 @@ class SimpleCompBuilder:
             result if list_output else result.split("\n"),
             valid_value if list_output else valid_value.split("\n"),
         )
-
-
-class ParentCompBuilder:
-    """A helper class that handles the logic for keeping parent component test implementations unified."""
-
-    def __init__(
-        self,
-        component: Component,
-    ) -> None:
-        self.component = component
-
-        self.builder = parent_component_builder(component)
-
-    def content(self, valid_value: str):
-        result: list[str] = self.builder.build()
-        assert "\n".join(result) == valid_value, (result, valid_value.split("\n"))
-
-    def comp_other(self, result_attr: str, valid_value: str, list_output: bool = False):
-        _ = self.builder.build()
-        result: list[str] = getattr(self.builder.storage, result_attr)
-        if list_output:
-            assert result == valid_value, (result, valid_value.split("\n"))
-        else:
-            assert "\n".join(result) == valid_value, (result, valid_value.split("\n"))

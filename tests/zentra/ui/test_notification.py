@@ -175,4 +175,4 @@ class TestTooltip:
 
     @staticmethod
     def test_import_str_icon_text(wrapper_icon_text: SimpleCompBuilder):
-        wrapper_icon_text.run("imports", VALID_IMPORTS["tooltip"]["icon_text"])
+        wrapper_icon_text.run("imports", VALID_IMPORTS["tooltip"]["icon"])

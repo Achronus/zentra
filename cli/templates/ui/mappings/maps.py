@@ -134,7 +134,6 @@ COMPONENT_CONTENT_MAPPING = {
     "Checkbox": lambda cb: checkbox_content(cb),
     "Collapsible": lambda comp: collapsible_content(comp),
     "RadioGroup": lambda rg: radio_group_content(rg),
-    "ScrollArea": lambda sa: scroll_area_content(sa),
     "Select": lambda select: select_content(select),
     "Alert": lambda alert: alert_content(alert),
     "TextAlertDialog": lambda ad: text_alert_dialog_content(ad),
@@ -143,6 +142,8 @@ COMPONENT_CONTENT_MAPPING = {
     "Button": lambda btn: button_content(btn),
     "Toggle": lambda comp: toggle_content(comp),
     "ToggleGroup": lambda comp: toggle_group_content(comp),
+    # Parent components
+    "ScrollArea": lambda sa: scroll_area_content(sa),
     "Tooltip": lambda tt: tooltip_content(tt),
 }
 

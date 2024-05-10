@@ -5,6 +5,7 @@ from cli.templates.ui.attributes import alt_attribute, src_attribute
 from cli.templates.utils import compress, text_content
 
 from zentra.core import Component
+from zentra.core.base import HTMLTag
 from zentra.core.react import LucideIcon, LucideIconWithText
 from zentra.nextjs import Link, NextJs
 from zentra.ui.control import (
@@ -63,6 +64,18 @@ def build_component(
         storage = JSXComponentExtras()
         storage = add_to_storage(storage, comp_storage)
         return content, storage
+
+    return content
+
+
+def build_html_tag(
+    tag: HTMLTag, output_storage: bool = False
+) -> list[str] | tuple[list[str], JSXComponentExtras]:
+    """A helper function to create a `HTMLTag` models. Returns the content as a list of strings. Or, if `output_storage` is `True`, returns a tuple in the form: `(content, JSXComponentExtras)`."""
+    content, comp_storage = controller().build_html_tag(tag)
+
+    if output_storage:
+        return content, comp_storage
 
     return content
 
@@ -153,11 +166,6 @@ def radio_group_content(rg: RadioGroup) -> list[str]:
         content.extend(radio_button_content(rb))
 
     return content
-
-
-def scroll_area_content(sa: ScrollArea) -> list[str]:
-    """Returns a list of strings for the `ScrollArea` content based on the components attributes."""
-    return [f'<ScrollBar orientation="{sa.orientation}" />']
 
 
 def select_content(select: Select) -> list[str]:
@@ -301,6 +309,18 @@ def toggle_group_content(tg: ToggleGroup) -> list[str]:
         content.append(inner_content)
 
     return content
+
+
+# Parent Components
+def scroll_area_content(sa: ScrollArea) -> tuple[list[str], JSXComponentExtras]:
+    """Returns a list of strings and component storage for the `ScrollArea` content based on the components attributes."""
+    if isinstance(sa.content, str):
+        content = [sa.content]
+        storage = JSXComponentExtras()
+    else:
+        content, storage = build_html_tag(sa.content, output_storage=True)
+
+    return [*content, f'<ScrollBar orientation="{sa.orientation}" />'], storage
 
 
 def tooltip_content(tt: Tooltip) -> tuple[list[str], JSXComponentExtras]:

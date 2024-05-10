@@ -3,7 +3,7 @@ from pydantic import ValidationError
 
 from cli.templates.details import COMPONENT_DETAILS_DICT
 
-from tests.templates.helper import SimpleCompBuilder, ParentCompBuilder
+from tests.templates.helper import SimpleCompBuilder
 from tests.mappings.ui_imports import VALID_IMPORTS
 from tests.mappings.ui_vals import VALID_VALS_MAP
 
@@ -613,45 +613,51 @@ class TestScrollArea:
         )
 
     @pytest.fixture
-    def wrapper(self, scroll_area: ScrollArea) -> ParentCompBuilder:
-        return ParentCompBuilder(scroll_area)
+    def wrapper(self, scroll_area: ScrollArea) -> SimpleCompBuilder:
+        return SimpleCompBuilder(scroll_area, COMPONENT_DETAILS_DICT["ScrollArea"])
 
     @pytest.fixture
-    def wrapper_vertical(self, scroll_area_vertical: ScrollArea) -> ParentCompBuilder:
-        return ParentCompBuilder(scroll_area_vertical)
+    def wrapper_vertical(self, scroll_area_vertical: ScrollArea) -> SimpleCompBuilder:
+        return SimpleCompBuilder(
+            scroll_area_vertical, COMPONENT_DETAILS_DICT["ScrollArea"]
+        )
 
     @pytest.fixture
     def wrapper_horizontal(
         self, scroll_area_horizontal: ScrollArea
-    ) -> ParentCompBuilder:
-        return ParentCompBuilder(scroll_area_horizontal)
-
-    @staticmethod
-    def test_content_str(wrapper: ParentCompBuilder):
-        wrapper.content(VALID_VALS_MAP["scroll_area"]["content"]["simple"])
-
-    @staticmethod
-    def test_content_str_vertical(wrapper_vertical: ParentCompBuilder):
-        wrapper_vertical.content(VALID_VALS_MAP["scroll_area"]["content"]["vertical"])
-
-    @staticmethod
-    def test_content_str_horizontal(wrapper_horizontal: ParentCompBuilder):
-        wrapper_horizontal.content(
-            VALID_VALS_MAP["scroll_area"]["content"]["horizontal"]
+    ) -> SimpleCompBuilder:
+        return SimpleCompBuilder(
+            scroll_area_horizontal, COMPONENT_DETAILS_DICT["ScrollArea"]
         )
 
     @staticmethod
-    def test_imports_str(wrapper: ParentCompBuilder):
-        wrapper.comp_other("imports", VALID_IMPORTS["scroll_area"]["simple"])
+    def test_content_str(wrapper: SimpleCompBuilder):
+        wrapper.run("content", VALID_VALS_MAP["scroll_area"]["content"]["simple"])
 
     @staticmethod
-    def test_imports_str_vertical(wrapper_vertical: ParentCompBuilder):
-        wrapper_vertical.comp_other("imports", VALID_IMPORTS["scroll_area"]["vertical"])
+    def test_content_str_vertical(wrapper_vertical: SimpleCompBuilder):
+        wrapper_vertical.run(
+            "content", VALID_VALS_MAP["scroll_area"]["content"]["vertical"]
+        )
 
     @staticmethod
-    def test_imports_str_horizontal(wrapper_horizontal: ParentCompBuilder):
-        wrapper_horizontal.comp_other(
-            "imports", VALID_IMPORTS["scroll_area"]["horizontal"]
+    def test_content_str_horizontal(wrapper_horizontal: SimpleCompBuilder):
+        wrapper_horizontal.run(
+            "content", VALID_VALS_MAP["scroll_area"]["content"]["horizontal"]
+        )
+
+    @staticmethod
+    def test_imports_str(wrapper: SimpleCompBuilder):
+        wrapper.run("imports", VALID_IMPORTS["scroll_area"]["simple"])
+
+    @staticmethod
+    def test_imports_str_vertical(wrapper_vertical: SimpleCompBuilder):
+        wrapper_vertical.run("imports", VALID_IMPORTS["scroll_area"]["vertical"])
+
+    @staticmethod
+    def test_imports_str_horizontal(wrapper_horizontal: SimpleCompBuilder):
+        wrapper_horizontal.run(
+            "imports", VALID_IMPORTS["scroll_area"]["horizontal"], list_output=True
         )
 
 

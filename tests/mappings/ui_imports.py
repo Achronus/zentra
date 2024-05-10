@@ -23,7 +23,10 @@ VALID_IMPORTS = {
     "scroll_area": {
         "simple": 'import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"',
         "vertical": 'import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"\nimport { Separator } from "@/components/ui/separator"',
-        "horizontal": '''import Image from 'next/image'\nimport { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"''',
+        "horizontal": [
+            'import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"',
+            "import Image from 'next/image'",
+        ],
     },
     "select": 'import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"',
     "slider": 'import { Slider } from "@/components/ui/slider"\nimport { cn } from "@/lib/utils"',

@@ -138,12 +138,12 @@ COMPONENT_CONTENT_MAPPING = {
     "Select": lambda select: select_content(select),
     "Alert": lambda alert: alert_content(alert),
     "TextAlertDialog": lambda ad: text_alert_dialog_content(ad),
-    "Tooltip": lambda tt: tooltip_content(tt),
     "Avatar": lambda avatar: avatar_content(avatar),
     "InputOTP": lambda otp: input_otp_content(otp),
     "Button": lambda btn: button_content(btn),
     "Toggle": lambda comp: toggle_content(comp),
     "ToggleGroup": lambda comp: toggle_group_content(comp),
+    "Tooltip": lambda tt: tooltip_content(tt),
 }
 
 

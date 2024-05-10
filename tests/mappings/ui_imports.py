@@ -43,12 +43,9 @@ VALID_IMPORTS = {
         "simple": 'import { AlertDialog, AlertDialogPortal, AlertDialogOverlay, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from "@/components/ui/alert-dialog"'
     },
     "tooltip": {
-        "button": 'import { Button } from "@/components/ui/button"\nimport { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"',
-        "label": 'import { Label } from "@/components/ui/label"\nimport { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"',
-        "image": [
-            "import Image from 'next/image'",
-            'import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"',
-        ],
+        "button": 'import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"\nimport { Button } from "@/components/ui/button"',
+        "string": 'import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"',
+        "icon": 'import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"\nimport { Loader } from "lucide-react"',
     },
     # PRESENTATION COMPONENTS
     "separator": 'import { Separator } from "@/components/ui/separator"',

@@ -5,12 +5,12 @@ from cli.conf.format import name_from_camel_case
 from zentra.core import Component
 from zentra.core.enums.ui import AlertVariant
 from zentra.core.html import Div, HTMLContent
+from zentra.core.react import LucideIcon, LucideIconWithText
 from zentra.ui import ShadcnUi
+from zentra.ui.control import Button
 
 from pydantic import Field, PrivateAttr, field_validator
 from pydantic_core import PydanticCustomError
-
-from zentra.ui.control import Button
 
 
 class Alert(Component, ShadcnUi):
@@ -150,11 +150,17 @@ class Tooltip(Component, ShadcnUi):
 
     Parameters:
     - `text` (`str`) - the text to display inside the tooltip
-    - `trigger` (`zentra.core.Component`) - the component to apply the tooltip to
+    - `trigger` (`zentra.ui.control.Button | zentra.core.react.LucideIcon | zentra.core.react.LucideIconWithText | string`) - An item to apply the tooltip to. Can be either:
+      1. A Zentra `Button` model
+      2. A Zentra `LucideIcon` model
+      3. A Zentra `LucideIconWithText` model
+      4. A string of text
     """
 
     text: str
-    trigger: Component
+    trigger: Button | LucideIcon | LucideIconWithText | str
+
+    _container_name = PrivateAttr(default="TooltipProvider")
 
     @property
     def custom_common_content(self) -> list[str]:

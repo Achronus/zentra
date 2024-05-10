@@ -1,9 +1,12 @@
+from cli.templates.builders import add_to_storage
 from cli.templates.builders.controller import BuildController
+from cli.templates.storage import JSXComponentExtras
 from cli.templates.ui.attributes import alt_attribute, src_attribute
 from cli.templates.utils import compress, text_content
 
+from zentra.core import Component
 from zentra.core.react import LucideIcon, LucideIconWithText
-from zentra.nextjs import Link
+from zentra.nextjs import Link, NextJs
 from zentra.ui.control import (
     Button,
     Checkbox,
@@ -29,6 +32,39 @@ def controller() -> BuildController:
     return BuildController(
         mappings=CONTROLLER_MAPPINGS, details_dict=COMPONENT_DETAILS_DICT
     )
+
+
+def build_icon(
+    model: LucideIcon | LucideIconWithText, output_storage: bool = False
+) -> list[str] | tuple[list[str], JSXComponentExtras]:
+    """A helper function to create a `LucideIcon` model. Returns the content as a list of strings. Or, if `output_storage` is `True`, returns a tuple in the form: `(content, JSXComponentExtras)`."""
+    content, import_str = controller().build_icon(model)
+
+    if output_storage:
+        storage = JSXComponentExtras()
+        storage.imports.append(import_str)
+        return content, storage
+
+    return content
+
+
+def build_component(
+    component: Component, output_storage: bool = False, full_shell: bool = False
+) -> list[str] | tuple[list[str], JSXComponentExtras]:
+    """A helper function to create a `Component` model (including `NextJS` components). Returns the content as a list of strings. Or, if `output_storage` is `True`, returns a tuple in the form: `(content, JSXComponentExtras)`."""
+    if isinstance(component, NextJs):
+        content, comp_storage = controller().build_nextjs_component(component)
+    else:
+        content, comp_storage = controller().build_component(
+            component, full_shell=full_shell
+        )
+
+    if output_storage:
+        storage = JSXComponentExtras()
+        storage = add_to_storage(storage, comp_storage)
+        return content, storage
+
+    return content
 
 
 def string_icon_content(content: str | LucideIconWithText) -> list[str]:
@@ -201,17 +237,6 @@ def text_alert_dialog_content(ad: TextAlertDialog) -> list[str]:
     ]
 
 
-def tooltip_content(tt: Tooltip) -> list[str]:
-    """Returns a list of strings for the `Tooltip` content based on the components attributes."""
-    return [
-        "<TooltipTrigger asChild>",
-        "</TooltipTrigger>",
-        "<TooltipContent>",
-        f"<p>{tt.text}</p>",
-        "</TooltipContent>",
-    ]
-
-
 def avatar_content(avatar: Avatar) -> list[str]:
     """Returns a list of strings for the `Avatar` content based on the components attributes."""
     src = src_attribute(avatar.src)
@@ -250,9 +275,7 @@ def button_content(btn: Button) -> list[str]:
     text = string_icon_content(btn.content)
 
     if btn.url:
-        text, _ = controller().build_nextjs_component(
-            Link(href=btn.url, text=compress(text))
-        )
+        text = build_component(Link(href=btn.url, text=compress(text)))
 
     return text
 
@@ -267,7 +290,7 @@ def toggle_group_content(tg: ToggleGroup) -> list[str]:
     content = []
 
     for item in tg.items:
-        inner_content, _ = controller().build_component(item, full_shell=True)
+        inner_content = build_component(item, full_shell=True)
 
         # Update `<Toggle>` to `<ToggleGroupItem>`
         inner_content = (
@@ -278,3 +301,26 @@ def toggle_group_content(tg: ToggleGroup) -> list[str]:
         content.append(inner_content)
 
     return content
+
+
+def tooltip_content(tt: Tooltip) -> tuple[list[str], JSXComponentExtras]:
+    """Returns a list of strings and component storage for the `Tooltip` content based on the components attributes."""
+
+    if isinstance(tt.trigger, str):
+        trigger_content = [tt.trigger]
+        storage = JSXComponentExtras()
+    elif isinstance(tt.trigger, (LucideIcon, LucideIconWithText)):
+        trigger_content, storage = build_icon(tt.trigger, output_storage=True)
+    else:
+        trigger_content, storage = build_component(tt.trigger, output_storage=True)
+
+    return [
+        "<Tooltip>",
+        "<TooltipTrigger asChild>",
+        *trigger_content,
+        "</TooltipTrigger>",
+        "<TooltipContent>",
+        f"<p>{tt.text}</p>",
+        "</TooltipContent>",
+        "</Tooltip>",
+    ], storage

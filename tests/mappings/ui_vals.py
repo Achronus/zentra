@@ -139,8 +139,9 @@ ALERT_DIALOG_VALID_VALS = {
 TOOLTIP_VALID_VALS = {
     "content": {
         "button": '<TooltipProvider>\n<Tooltip>\n<TooltipTrigger asChild>\n<Button variant="outline">\nHover\n</Button>\n</TooltipTrigger>\n<TooltipContent>\n<p>Add to Library</p>\n</TooltipContent>\n</Tooltip>\n</TooltipProvider>',
-        "label": '<TooltipProvider>\n<Tooltip>\n<TooltipTrigger asChild>\n<Label htmlFor="library">\nUI Library\n</Label>\n</TooltipTrigger>\n<TooltipContent>\n<p>A cheeky label</p>\n</TooltipContent>\n</Tooltip>\n</TooltipProvider>',
-        "image": '<TooltipProvider>\n<Tooltip>\n<TooltipTrigger asChild>\n<Image src="/img.jpg" width={200} height={200} alt="A cool image" />\n</TooltipTrigger>\n<TooltipContent>\n<p>A cool image</p>\n</TooltipContent>\n</Tooltip>\n</TooltipProvider>',
+        "string": "<TooltipProvider>\n<Tooltip>\n<TooltipTrigger asChild>\nTest tooltip\n</TooltipTrigger>\n<TooltipContent>\n<p>A cheeky label</p>\n</TooltipContent>\n</Tooltip>\n</TooltipProvider>",
+        "icon": '<TooltipProvider>\n<Tooltip>\n<TooltipTrigger asChild>\n<Loader className="mr-2 h-4 w-4" size={30} />\n</TooltipTrigger>\n<TooltipContent>\n<p>Loading...</p>\n</TooltipContent>\n</Tooltip>\n</TooltipProvider>',
+        "icon_text": '<TooltipProvider>\n<Tooltip>\n<TooltipTrigger asChild>\n<Loader className="mr-2 h-4 w-4" />\nLoading\n</TooltipTrigger>\n<TooltipContent>\n<p>Load me up!</p>\n</TooltipContent>\n</Tooltip>\n</TooltipProvider>',
     },
 }
 

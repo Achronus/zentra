@@ -34,6 +34,7 @@ COMPONENT_MAPPINGS = ComponentMappings(
     imports=IMPORT_MAPPINGS,
     logic=LOGIC_MAPPING,
     wrappers=COMPONENTS_TO_WRAP,
+    parents=PARENT_COMPONENTS,
 )
 
 HTML_SHELL_MAPPINGS = HTMLShellMappings(

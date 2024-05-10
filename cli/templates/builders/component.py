@@ -5,7 +5,7 @@ from cli.templates.builders.jsx import (
     ImportBuilder,
     LogicBuilder,
 )
-from cli.templates.storage import JSXComponentContentStorage
+from cli.templates.storage import JSXComponentContentStorage, JSXComponentExtras
 from cli.templates.ui.mappings.storage import ComponentMappings
 from cli.templates.utils import compress
 
@@ -24,6 +24,7 @@ class ComponentBuilder:
         self.component = component
         self.details = details
         self.wrapper_map = mappings.wrappers
+        self.parent_map = mappings.parents
 
         self.storage = JSXComponentContentStorage()
         self.attrs = AttributeBuilder(
@@ -53,11 +54,27 @@ class ComponentBuilder:
         self.storage.imports = compress(self.imports.build())
         self.storage.attributes = compress(self.attrs.build(), chars=" ")
         self.storage.logic = compress(self.logic.build())
+
+        if self.component.classname in self.parent_map:
+            content, storage_extras = self.content.build()
+            self.add_extra_storage(storage_extras)
+        else:
+            content = self.content.build()
+
         self.storage.content = compress(
-            self.apply_content_containers(
-                content=self.content.build(), full_shell=full_shell
-            )
+            self.apply_content_containers(content=content, full_shell=full_shell)
         )
+
+    def add_extra_storage(self, storage_extras: JSXComponentExtras) -> None:
+        """Adds the extra storage items to `self.storage`."""
+
+        def add_item(local_item: str, item: list[str]) -> str:
+            if len(item) > 0:
+                local_item += "\n" + compress(item)
+            return local_item
+
+        self.storage.imports = add_item(self.storage.imports, storage_extras.imports)
+        self.storage.logic = add_item(self.storage.logic, storage_extras.logic)
 
     def apply_content_containers(
         self, content: list[str], full_shell: bool

@@ -1,5 +1,6 @@
 from cli.conf.format import name_from_camel_case
 from cli.conf.types import MappingDict
+from cli.templates.storage import JSXComponentExtras
 from cli.templates.utils import remove_none, text_content
 
 from zentra.core import Component
@@ -181,19 +182,23 @@ class ContentBuilder:
         """A helper function to retrieve the content from the `common_map` for the zentra model."""
         return self.common_map[attr_name](value)
 
-    def get_content(self) -> list[str]:
+    def get_content(self) -> list[str] | tuple[list[str], JSXComponentExtras]:
         """A helper function to retrieve the content from the `model_map` for the zentra model."""
         return self.model_map[self.model.classname](self.model)
 
-    def build(self) -> list[str]:
+    def build(self) -> list[str] | tuple[list[str], JSXComponentExtras]:
         """Builds the content for the component."""
         content = []
+        extra_storage = None
 
         if isinstance(self.model, (Component, HTMLTag)):
             if self.model.classname in self.model_map.keys():
                 inner_content = self.get_content()
 
                 if inner_content is not None:
+                    if isinstance(inner_content, tuple):
+                        inner_content, extra_storage = inner_content
+
                     content.extend(inner_content)
 
             model_dict = self.model.__dict__
@@ -205,6 +210,9 @@ class ContentBuilder:
                 ):
                     inner_content = self.get_common(attr_name, value)
                     content.extend(inner_content)
+
+        if extra_storage is not None:
+            return text_content(content), extra_storage
 
         return text_content(content)
 

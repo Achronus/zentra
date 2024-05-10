@@ -46,6 +46,7 @@ class ComponentMappings(BaseModel):
     imports: ImportMappings
     logic: MappingDict
     wrappers: dict[str, str]
+    parents: list[str]
 
 
 class HTMLShellMappings(BaseModel):

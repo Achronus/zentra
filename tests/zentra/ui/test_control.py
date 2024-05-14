@@ -19,6 +19,7 @@ from zentra.ui.control import (
     Input,
     InputOTP,
     Label,
+    Pagination,
     RadioButton,
     RadioGroup,
     ScrollArea,
@@ -454,6 +455,48 @@ class TestLabel:
     @staticmethod
     def test_name_validation_camelcase():
         Label(name="termsConditions", text="Accept terms and conditions.")
+
+
+class TestPagination:
+    @pytest.fixture
+    def pagination_simple(self) -> Pagination:
+        return Pagination(items_per_page=10, links=["#", "#", "#"])
+
+    @pytest.fixture
+    def pagination_full(self) -> Pagination:
+        return Pagination(
+            items_per_page=10, total_items=20, links=["#", "#", "#"], ellipsis=True
+        )
+
+    @pytest.fixture
+    def wrapper_simple(self, pagination_simple: Pagination) -> SimpleCompBuilder:
+        return SimpleCompBuilder(
+            pagination_simple, COMPONENT_DETAILS_DICT["Pagination"]
+        )
+
+    @pytest.fixture
+    def wrapper_full(self, pagination_full: Pagination) -> SimpleCompBuilder:
+        return SimpleCompBuilder(pagination_full, COMPONENT_DETAILS_DICT["Pagination"])
+
+    @staticmethod
+    def test_content_str_simple(wrapper_simple: SimpleCompBuilder):
+        wrapper_simple.run("content", VALID_VALS_MAP["pagination"]["content"]["simple"])
+
+    @staticmethod
+    def test_content_str_full(wrapper_full: SimpleCompBuilder):
+        wrapper_full.run("content", VALID_VALS_MAP["pagination"]["content"]["full"])
+
+    @staticmethod
+    def test_logic_str_simple(wrapper_simple: SimpleCompBuilder):
+        wrapper_simple.run("logic", VALID_VALS_MAP["pagination"]["logic"]["simple"])
+
+    @staticmethod
+    def test_logic_str_full(wrapper_full: SimpleCompBuilder):
+        wrapper_full.run("logic", VALID_VALS_MAP["pagination"]["logic"]["full"])
+
+    @staticmethod
+    def test_import_str_simple(wrapper_simple: SimpleCompBuilder):
+        wrapper_simple.run("imports", VALID_IMPORTS["pagination"])
 
 
 class TestRadioGroup:

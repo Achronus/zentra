@@ -60,6 +60,17 @@ LABEL_VALID_VALS = {
     "content": '<Label htmlFor="terms">\nAccept terms and conditions.\n</Label>',
 }
 
+PAGINATION_VALID_VALS = {
+    "content": {
+        "simple": '<Pagination>\n<PaginationContent>\n<PaginationItem>\n<PaginationPrevious \nclassName={pagStartIndex === 0 ? "pointer-events-none opacity-50" : undefined}\n onClick={() => {\npagSetStartIndex(pagStartIndex - itemsPerPage);\npagSetEndIndex(pagEndIndex - itemsPerPage);\n}} />\n</PaginationItem>\n<PaginationItem>\n<PaginationLink href="#" isActive>1</PaginationLink>\n</PaginationItem>\n<PaginationItem>\n<PaginationLink href="#">2</PaginationLink>\n</PaginationItem>\n<PaginationItem>\n<PaginationLink href="#">3</PaginationLink>\n</PaginationItem>\n<PaginationItem>\n<PaginationNext \nclassName={pagEndIndex === maxitems ? "pointer-events-none opacity-50" : undefined}\n onClick={() => {\npagSetStartIndex(pagStartIndex + itemsPerPage);\npagSetEndIndex(pagEndIndex + itemsPerPage);\n}} />\n</PaginationItem>\n</PaginationContent>\n</Pagination>',
+        "full": '<Pagination>\n<PaginationContent>\n<PaginationItem>\n<PaginationPrevious \nclassName={pagStartIndex === 0 ? "pointer-events-none opacity-50" : undefined}\n onClick={() => {\npagSetStartIndex(pagStartIndex - itemsPerPage);\npagSetEndIndex(pagEndIndex - itemsPerPage);\n}} />\n</PaginationItem>\n<PaginationItem>\n<PaginationLink href="#" isActive>1</PaginationLink>\n</PaginationItem>\n<PaginationItem>\n<PaginationLink href="#">2</PaginationLink>\n</PaginationItem>\n<PaginationItem>\n<PaginationLink href="#">3</PaginationLink>\n</PaginationItem>\n<PaginationItem>\n<PaginationEllipsis />\n</PaginationItem>\n<PaginationItem>\n<PaginationNext \nclassName={pagEndIndex === maxitems ? "pointer-events-none opacity-50" : undefined}\n onClick={() => {\npagSetStartIndex(pagStartIndex + itemsPerPage);\npagSetEndIndex(pagEndIndex + itemsPerPage);\n}} />\n</PaginationItem>\n</PaginationContent>\n</Pagination>',
+    },
+    "logic": {
+        "simple": "const itemsPerPage = 10;\nconst maxItems = 100;\nconst [pagStartIndex, pagSetStartIndex] = useState(0);\nconst [pagEndIndex, pagSetEndIndex] = useState(itemsPerPage);",
+        "full": "const itemsPerPage = 10;\nconst maxItems = 20;\nconst [pagStartIndex, pagSetStartIndex] = useState(0);\nconst [pagEndIndex, pagSetEndIndex] = useState(itemsPerPage);",
+    },
+}
+
 RADIO_GROUP_VALID_VALS = {
     "attributes": 'defaultValue="comfortable"',
     "content": '<RadioGroup defaultValue="comfortable">\n<div className="flex items-center space-x-2">\n<RadioGroupItem value="default" id="r1" />\n<Label htmlFor="r1">\nDefault\n</Label>\n</div>\n<div className="flex items-center space-x-2">\n<RadioGroupItem value="comfortable" id="r2" />\n<Label htmlFor="r2">\nComfortable\n</Label>\n</div>\n<div className="flex items-center space-x-2">\n<RadioGroupItem value="compact" id="r3" />\n<Label htmlFor="r3">\nCompact\n</Label>\n</div>\n</RadioGroup>',
@@ -190,6 +201,7 @@ VALID_VALS_MAP = {
     "tooltip": TOOLTIP_VALID_VALS,
     "avatar": AVATAR_VALID_VALS,
     "badge": BADGE_VALID_VALS,
+    "pagination": PAGINATION_VALID_VALS,
 }
 
 

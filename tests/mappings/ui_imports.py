@@ -19,6 +19,7 @@ VALID_IMPORTS = {
         "custom_pattern": 'import { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator } from "@/components/ui/input-otp"',
     },
     "label": 'import { Label } from "@/components/ui/label"',
+    "pagination": 'import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination"',
     "radio_group": 'import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"\nimport { Label } from "@/components/ui/label"',
     "scroll_area": {
         "simple": 'import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"',

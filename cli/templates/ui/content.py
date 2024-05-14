@@ -13,6 +13,7 @@ from zentra.ui.control import (
     Checkbox,
     Collapsible,
     InputOTP,
+    Pagination,
     RadioButton,
     RadioGroup,
     ScrollArea,
@@ -308,6 +309,63 @@ def toggle_group_content(tg: ToggleGroup) -> list[str]:
         )
         content.append(inner_content)
 
+    return content
+
+
+def pagination_content(page: Pagination) -> list[str]:
+    """Returns a list of strings for the `Pagination` content based on the components attributes."""
+
+    def wrap_item(content: str | list[str]) -> list[str]:
+        if isinstance(content, str):
+            return ["<PaginationItem>", content, "</PaginationItem>"]
+        else:
+            return ["<PaginationItem>", *content, "</PaginationItem>"]
+
+    def set_on_clicks(symbol: str) -> list[str]:
+        return [
+            f"{page.start_idx_name[1]}({page.start_idx_name[0]} {symbol} itemsPerPage);",
+            f"{page.end_idx_name[1]}({page.end_idx_name[0]} {symbol} itemsPerPage);",
+        ]
+
+    def disable_btn_styles(name: str, idx: int | str) -> str:
+        return f'className={{{name} === {idx} ? "pointer-events-none opacity-50" : undefined}}'
+
+    content = [
+        "<PaginationContent>",
+        *wrap_item(
+            [
+                "<PaginationPrevious ",
+                disable_btn_styles(page.start_idx_name[0], 0),
+                " onClick={() => {",
+                *set_on_clicks("-"),
+                "}} />",
+            ]
+        ),
+    ]
+
+    for idx, link in enumerate(page.links, start=1):
+        link_content = f'<PaginationLink href="{link}" isActive>{idx}</PaginationLink>'
+
+        if idx > 1:
+            link_content = link_content.replace(" isActive", "")
+
+        content.extend(wrap_item(link_content))
+
+    if page.ellipsis:
+        content.extend(wrap_item("<PaginationEllipsis />"))
+
+    content.extend(
+        wrap_item(
+            [
+                "<PaginationNext ",
+                disable_btn_styles(page.end_idx_name[0], "maxitems"),
+                " onClick={() => {",
+                *set_on_clicks("+"),
+                "}} />",
+            ]
+        )
+    )
+    content.append("</PaginationContent>")
     return content
 
 

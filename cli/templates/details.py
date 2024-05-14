@@ -152,4 +152,17 @@ COMPONENT_DETAILS_DICT = {
         name="Switch",
         child_names=[],
     ),
+    "Pagination": ComponentDetails(
+        library="ui",
+        filename="pagination.jsx",
+        name="Pagination",
+        child_names=[
+            "PaginationContent",
+            "PaginationEllipsis",
+            "PaginationItem",
+            "PaginationLink",
+            "PaginationNext",
+            "PaginationPrevious",
+        ],
+    ),
 }

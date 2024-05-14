@@ -343,6 +343,49 @@ class Label(Component, ShadcnUi):
         return name
 
 
+class Pagination(Component, ShadcnUi):
+    """
+    A Zentra model for the [Shadcn/ui Pagination](https://ui.shadcn.com/docs/components/pagination) component.
+
+    Parameters:
+    - `items_per_page` (`integer`) - the number of items per page. Used as an `itemsPerPage` variable in the component that is passed into the state hooks for the `next` and `previous` items
+    - `links` (`list[string]`) - a list of links to add to the pagination. Up to a maximum of 5
+    - `total_items` (`integer, optional`) - the maximum number of items used in the pagination. Used as a `maxItems` variable in the component. Applied to `PaginationNext` for disabling interaction when on the last page. `100` by default
+    - `name` (`string, optional`) - a custom name for the pagination. Used to identify the state hooks for this component. `pag` by default
+    - `ellipsis` (`boolean`) - a flag for including an ellipsis before `PaginationNext` and after `PaginationItems` to indicate more pages. `False` by default
+    """
+
+    items_per_page: int
+    links: list[str]
+    total_items: int = 100
+    name: str = "pag"
+    ellipsis: bool = False
+
+    @property
+    def custom_common_attributes(self) -> list[str]:
+        return ["name"]
+
+    @property
+    def start_idx_name(self) -> tuple[str, str]:
+        """Defines the start index state hook `get` and `set` names."""
+        return [f"{self.name}StartIndex", f"{self.name}SetStartIndex"]
+
+    @property
+    def end_idx_name(self) -> tuple[str, str]:
+        """Defines the end index state hook `get` and `set` names."""
+        return [f"{self.name}EndIndex", f"{self.name}SetEndIndex"]
+
+    @field_validator("links")
+    def validate_links(cls, links: list[str]) -> list[str]:
+        if len(links) > 5:
+            PydanticCustomError(
+                "too_many_links",
+                "exceeds maximum link count (5)",
+                dict(wrong_value=links, count=len(links)),
+            )
+        return links
+
+
 class RadioButton(Component, ShadcnUi):
     """
     A helper Zentra model for the [Shadcn/ui RadioGroup](https://ui.shadcn.com/docs/components/radio-group) component. Cannot be used on its own, must be used inside a `RadioGroup` component.
@@ -706,7 +749,7 @@ class Tabs(Component, ShadcnUi):
     - `name` (`string`) - the name of the component
     """
 
-    # TODO: complete after simple
+    # TODO: come back once 'card' created
 
 
 class Textarea(Component, ShadcnUi):

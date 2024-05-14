@@ -20,6 +20,7 @@ from cli.templates.ui.content import (
     checkbox_content,
     collapsible_content,
     input_otp_content,
+    pagination_content,
     radio_group_content,
     scroll_area_content,
     select_content,
@@ -41,7 +42,7 @@ from cli.templates.ui.imports import (
     toggle_group_imports,
     toggle_imports,
 )
-from cli.templates.ui.logic import calendar_logic, collapsible_logic
+from cli.templates.ui.logic import calendar_logic, collapsible_logic, pagination_logic
 
 
 # Components made up of other Zentra models using a 'content' or 'items' attribute
@@ -142,6 +143,7 @@ COMPONENT_CONTENT_MAPPING = {
     "Button": lambda btn: button_content(btn),
     "Toggle": lambda comp: toggle_content(comp),
     "ToggleGroup": lambda comp: toggle_group_content(comp),
+    "Pagination": lambda comp: pagination_content(comp),
     # Parent components
     "ScrollArea": lambda sa: scroll_area_content(sa),
     "Tooltip": lambda tt: tooltip_content(tt),
@@ -156,6 +158,7 @@ COMMON_CONTENT_MAPPING = {
 LOGIC_MAPPING = {
     "Calendar": lambda comp: calendar_logic(comp),
     "Collapsible": lambda comp: collapsible_logic(comp),
+    "Pagination": lambda comp: pagination_logic(comp),
 }
 
 

@@ -7,7 +7,7 @@ from cli.templates.builders.jsx import (
 )
 from cli.templates.storage import JSXComponentContentStorage, JSXComponentExtras
 from cli.templates.ui.mappings.storage import ComponentMappings
-from cli.templates.utils import compress, str_to_list
+from cli.templates.utils import compress, compress_imports, str_to_list
 
 from zentra.core import Component
 
@@ -70,8 +70,10 @@ class ComponentBuilder:
             self.storage.imports,
             self.storage.content,
         )
-        self.add_use_state(self.storage.logic)
-        self.add_use_client()
+        self.storage.imports = self.handle_imports(
+            self.storage.logic,
+            self.storage.imports,
+        )
 
     def add_extra_storage(self, storage_extras: JSXComponentExtras) -> None:
         """Adds the extra storage items to `self.storage`."""
@@ -110,17 +112,21 @@ class ComponentBuilder:
 
         return wrapped_content
 
-    def add_use_state(self, logic: str) -> None:
+    def add_use_state(self, logic: str, imports: str) -> str:
         """Adds React's `useState` import if the component requires it."""
         if "useState" in logic:
             import_str = 'import { useState } from "react"\n'
-            self.storage.imports = import_str + self.storage.imports
+            return import_str + imports
 
-    def add_use_client(self) -> None:
+        return imports
+
+    def add_use_client(self, imports: str) -> str:
         """Adds NextJS's `use client` import if the component requires it."""
         if self.component.classname in self.use_client_map:
             import_str = '"use client"\n'
-            self.storage.imports = import_str + self.storage.imports
+            return import_str + imports
+
+        return imports
 
     def tidy_child_names(
         self, child_names: list[str], imports: str, content: str
@@ -139,3 +145,10 @@ class ComponentBuilder:
 
         imports_list.insert(0, self.imports.core_import(used_child_names))
         return compress(imports_list)
+
+    def handle_imports(self, logic: str, imports: str) -> str:
+        """Performs import processing such as adding in additional imports and compressing them. Returns the updated version as a string."""
+        imports = self.add_use_state(logic, imports)
+        imports = self.add_use_client(imports)
+        imports = compress_imports(str_to_list(imports))
+        return compress(imports)

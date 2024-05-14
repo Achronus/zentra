@@ -45,7 +45,7 @@ from cli.templates.ui.imports import (
 from cli.templates.ui.logic import calendar_logic, collapsible_logic, pagination_logic
 
 
-# Components made up of other Zentra models using a 'content' or 'items' attribute
+# Components with content that returns a tuple: '(content, storage)'
 PARENT_COMPONENTS = [
     "ScrollArea",
     "Tooltip",
@@ -65,11 +65,6 @@ USE_CLIENT_COMPONENTS = [
     "Collapsible",
     "Image",
 ]
-
-# Components that have "useState"
-USE_STATE_COMPONENTS = [
-    "Calendar",
-    "Collapsible",
 ]
 
 
@@ -171,7 +166,6 @@ MAPPING_DICT = {
     "additional_imports": EXTRA_IMPORTS_MAPPING,
     "wrappers": COMPONENTS_TO_WRAP,
     "use_client_map": USE_CLIENT_COMPONENTS,
-    "use_state_map": USE_STATE_COMPONENTS,
     "parent_components": PARENT_COMPONENTS,
 }
 
@@ -183,9 +177,4 @@ ATTR_DICT = {
 CONTENT_DICT = {
     "common": COMMON_CONTENT_MAPPING,
     "model": COMPONENT_CONTENT_MAPPING,
-}
-
-IMPORT_DICT = {
-    "extra": EXTRA_IMPORTS_MAPPING,
-    "use_state": USE_STATE_COMPONENTS,
 }

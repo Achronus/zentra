@@ -25,6 +25,7 @@ class ComponentBuilder:
         self.details = details
         self.wrapper_map = mappings.wrappers
         self.parent_map = mappings.parents
+        self.use_client_map = mappings.client
 
         self.storage = JSXComponentContentStorage()
         self.attrs = AttributeBuilder(
@@ -35,7 +36,6 @@ class ComponentBuilder:
         self.imports = ImportBuilder(
             component=component,
             additional_imports_mapping=mappings.imports.extra,
-            use_state_mapping=mappings.imports.use_state,
             core_name=details.name,
             child_names=details.child_names,
         )
@@ -60,6 +60,9 @@ class ComponentBuilder:
             self.add_extra_storage(storage_extras)
         else:
             content = self.content.build()
+
+        self.add_use_state(self.storage.logic)
+        self.add_use_client()
 
         self.storage.content = compress(
             self.apply_content_containers(content=content, full_shell=full_shell)
@@ -101,3 +104,15 @@ class ComponentBuilder:
             ]
 
         return wrapped_content
+
+    def add_use_state(self, logic: str) -> None:
+        """Adds React's `useState` import if the component requires it."""
+        if "useState" in logic:
+            import_str = 'import { useState } from "react"\n'
+            self.storage.imports = import_str + self.storage.imports
+
+    def add_use_client(self) -> None:
+        """Adds NextJS's `use client` import if the component requires it."""
+        if self.component.classname in self.use_client_map:
+            import_str = '"use client"\n'
+            self.storage.imports = import_str + self.storage.imports

@@ -2,10 +2,11 @@ from cli.templates.ui.mappings.maps import (
     ATTR_DICT,
     COMPONENTS_TO_WRAP,
     CONTENT_DICT,
-    IMPORT_DICT,
+    EXTRA_IMPORTS_MAPPING,
     LOGIC_MAPPING,
     MAPPING_DICT,
     PARENT_COMPONENTS,
+    USE_CLIENT_COMPONENTS,
 )
 from cli.templates.ui.mappings.storage import (
     AttributeMappings,
@@ -26,7 +27,7 @@ JSX_MAPPINGS = JSXMappings(**MAPPING_DICT)
 
 CONTENT_MAPPINGS = ContentMappings(**CONTENT_DICT)
 ATTRIBUTE_MAPPINGS = AttributeMappings(**ATTR_DICT)
-IMPORT_MAPPINGS = ImportMappings(**IMPORT_DICT)
+IMPORT_MAPPINGS = ImportMappings(extra=EXTRA_IMPORTS_MAPPING)
 
 COMPONENT_MAPPINGS = ComponentMappings(
     content=CONTENT_MAPPINGS,
@@ -35,6 +36,7 @@ COMPONENT_MAPPINGS = ComponentMappings(
     logic=LOGIC_MAPPING,
     wrappers=COMPONENTS_TO_WRAP,
     parents=PARENT_COMPONENTS,
+    client=USE_CLIENT_COMPONENTS,
 )
 
 HTML_SHELL_MAPPINGS = HTMLShellMappings(

@@ -22,7 +22,6 @@ class NextJSComponentBuilder:
         self.import_builder = ImportBuilder(
             component=component,
             additional_imports_mapping=mappings.imports.extra,
-            use_state_mapping=mappings.imports.use_state,
             core_name=component.container_name,
             child_names=[],
         )

@@ -13,7 +13,6 @@ class JSXMappings(BaseModel):
     additional_imports: MappingDict
     wrappers: dict[str, str]
     use_client_map: list[str]
-    use_state_map: list[str]
     parent_components: list[str]
 
 
@@ -35,7 +34,6 @@ class ImportMappings(BaseModel):
     """A storage container for JSX import mappings."""
 
     extra: MappingDict
-    use_state: list[str]
 
 
 class ComponentMappings(BaseModel):
@@ -47,6 +45,7 @@ class ComponentMappings(BaseModel):
     logic: MappingDict
     wrappers: dict[str, str]
     parents: list[str]
+    client: list[str]
 
 
 class HTMLShellMappings(BaseModel):

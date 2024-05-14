@@ -100,24 +100,18 @@ class ImportBuilder:
         self,
         component: Component,
         additional_imports_mapping: MappingDict,
-        use_state_mapping: MappingDict,
         core_name: str,
         child_names: list[str],
     ) -> None:
         self.component = component
         self.additional_map = additional_imports_mapping
-        self.use_state_map = use_state_mapping
         self.core_name = core_name
         self.child_names = child_names
 
     def build(self) -> list[str]:
         """Builds the import statements for the component."""
         additional_imports = self.additional_imports()
-        use_state = self.use_state()
         imports = [self.core_import()]
-
-        if use_state:
-            imports.extend(use_state)
 
         if additional_imports:
             imports.extend(additional_imports)
@@ -156,12 +150,6 @@ class ImportBuilder:
     def core_import_pieces(self) -> str:
         """Creates the core import pieces including the main component and its children (if required)."""
         return ", ".join([self.core_name] + self.child_names)
-
-    def use_state(self) -> list[str]:
-        """Adds React's `useState` import if the component requires it."""
-        if self.component.classname in self.use_state_map:
-            return ['import { useState } from "react"']
-        return None
 
 
 class ContentBuilder:

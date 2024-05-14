@@ -9,9 +9,9 @@ VALID_IMPORTS = {
             'import { Loader } from "lucide-react"',
         ],
     },
-    "calendar": 'import { Calendar } from "@/components/ui/calendar"\nimport { useState } from "react"',
-    "checkbox": 'import { Checkbox } from "@/components/ui/checkbox"',
-    "collapsible": 'import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible"\nimport { useState } from "react"\nimport { Button } from "@/components/ui/button"\nimport { ChevronsUpDown } from "lucide-react"',
+    "calendar": '"use client"\nimport { useState } from "react"\nimport { Calendar } from "@/components/ui/calendar"',
+    "checkbox": '"use client"\nimport { Checkbox } from "@/components/ui/checkbox"',
+    "collapsible": '"use client"\nimport { useState } from "react"\nimport { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible"\nimport { Button } from "@/components/ui/button"\nimport { ChevronsUpDown } from "lucide-react"',
     "input": 'import { Input } from "@/components/ui/input"',
     "input_otp": {
         "standard": 'import { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator } from "@/components/ui/input-otp"',
@@ -19,7 +19,7 @@ VALID_IMPORTS = {
         "custom_pattern": 'import { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator } from "@/components/ui/input-otp"',
     },
     "label": 'import { Label } from "@/components/ui/label"',
-    "pagination": 'import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination"',
+    "pagination": 'import { useState } from "react"\nimport { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination"',
     "radio_group": 'import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"\nimport { Label } from "@/components/ui/label"',
     "scroll_area": {
         "simple": 'import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"',

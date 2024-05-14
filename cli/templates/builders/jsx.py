@@ -118,10 +118,13 @@ class ImportBuilder:
 
         return [item for item in imports if item]
 
-    def core_import(self) -> str:
+    def core_import(self, child_names: list[str] = None) -> str:
         """Creates the core import statement for the component."""
         filename = name_from_camel_case(self.core_name)
-        return f'import {{ {self.core_import_pieces()} }} from "@/components/{self.component.library}/{filename}"'.replace(
+        import_pieces = self.core_import_pieces(
+            child_names if child_names else self.child_names
+        )
+        return f'import {{ {import_pieces} }} from "@/components/{self.component.library}/{filename}"'.replace(
             "'", " "
         )
 
@@ -147,9 +150,9 @@ class ImportBuilder:
 
         return imports
 
-    def core_import_pieces(self) -> str:
+    def core_import_pieces(self, child_names: list[str]) -> str:
         """Creates the core import pieces including the main component and its children (if required)."""
-        return ", ".join([self.core_name] + self.child_names)
+        return ", ".join([self.core_name] + child_names)
 
 
 class ContentBuilder:

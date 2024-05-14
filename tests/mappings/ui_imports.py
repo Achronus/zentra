@@ -14,12 +14,12 @@ VALID_IMPORTS = {
     "collapsible": '"use client"\nimport { useState } from "react"\nimport { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible"\nimport { Button } from "@/components/ui/button"\nimport { ChevronsUpDown } from "lucide-react"',
     "input": 'import { Input } from "@/components/ui/input"',
     "input_otp": {
-        "standard": 'import { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator } from "@/components/ui/input-otp"',
+        "standard": 'import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp"',
         "pattern": 'import { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator } from "@/components/ui/input-otp"\nimport { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp"',
         "custom_pattern": 'import { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator } from "@/components/ui/input-otp"',
     },
     "label": 'import { Label } from "@/components/ui/label"',
-    "pagination": 'import { useState } from "react"\nimport { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination"',
+    "pagination": 'import { useState } from "react"\nimport { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination"',
     "radio_group": 'import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"\nimport { Label } from "@/components/ui/label"',
     "scroll_area": {
         "simple": 'import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"',
@@ -29,7 +29,7 @@ VALID_IMPORTS = {
             "import Image from 'next/image'",
         ],
     },
-    "select": 'import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"',
+    "select": 'import { Select, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"',
     "slider": 'import { Slider } from "@/components/ui/slider"\nimport { cn } from "@/lib/utils"',
     "switch": 'import { Switch } from "@/components/ui/switch"',
     "textarea": 'import { Textarea } from "@/components/ui/textarea"',
@@ -44,7 +44,7 @@ VALID_IMPORTS = {
         "icon": 'import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"\nimport { Terminal } from "lucide-react"',
     },
     "alert_dialog": {
-        "simple": 'import { AlertDialog, AlertDialogPortal, AlertDialogOverlay, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from "@/components/ui/alert-dialog"'
+        "simple": 'import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from "@/components/ui/alert-dialog"'
     },
     "tooltip": {
         "button": 'import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"\nimport { Button } from "@/components/ui/button"',

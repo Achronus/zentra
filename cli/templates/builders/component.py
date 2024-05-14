@@ -7,7 +7,7 @@ from cli.templates.builders.jsx import (
 )
 from cli.templates.storage import JSXComponentContentStorage, JSXComponentExtras
 from cli.templates.ui.mappings.storage import ComponentMappings
-from cli.templates.utils import compress
+from cli.templates.utils import compress, str_to_list
 
 from zentra.core import Component
 
@@ -61,12 +61,17 @@ class ComponentBuilder:
         else:
             content = self.content.build()
 
-        self.add_use_state(self.storage.logic)
-        self.add_use_client()
-
         self.storage.content = compress(
             self.apply_content_containers(content=content, full_shell=full_shell)
         )
+
+        self.storage.imports = self.tidy_child_names(
+            self.details.child_names,
+            self.storage.imports,
+            self.storage.content,
+        )
+        self.add_use_state(self.storage.logic)
+        self.add_use_client()
 
     def add_extra_storage(self, storage_extras: JSXComponentExtras) -> None:
         """Adds the extra storage items to `self.storage`."""
@@ -116,3 +121,21 @@ class ComponentBuilder:
         if self.component.classname in self.use_client_map:
             import_str = '"use client"\n'
             self.storage.imports = import_str + self.storage.imports
+
+    def tidy_child_names(
+        self, child_names: list[str], imports: str, content: str
+    ) -> str:
+        """Removes component child names from the import statements, if they are not used in the components content."""
+        used_child_names = []
+        for name in child_names:
+            if name in content:
+                used_child_names.append(name)
+
+        imports_list = str_to_list(imports)
+        for idx, import_str in enumerate(imports_list):
+            if self.component.container_name in import_str:
+                imports_list.pop(idx)
+                break
+
+        imports_list.insert(0, self.imports.core_import(used_child_names))
+        return compress(imports_list)

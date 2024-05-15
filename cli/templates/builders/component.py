@@ -143,12 +143,13 @@ class ComponentBuilder:
                 imports_list.pop(idx)
                 break
 
+        used_child_names.sort()
         imports_list.insert(0, self.imports.core_import(used_child_names))
         return compress(imports_list)
 
     def handle_imports(self, logic: str, imports: str) -> str:
         """Performs import processing such as adding in additional imports and compressing them. Returns the updated version as a string."""
+        imports = compress(compress_imports(str_to_list(imports)))
         imports = self.add_use_state(logic, imports)
         imports = self.add_use_client(imports)
-        imports = compress_imports(str_to_list(imports))
-        return compress(imports)
+        return imports

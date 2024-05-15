@@ -25,6 +25,17 @@ def remove_none(values: list[str]) -> list[str]:
 
 def compress_imports(imports: list[str]) -> list[str]:
     """Merges imports with the same `from` into a single import. Returns the updated import list."""
+
+    def check_extensions(module: str) -> list[bool]:
+        remote_item = []
+        for extension in ["next/", ".jpg", ".png", ".webp"]:
+            if extension not in module:
+                remote_item.append(True)
+            else:
+                remote_item.append(False)
+
+        return remote_item
+
     imports_dict: dict[str, list[str]] = {}
 
     for item in imports:
@@ -43,7 +54,8 @@ def compress_imports(imports: list[str]) -> list[str]:
         comps = list(set(comps))
         comps.sort()
 
-        if "next/" not in module:
+        remote_item = all(check_extensions(module))
+        if remote_item:
             comps = "{ " + ", ".join(comps) + " }"
         else:
             comps = comps[0]

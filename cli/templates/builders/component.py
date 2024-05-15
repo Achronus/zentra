@@ -120,9 +120,9 @@ class ComponentBuilder:
 
         return imports
 
-    def add_use_client(self, imports: str) -> str:
+    def add_use_client(self, logic: str, imports: str) -> str:
         """Adds NextJS's `use client` import if the component requires it."""
-        if self.component.classname in self.use_client_map:
+        if self.component.classname in self.use_client_map or "useState" in logic:
             import_str = '"use client"\n'
             return import_str + imports
 
@@ -151,5 +151,5 @@ class ComponentBuilder:
         """Performs import processing such as adding in additional imports and compressing them. Returns the updated version as a string."""
         imports = compress(compress_imports(str_to_list(imports)))
         imports = self.add_use_state(logic, imports)
-        imports = self.add_use_client(imports)
+        imports = self.add_use_client(logic, imports)
         return imports

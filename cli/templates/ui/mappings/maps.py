@@ -65,13 +65,9 @@ COMPONENTS_TO_WRAP = {
 }
 
 
-# Components that have a "use client" import at the top of their file
+# Unique components that need a "use client" import but don't use hooks
 USE_CLIENT_COMPONENTS = [
-    "Calendar",
     "Checkbox",
-    "Collapsible",
-    "Image",
-    "DropdownMenu",
 ]
 
 

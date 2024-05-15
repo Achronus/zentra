@@ -1,6 +1,6 @@
 ## THIS TOOL IS A WORK IN PROGRESS, PLEASE WAIT UNTIL A VERSION RELEASE.
 
-_Last updated 04/05/2024_
+_Last updated 15/05/2024_
 
 ![Logo](/docs/assets/imgs/zentra-logo.jpg)
 
@@ -27,9 +27,9 @@ Core component libraries and custom models in development:
 - [ ] Zentra Structural Models (1/3)
 - [ ] Custom Data Models (0/1)
 - [X] Custom HTML Models (4/4)
-- [ ] Custom JavaScript Models (1/2)
-- [ ] Custom Form Models (0/13)
-- [ ] [Shadcn/ui](https://ui.shadcn.com/) (18/48)
+- [ ] Custom JavaScript Models (1/4)
+- [ ] [Shadcn/ui Form](https://ui.shadcn.com/docs/components/form) Models (0/13)
+- [ ] [Shadcn/ui](https://ui.shadcn.com/) (21/48)
 - [ ] [NextJS](https://nextjs.org/docs/app/api-reference/components) (2/4)
 - [X] [Uploadthing](https://docs.uploadthing.com/getting-started/appdir) (1/1)
 - [X] [Lucide React Icons](https://lucide.dev/guide/packages/lucide-react) (1/1 - 1 component for all icons)
@@ -84,7 +84,7 @@ export function ScrollAreaHorizontalDemo() {
               />
             </div>
             <figcaption className="pt-2 text-xs text-muted-foreground">
-              Photo by
+              Photo by{" "}
               <span className="font-semibold text-foreground">
                 {artwork.artist}
               </span>
@@ -132,7 +132,7 @@ artwork_map = Div(
             caption=FigCaption(
                 styles="pt-2 text-xs text-muted-foreground",
                 text=[
-                    'Photo by',
+                    'Photo by{" "}',
                     HTMLContent(
                         tag="span",
                         styles="font-semibold text-foreground",

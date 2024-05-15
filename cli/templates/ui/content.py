@@ -22,6 +22,15 @@ from zentra.ui.control import (
     Toggle,
     ToggleGroup,
 )
+from zentra.ui.navigation import (
+    DDMCheckboxGroup,
+    DDMGroup,
+    DDMItem,
+    DDMSeparator,
+    DDMSubGroup,
+    DropdownMenu,
+    DDMRadioGroup,
+)
 from zentra.ui.notification import Alert, TextAlertDialog, Tooltip
 from zentra.ui.presentation import Avatar
 
@@ -402,3 +411,191 @@ def tooltip_content(tt: Tooltip) -> tuple[list[str], JSXComponentExtras]:
         "</TooltipContent>",
         "</Tooltip>",
     ], storage
+
+
+def dropdown_menu_content(dd: DropdownMenu) -> tuple[list[str], JSXComponentExtras]:
+    """Returns a list of strings and component storage for the `DropdownMenu` content based on the components attributes."""
+
+    def trigger() -> tuple[list[str], JSXComponentExtras]:
+        if isinstance(dd.trigger, str):
+            trigger_content = [dd.trigger]
+            storage = JSXComponentExtras()
+        elif isinstance(dd.trigger, Button):
+            trigger_content, storage = build_component(dd.trigger, output_storage=True)
+        else:
+            trigger_content, storage = build_html_tag(dd.trigger, output_storage=True)
+
+        return [
+            "<DropdownMenuTrigger asChild>",
+            *trigger_content,
+            "</DropdownMenuTrigger>",
+        ], storage
+
+    def add_wrapper(name: str, content: str | list[str], attrs: str = None) -> str:
+        start = f"<{name}{f' {attrs}' if attrs else ''}>"
+        end = f"</{name}>"
+
+        if isinstance(content, str):
+            return compress([start, content, end])
+
+        return compress([start, *content, end])
+
+    def radio_group(rg: DDMRadioGroup) -> list[str]:
+        if rg.values:
+            item_content = [
+                add_wrapper("DropdownMenuRadioItem", text, f'value="{value}"')
+                for text, value in zip(rg.texts, rg.values)
+            ]
+        else:
+            item_content = [
+                add_wrapper(
+                    "DropdownMenuRadioItem",
+                    text,
+                    f'value="{text.split(" ")[0].lower()}"',
+                )
+                for text in rg.texts
+            ]
+
+        return [
+            add_wrapper(
+                "DropdownMenuRadioGroup",
+                item_content,
+                "value={position} onValueChange={setPosition}",
+            )
+        ]
+
+    def checkbox_group(cbg: DDMCheckboxGroup) -> list[str]:
+        content = []
+        for item, (start_name, end_name) in zip(cbg.texts, cbg.state_name_pairs):
+            content.extend(
+                [
+                    add_wrapper(
+                        "DropdownMenuCheckboxItem",
+                        item,
+                        f"checked={{{start_name}}} onCheckedChange={{{end_name}}}",
+                    )
+                ]
+            )
+
+        return content
+
+    def create_ddm_item(item: DDMItem) -> tuple[list[str], JSXComponentExtras]:
+        icon_content, storage = build_icon(item.icon, output_storage=True)
+        content = [*icon_content, f"<span>{item.text}</span>"]
+
+        if item.shortcut_key:
+            content.append(add_wrapper("DropdownMenuShortcut", item.shortcut_key))
+
+        content = [
+            add_wrapper(
+                name="DropdownMenuItem",
+                content=content,
+                attrs="disabled" if item.disabled else None,
+            )
+        ]
+        return content, storage
+
+    def create_str_item(item: str) -> list[str]:
+        return [add_wrapper("DropdownMenuItem", item)]
+
+    def ddm_group_iteration(
+        item: str | DDMSubGroup | DDMItem | DDMSeparator,
+    ) -> tuple[list[str], JSXComponentExtras]:
+        if isinstance(item, str):
+            item_content = create_str_item(item)
+            item_storage = None
+        elif isinstance(item, DDMSubGroup):
+            item_content, item_storage = ddm_sub_group(item)
+        elif isinstance(item, DDMSeparator):
+            item_content = [DDMSeparator().content_str]
+            item_storage = None
+        else:
+            item_content, item_storage = create_ddm_item(item)
+
+        return item_content, item_storage
+
+    def ddm_sub_group(sub: DDMSubGroup) -> tuple[list[str], JSXComponentExtras]:
+        inner_content, storage = create_ddm_item(sub.trigger)
+        inner_content[0] = inner_content[0].replace(
+            "DropdownMenuItem", "DropdownMenuSubTrigger"
+        )
+
+        if sub.label:
+            inner_content.append(add_wrapper("DropdownMenuLabel", sub.label))
+
+        inner_item_content = []
+        for item in sub.items:
+            item_content, item_storage = ddm_group_iteration(item)
+
+            if item_storage:
+                storage = add_to_storage(storage, item_storage, extend=True)
+
+            inner_item_content.extend(item_content)
+
+        inner_content = [
+            *inner_content,
+            add_wrapper(
+                "DropdownMenuPortal",
+                add_wrapper("DropdownMenuSubContent", inner_item_content),
+            ),
+        ]
+
+        content = [add_wrapper("DropdownMenuSub", inner_content)]
+        return content, storage
+
+    def ddm_group(group: DDMGroup) -> tuple[list[str], JSXComponentExtras]:
+        inner_content = []
+        storage = JSXComponentExtras()
+
+        if group.label:
+            inner_content.append(add_wrapper("DropdownMenulabel", group.label))
+
+        for item in group.items:
+            item_content, item_storage = ddm_group_iteration(item)
+
+            if item_storage:
+                storage = add_to_storage(storage, item_storage, extend=True)
+
+            inner_content.extend(item_content)
+
+        content = [add_wrapper("DropdownMenuGroup", inner_content)]
+        return content, storage
+
+    def handle_groups(items: list[DDMGroup]) -> tuple[list[str], JSXComponentExtras]:
+        content = []
+        storage = JSXComponentExtras()
+
+        for item in items:
+            item_content, item_storage = ddm_group(item)
+            content.extend(item_content)
+            storage = add_to_storage(storage, item_storage, extend=True)
+            content.append(DDMSeparator().content_str)
+
+        content.pop()  # Remove trailing separator
+        return content, storage
+
+    content, storage = trigger()
+    inner_content = [
+        add_wrapper("DropdownMenuLabel", dd.label),
+        DDMSeparator().content_str,
+    ]
+
+    group_storage = None
+    if isinstance(dd.items, DDMRadioGroup):
+        group_content = radio_group(dd.items)
+    elif isinstance(dd.items, DDMCheckboxGroup):
+        group_content = checkbox_group(dd.items)
+    elif isinstance(dd.items, (DDMGroup, list)):
+        if isinstance(dd.items, DDMGroup):
+            dd.items = [dd.items]
+        group_content, group_storage = handle_groups(dd.items)
+
+    if group_storage:
+        storage = add_to_storage(storage, group_storage, extend=True)
+
+    inner_content.extend(group_content)
+    content = [
+        *content,
+        add_wrapper("DropdownMenuContent", inner_content, 'className="w-56"'),
+    ]
+    return content, storage

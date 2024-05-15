@@ -19,6 +19,7 @@ from cli.templates.ui.content import (
     button_content,
     checkbox_content,
     collapsible_content,
+    dropdown_menu_content,
     input_otp_content,
     pagination_content,
     radio_group_content,
@@ -42,13 +43,19 @@ from cli.templates.ui.imports import (
     toggle_group_imports,
     toggle_imports,
 )
-from cli.templates.ui.logic import calendar_logic, collapsible_logic, pagination_logic
+from cli.templates.ui.logic import (
+    calendar_logic,
+    collapsible_logic,
+    dropdown_menu_logic,
+    pagination_logic,
+)
 
 
 # Components with content that returns a tuple: '(content, storage)'
 PARENT_COMPONENTS = [
     "ScrollArea",
     "Tooltip",
+    "DropdownMenu",
 ]
 
 # Dictionary of components with containers around them
@@ -64,7 +71,7 @@ USE_CLIENT_COMPONENTS = [
     "Checkbox",
     "Collapsible",
     "Image",
-]
+    "DropdownMenu",
 ]
 
 
@@ -142,6 +149,7 @@ COMPONENT_CONTENT_MAPPING = {
     # Parent components
     "ScrollArea": lambda sa: scroll_area_content(sa),
     "Tooltip": lambda tt: tooltip_content(tt),
+    "DropdownMenu": lambda dd: dropdown_menu_content(dd),
 }
 
 
@@ -154,6 +162,7 @@ LOGIC_MAPPING = {
     "Calendar": lambda comp: calendar_logic(comp),
     "Collapsible": lambda comp: collapsible_logic(comp),
     "Pagination": lambda comp: pagination_logic(comp),
+    "DropdownMenu": lambda comp: dropdown_menu_logic(comp),
 }
 
 

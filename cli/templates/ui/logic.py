@@ -1,4 +1,5 @@
 from zentra.ui.control import Calendar, Collapsible, Pagination
+from zentra.ui.navigation import DDMCheckboxGroup, DropdownMenu, DDMRadioGroup
 
 
 def hook_assignment(get_name: str, set_name: str) -> str:
@@ -28,3 +29,36 @@ def pagination_logic(comp: Pagination) -> list[str]:
         f"{start_idx} useState(0);",
         f"{end_idx} useState(itemsPerPage);",
     ]
+
+
+def dropdown_menu_logic(dd: DropdownMenu) -> list[str]:
+    """Returns a list of strings for the `DropdownMenu` logic based on the given name value."""
+
+    def radio_group(rg: DDMRadioGroup) -> list[str]:
+        logic = []
+
+        for idx, text in enumerate(rg.texts):
+            get_name, set_name = rg.state_name_pairs[idx]
+            hook = hook_assignment(get_name, set_name)
+            hook_value = rg.values[0] if rg.values else text.split(" ")[0].lower()
+            logic.append(f'{hook} useState("{hook_value}")')
+
+        return logic
+
+    def checkbox_group(cbg: DDMCheckboxGroup) -> list[str]:
+        logic = []
+
+        for idx, _ in enumerate(cbg.texts):
+            get_name, set_name = cbg.state_name_pairs[idx]
+            hook = hook_assignment(get_name, set_name)
+            state_val = "true" if idx == 0 else "false"
+            logic.append(f"{hook} useState<Checked>({state_val});")
+
+        return logic
+
+    if isinstance(dd.items, DDMRadioGroup):
+        return radio_group(dd.items)
+    elif isinstance(dd.items, DDMCheckboxGroup):
+        return checkbox_group(dd.items)
+
+    return []

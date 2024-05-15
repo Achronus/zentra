@@ -34,7 +34,7 @@ def html_content_container(
     wrapped_content.append(f"</{model.classname}>")
 
     if isinstance(model, Div):
-        if model.shell:
+        if model.fragment:
             wrapped_content[0] = "<>"
             wrapped_content[-1] = "</>"
 

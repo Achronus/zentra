@@ -118,7 +118,7 @@ class TestDiv:
         builder = Builder(
             model=Div(
                 items="This is a shell test",
-                shell=True,
+                fragment=True,
             ),
         )
         builder.content(HTML_VALID_VALS_MAP["div"]["content"]["shell"])

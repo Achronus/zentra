@@ -35,13 +35,13 @@ class Div(HTMLTag):
       2. Any `zentra.core.Component` model, such as `zentra.ui.control.Label`
       3. Any `zentra.core.js.JSIterable` model, such as `zentra.core.js.Map`
       4. A `list` of a combination of `strings` of text, `zentra.core.html.HTMLTag` models, `zentra.core.js.JSIterable` models, or `zentra.core.Component` models
-    - `shell` (`boolean, optional`) - A flag to indicate whether the div should be an empty tag wrapper (`<>`, `</>`). Often used in JSX when a single parent container is needed. `False` by default
+    - `fragment` (`boolean, optional`) - A flag to switch the div to a React fragment (`<>`, `</>`). Often used in JSX when a single parent container is needed. `False` by default
     - `key` (`string, optional`) - A unique identifier added to the container. Needed when using JS iterables like `map`. When provided, must be a parameter (start with a `$`). `None` by default
     - `styles` (`string, optional`) - the CSS styles to apply to the tag. `None` by default
     """
 
     items: str | Component | JSIterable | list[str | HTMLTag | Component | JSIterable]
-    shell: bool = False
+    fragment: bool = False
     key: str = None
 
     @field_validator("key")

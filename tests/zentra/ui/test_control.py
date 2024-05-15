@@ -607,7 +607,7 @@ class TestScrollArea:
                         obj_name="tags",
                         param_name="tag",
                         content=Div(
-                            shell=True,
+                            fragment=True,
                             items=[
                                 Div(key="$tag", styles="text-sm", items="$tag"),
                                 Separator(styles="my-2"),

@@ -2,6 +2,7 @@ from pydantic import ValidationInfo, field_validator
 from pydantic_core import PydanticCustomError
 from zentra.core import Component
 from zentra.core.react import LucideIcon
+from zentra.custom.ui import SeparatorModel
 from zentra.ui import ShadcnUi
 from zentra.ui.control import Button
 
@@ -53,7 +54,7 @@ class DDMSeparator(Component, ShadcnUi):
     @property
     def content_str(self) -> str:
         """Provides the JSX content for the component."""
-        return "<DropdownMenuSeparator />"
+        return SeparatorModel(variant="dropdown_menu").content_str
 
 
 class DDMSubGroup(Component, ShadcnUi):
@@ -163,16 +164,16 @@ class DropdownMenu(Component, ShadcnUi):
     - `trigger` (`zentra.ui.control.Button | string`) - The item to activate the dropdown menu. Can be either:
       1. A Zentra `Button` model
       2. A string of text
-    - `items` (`zentra.ui.navigation.DDMRadioGroup | zentra.ui.navigation.DDMCheckboxGroup | zentra.ui.navigation.DDMGroup | list[zentra.ui.navigation.DDMGroup]`) - Can be either:
-      1. A `DDMRadioGroup` model containing a list of radio items
-      2. A `DDMCheckboxGroup` model containing a list of checkbox items
-      3. A `DDMGroup` model. For a single group of dropdown menu items. These can be either `strings` or `DDMItem` models
+    - `items` (`zentra.ui.navigation.DDMGroup | zentra.ui.navigation.DDMRadioGroup | zentra.ui.navigation.DDMCheckboxGroup | list[zentra.ui.navigation.DDMGroup]`) - Can be either:
+      1. A `DDMGroup` model. For a single group of dropdown menu items. These can be either `strings` or `DDMItem` models
+      2. A `DDMRadioGroup` model containing a list of radio items
+      3. A `DDMCheckboxGroup` model containing a list of checkbox items
       4. A list of `DDMGroup` models. For multiple groups of dropdown items, automatically separated by a `DropdownMenuSeparator`
     - `label` (`string, optional`) - The main label displayed at the top of the dropdown menu. `None` by default
     """
 
     trigger: Button | str
-    items: DDMRadioGroup | DDMCheckboxGroup | DDMGroup | list[DDMGroup]
+    items: DDMGroup | DDMRadioGroup | DDMCheckboxGroup | list[DDMGroup]
     label: str = None
 
 

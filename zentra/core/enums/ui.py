@@ -5,6 +5,7 @@ class LibraryType(str, Enum):
     SHADCNUI = "ui"
     UPLOADTHING = "uploadthing"
     NEXTJS = "nextjs"
+    CUSTOM = "custom"
 
 
 class ButtonVariant(str, Enum):
@@ -90,3 +91,11 @@ class BadgeVariant(str, Enum):
     SECONDARY = "secondary"
     DESTRUCTIVE = "destructive"
     OUTLINE = "outline"
+
+
+class SeparatorVariant(str, Enum):
+    BREADCRUMB = "breadcrumb"
+    DROPDOWN_MENU = "dropdown_menu"
+    MENUBAR = "menubar"
+    COMMAND = "command"
+    CONTEXT_MENU = "context_menu"

@@ -504,7 +504,7 @@ def dropdown_menu_content(dd: DropdownMenu) -> tuple[list[str], JSXComponentExtr
         elif isinstance(item, DDMSubGroup):
             item_content, item_storage = ddm_sub_group(item)
         elif isinstance(item, DDMSeparator):
-            item_content = [DDMSeparator().content_str]
+            item_content = [item.content_str]
             item_storage = None
         else:
             item_content, item_storage = create_ddm_item(item)

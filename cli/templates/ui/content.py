@@ -418,18 +418,15 @@ def dropdown_menu_content(dd: DropdownMenu) -> tuple[list[str], JSXComponentExtr
 
     def trigger() -> tuple[list[str], JSXComponentExtras]:
         if isinstance(dd.trigger, str):
-            trigger_content = [dd.trigger]
-            storage = JSXComponentExtras()
-        elif isinstance(dd.trigger, Button):
-            trigger_content, storage = build_component(dd.trigger, output_storage=True)
+            return [
+                add_wrapper("DropdownMenuTrigger", dd.trigger),
+            ], JSXComponentExtras()
         else:
-            trigger_content, storage = build_html_tag(dd.trigger, output_storage=True)
+            trigger_content, storage = build_component(dd.trigger, output_storage=True)
 
-        return [
-            "<DropdownMenuTrigger asChild>",
-            *trigger_content,
-            "</DropdownMenuTrigger>",
-        ], storage
+            return [
+                add_wrapper("DropdownMenuTrigger", trigger_content, attrs="asChild")
+            ], storage
 
     def add_wrapper(name: str, content: str | list[str], attrs: str = None) -> str:
         start = f"<{name}{f' {attrs}' if attrs else ''}>"
@@ -575,10 +572,12 @@ def dropdown_menu_content(dd: DropdownMenu) -> tuple[list[str], JSXComponentExtr
         return content, storage
 
     content, storage = trigger()
-    inner_content = [
-        add_wrapper("DropdownMenuLabel", dd.label),
-        DDMSeparator().content_str,
-    ]
+    inner_content = []
+
+    if dd.label:
+        inner_content.extend(
+            [add_wrapper("DropdownMenuLabel", dd.label), DDMSeparator().content_str]
+        )
 
     group_storage = None
     if isinstance(dd.items, DDMRadioGroup):

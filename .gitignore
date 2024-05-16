@@ -63,3 +63,6 @@ logs/
 zentra/models
 zentra/generated
 frontend/
+
+# Tests
+tests/automation/output.py

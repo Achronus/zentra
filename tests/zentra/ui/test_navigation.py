@@ -173,6 +173,15 @@ class TestDropdownMenu:
         wrapper_full.run("content", VALID_VALS_MAP["dropdown_menu"]["content"]["full"])
 
     @staticmethod
+    def test_content_str_no_label():
+        comp = DropdownMenu(
+            trigger="open",
+            items=DDMGroup(items=["Top", "Bottom", "Right"]),
+        )
+        wrapper = SimpleCompBuilder(comp, COMPONENT_DETAILS_DICT["DropdownMenu"])
+        wrapper.run("content", VALID_VALS_MAP["dropdown_menu"]["content"]["no_label"])
+
+    @staticmethod
     def test_logic_str_radio_group(wrapper_radio_group: SimpleCompBuilder):
         wrapper_radio_group.run(
             "logic", VALID_VALS_MAP["dropdown_menu"]["logic"]["radio_group"]

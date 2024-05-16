@@ -21,7 +21,7 @@ class LucideIcon(BaseModel):
     """
 
     name: str = Field(min_length=1)
-    styles: str = "mr-2 h-4 w-4"
+    styles: Optional[str] = "mr-2 h-4 w-4"
     size: Optional[int] = None
     color: Optional[str] = None
     stroke_width: Optional[int] = None

@@ -1,10 +1,13 @@
 from typing import Optional
+import requests
 
 from pydantic import ValidationInfo, field_validator
 from pydantic_core import PydanticCustomError
 
 from zentra.core import Component
-from zentra.core.react import LucideIcon
+from zentra.core.enums.ui import BCTriggerVariant
+from zentra.core.react import LucideIcon, LucideIconWithText
+from zentra.core.utils import name_from_pascal_case
 from zentra.custom.ui import SeparatorModel
 from zentra.nextjs import Link
 from zentra.ui import ShadcnUi
@@ -210,10 +213,118 @@ class Command(Component, ShadcnUi):
     """
 
 
+class BCTrigger(Component, ShadcnUi):
+    """
+    A helper Zentra model that represents a unique dropdown menu trigger for the [Shadcn/ui Breadcrumb](https://ui.shadcn.com/docs/components/breadcrumb) component.
+
+    Cannot be used on its own, must be used inside a `zentra.ui.navigation.BCDropdownMenu` model.
+
+    Parameter:
+    - `variant` (`string, optional`) - the type of trigger to use. Valid options: `['ellipsis', 'text']`. `ellipsis` by default
+    - `text` (`string, optional`) - the text to use inside the trigger. Only usable when `variant='text'`. Populates the `DropdownMenuTrigger` with text and a `ChevronDown` icon after it. `None` by default
+    """
+
+    variant: BCTriggerVariant = "ellipsis"
+    text: Optional[str] = None
+
+    @field_validator("text")
+    def validate_text(cls, text: str | None, info: ValidationInfo) -> str | None:
+        variant = info.data.get("variant")
+        if text and variant != "text":
+            raise PydanticCustomError(
+                "invalid_variant",
+                "Cannot use the 'text' attribute without 'variant=" + "text" + "'\n",
+                dict(wrong_value=variant),
+            )
+
+        return text
+
+    @property
+    def content_str(self) -> str | LucideIconWithText:
+        """Defines the JSX content for the component."""
+        styles = "h-4 w-4"
+
+        if self.variant == "ellipsis":
+            return f'<BreadcrumbEllipsis className="{styles}" />\n<span className="sr-only">Toggle menu</span>'
+        elif self.variant == "text":
+            return LucideIconWithText(
+                name="ChevronDown", text=self.text, position="end", styles=styles
+            )
+
+
+class BCItem(Component, ShadcnUi):
+    """
+    A helper Zentra model for the [Shadcn/ui Breadcrumb](https://ui.shadcn.com/docs/components/breadcrumb) component. Represents a single breadcrumb item (`BreadcrumbItem`).
+
+    Cannot be used on its own, must be used inside a `zentra.ui.navigation.Breadcrumb`, or a `zentra.ui.navigation.BCDropdownMenu` model.
+
+    Parameters:
+    - `text` (`string`) - The text to display inside the link
+    - `href` (`string`) - The URL to display inside the `href` property. Can only be a local URL and must start with a `/`
+    """
+
+    text: str
+    href: str
+
+    @field_validator("href")
+    def validate_url(cls, href: str) -> str:
+        if not href.startswith("/"):
+            raise PydanticCustomError(
+                "invalid_href",
+                "'href' must be a local URL and start with a '/'!",
+                dict(wrong_value=href),
+            )
+
+        return href
+
+
+class BCDropdownMenu(Component, ShadcnUi):
+    """
+    A helper Zentra model for the [Shadcn/ui Breadcrumb](https://ui.shadcn.com/docs/components/breadcrumb) component. Represents a dropdown menu unique to the breadcrumb component.
+
+    Cannot be used on its own, must be used inside a `zentra.ui.navigation.Breadcrumb` model.
+
+    Parameters:
+    - `trigger` (`zentra.ui.navigation.BCTrigger`) - a Zentra `BCTrigger` model
+    - `items` (`list[zentra.ui.navigation.BCItem]`) - a list of breadcrumb items
+    """
+
+    trigger: BCTrigger
+    items: list[BCItem]
+
+
 class Breadcrumb(Component, ShadcnUi):
     """
     A Zentra model for the [Shadcn/ui Breadcrumb](https://ui.shadcn.com/docs/components/breadcrumb) component.
 
     Parameters:
-    - `name` (`str`) - the name of the component
+    - `page_name` (`str`) - the name of the current resource, added as the last item inside a `BreadcrumbPage` child component
+    - `items` (`list[zentra.ui.navigation.BCItem | zentra.ui.navigation.BCDropdownMenu]`) - a list of `BCItem` models and/or `BCDropdownMenu` models. Automatically adds a separator between each item
+    - `custom_sep` (`string, optional`) - the name of a custom separator pulled from [Lucide React Icons](https://lucide.dev/icons). Name must be in React format (PascalCase). E.g., `Slash` or `MoveRight`. `None` by default
     """
+
+    page_name: str
+    items: list[BCItem | BCDropdownMenu]
+    custom_sep: Optional[str] = None
+
+    @field_validator("custom_sep")
+    def validate_custom_sep(cls, name: str) -> str:
+        icon_name = name_from_pascal_case(name)
+        response = requests.get(f"https://lucide.dev/icons/{icon_name}")
+
+        if response.status_code != 200:
+            raise PydanticCustomError(
+                "invalid_icon",
+                f"'{name}' at '{response.url}' does not exist",
+                dict(wrong_value=name, error_code=response.status_code),
+            )
+
+        return name
+
+    @property
+    def separator_content(self) -> str | list[str]:
+        """Defines the separator content for the component."""
+        if self.custom_sep:
+            return SeparatorModel(variant="breadcrumb", full=True).content_str
+
+        return SeparatorModel(variant="breadcrumb").content_str

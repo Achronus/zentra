@@ -197,6 +197,12 @@ DROPDOWN_MENU_VALID_VALS = {
     },
 }
 
+BREADCRUMB_VALID_VALS = {
+    "content": {
+        "ellipsis_trigger": '<Breadcrumb>\n<BreadcrumbList>\n<BreadcrumbItem>\n<BreadcrumbLink href="/">\nHome\n</BreadcrumbLink>\n</BreadcrumbItem>\n<BreadcrumbSeparator />\n<BreadcrumbItem>\n<DropdownMenu>\n<DropdownMenuTrigger className="flex items-center gap-1">\n<BreadcrumbEllipsis className="h-4 w-4" />\n<span className="sr-only">Toggle menu</span>\n</DropdownMenuTrigger>\n<DropdownMenuContent align="start">\n<DropdownMenuGroup>\n<DropdownMenuItem asChild>\n<Link href="/docs">\n<span>Documentation</span>\n</Link>\n</DropdownMenuItem>\n<DropdownMenuItem asChild>\n<Link href="/themes">\n<span>Themes</span>\n</Link>\n</DropdownMenuItem>\n<DropdownMenuItem asChild>\n<Link href="/github">\n<span>GitHub</span>\n</Link>\n</DropdownMenuItem>\n</DropdownMenuGroup>\n</DropdownMenuContent>\n</DropdownMenu>\n</BreadcrumbItem>\n<BreadcrumbSeparator />\n<BreadcrumbItem>\n<BreadcrumbLink href="/docs/components">\nComponents\n</BreadcrumbLink>\n</BreadcrumbItem>\n<BreadcrumbSeparator />\n<BreadcrumbItem>\n<BreadcrumbPage>\nBreadcrumb\n</BreadcrumbPage>\n</BreadcrumbItem>\n</BreadcrumbList>\n</Breadcrumb>',
+        "text_trigger": '<Breadcrumb>\n<BreadcrumbList>\n<BreadcrumbItem>\n<BreadcrumbLink href="/">\nHome\n</BreadcrumbLink>\n</BreadcrumbItem>\n<BreadcrumbSeparator>\n<Slash />\n</BreadcrumbSeparator>\n<BreadcrumbItem>\n<DropdownMenu>\n<DropdownMenuTrigger className="flex items-center gap-1">\nComponents\n<ChevronDown className="h-4 w-4" />\n</DropdownMenuTrigger>\n<DropdownMenuContent align="start">\n<DropdownMenuGroup>\n<DropdownMenuItem asChild>\n<Link href="/docs">\n<span>Documentation</span>\n</Link>\n</DropdownMenuItem>\n<DropdownMenuItem asChild>\n<Link href="/themes">\n<span>Themes</span>\n</Link>\n</DropdownMenuItem>\n<DropdownMenuItem asChild>\n<Link href="/github">\n<span>GitHub</span>\n</Link>\n</DropdownMenuItem>\n</DropdownMenuGroup>\n</DropdownMenuContent>\n</DropdownMenu>\n</BreadcrumbItem>\n<BreadcrumbSeparator>\n<Slash />\n</BreadcrumbSeparator>\n<BreadcrumbItem>\n<BreadcrumbLink href="/docs/components">\nComponents\n</BreadcrumbLink>\n</BreadcrumbItem>\n<BreadcrumbSeparator>\n<Slash />\n</BreadcrumbSeparator>\n<BreadcrumbItem>\n<BreadcrumbPage>\nBreadcrumb\n</BreadcrumbPage>\n</BreadcrumbItem>\n</BreadcrumbList>\n</Breadcrumb>',
+    }
+}
 
 VALID_VALS_MAP = {
     "calendar": CALENDAR_VALID_VALS,
@@ -221,6 +227,7 @@ VALID_VALS_MAP = {
     "badge": BADGE_VALID_VALS,
     "pagination": PAGINATION_VALID_VALS,
     "dropdown_menu": DROPDOWN_MENU_VALID_VALS,
+    "breadcrumb": BREADCRUMB_VALID_VALS,
 }
 
 

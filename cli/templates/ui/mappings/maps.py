@@ -16,6 +16,7 @@ from cli.templates.ui.attributes import (
 from cli.templates.ui.content import (
     alert_content,
     avatar_content,
+    breadcrumb_content,
     button_content,
     checkbox_content,
     collapsible_content,
@@ -56,6 +57,7 @@ PARENT_COMPONENTS = [
     "ScrollArea",
     "Tooltip",
     "DropdownMenu",
+    "Breadcrumb",
 ]
 
 # Dictionary of components with containers around them
@@ -146,6 +148,7 @@ COMPONENT_CONTENT_MAPPING = {
     "ScrollArea": lambda sa: scroll_area_content(sa),
     "Tooltip": lambda tt: tooltip_content(tt),
     "DropdownMenu": lambda dd: dropdown_menu_content(dd),
+    "Breadcrumb": lambda bc: breadcrumb_content(bc),
 }
 
 

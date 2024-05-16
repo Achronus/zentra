@@ -73,6 +73,19 @@ VALID_IMPORTS = {
             'import { CreditCard, User } from "lucide-react"',
         ],
     },
+    "breadcrumb": {
+        "ellipsis_trigger": [
+            'import { Breadcrumb, BreadcrumbEllipsis, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"',
+            "import Link from 'next/link'",
+            'import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"',
+        ],
+        "text_trigger": [
+            'import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"',
+            "import Link from 'next/link'",
+            'import { ChevronDown, Slash } from "lucide-react"',
+            'import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"',
+        ],
+    },
 }
 
 

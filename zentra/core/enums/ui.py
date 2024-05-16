@@ -99,3 +99,8 @@ class SeparatorVariant(str, Enum):
     MENUBAR = "menubar"
     COMMAND = "command"
     CONTEXT_MENU = "context_menu"
+
+
+class BCTriggerVariant(str, Enum):
+    ELLIPSIS = "ellipsis"
+    TEXT = "text"

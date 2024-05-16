@@ -186,4 +186,17 @@ COMPONENT_DETAILS_DICT = {
             "DropdownMenuRadioGroup",
         ],
     ),
+    "Breadcrumb": ComponentDetails(
+        library="ui",
+        filename="breadcrumb.jsx",
+        name="Breadcrumb",
+        child_names=[
+            "BreadcrumbList",
+            "BreadcrumbItem",
+            "BreadcrumbLink",
+            "BreadcrumbPage",
+            "BreadcrumbSeparator",
+            "BreadcrumbEllipsis",
+        ],
+    ),
 }

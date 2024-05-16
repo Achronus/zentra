@@ -2,7 +2,7 @@ from cli.templates.builders import add_to_storage
 from cli.templates.builders.controller import BuildController
 from cli.templates.storage import JSXComponentExtras
 from cli.templates.ui.attributes import alt_attribute, src_attribute
-from cli.templates.utils import compress, text_content
+from cli.templates.utils import compress, str_to_list, text_content
 
 from zentra.core import Component
 from zentra.core.base import HTMLTag
@@ -23,6 +23,9 @@ from zentra.ui.control import (
     ToggleGroup,
 )
 from zentra.ui.navigation import (
+    BCDropdownMenu,
+    BCItem,
+    Breadcrumb,
     DDMCheckboxGroup,
     DDMGroup,
     DDMItem,
@@ -625,4 +628,83 @@ def dropdown_menu_content(dd: DropdownMenu) -> tuple[list[str], JSXComponentExtr
         *content,
         add_wrapper("DropdownMenuContent", inner_content, 'className="w-56"'),
     ]
+    return content, storage
+
+
+def breadcrumb_content(bc: Breadcrumb) -> tuple[list[str], JSXComponentExtras]:
+    """Returns a list of strings and component storage for the `Breadcrumb` content based on the components attributes."""
+
+    def bc_item(item: BCItem) -> str:
+        return add_wrapper("BreadcrumbLink", item.text, attrs=f'href="{item.href}"')
+
+    def tidy_ddm_menu_content(content: str) -> str:
+        """Format content into the required format."""
+        return (
+            compress(content)
+            .replace(
+                "DropdownMenuTrigger asChild",
+                'DropdownMenuTrigger className="flex items-center gap-1"',
+            )
+            .replace("<Button>\n", "")
+            .replace("</Button>\n", "")
+            .replace(
+                'DropdownMenuContent className="w-56"',
+                'DropdownMenuContent align="start"',
+            )
+        )
+
+    def bc_menu(ddm: BCDropdownMenu) -> tuple[str, JSXComponentExtras]:
+        item_content: list[DDMItem] = []
+        for item in ddm.items:
+            item_content.append(DDMItem(text=Link(href=item.href, text=item.text)))
+
+        bc_ddm = DropdownMenu(
+            trigger=Button(content=ddm.trigger.content_str),
+            items=DDMGroup(items=item_content),
+        )
+
+        menu_content, ddm_storage = build_component(bc_ddm, output_storage=True)
+        menu_content = tidy_ddm_menu_content(menu_content)
+
+        # Remove 'Button' import
+        storage.imports.extend(
+            [
+                imp_str
+                for imp_str in str_to_list(ddm_storage.imports[0])
+                if "Button" not in imp_str
+            ]
+        )
+
+        return menu_content, storage
+
+    def bc_seperator() -> tuple[str, JSXComponentExtras]:
+        if bc.custom_sep:
+            start, end = bc.separator_content
+            content, storage = build_icon(
+                LucideIcon(name=bc.custom_sep, styles=None), output_storage=True
+            )
+            content = compress(content)
+            return f"{start}\n{content}\n{end}", storage
+
+        return bc.separator_content, JSXComponentExtras()
+
+    content, storage = [], JSXComponentExtras()
+
+    sep_content, sep_storage = bc_seperator()
+    add_to_storage(storage, sep_storage, extend=True)
+
+    for item in bc.items:
+        if isinstance(item, BCItem):
+            item_content = bc_item(item)
+        else:
+            item_content, menu_storage = bc_menu(item)
+            add_to_storage(storage, menu_storage, extend=True)
+
+        content.append(add_wrapper("BreadcrumbItem", item_content))
+        content.append(sep_content)
+
+    content.append(
+        add_wrapper("BreadcrumbItem", add_wrapper("BreadcrumbPage", bc.page_name))
+    )
+    content = [add_wrapper("BreadcrumbList", content)]
     return content, storage

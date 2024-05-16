@@ -12,6 +12,10 @@ from zentra.core.react import LucideIcon
 from zentra.nextjs import Link
 from zentra.ui.control import Button
 from zentra.ui.navigation import (
+    BCDropdownMenu,
+    BCItem,
+    BCTrigger,
+    Breadcrumb,
     DDMCheckboxGroup,
     DDMGroup,
     DDMItem,
@@ -277,3 +281,82 @@ class TestDropdownMenu:
                 trigger="open",
                 items=DDMGroup(items=[DDMItem(text=Link(href="/settings"))]),
             )
+
+
+class TestBreadcrumb:
+    @pytest.fixture
+    def breadcrumb_ellipsis_trigger(self) -> Breadcrumb:
+        return Breadcrumb(
+            page_name="Breadcrumb",
+            items=[
+                BCItem(text="Home", href="/"),
+                BCDropdownMenu(
+                    trigger=BCTrigger(),
+                    items=[
+                        BCItem(text="Documentation", href="/docs"),
+                        BCItem(text="Themes", href="/themes"),
+                        BCItem(text="GitHub", href="/github"),
+                    ],
+                ),
+                BCItem(text="Components", href="/docs/components"),
+            ],
+        )
+
+    @pytest.fixture
+    def breadcrumb_text_trigger(self) -> Breadcrumb:
+        return Breadcrumb(
+            page_name="Breadcrumb",
+            items=[
+                BCItem(text="Home", href="/"),
+                BCDropdownMenu(
+                    trigger=BCTrigger(variant="text", text="Components"),
+                    items=[
+                        BCItem(text="Documentation", href="/docs"),
+                        BCItem(text="Themes", href="/themes"),
+                        BCItem(text="GitHub", href="/github"),
+                    ],
+                ),
+                BCItem(text="Components", href="/docs/components"),
+            ],
+            custom_sep="Slash",
+        )
+
+    @pytest.fixture
+    def wrapper_ellipsis_trigger(
+        self, breadcrumb_ellipsis_trigger: Breadcrumb
+    ) -> SimpleCompBuilder:
+        return SimpleCompBuilder(
+            breadcrumb_ellipsis_trigger, COMPONENT_DETAILS_DICT["Breadcrumb"]
+        )
+
+    @pytest.fixture
+    def wrapper_text_trigger(
+        self, breadcrumb_text_trigger: Breadcrumb
+    ) -> SimpleCompBuilder:
+        return SimpleCompBuilder(
+            breadcrumb_text_trigger, COMPONENT_DETAILS_DICT["Breadcrumb"]
+        )
+
+    @staticmethod
+    def test_content_str_ellipsis_trigger(wrapper_ellipsis_trigger: SimpleCompBuilder):
+        wrapper_ellipsis_trigger.run(
+            "content", VALID_VALS_MAP["breadcrumb"]["content"]["ellipsis_trigger"]
+        )
+
+    @staticmethod
+    def test_content_str_text_trigger(wrapper_text_trigger: SimpleCompBuilder):
+        wrapper_text_trigger.run(
+            "content", VALID_VALS_MAP["breadcrumb"]["content"]["text_trigger"]
+        )
+
+    @staticmethod
+    def test_import_str_ellipsis_trigger(wrapper_ellipsis_trigger: SimpleCompBuilder):
+        wrapper_ellipsis_trigger.run(
+            "imports", VALID_IMPORTS["breadcrumb"]["ellipsis_trigger"], list_output=True
+        )
+
+    @staticmethod
+    def test_import_str_text_trigger(wrapper_text_trigger: SimpleCompBuilder):
+        wrapper_text_trigger.run(
+            "imports", VALID_IMPORTS["breadcrumb"]["text_trigger"], list_output=True
+        )

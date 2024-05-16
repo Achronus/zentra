@@ -5,7 +5,7 @@ from tests.mappings.ui_vals import NEXTJS_VALID_VALS_MAP
 from tests.templates.helper import nextjs_component_builder
 
 from zentra.core import Component
-from zentra.nextjs import Image, Link, StaticImage, Url
+from zentra.nextjs import Image, Link, StaticImage, UrlQuery
 
 from pydantic import ValidationError
 
@@ -171,7 +171,7 @@ class TestLink:
     @staticmethod
     def test_content_full():
         link = Link(
-            href=Url(
+            href=UrlQuery(
                 pathname="/dashboard",
                 query={"name": "test"},
             ),
@@ -230,7 +230,7 @@ class TestLink:
     @staticmethod
     def test_attr_href_url():
         link = Link(
-            href=Url(
+            href=UrlQuery(
                 pathname="/dashboard",
                 query={"name": "test"},
             ),
@@ -243,7 +243,7 @@ class TestLink:
     @staticmethod
     def test_attr_href_url_multi_query():
         link = Link(
-            href=Url(
+            href=UrlQuery(
                 pathname="/dashboard",
                 query={"name": "test", "second": "test2"},
             ),
@@ -259,7 +259,7 @@ class TestUrl:
     @staticmethod
     def test_pathname_invalid():
         with pytest.raises(ValidationError):
-            Url(
+            UrlQuery(
                 pathname="dashboard",
                 query={"name": "test"},
             )

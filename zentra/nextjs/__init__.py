@@ -1,8 +1,8 @@
-from pydantic_core import PydanticCustomError
 from zentra.core import LOWER_CAMELCASE_SINGLE_WORD, Component, has_valid_pattern
 from zentra.core.enums.ui import LibraryType
 
 from pydantic import BaseModel, Field, HttpUrl, field_validator
+from pydantic_core import PydanticCustomError
 
 
 class NextJs:
@@ -13,7 +13,7 @@ class NextJs:
         return LibraryType.NEXTJS.value
 
 
-class Url(BaseModel, NextJs):
+class UrlQuery(BaseModel, NextJs):
     """
     A model for the [NextJS URL object](https://nextjs.org/docs/app/api-reference/components/link#with-url-object) used within the [NextJS Link](https://nextjs.org/docs/app/api-reference/components/link) component.
 
@@ -232,7 +232,7 @@ class Link(Component, NextJs):
     A Zentra model for the [NextJS Link](https://nextjs.org/docs/app/api-reference/components/link) component.
 
     Parameters:
-    - `href` (`string | HttpUrl | zentra.nextjs.Url`) - a path or URL to navigate to, or a `zentra.nextjs.Url` object
+    - `href` (`string | HttpUrl | zentra.nextjs.UrlQuery`) - a path or URL to navigate to, or a `zentra.nextjs.UrlQuery` model
     - `text` (`string, optional`) - a string of text to display inside the `Link`. `None` by default
     - `styles` (`string, optional`) - a set of optional CSS styles. Automatically assigns them to a `className` attribute. `None` by default
     - `target` (`string | HttpUrl, optional`) - a target for the URL such as `_blank` for a new tab. `None` by default
@@ -270,10 +270,10 @@ class Link(Component, NextJs):
 
     3. An advanced link with everything.
     ```python
-    from zentra.nextjs import Link, Url
+    from zentra.nextjs import Link, UrlQuery
 
     Link(
-        href=Url(
+        href=UrlQuery(
             pathname="/dashboard",
             query={"name": "test"},
         ),
@@ -303,7 +303,7 @@ class Link(Component, NextJs):
     ```
     """
 
-    href: str | HttpUrl | Url
+    href: str | HttpUrl | UrlQuery
     text: str = None
     styles: str = None
     target: str | HttpUrl = None

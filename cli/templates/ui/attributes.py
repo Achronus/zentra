@@ -2,7 +2,7 @@ import re
 
 from pydantic import HttpUrl
 from zentra.core.enums.ui import InputOTPPatterns
-from zentra.nextjs import Link, StaticImage, Url
+from zentra.nextjs import Link, StaticImage, UrlQuery
 from zentra.ui.control import Calendar, Collapsible, InputOTP, Slider, Toggle
 
 
@@ -136,7 +136,7 @@ def nextjs_link_attributes(link: Link) -> list[str]:
     """Returns a list of strings for the Link attributes based on its given values."""
     attributes = []
 
-    if isinstance(link.href, Url) and not isinstance(link.href, str):
+    if isinstance(link.href, UrlQuery) and not isinstance(link.href, str):
         queries = {
             "pathname": link.href.pathname,
             "query": link.href.query,

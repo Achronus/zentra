@@ -1,10 +1,10 @@
 from typing import Optional
 
-from pydantic import Field, HttpUrl, field_validator
-from pydantic_core import PydanticCustomError
+from pydantic import Field, field_validator
 
 from zentra.core import Component
 from zentra.core.enums.ui import BadgeVariant, Orientation
+from zentra.custom import CustomUrl
 from zentra.nextjs import StaticImage
 from zentra.ui import ShadcnUi
 
@@ -32,16 +32,17 @@ class Avatar(Component, ShadcnUi):
     A Zentra model for the [Shadcn/ui Avatar](https://ui.shadcn.com/docs/components/avatar) component.
 
     Parameters:
-    - `src` (`string | HttpUrl | zentra.nextjs.StaticImage`) - can be either:
-        1. A path string (e.g., `/profile.png`)
+    - `src` (`string | zentra.nextjs.StaticImage`) - can be either:
+        1. A local path string starting with `/`, `./`, or `../`
         2. A statically imported image file represented by a `StaticImage` model
-        3. An absolute external URL denoted by `http`
-        4. Or a parameter, signified by a `$` at the start of the parameter name
+        3. An absolute external URL starting with `http://`, `https://`, `ftp://`, or `file://`
+        4. An informative path string starting with `mailto:`, or `tel:`
+        5. Or a parameter, signified by a `$` at the start of the parameter name. Parameters are useful when using the `Image` inside an `iterable` function like `zentra.js.Map`
     - `alt` (`string`) - an `alt` tag used to describe the image for screen readers and search engines. Also, acts as fallback text if the image is disabled, errors, or fails to load. Can also include parameters, signified by a `$` at the start of the parameter name
     - `fallback_text` (`string`) - the fallback text if the avatar image doesn't load. Up to a maximum of `2` characters
     """
 
-    src: str | HttpUrl | StaticImage
+    src: str | StaticImage
     alt: str
     fallback_text: str = Field(min_length=1, max_length=2)
 
@@ -50,15 +51,9 @@ class Avatar(Component, ShadcnUi):
         return ["src", "alt"]
 
     @field_validator("src")
-    def validate_src(
-        cls, src: str | HttpUrl | StaticImage
-    ) -> str | HttpUrl | StaticImage:
-        if isinstance(src, str) and not src.startswith(("$", "http", "/")):
-            raise PydanticCustomError(
-                "invalid_string_value",
-                "when 'string' must be a 'parameter' (start with '$'), a path string (start with '/'), or 'url' (start with 'http')\n",
-                dict(wrong_value=src),
-            )
+    def validate_src(cls, src: str | StaticImage) -> str | StaticImage:
+        if isinstance(src, str):
+            CustomUrl(url=src, plus_param=True).validate_url()
 
         return src
 

@@ -3,8 +3,10 @@ from typing import Optional
 from zentra.core import LOWER_CAMELCASE_SINGLE_WORD, Component, has_valid_pattern
 from zentra.core.enums.ui import LibraryType
 
-from pydantic import BaseModel, Field, HttpUrl, field_validator
+from pydantic import BaseModel, Field, field_validator
 from pydantic_core import PydanticCustomError
+
+from zentra.custom import CustomUrl
 
 
 class NextJs:
@@ -123,11 +125,12 @@ class Image(Component, NextJs):
     A Zentra model for the [NextJS Image](https://nextjs.org/docs/app/api-reference/components/image) component.
 
     Parameter:
-    - `src` (`string | HttpUrl | zentra.nextjs.StaticImage`) - can be either:
-        1. A path string (e.g., `/profile.png`)
+    - `src` (`string | zentra.nextjs.StaticImage`) - can be either:
+        1. A local path string starting with `/`, `./`, or `../`
         2. A statically imported image file represented by a `StaticImage` model
-        3. An absolute external URL denoted by `http`
-        4. Or a parameter, signified by a `$` at the start of the parameter name. Parameters are useful when using the `Image` inside an `iterable` function like `zentra.js.Map`
+        3. An absolute external URL starting with `http://`, `https://`, `ftp://`, or `file://`
+        4. An informative path string starting with `mailto:`, or `tel:`
+        5. Or a parameter, signified by a `$` at the start of the parameter name. Parameters are useful when using the `Image` inside an `iterable` function like `zentra.js.Map`
     - `width` (`integer`) - a static width for the image
     - `height` (`integer`) - a static height for the image
     - `alt` (`string`) - an `alt` tag used to describe the image for screen readers and search engines. Also, acts as fallback text if the image is disabled, errors, or fails to load. Can also include parameters, signified by a `$` at the start of the parameter name. This is useful when using the `Image` inside an `iterable` function like `zentra.js.Map`
@@ -188,6 +191,7 @@ class Image(Component, NextJs):
         height={500}
         alt={`Picture of the ${author} ${name}`}
     />
+    ```
 
     4. Using a path string.
     ```python
@@ -208,7 +212,7 @@ class Image(Component, NextJs):
     ```
     """
 
-    src: str | HttpUrl | StaticImage
+    src: str | StaticImage
     width: int
     height: int
     alt: str
@@ -216,15 +220,9 @@ class Image(Component, NextJs):
 
     # TODO: add optional attributes such as loader
     @field_validator("src")
-    def validate_src(
-        cls, src: str | HttpUrl | StaticImage
-    ) -> str | HttpUrl | StaticImage:
-        if isinstance(src, str) and not src.startswith(("$", "http", "/")):
-            raise PydanticCustomError(
-                "invalid_string_value",
-                "when 'string' must be a 'parameter' (start with '$'), a path string (start with '/'), or 'url' (start with 'http')\n",
-                dict(wrong_value=src),
-            )
+    def validate_src(cls, src: str | StaticImage) -> str | StaticImage:
+        if isinstance(src, str):
+            CustomUrl(url=src, plus_param=True).validate_url()
 
         return src
 
@@ -234,10 +232,15 @@ class Link(Component, NextJs):
     A Zentra model for the [NextJS Link](https://nextjs.org/docs/app/api-reference/components/link) component.
 
     Parameters:
-    - `href` (`string | HttpUrl | zentra.nextjs.UrlQuery`) - a path or URL to navigate to, or a `zentra.nextjs.UrlQuery` model
+    - `href` (`string | zentra.nextjs.UrlQuery`) - a path or URL to navigate to starting with any of the following:
+      1. Local paths - `/`, `./`, or `../`
+      2. File urls - `ftp://` or `file://`
+      3. Informative urls - `mailto:` or `tel:`
+      4. HTTP urls - `http://` or `https://`
+      5. Or, a `zentra.nextjs.UrlQuery` model
     - `text` (`string, optional`) - a string of text to display inside the `Link`. `None` by default
     - `styles` (`string, optional`) - a set of custom CSS classes to apply to the link. Automatically adds them to `className`. `None` by default
-    - `target` (`string | HttpUrl, optional`) - a target for the URL such as `_blank` for a new tab. `None` by default
+    - `new_tab` (`boolean, optional`) - a flag for opening the link in a new tab. `False` by default
     - `replace` (`boolean, optional`) - a boolean flag for enabling replacement of the current history state instead of adding a new URL into the [browser's history](https://developer.mozilla.org/en-US/docs/Web/API/History_API) stack. `False` by default
     - `scroll` (`boolean, optional`) - a boolean flag for setting the scroll behaviour. When `True` links will scroll to the top of a new route or maintain its scroll position for backwards and forwards navigation. When `False` links will `not` scroll to the top of the page. `True` by default
     - `prefetch` (`boolean, optional`) - a boolean flag for prefetching behaviour. Happens when a `Link` component enters the user's viewport (initially or through scroll). Involves loading the linked route (`href`) and its data in the background to improve the performance of the client-side navigations. Only enabled during production. `None` by default. Options:
@@ -281,7 +284,7 @@ class Link(Component, NextJs):
         ),
         text="Dashboard",
         styles="rounded-md border",
-        target="_blank",
+        new_tab=True,
         replace=True,
         scroll=False,
         prefetch=False,
@@ -305,10 +308,10 @@ class Link(Component, NextJs):
     ```
     """
 
-    href: str | HttpUrl | UrlQuery
+    href: str | UrlQuery
     text: Optional[str] = None
     styles: Optional[str] = None
-    target: Optional[str | HttpUrl] = None
+    new_tab: bool = False
     replace: bool = False
     scroll: bool = True
     prefetch: Optional[bool] = None
@@ -317,3 +320,10 @@ class Link(Component, NextJs):
     def import_str(self) -> str:
         """Returns the core import string for the component."""
         return f'import {self.classname} from "next/{self.classname.lower()}"'
+
+    @field_validator("href")
+    def validate_href(cls, href: str | UrlQuery) -> str | UrlQuery:
+        if isinstance(href, str):
+            CustomUrl(url=href).validate_url()
+
+        return href

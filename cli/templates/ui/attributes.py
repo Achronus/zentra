@@ -1,6 +1,5 @@
 import re
 
-from pydantic import HttpUrl
 from zentra.core.enums.ui import InputOTPPatterns
 from zentra.nextjs import Link, StaticImage, UrlQuery
 from zentra.ui.control import Calendar, Collapsible, InputOTP, Slider, Toggle
@@ -71,7 +70,7 @@ def size_attribute(value: str | int, attr_name: str = "size") -> str:
         return param_attr(attr_name, value)
 
 
-def src_attribute(value: str | HttpUrl | StaticImage, attr_name: str = "src") -> str:
+def src_attribute(value: str | StaticImage, attr_name: str = "src") -> str:
     """Returns a string for the `src` attribute based on its given value."""
     if isinstance(value, str):
         if value.startswith("$"):

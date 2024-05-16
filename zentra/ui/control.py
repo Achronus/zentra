@@ -20,9 +20,10 @@ from zentra.core.enums.ui import (
 )
 from zentra.core.html import Div
 from zentra.core.react import LucideIconWithText
+from zentra.custom import CustomUrl
 from zentra.ui import ShadcnUi
 
-from pydantic import Field, HttpUrl, PrivateAttr, ValidationInfo, field_validator
+from pydantic import Field, PrivateAttr, ValidationInfo, field_validator
 from pydantic_core import PydanticCustomError
 
 
@@ -32,17 +33,28 @@ class Button(Component, ShadcnUi):
 
     Parameters:
     - `content` (`string | zentra.core.react.LucideIconWithText`) - the information displayed inside the button. Can be a string of text or a `LucideIconWithText` Zentra model. Can include parameter variables (indicated by starting the variable name with a `$`)
-    - `url` (`string, optional`) - the URL the button links to. `None` by default. When `None` removes it from `Button`
+    - `url` (`string, optional`) - the URL the button links to. `None` by default. When `None` removes it from `Button`. Can be a path or URL starting with any of the following:
+      1. Local paths - `/`, `./`, or `../`
+      2. File urls - `ftp://` or `file://`
+      3. Informative urls - `mailto:` or `tel:`
+      4. HTTP urls - `http://` or `https://`
     - `variant` (`string, optional`) - the style of the button. Valid options: `['default', 'secondary', 'destructive', 'outline', 'ghost', 'link']`. `default` by default
     - `size` (`string, optional`) - the size of the button. Valid options: `['default', 'sm', 'lg', 'icon']`. `default` by default
     - `disabled` (`boolean, optional`) - adds the disabled property, preventing it from being clicked. `False` by default
     """
 
     content: str | LucideIconWithText
-    url: Optional[str | HttpUrl] = None
+    url: Optional[str] = None
     variant: ButtonVariant = "default"
     size: ButtonSize = "default"
     disabled: bool = False
+
+    @field_validator("url")
+    def validate_url(cls, url: str) -> str:
+        if isinstance(url, str):
+            CustomUrl(url=url).validate_url()
+
+        return url
 
 
 class Calendar(Component, ShadcnUi):

@@ -98,7 +98,7 @@ COMMON_ATTR_MAPPING = {
     "apiEndpoint": lambda value: str_attr("apiEndpoint", value),
     "num_inputs": lambda value: param_attr("maxLength", value),
     "key": lambda key: param_attr("key", key),
-    "target": lambda value: str_attr("target", value),
+    "new_tab": lambda value: str_attr("target", "_blank") if value else None,
     "styles": lambda value: str_attr("className", value),
     "src": lambda value: src_attribute(value),
     "alt": lambda alt: alt_attribute(alt),

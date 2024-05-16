@@ -177,7 +177,7 @@ class TestLink:
             ),
             text="Dashboard",
             styles="rounded-md border",
-            target="_blank",
+            new_tab=True,
             replace=True,
             scroll=False,
             prefetch=False,
@@ -193,7 +193,7 @@ class TestLink:
 
     @staticmethod
     def test_attr_target():
-        link = Link(href="/dashboard", target="_blank")
+        link = Link(href="/dashboard", new_tab=True)
         builder = Builder(link)
         builder.run("attributes", NEXTJS_VALID_VALS_MAP["link"]["attributes"]["target"])
 

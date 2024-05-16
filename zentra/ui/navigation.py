@@ -1,8 +1,12 @@
+from typing import Optional
+
 from pydantic import ValidationInfo, field_validator
 from pydantic_core import PydanticCustomError
+
 from zentra.core import Component
 from zentra.core.react import LucideIcon
 from zentra.custom.ui import SeparatorModel
+from zentra.nextjs import Link
 from zentra.ui import ShadcnUi
 from zentra.ui.control import Button
 
@@ -32,16 +36,27 @@ class DDMItem(Component, ShadcnUi):
     Cannot be used on its own, must be used inside a `zentra.ui.navigation.DDMGroup` or `zentra.ui.navigation.DDMSubGroup` model.
 
     Parameters:
-    - `icon` (`zentra.core.react.LucideIcon`) - a [Lucide React Icon](https://lucide.dev/icons) added before the text
-    - `text` (`string`) - the text to display in the menu item
+    - `text` (`string | zentra.nextjs.Link`) - the text or `Link` model to display in the menu item. When `Link` model, `Link.text` and `Link.href` attributes are required
+    - `icon` (`zentra.core.react.LucideIcon, optional`) - a [Lucide React Icon](https://lucide.dev/icons) added before the text. `None` by default
     - `shortcut_key` (`string, optional`) - the shortcut key for the menu item. `None` by default
     - `disabled` (`boolean, optional`) - adds the disabled property, preventing it from being clicked. `False` by default
     """
 
-    icon: LucideIcon
-    text: str
-    shortcut_key: str = None
+    text: str | Link
+    icon: Optional[LucideIcon] = None
+    shortcut_key: Optional[str] = None
     disabled: bool = False
+
+    @field_validator("text")
+    def validate_link(cls, text: str | Link) -> str | Link:
+        if isinstance(text, Link) and not text.text:
+            raise PydanticCustomError(
+                "link_text_required",
+                f"cannot have 'text=None' for 'Link' model in 'DDMItems'. Model error: '{repr(text)}'\n",
+                dict(wrong_value=text.text, wrong_model=repr(text)),
+            )
+
+        return text
 
 
 class DDMSeparator(Component, ShadcnUi):
@@ -73,7 +88,7 @@ class DDMSubGroup(Component, ShadcnUi):
 
     trigger: DDMItem
     items: list[str | DDMSeparator] | list[DDMItem | DDMSeparator]
-    label: str = None
+    label: Optional[str] = None
 
 
 class DDMGroup(Component, ShadcnUi):
@@ -90,7 +105,7 @@ class DDMGroup(Component, ShadcnUi):
     """
 
     items: list[str | DDMSeparator] | list[DDMItem | DDMSubGroup | DDMSeparator]
-    label: str = None
+    label: Optional[str] = None
 
 
 class DDMCheckboxGroup(Component, ShadcnUi):
@@ -130,7 +145,7 @@ class DDMRadioGroup(Component, ShadcnUi):
     """
 
     texts: list[str]
-    values: list[str] = None
+    values: Optional[list[str]] = None
 
     @property
     def state_name_pairs(self) -> list[tuple[str, str]]:
@@ -174,7 +189,7 @@ class DropdownMenu(Component, ShadcnUi):
 
     trigger: Button | str
     items: DDMGroup | DDMRadioGroup | DDMCheckboxGroup | list[DDMGroup]
-    label: str = None
+    label: Optional[str] = None
 
 
 class ContextMenu(Component, ShadcnUi):

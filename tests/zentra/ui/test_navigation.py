@@ -6,7 +6,10 @@ from tests.mappings.ui_imports import VALID_IMPORTS
 from tests.mappings.ui_vals import VALID_VALS_MAP
 from tests.templates.helper import SimpleCompBuilder
 
+from pydantic import ValidationError
+
 from zentra.core.react import LucideIcon
+from zentra.nextjs import Link
 from zentra.ui.control import Button
 from zentra.ui.navigation import (
     DDMCheckboxGroup,
@@ -121,6 +124,32 @@ class TestDropdownMenu:
         )
 
     @pytest.fixture
+    def dropdown_menu_with_links(self) -> DropdownMenu:
+        return DropdownMenu(
+            trigger="open",
+            items=DDMGroup(
+                label="Core Settings",
+                items=[
+                    DDMItem(text="Profile", icon=LucideIcon(name="User")),
+                    DDMItem(
+                        text=Link(href="/billing", text="Billing"),
+                        icon=LucideIcon(name="CreditCard"),
+                        shortcut_key="⌘B",
+                        disabled=True,
+                    ),
+                    DDMItem(
+                        text=Link(href="/settings", text="Settings"),
+                    ),
+                    DDMItem(
+                        text=Link(href="/settings", text="Settings"),
+                        shortcut_key="⌘B",
+                    ),
+                ],
+            ),
+            label="Account Settings",
+        )
+
+    @pytest.fixture
     def wrapper_radio_group(
         self, dropdown_menu_radio_group: DropdownMenu
     ) -> SimpleCompBuilder:
@@ -142,6 +171,14 @@ class TestDropdownMenu:
     ) -> SimpleCompBuilder:
         return SimpleCompBuilder(
             dropdown_menu_str_list, COMPONENT_DETAILS_DICT["DropdownMenu"]
+        )
+
+    @pytest.fixture
+    def wrapper_with_links(
+        self, dropdown_menu_with_links: DropdownMenu
+    ) -> SimpleCompBuilder:
+        return SimpleCompBuilder(
+            dropdown_menu_with_links, COMPONENT_DETAILS_DICT["DropdownMenu"]
         )
 
     @pytest.fixture
@@ -182,6 +219,12 @@ class TestDropdownMenu:
         wrapper.run("content", VALID_VALS_MAP["dropdown_menu"]["content"]["no_label"])
 
     @staticmethod
+    def test_content_with_links(wrapper_with_links: SimpleCompBuilder):
+        wrapper_with_links.run(
+            "content", VALID_VALS_MAP["dropdown_menu"]["content"]["with_links"]
+        )
+
+    @staticmethod
     def test_logic_str_radio_group(wrapper_radio_group: SimpleCompBuilder):
         wrapper_radio_group.run(
             "logic", VALID_VALS_MAP["dropdown_menu"]["logic"]["radio_group"]
@@ -220,3 +263,17 @@ class TestDropdownMenu:
     @staticmethod
     def test_import_str_full(wrapper_full: SimpleCompBuilder):
         wrapper_full.run("imports", VALID_IMPORTS["dropdown_menu"]["full"])
+
+    @staticmethod
+    def test_import_with_links(wrapper_with_links: SimpleCompBuilder):
+        wrapper_with_links.run(
+            "imports", VALID_IMPORTS["dropdown_menu"]["with_links"], list_output=True
+        )
+
+    @staticmethod
+    def test_validate_link_error():
+        with pytest.raises(ValidationError):
+            DropdownMenu(
+                trigger="open",
+                items=DDMGroup(items=[DDMItem(text=Link(href="/settings"))]),
+            )

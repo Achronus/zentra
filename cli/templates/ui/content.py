@@ -90,6 +90,17 @@ def build_html_tag(
     return content
 
 
+def add_wrapper(name: str, content: str | list[str], attrs: str = None) -> str:
+    """A helper function to create a JSX wrapper around a given set of content. Applies the `name` and `attrs` to the start wrapper. Returns the updated content as a `string`."""
+    start = f"<{name}{f' {attrs}' if attrs else ''}>"
+    end = f"</{name}>"
+
+    if isinstance(content, str):
+        return compress([start, content, end])
+
+    return compress([start, *content, end])
+
+
 def string_icon_content(content: str | LucideIconWithText) -> list[str]:
     """A helper function to handle the `content` attribute when it is a string or `LucideIconWithText`. Returns the content as a list of strings."""
     if isinstance(content, str):
@@ -428,15 +439,6 @@ def dropdown_menu_content(dd: DropdownMenu) -> tuple[list[str], JSXComponentExtr
                 add_wrapper("DropdownMenuTrigger", trigger_content, attrs="asChild")
             ], storage
 
-    def add_wrapper(name: str, content: str | list[str], attrs: str = None) -> str:
-        start = f"<{name}{f' {attrs}' if attrs else ''}>"
-        end = f"</{name}>"
-
-        if isinstance(content, str):
-            return compress([start, content, end])
-
-        return compress([start, *content, end])
-
     def radio_group(rg: DDMRadioGroup) -> list[str]:
         if rg.values:
             item_content = [
@@ -477,17 +479,43 @@ def dropdown_menu_content(dd: DropdownMenu) -> tuple[list[str], JSXComponentExtr
         return content
 
     def create_ddm_item(item: DDMItem) -> tuple[list[str], JSXComponentExtras]:
-        icon_content, storage = build_icon(item.icon, output_storage=True)
-        content = [*icon_content, f"<span>{item.text}</span>"]
+        """Handles the creation of the `DDMItem` model content."""
+        content, storage = [], JSXComponentExtras()
+        icon_content, shortcut_content = [None], [None]
+        item_attrs = "disabled" if item.disabled else ""
+
+        if item.icon:
+            icon_content, icon_storage = build_icon(item.icon, output_storage=True)
+            add_to_storage(storage, icon_storage, extend=True)
 
         if item.shortcut_key:
-            content.append(add_wrapper("DropdownMenuShortcut", item.shortcut_key))
+            shortcut_content = [add_wrapper("DropdownMenuShortcut", item.shortcut_key)]
 
+        if isinstance(item.text, str):
+            text_content = [
+                *icon_content,
+                f"<span>{item.text}</span>",
+                *shortcut_content,
+            ]
+        else:
+            link_content, link_storage = build_component(item.text, output_storage=True)
+            start, middle, end = link_content
+            text_content = [
+                start,
+                *icon_content,
+                f"<span>{middle}</span>",
+                *shortcut_content,
+                end,
+            ]
+            item_attrs += " asChild"
+            add_to_storage(storage, link_storage, extend=True)
+
+        content.extend([text_str for text_str in text_content if text_str is not None])
         content = [
             add_wrapper(
                 name="DropdownMenuItem",
                 content=content,
-                attrs="disabled" if item.disabled else None,
+                attrs=item_attrs.lstrip(),
             )
         ]
         return content, storage
@@ -545,7 +573,7 @@ def dropdown_menu_content(dd: DropdownMenu) -> tuple[list[str], JSXComponentExtr
         storage = JSXComponentExtras()
 
         if group.label:
-            inner_content.append(add_wrapper("DropdownMenulabel", group.label))
+            inner_content.append(add_wrapper("DropdownMenuLabel", group.label))
 
         for item in group.items:
             item_content, item_storage = ddm_group_iteration(item)

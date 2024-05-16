@@ -282,6 +282,14 @@ class TestDropdownMenu:
                 items=DDMGroup(items=[DDMItem(text=Link(href="/settings"))]),
             )
 
+    @staticmethod
+    def test_item_values_error():
+        with pytest.raises(ValidationError):
+            DropdownMenu(
+                trigger="open",
+                items=DDMRadioGroup(texts=["test"], values=["test1", "test2"]),
+            )
+
 
 class TestBreadcrumb:
     @pytest.fixture

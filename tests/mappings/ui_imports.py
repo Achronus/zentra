@@ -61,6 +61,7 @@ VALID_IMPORTS = {
         ],
     },
     "badge": 'import { Badge } from "@/components/ui/badge"',
+    "accordion": 'import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"',
     # NAVIGATION COMPONENTS
     "dropdown_menu": {
         "radio_group": '"use client"\nimport { useState } from "react"\nimport { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"\nimport { Button } from "@/components/ui/button"',

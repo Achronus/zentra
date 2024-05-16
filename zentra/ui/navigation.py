@@ -164,14 +164,14 @@ class DDMRadioGroup(Component, ShadcnUi):
     def validate_items_values(
         cls, values: list[str], info: ValidationInfo
     ) -> list[str]:
-        items = info.data.get("items")
-        if values is not None and len(items) != len(values):
+        texts = info.data.get("texts")
+        if values is not None and len(texts) != len(values):
             raise PydanticCustomError(
                 "size_mismatch",
-                f"'items' and 'values' must match in size -> 'items={len(items)} != values={len(values)}'\n",
-                dict(items_size=len(items), values_size=len(values)),
+                f"'texts' and 'values' must match in size -> 'texts={len(texts)} != values={len(values)}'\n",
+                dict(texts_size=len(texts), values_size=len(values)),
             )
-        return items
+        return values
 
 
 class DropdownMenu(Component, ShadcnUi):

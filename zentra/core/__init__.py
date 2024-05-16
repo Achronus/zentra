@@ -4,9 +4,9 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, field_validator
 from pydantic_core import PydanticCustomError
 
-from cli.conf.format import name_from_camel_case
 from cli.conf.storage import BasicNameStorage
 from cli.conf.types import LibraryNamePairs
+from zentra.core.utils import name_from_pascal_case
 
 
 LOWER_CAMELCASE_WITH_DIGITS = r"^[a-z]+(?:[A-Z][a-z]*)*\d*$"
@@ -282,7 +282,7 @@ class Zentra(BaseModel):
         self._name_storage.components = component_names
         self._name_storage.pages = [page.name for page in pages]
         self._name_storage.filenames = [
-            (folder, f"{name_from_camel_case(name)}.tsx")
+            (folder, f"{name_from_pascal_case(name)}.tsx")
             for folder, name in component_pairs
         ]
 

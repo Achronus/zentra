@@ -1,11 +1,10 @@
 import requests
 
-from cli.conf.format import name_from_camel_case
-
 from zentra.core import Component
 from zentra.core.enums.ui import AlertVariant
 from zentra.core.html import Div, HTMLContent
 from zentra.core.react import LucideIcon, LucideIconWithText
+from zentra.core.utils import name_from_pascal_case
 from zentra.ui import ShadcnUi
 from zentra.ui.control import Button
 
@@ -31,7 +30,7 @@ class Alert(Component, ShadcnUi):
 
     @field_validator("icon")
     def validate_icon(cls, icon: str) -> str:
-        icon_name = name_from_camel_case(icon)
+        icon_name = name_from_pascal_case(icon)
         response = requests.get(f"https://lucide.dev/icons/{icon_name}")
 
         if response.status_code != 200:

@@ -1,9 +1,10 @@
-from pydantic import BaseModel, ConfigDict, Field, field_validator
-from pydantic_core import PydanticCustomError
 import requests
 
-from cli.conf.format import name_from_camel_case
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic_core import PydanticCustomError
+
 from zentra.core.enums.ui import ButtonIconPosition
+from zentra.core.utils import name_from_pascal_case
 
 
 class LucideIcon(BaseModel):
@@ -36,7 +37,7 @@ class LucideIcon(BaseModel):
 
     @field_validator("name")
     def validate_name(cls, name: str) -> str:
-        icon_name = name_from_camel_case(name)
+        icon_name = name_from_pascal_case(name)
         response = requests.get(f"https://lucide.dev/icons/{icon_name}")
 
         if response.status_code != 200:

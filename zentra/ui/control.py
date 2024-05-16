@@ -1,4 +1,5 @@
 import re
+from typing import Optional
 
 from zentra.core import (
     LOWER_CAMELCASE_WITH_DIGITS,
@@ -38,7 +39,7 @@ class Button(Component, ShadcnUi):
     """
 
     content: str | LucideIconWithText
-    url: HttpUrl = None
+    url: Optional[str | HttpUrl] = None
     variant: ButtonVariant = "default"
     size: ButtonSize = "default"
     disabled: bool = False
@@ -90,7 +91,7 @@ class Checkbox(Component, ShadcnUi):
     id: str = Field(min_length=1, max_length=15)
     label: str = Field(min_length=1)
     checked: bool = False
-    more_info: str = None
+    more_info: Optional[str] = None
     disabled: bool = False
 
     @field_validator("id")
@@ -288,7 +289,7 @@ class InputOTP(Component, ShadcnUi):
 
     num_inputs: int = Field(ge=1)
     num_groups: int = Field(default=1, ge=1)
-    pattern: InputOTPPatterns | str = None
+    pattern: Optional[InputOTPPatterns | str] = None
 
     @property
     def custom_common_attributes(self) -> list[str]:
@@ -478,7 +479,7 @@ class ScrollArea(Component, ShadcnUi):
     - `content` (`string | zentra.core.html.Div`) - Can be either:
       1. A simple `string` of text
       2. A `zentra.core.html.Div` model (recommended)
-    - `styles` (`string, optional`) - the CSS styles to apply to the `ScrollArea`. Automatically adds them to `className`. `w-96 rounded-md border` by default
+    - `styles` (`string, optional`) - a set of custom CSS classes to apply to the `ScrollArea`. Automatically adds them to `className`. `w-96 rounded-md border` by default
     - `orientation` (`string, optional`) - the orientation of the scroll axis. Valid options: `[horizontal, vertical]`. `vertical` by default
 
     Example usage:
@@ -687,7 +688,7 @@ class Slider(Component, ShadcnUi):
     max: int | str = 100
     step: int | str = 1
     bar_size: int = 60
-    name: str = None
+    name: Optional[str] = None
     disabled: bool = False
     orientation: Orientation = "horizontal"
 

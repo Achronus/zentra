@@ -1,5 +1,8 @@
+from typing import Optional
+
 from pydantic import Field, HttpUrl, field_validator
 from pydantic_core import PydanticCustomError
+
 from zentra.core import Component
 from zentra.core.enums.ui import BadgeVariant, Orientation
 from zentra.nextjs import StaticImage
@@ -141,11 +144,11 @@ class Separator(Component, ShadcnUi):
     A Zentra model for the [Shadcn/ui Separator](https://ui.shadcn.com/docs/components/separator) component.
 
     Parameters:
-    - `styles` (`string, optional`) - an optional set of CSS classes. `None` by default
+    - `styles` (`string, optional`) - a set of custom CSS classes to apply to the separator. Automatically adds them to `className`. `None` by default
     - `orientation` (`string, optional`) - the axis orientation of the separator. Valid options: `['horizontal', 'vertical']`. `vertical` by default
     """
 
-    styles: str = None
+    styles: Optional[str] = None
     orientation: Orientation = "vertical"
 
 

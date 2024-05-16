@@ -1,3 +1,5 @@
+from typing import Optional
+
 from zentra.core import Component
 from zentra.core.enums.ui import SeparatorVariant
 from zentra.core.utils import name_to_pascal_case
@@ -17,22 +19,27 @@ class SeparatorModel(Component, CustomModel):
       3. `menubar` -> `MenubarSeparator`
       4. `command` -> `CommandSeparator`
       5. `context_menu` -> `ContextMenuSeparator`
-    - `styles` (`string, optional`) - an optional set of CSS classes. `None` by default
+    - `styles` (`string, optional`) - a set of custom CSS classes to apply to the separator. Automatically adds them to `className`. `None` by default
+    - `full` (`boolean, optional`) - a flag for creating a complete container. E.g., `['<BreadcrumbSeparator>', '<BreadcrumbSeparator />']` instead of `<BreadcrumbSeparator />`
     """
 
     variant: SeparatorVariant
-    styles: str = None
+    styles: Optional[str] = None
+    full: bool = False
 
     @property
     def container_name(self) -> str:
         return f"{name_to_pascal_case(self.variant)}Separator"
 
     @property
-    def content_str(self) -> str:
+    def content_str(self) -> str | list[str]:
         """Defines the JSX content for the component."""
-        content = f'<{self.container_name}{f' className="{self.styles}"' if self.styles else ''} />'
+        main_content = f'{self.container_name}{f' className="{self.styles}"' if self.styles else ''}'
 
-        if self.variant == "breadcrumb":
-            content += '\n<span className="sr-only">Toggle menu</span>'
+        if self.full:
+            return [
+                f"<{main_content}>",
+                f"</{self.container_name}>",
+            ]
 
-        return content
+        return f"<{main_content} />"

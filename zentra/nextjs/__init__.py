@@ -1,3 +1,5 @@
+from typing import Optional
+
 from zentra.core import LOWER_CAMELCASE_SINGLE_WORD, Component, has_valid_pattern
 from zentra.core.enums.ui import LibraryType
 
@@ -129,7 +131,7 @@ class Image(Component, NextJs):
     - `width` (`integer`) - a static width for the image
     - `height` (`integer`) - a static height for the image
     - `alt` (`string`) - an `alt` tag used to describe the image for screen readers and search engines. Also, acts as fallback text if the image is disabled, errors, or fails to load. Can also include parameters, signified by a `$` at the start of the parameter name. This is useful when using the `Image` inside an `iterable` function like `zentra.js.Map`
-    - `styles` (`string, optional`) - a set of optional CSS styles. Automatically assigns them to a `className` attribute. `None` by default
+    - `styles` (`string, optional`) - a set of custom CSS classes to apply to the image. Automatically adds them to `className`. `None` by default
 
     Example Usage:
     1. A statically imported local image.
@@ -210,7 +212,7 @@ class Image(Component, NextJs):
     width: int
     height: int
     alt: str
-    styles: str = None
+    styles: Optional[str] = None
 
     # TODO: add optional attributes such as loader
     @field_validator("src")
@@ -234,7 +236,7 @@ class Link(Component, NextJs):
     Parameters:
     - `href` (`string | HttpUrl | zentra.nextjs.UrlQuery`) - a path or URL to navigate to, or a `zentra.nextjs.UrlQuery` model
     - `text` (`string, optional`) - a string of text to display inside the `Link`. `None` by default
-    - `styles` (`string, optional`) - a set of optional CSS styles. Automatically assigns them to a `className` attribute. `None` by default
+    - `styles` (`string, optional`) - a set of custom CSS classes to apply to the link. Automatically adds them to `className`. `None` by default
     - `target` (`string | HttpUrl, optional`) - a target for the URL such as `_blank` for a new tab. `None` by default
     - `replace` (`boolean, optional`) - a boolean flag for enabling replacement of the current history state instead of adding a new URL into the [browser's history](https://developer.mozilla.org/en-US/docs/Web/API/History_API) stack. `False` by default
     - `scroll` (`boolean, optional`) - a boolean flag for setting the scroll behaviour. When `True` links will scroll to the top of a new route or maintain its scroll position for backwards and forwards navigation. When `False` links will `not` scroll to the top of the page. `True` by default
@@ -304,12 +306,12 @@ class Link(Component, NextJs):
     """
 
     href: str | HttpUrl | UrlQuery
-    text: str = None
-    styles: str = None
-    target: str | HttpUrl = None
+    text: Optional[str] = None
+    styles: Optional[str] = None
+    target: Optional[str | HttpUrl] = None
     replace: bool = False
     scroll: bool = True
-    prefetch: bool = None
+    prefetch: Optional[bool] = None
 
     @property
     def import_str(self) -> str:

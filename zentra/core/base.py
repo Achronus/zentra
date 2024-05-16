@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel, ConfigDict, field_validator, Field
 from pydantic_core import PydanticCustomError
 
@@ -9,10 +10,10 @@ class HTMLTag(BaseModel):
     A parent model for all HTML tags.
 
     Parameters:
-    - `styles` (`string, optional`) - the CSS styles to apply to the tag. Automatically adds them to `className`. `None` by default
+    - `styles` (`string, optional`) - a set of custom CSS classes to apply to the tag. Automatically adds them to `className`. `None` by default
     """
 
-    styles: str = None
+    styles: Optional[str] = None
 
     model_config = ConfigDict(use_enum_values=True)
 

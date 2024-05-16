@@ -232,7 +232,7 @@ def alert_content(alert: Alert) -> list[str]:
     ]
 
     if alert.icon:
-        content.insert(0, LucideIcon(name=alert.icon).content_str)
+        content.insert(0, LucideIcon(name=alert.icon, styles="h-4 w-4").content_str)
 
     return content
 

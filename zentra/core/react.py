@@ -60,7 +60,7 @@ class LucideIcon(BaseModel):
     @property
     def content_str(self) -> str:
         """Returns the primary content string for the icon."""
-        return f'<{self.name} className="h-4 w-4" />'
+        return f'<{self.name} className="{self.styles}" />'
 
 
 class LucideIconWithText(LucideIcon):

@@ -43,6 +43,4 @@ class IconBuilder:
     def create_container(self) -> list[str]:
         """Creates the icon container and applies the attributes to it. Returns it as a list of strings."""
         attrs_str = compress(self.attrs.build(), chars=" ")
-        return [
-            f'<{self.model.name} className="mr-2 h-4 w-4"{f' {attrs_str}' if attrs_str else ''} />'
-        ]
+        return [f'<{self.model.name}{f' {attrs_str}' if attrs_str else ''} />']

@@ -199,4 +199,14 @@ COMPONENT_DETAILS_DICT = {
             "BreadcrumbEllipsis",
         ],
     ),
+    "Accordion": ComponentDetails(
+        library="ui",
+        filename="accordion.jsx",
+        name="Accordion",
+        child_names=[
+            "AccordionItem",
+            "AccordionTrigger",
+            "AccordionContent",
+        ],
+    ),
 }

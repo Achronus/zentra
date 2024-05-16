@@ -179,6 +179,13 @@ BADGE_VALID_VALS = {
     }
 }
 
+ACCORDION_VALID_VALS = {
+    "content": {
+        "simple": '<Accordion type="single" className="w-full" collapsible>\n<AccordionItem value="item-1">\n<AccordionTrigger>\nIs it accessible?\n</AccordionTrigger>\n<AccordionContent>\nYes. It adheres to the WAI-ARIA design pattern.\n</AccordionContent>\n</AccordionItem>\n<AccordionItem value="item-2">\n<AccordionTrigger>\nIs it styled?\n</AccordionTrigger>\n<AccordionContent>\nYes. It comes with default styles that matches the other components\' aesthetic.\n</AccordionContent>\n</AccordionItem>\n<AccordionItem value="item-3">\n<AccordionTrigger>\nIs it animated?\n</AccordionTrigger>\n<AccordionContent>\nYes. It\'s animated by default, but you can disable it if you prefer.\n</AccordionContent>\n</AccordionItem>\n<AccordionItem value="item-4" disabled>\n<AccordionTrigger>\nCan I access it?\n</AccordionTrigger>\n<AccordionContent>\nNot today.\n</AccordionContent>\n</AccordionItem>\n</Accordion>',
+        "full": '<Accordion type="multiple" disabled orientation="horizontal">\n<AccordionItem value="item-1">\n<AccordionTrigger>\nCan I access it?\n</AccordionTrigger>\n<AccordionContent>\nNot today.\n</AccordionContent>\n</AccordionItem>\n</Accordion>',
+    },
+}
+
 # UI NAVIGATION COMPONENTS
 DROPDOWN_MENU_VALID_VALS = {
     "content": {
@@ -204,6 +211,8 @@ BREADCRUMB_VALID_VALS = {
     }
 }
 
+
+# CORE UI MAPPING
 VALID_VALS_MAP = {
     "calendar": CALENDAR_VALID_VALS,
     "checkbox": CHECKBOX_VALID_VALS,
@@ -228,6 +237,7 @@ VALID_VALS_MAP = {
     "pagination": PAGINATION_VALID_VALS,
     "dropdown_menu": DROPDOWN_MENU_VALID_VALS,
     "breadcrumb": BREADCRUMB_VALID_VALS,
+    "accordion": ACCORDION_VALID_VALS,
 }
 
 
@@ -263,6 +273,7 @@ LINK_VALID_VALS = {
 }
 
 
+# CORE NEXTJS MAPPING
 NEXTJS_VALID_VALS_MAP = {
     "image": IMAGE_VALID_VALS,
     "link": LINK_VALID_VALS,

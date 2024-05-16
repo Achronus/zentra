@@ -3,6 +3,7 @@ import re
 from zentra.core.enums.ui import InputOTPPatterns
 from zentra.nextjs import Link, StaticImage, UrlQuery
 from zentra.ui.control import Calendar, Collapsible, InputOTP, Slider, Toggle
+from zentra.ui.presentation import Accordion
 
 
 def str_attr(name: str, value: str) -> str:
@@ -101,7 +102,7 @@ def alt_attribute(alt: str, attr_name: str = "alt") -> str:
 
 
 def calendar_attributes(cal: Calendar) -> list[str]:
-    """Returns a list of strings for the Calendar attributes based on a given name value."""
+    """Returns a list of strings for the `Calendar` attributes based on a given name value."""
     return [
         str_attr("mode", "single"),
         param_attr("selected", f"{cal.name}Date"),
@@ -111,7 +112,7 @@ def calendar_attributes(cal: Calendar) -> list[str]:
 
 
 def collapsible_attributes(comp: Collapsible) -> list[str]:
-    """Returns a list of strings for the Collapsible attributes based on a given name value."""
+    """Returns a list of strings for the `Collapsible` attributes based on a given name value."""
     return [
         param_attr("open", f"{comp.name}IsOpen"),
         param_attr("onOpenChange", f"{comp.name}SetIsOpen"),
@@ -120,7 +121,7 @@ def collapsible_attributes(comp: Collapsible) -> list[str]:
 
 
 def input_otp_attributes(comp: InputOTP) -> list[str] | None:
-    """Returns a list of strings for the InputOTP attributes based on a given pattern value."""
+    """Returns a list of strings for the `InputOTP` attributes based on a given pattern value."""
     if comp.pattern:
         return [
             param_attr("pattern", InputOTPPatterns(comp.pattern).name)
@@ -132,7 +133,7 @@ def input_otp_attributes(comp: InputOTP) -> list[str] | None:
 
 
 def nextjs_link_attributes(link: Link) -> list[str]:
-    """Returns a list of strings for the Link attributes based on its given values."""
+    """Returns a list of strings for the `Link` attributes based on its given values."""
     attributes = []
 
     if isinstance(link.href, UrlQuery) and not isinstance(link.href, str):
@@ -155,7 +156,7 @@ def nextjs_link_attributes(link: Link) -> list[str]:
 
 
 def slider_attributes(slider: Slider) -> list[str]:
-    """Returns a list of strings for the Slider attributes based on its given values."""
+    """Returns a list of strings for the `Slider` attributes based on its given values."""
     return [
         param_attr("defaultValue", f"[{slider.value}]"),
         param_attr("className", f'cn("w-[{str(slider.bar_size)}%]", className)'),
@@ -163,10 +164,22 @@ def slider_attributes(slider: Slider) -> list[str]:
 
 
 def toggle_attributes(toggle: Toggle) -> list[str]:
-    """Returns a list of strings for the Toggle attributes based on its given values."""
+    """Returns a list of strings for the `Toggle` attributes based on its given values."""
     return [
         str_attr(
             "aria-label",
             f'Toggle{f' {toggle.style}' if toggle.style != "default" else ''}',
         )
     ]
+
+
+def accordion_attributes(acc: Accordion) -> list[str]:
+    """Returns a list of strings for the `Accordion` attributes based on its given values."""
+    attrs = []
+    if acc.type == "single":
+        attrs.append("collapsible")
+
+    if acc.orientation != "vertical":
+        attrs.append(str_attr("orientation", acc.orientation))
+
+    return attrs

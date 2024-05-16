@@ -3,10 +3,27 @@ from typing import Optional
 from pydantic import Field, field_validator
 
 from zentra.core import Component
-from zentra.core.enums.ui import BadgeVariant, Orientation
+from zentra.core.enums.ui import BadgeVariant, Orientation, ToggleType
 from zentra.custom import CustomUrl
 from zentra.nextjs import StaticImage
 from zentra.ui import ShadcnUi
+
+
+class AccordionItem(Component, ShadcnUi):
+    """
+    A helper Zentra model for the [Shadcn/ui Accordion](https://ui.shadcn.com/docs/components/accordion) component. Represents a single accordion item.
+
+    Cannot be used on its own, must be used inside a `zentra.ui.presentation.Accordion` model.
+
+    Parameters:
+    - `title` (`string`) - the title of the accordion item. Added to `AccordionTrigger`
+    - `content` (`string`) - the text content of the accordion item. Added to `AccordionContent`
+    - `disabled` (`boolean, optional`) - adds the disabled property, preventing the item from being clicked. `False` by default
+    """
+
+    title: str
+    content: str
+    disabled: bool = False
 
 
 class Accordion(Component, ShadcnUi):
@@ -14,8 +31,22 @@ class Accordion(Component, ShadcnUi):
     A Zentra model for the [Shadcn/ui Accordion](https://ui.shadcn.com/docs/components/accordion) component.
 
     Parameters:
-    - `name` (`str`) - the name of the component
+    - `items` (`list[zentra.ui.presentation.AccordionItems]`) - a list of `AccordionItem` models
+    - `type` (`string, optional`) - determines how many items can be opened at the same time. Valid options: `['single', 'multiple']`. `single` by default
+    - `orientation` (`string, optional`) - the axis orientation of the accordion. Valid options: `['vertical', 'horizontal']`. `vertical` by default
+    - `disabled` (`boolean, optional`) - adds the disabled property, preventing the accordion from being clicked. `False` by default
+    - `styles` (`string, optional`) - a set of custom CSS classes to apply to the accordion. Automatically adds them to `className`. `w-full` by default
     """
+
+    items: list[AccordionItem]
+    type: ToggleType = "single"
+    orientation: Orientation = "vertical"
+    disabled: bool = False
+    styles: Optional[str] = "w-full"
+
+    @property
+    def custom_common_attributes(self) -> list[str]:
+        return ["orientation"]
 
 
 class AspectRatio(Component, ShadcnUi):

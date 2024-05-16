@@ -7,7 +7,7 @@ from tests.mappings.ui_vals import VALID_VALS_MAP
 from tests.templates.helper import SimpleCompBuilder
 
 from zentra.nextjs import StaticImage
-from zentra.ui.presentation import Avatar, Badge, Separator
+from zentra.ui.presentation import Accordion, AccordionItem, Avatar, Badge, Separator
 
 
 class TestSeparator:
@@ -132,3 +132,57 @@ class TestBadge:
     @staticmethod
     def test_import_str(wrapper: SimpleCompBuilder):
         wrapper.run("imports", VALID_IMPORTS["badge"])
+
+
+class TestAccordion:
+    @pytest.fixture
+    def accordion_simple(self) -> Accordion:
+        return Accordion(
+            items=[
+                AccordionItem(
+                    title="Is it accessible?",
+                    content="Yes. It adheres to the WAI-ARIA design pattern.",
+                ),
+                AccordionItem(
+                    title="Is it styled?",
+                    content="Yes. It comes with default styles that matches the other components' aesthetic.",
+                ),
+                AccordionItem(
+                    title="Is it animated?",
+                    content="Yes. It's animated by default, but you can disable it if you prefer.",
+                ),
+                AccordionItem(
+                    title="Can I access it?", content="Not today.", disabled=True
+                ),
+            ]
+        )
+
+    @pytest.fixture
+    def accordion_full(self) -> Accordion:
+        return Accordion(
+            items=[AccordionItem(title="Can I access it?", content="Not today.")],
+            type="multiple",
+            orientation="horizontal",
+            disabled=True,
+            styles=None,
+        )
+
+    @pytest.fixture
+    def wrapper_simple(self, accordion_simple: Accordion) -> SimpleCompBuilder:
+        return SimpleCompBuilder(accordion_simple, COMPONENT_DETAILS_DICT["Accordion"])
+
+    @pytest.fixture
+    def wrapper_full(self, accordion_full: Accordion) -> SimpleCompBuilder:
+        return SimpleCompBuilder(accordion_full, COMPONENT_DETAILS_DICT["Accordion"])
+
+    @staticmethod
+    def test_content_str_simple(wrapper_simple: SimpleCompBuilder):
+        wrapper_simple.run("content", VALID_VALS_MAP["accordion"]["content"]["simple"])
+
+    @staticmethod
+    def test_content_str_full(wrapper_full: SimpleCompBuilder):
+        wrapper_full.run("content", VALID_VALS_MAP["accordion"]["content"]["full"])
+
+    @staticmethod
+    def test_import_str_simple(wrapper_simple: SimpleCompBuilder):
+        wrapper_simple.run("imports", VALID_IMPORTS["accordion"])

@@ -1,6 +1,7 @@
 from pydantic_core import Url
 
 from cli.templates.ui.attributes import (
+    accordion_attributes,
     alt_attribute,
     calendar_attributes,
     collapsible_attributes,
@@ -14,6 +15,7 @@ from cli.templates.ui.attributes import (
     toggle_attributes,
 )
 from cli.templates.ui.content import (
+    accordion_content,
     alert_content,
     avatar_content,
     breadcrumb_content,
@@ -80,6 +82,7 @@ COMPONENT_ATTR_MAPPING = {
     "Link": lambda comp: nextjs_link_attributes(comp),
     "Slider": lambda comp: slider_attributes(comp),
     "Toggle": lambda comp: toggle_attributes(comp),
+    "Accordion": lambda comp: accordion_attributes(comp),
 }
 
 
@@ -144,6 +147,7 @@ COMPONENT_CONTENT_MAPPING = {
     "Toggle": lambda comp: toggle_content(comp),
     "ToggleGroup": lambda comp: toggle_group_content(comp),
     "Pagination": lambda comp: pagination_content(comp),
+    "Accordion": lambda comp: accordion_content(comp),
     # Parent components
     "ScrollArea": lambda sa: scroll_area_content(sa),
     "Tooltip": lambda tt: tooltip_content(tt),

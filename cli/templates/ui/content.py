@@ -35,7 +35,7 @@ from zentra.ui.navigation import (
     DDMRadioGroup,
 )
 from zentra.ui.notification import Alert, TextAlertDialog, Tooltip
-from zentra.ui.presentation import Avatar
+from zentra.ui.presentation import Accordion, Avatar
 
 
 def controller() -> BuildController:
@@ -389,6 +389,32 @@ def pagination_content(page: Pagination) -> list[str]:
         )
     )
     content.append("</PaginationContent>")
+    return content
+
+
+def accordion_content(acc: Accordion) -> list[str]:
+    """Returns a list of strings for the `Accordion` content based on the components attributes."""
+    content = []
+
+    for idx, item in enumerate(acc.items, start=1):
+        item_attrs = compress(
+            [
+                f'value="item-{idx}"',
+                "disabled" if item.disabled else "",
+            ],
+            chars=" ",
+        )
+
+        item_content = [
+            add_wrapper("AccordionTrigger", item.title),
+            add_wrapper("AccordionContent", item.content),
+        ]
+
+        item_content = add_wrapper(
+            "AccordionItem", item_content, attrs=item_attrs.strip()
+        )
+        content.append(item_content)
+
     return content
 
 

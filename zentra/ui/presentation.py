@@ -1,11 +1,12 @@
 from typing import Optional
 
 from pydantic import Field, field_validator
+from pydantic_core import PydanticCustomError
 
 from zentra.core import Component
 from zentra.core.enums.ui import BadgeVariant, Orientation, ToggleType
 from zentra.custom import CustomUrl
-from zentra.nextjs import StaticImage
+from zentra.nextjs import Image, StaticImage
 from zentra.ui import ShadcnUi
 
 
@@ -54,8 +55,28 @@ class AspectRatio(Component, ShadcnUi):
     A Zentra model for the [Shadcn/ui AspectRatio](https://ui.shadcn.com/docs/components/aspect-ratio) component.
 
     Parameters:
-    - `name` (`str`) - the name of the component
+    - `img` (`zentra.nextjs.Image`) - the `Image` model to use inside the aspect ratio
+    - `ratio` (`string | integer`) - the ratio to apply to the aspect ratio. Can be a string for defining an equation (e.g., `16 / 9`) that results in an integer or a standard integer (e.g., `1`)
+    - `styles` (`string, optional`) - a set of custom CSS classes to apply to the aspect ratio. Automatically adds them to `className`. `None` by default
     """
+
+    img: Image
+    ratio: str | int
+    styles: Optional[str] = None
+
+    @field_validator("ratio")
+    def validate_ratio(cls, ratio: str | int) -> str | int:
+        if isinstance(ratio, str):
+            try:
+                eval(ratio)
+            except NameError as e:
+                raise PydanticCustomError(
+                    "invalid_equation",
+                    f"ratio must be an 'integer' or a valid 'numeric equation' that results in an 'integer'\n  Equation error -> NameError: {e}\n",
+                    dict(wrong_value=ratio),
+                )
+
+        return ratio
 
 
 class Avatar(Component, ShadcnUi):

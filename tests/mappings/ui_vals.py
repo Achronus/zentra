@@ -186,6 +186,13 @@ ACCORDION_VALID_VALS = {
     },
 }
 
+ASPECT_RATIO_VALID_VALS = {
+    "content": {
+        "simple": '<AspectRatio ratio={1}>\n<Image src="./profile.png" alt="Image" className="rounded-md object-cover" />\n</AspectRatio>',
+        "eq_ratio": '<AspectRatio ratio={16 / 9} className="bg-muted">\n<Image src="https://example.com/" alt="Photo by me" className="rounded-md object-cover" fill />\n</AspectRatio>',
+    }
+}
+
 # UI NAVIGATION COMPONENTS
 DROPDOWN_MENU_VALID_VALS = {
     "content": {

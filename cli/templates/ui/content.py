@@ -35,7 +35,7 @@ from zentra.ui.navigation import (
     DDMRadioGroup,
 )
 from zentra.ui.notification import Alert, TextAlertDialog, Tooltip
-from zentra.ui.presentation import Accordion, Avatar
+from zentra.ui.presentation import Accordion, AspectRatio, Avatar
 
 
 def controller() -> BuildController:
@@ -734,3 +734,9 @@ def breadcrumb_content(bc: Breadcrumb) -> tuple[list[str], JSXComponentExtras]:
     )
     content = [add_wrapper("BreadcrumbList", content)]
     return content, storage
+
+
+def aspect_ratio_content(ar: AspectRatio) -> tuple[list[str], JSXComponentExtras]:
+    """Returns a list of strings for the `AspectRatio` content based on the components attributes."""
+    img_content, storage = build_component(ar.img, output_storage=True)
+    return img_content, storage

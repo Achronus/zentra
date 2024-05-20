@@ -209,4 +209,10 @@ COMPONENT_DETAILS_DICT = {
             "AccordionContent",
         ],
     ),
+    "AspectRatio": ComponentDetails(
+        library="ui",
+        filename="aspect-ratio.jsx",
+        name="AspectRatio",
+        child_names=[],
+    ),
 }

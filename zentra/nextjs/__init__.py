@@ -131,8 +131,9 @@ class Image(Component, NextJs):
         3. An absolute external URL starting with `http://`, `https://`, `ftp://`, or `file://`
         4. An informative path string starting with `mailto:`, or `tel:`
         5. Or a parameter, signified by a `$` at the start of the parameter name. Parameters are useful when using the `Image` inside an `iterable` function like `zentra.js.Map`
-    - `width` (`integer`) - a static width for the image
-    - `height` (`integer`) - a static height for the image
+    - `width` (`integer, optional`) - a static width for the image
+    - `height` (`integer, optional`) - a static height for the image
+    - `fill` (`boolean, optional`) - a flag for setting the image to fill its parent component. Adds the `fill` property to the image. Can be used as a useful alternative to the `width` and `height` parameters. `False` by default
     - `alt` (`string`) - an `alt` tag used to describe the image for screen readers and search engines. Also, acts as fallback text if the image is disabled, errors, or fails to load. Can also include parameters, signified by a `$` at the start of the parameter name. This is useful when using the `Image` inside an `iterable` function like `zentra.js.Map`
     - `styles` (`string, optional`) - a set of custom CSS classes to apply to the image. Automatically adds them to `className`. `None` by default
 
@@ -213,10 +214,11 @@ class Image(Component, NextJs):
     """
 
     src: str | StaticImage
-    width: int
-    height: int
     alt: str
+    width: Optional[int] = None
+    height: Optional[int] = None
     styles: Optional[str] = None
+    fill: bool = False
 
     # TODO: add optional attributes such as loader
     @field_validator("src")

@@ -17,6 +17,7 @@ from cli.templates.ui.attributes import (
 from cli.templates.ui.content import (
     accordion_content,
     alert_content,
+    aspect_ratio_content,
     avatar_content,
     breadcrumb_content,
     button_content,
@@ -60,6 +61,7 @@ PARENT_COMPONENTS = [
     "Tooltip",
     "DropdownMenu",
     "Breadcrumb",
+    "AspectRatio",
 ]
 
 # Dictionary of components with containers around them
@@ -105,8 +107,8 @@ COMMON_ATTR_MAPPING = {
     "styles": lambda value: str_attr("className", value),
     "src": lambda value: src_attribute(value),
     "alt": lambda alt: alt_attribute(alt),
-    "width": lambda width: param_attr("width", width),
-    "height": lambda height: param_attr("height", height),
+    "width": lambda width: param_attr("width", width) if width else None,
+    "height": lambda height: param_attr("height", height) if height else None,
     "checked": lambda checked: param_attr("checked", checked),
     "pressed": lambda pressed: param_attr("pressed", pressed),
     "color": lambda value: str_attr("color", value),
@@ -116,6 +118,8 @@ COMMON_ATTR_MAPPING = {
     "step": lambda value: param_attr("step", value),
     "orientation": lambda value: str_attr("orientation", value),
     "default_value": lambda value: str_attr("defaultValue", value),
+    "fill": lambda value: "fill" if value else None,
+    "ratio": lambda value: param_attr("ratio", value),
 }
 
 
@@ -153,6 +157,7 @@ COMPONENT_CONTENT_MAPPING = {
     "Tooltip": lambda tt: tooltip_content(tt),
     "DropdownMenu": lambda dd: dropdown_menu_content(dd),
     "Breadcrumb": lambda bc: breadcrumb_content(bc),
+    "AspectRatio": lambda ar: aspect_ratio_content(ar),
 }
 
 

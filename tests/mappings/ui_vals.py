@@ -85,7 +85,7 @@ SCROLL_AREA_VALID_VALS = {
     "content": {
         "simple": '<ScrollArea className="w-96 rounded-md border">\nThis is some text that is extremely simple.\n<ScrollBar orientation="vertical" />\n</ScrollArea>',
         "vertical": '<ScrollArea className="h-72 w-48 rounded-md border">\n<div className="p-4">\n<h4 className="mb-4 text-sm font-medium leading-none">\nTags\n</h4>\n{tags.map((tag) => (\n<>\n<div className="text-sm" key={tag}>\n{tag}\n</div>\n<Separator className="my-2" orientation="vertical" />\n</>\n))}\n</div>\n<ScrollBar orientation="vertical" />\n</ScrollArea>',
-        "horizontal": '<ScrollArea className="w-96 whitespace-nowrap rounded-md border">\n<div className="flex w-max space-x-4 p-4">\n{works.map((artwork) => (\n<figure className="shrink-0" key={artwork.artist}>\n<div className="overflow-hidden rounded-md"\n<Image src={artwork.art} width={300} height={400} alt={`Photo by {artwork.artist}`} className="aspect-[3/4] h-fit w-fit object-cover" />\n</div>\n<figcaption className="pt-2 text-xs text-muted-foreground">\nPhoto by\n<span className="font-semibold text-foreground">\n{artwork.artist}\n</span>\n</figcaption>\n</figure>\n))}\n</div>\n<ScrollBar orientation="horizontal" />\n</ScrollArea>',
+        "horizontal": '<ScrollArea className="w-96 whitespace-nowrap rounded-md border">\n<div className="flex w-max space-x-4 p-4">\n{works.map((artwork) => (\n<figure className="shrink-0" key={artwork.artist}>\n<div className="overflow-hidden rounded-md"\n<Image src={artwork.art} alt={`Photo by {artwork.artist}`} width={300} height={400} className="aspect-[3/4] h-fit w-fit object-cover" />\n</div>\n<figcaption className="pt-2 text-xs text-muted-foreground">\nPhoto by\n<span className="font-semibold text-foreground">\n{artwork.artist}\n</span>\n</figcaption>\n</figure>\n))}\n</div>\n<ScrollBar orientation="horizontal" />\n</ScrollArea>',
     },
 }
 
@@ -250,14 +250,14 @@ VALID_VALS_MAP = {
 
 # NEXTJS COMPONENTS
 IMAGE_VALID_VALS = {
-    "attributes": 'src={artwork.art} width={300} height={400} alt={`Photo by {artwork.artist}`} className="aspect-[3/4] h-fit w-fit object-cover"',
+    "attributes": 'src={artwork.art} alt={`Photo by {artwork.artist}`} width={300} height={400} className="aspect-[3/4] h-fit w-fit object-cover"',
     "content": {
-        "standard": '<Image src={artwork.art} width={300} height={400} alt={`Photo by {artwork.artist}`} className="aspect-[3/4] h-fit w-fit object-cover" />',
-        "no_styles": "<Image src={artwork.art} width={300} height={400} alt={`Photo by {artwork.artist}`} />",
-        "with_url": '<Image src="http://example.com" width={300} height={400} alt={`Photo by {artwork.artist}`} />',
-        "basic_alt": '<Image src="http://example.com" width={300} height={400} alt="Photo by author" />',
-        "basic_path": '<Image src="/profile.png" width={300} height={400} alt="Photo by author" />',
-        "static_img_src": "<Image src={profilePic} width={300} height={400} alt={`Photo by {artwork.artist}`} />",
+        "standard": '<Image src={artwork.art} alt={`Photo by {artwork.artist}`} width={300} height={400} className="aspect-[3/4] h-fit w-fit object-cover" />',
+        "no_styles": "<Image src={artwork.art} alt={`Photo by {artwork.artist}`} width={300} height={400} />",
+        "with_url": '<Image src="http://example.com" alt={`Photo by {artwork.artist}`} width={300} height={400} />',
+        "basic_alt": '<Image src="http://example.com" alt="Photo by author" width={300} height={400} />',
+        "basic_path": '<Image src="/profile.png" alt="Photo by author" width={300} height={400} />',
+        "static_img_src": "<Image src={profilePic} alt={`Photo by {artwork.artist}`} width={300} height={400} />",
     },
 }
 

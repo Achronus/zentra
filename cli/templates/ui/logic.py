@@ -1,5 +1,6 @@
 from zentra.ui.control import Calendar, Collapsible, Pagination
 from zentra.ui.navigation import DDMCheckboxGroup, DropdownMenu, DDMRadioGroup
+from zentra.ui.presentation import Progress
 
 
 def hook_assignment(get_name: str, set_name: str) -> str:
@@ -62,3 +63,14 @@ def dropdown_menu_logic(dd: DropdownMenu) -> list[str]:
         return checkbox_group(dd.items)
 
     return []
+
+
+def progress_logic(prog: Progress) -> list[str]:
+    """Returns a list of strings for the `Progress` logic based on the given name value."""
+    return [
+        f"{hook_assignment(prog.use_state_names[0], prog.use_state_names[1])} useState({prog.min});",
+        "useEffect(() =< {",
+        f"const timer = setTimeout(() => setProgress({prog.value}), {prog.max});",
+        "return () => clearTimeout(timer);",
+        "}, [])",
+    ]

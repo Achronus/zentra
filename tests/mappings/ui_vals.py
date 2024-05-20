@@ -193,6 +193,17 @@ ASPECT_RATIO_VALID_VALS = {
     }
 }
 
+PROGRESS_VALID_VALS = {
+    "content": {
+        "simple": '<Progress className="w-[60%]" value={progress} />',
+        "custom": '<Progress className="w-full" value={progress} />',
+    },
+    "logic": {
+        "simple": "const [progress, setProgress] = useState(0);\nuseEffect(() =< {\nconst timer = setTimeout(() => setProgress(10), 100);\nreturn () => clearTimeout(timer);\n}, [])",
+        "custom": "const [progress, setProgress] = useState(0);\nuseEffect(() =< {\nconst timer = setTimeout(() => setProgress(66), 500);\nreturn () => clearTimeout(timer);\n}, [])",
+    },
+}
+
 # UI NAVIGATION COMPONENTS
 DROPDOWN_MENU_VALID_VALS = {
     "content": {
@@ -246,6 +257,7 @@ VALID_VALS_MAP = {
     "breadcrumb": BREADCRUMB_VALID_VALS,
     "accordion": ACCORDION_VALID_VALS,
     "aspect_ratio": ASPECT_RATIO_VALID_VALS,
+    "progress": PROGRESS_VALID_VALS,
 }
 
 

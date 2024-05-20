@@ -173,8 +173,25 @@ class Progress(Component, ShadcnUi):
     A Zentra model for the [Shadcn/ui Progress](https://ui.shadcn.com/docs/components/progress) component.
 
     Parameters:
-    - `name` (`str`) - the name of the component
+    - `value` (`integer, optional`) - the initial value of the progress bar. Assigned to the `setProgress` function in the `useEffect`. `10` by default
+    - `min` (`integer, optional`) - the minimum size of the progress bar. Assigned as the initial value of the `useState` hook. `0` by default
+    - `max` (`integer, optional`) - the maximum size of the progress bar. Assigned as the maximum value of the `setTimeout` function in the `useEffect` hook. `100` by default
+    - `styles` (`string, optional`) - a set of custom CSS classes to apply to the progress bar. Automatically adds them to `className`. `w-[60%]` by default
     """
+
+    value: int = 10
+    min: int = 0
+    max: int = 100
+    styles: Optional[str] = "w-[60%]"
+
+    @property
+    def custom_common_attributes(self) -> list[str]:
+        return ["min", "max"]
+
+    @property
+    def use_state_names(self) -> tuple[str, str]:
+        """Defines the `useState` hook `get` and `set` names."""
+        return ["progress", "setProgress"]
 
 
 class Resizeable(Component, ShadcnUi):

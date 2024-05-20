@@ -215,4 +215,10 @@ COMPONENT_DETAILS_DICT = {
         name="AspectRatio",
         child_names=[],
     ),
+    "Progress": ComponentDetails(
+        library="ui",
+        filename="progress.jsx",
+        name="Progress",
+        child_names=[],
+    ),
 }

@@ -3,7 +3,7 @@ import re
 from zentra.core.enums.ui import InputOTPPatterns
 from zentra.nextjs import Link, StaticImage, UrlQuery
 from zentra.ui.control import Calendar, Collapsible, InputOTP, Slider, Toggle
-from zentra.ui.presentation import Accordion
+from zentra.ui.presentation import Accordion, Progress
 
 
 def str_attr(name: str, value: str) -> str:
@@ -183,3 +183,8 @@ def accordion_attributes(acc: Accordion) -> list[str]:
         attrs.append(str_attr("orientation", acc.orientation))
 
     return attrs
+
+
+def progress_attributes(prog: Progress) -> list[str]:
+    """Returns a list of strings for the `Progress` attributes based on its given values."""
+    return [param_attr("value", prog.use_state_names[0])]

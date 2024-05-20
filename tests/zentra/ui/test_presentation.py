@@ -14,6 +14,7 @@ from zentra.ui.presentation import (
     AspectRatio,
     Avatar,
     Badge,
+    Progress,
     Separator,
 )
 
@@ -262,3 +263,45 @@ class TestAspectRatio:
     @staticmethod
     def test_import_str_simple(wrapper_simple: SimpleCompBuilder):
         wrapper_simple.run("imports", VALID_IMPORTS["aspect_ratio"], list_output=True)
+
+
+class TestProgress:
+    @pytest.fixture
+    def progress_simple(self) -> Progress:
+        return Progress()
+
+    @pytest.fixture
+    def progress_custom(self) -> Progress:
+        return Progress(value=66, max=500, styles="w-full")
+
+    @pytest.fixture
+    def wrapper_simple(self, progress_simple: Progress) -> SimpleCompBuilder:
+        return SimpleCompBuilder(progress_simple, COMPONENT_DETAILS_DICT["Progress"])
+
+    @pytest.fixture
+    def wrapper_custom(self, progress_custom: Progress) -> SimpleCompBuilder:
+        return SimpleCompBuilder(progress_custom, COMPONENT_DETAILS_DICT["Progress"])
+
+    @staticmethod
+    def test_content_str_simple(wrapper_simple: SimpleCompBuilder):
+        wrapper_simple.run("content", VALID_VALS_MAP["progress"]["content"]["simple"])
+
+    @staticmethod
+    def test_content_str_custom(wrapper_custom: SimpleCompBuilder):
+        wrapper_custom.run("content", VALID_VALS_MAP["progress"]["content"]["custom"])
+
+    @staticmethod
+    def test_logic_str_simple(wrapper_simple: SimpleCompBuilder):
+        wrapper_simple.run("logic", VALID_VALS_MAP["progress"]["logic"]["simple"])
+
+    @staticmethod
+    def test_logic_str_custom(wrapper_custom: SimpleCompBuilder):
+        wrapper_custom.run("logic", VALID_VALS_MAP["progress"]["logic"]["custom"])
+
+    @staticmethod
+    def test_import_str_simple(wrapper_simple: SimpleCompBuilder):
+        wrapper_simple.run("imports", VALID_IMPORTS["progress"]["simple"])
+
+    @staticmethod
+    def test_import_str_custom(wrapper_custom: SimpleCompBuilder):
+        wrapper_custom.run("imports", VALID_IMPORTS["progress"]["custom"])

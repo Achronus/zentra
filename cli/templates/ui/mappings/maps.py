@@ -8,6 +8,7 @@ from cli.templates.ui.attributes import (
     input_otp_attributes,
     param_attr,
     nextjs_link_attributes,
+    progress_attributes,
     size_attribute,
     slider_attributes,
     src_attribute,
@@ -52,6 +53,7 @@ from cli.templates.ui.logic import (
     collapsible_logic,
     dropdown_menu_logic,
     pagination_logic,
+    progress_logic,
 )
 
 
@@ -85,6 +87,7 @@ COMPONENT_ATTR_MAPPING = {
     "Slider": lambda comp: slider_attributes(comp),
     "Toggle": lambda comp: toggle_attributes(comp),
     "Accordion": lambda comp: accordion_attributes(comp),
+    "Progress": lambda comp: progress_attributes(comp),
 }
 
 
@@ -171,6 +174,7 @@ LOGIC_MAPPING = {
     "Collapsible": lambda comp: collapsible_logic(comp),
     "Pagination": lambda comp: pagination_logic(comp),
     "DropdownMenu": lambda comp: dropdown_menu_logic(comp),
+    "Progress": lambda comp: progress_logic(comp),
 }
 
 

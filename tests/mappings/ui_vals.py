@@ -245,6 +245,7 @@ VALID_VALS_MAP = {
     "dropdown_menu": DROPDOWN_MENU_VALID_VALS,
     "breadcrumb": BREADCRUMB_VALID_VALS,
     "accordion": ACCORDION_VALID_VALS,
+    "aspect_ratio": ASPECT_RATIO_VALID_VALS,
 }
 
 

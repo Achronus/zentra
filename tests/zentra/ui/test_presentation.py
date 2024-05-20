@@ -1,13 +1,21 @@
 import pytest
 
-from cli.templates.details import COMPONENT_DETAILS_DICT
+from pydantic import ValidationError
 
+from cli.templates.details import COMPONENT_DETAILS_DICT
 from tests.mappings.ui_imports import VALID_IMPORTS
 from tests.mappings.ui_vals import VALID_VALS_MAP
 from tests.templates.helper import SimpleCompBuilder
 
-from zentra.nextjs import StaticImage
-from zentra.ui.presentation import Accordion, AccordionItem, Avatar, Badge, Separator
+from zentra.nextjs import Image, StaticImage
+from zentra.ui.presentation import (
+    Accordion,
+    AccordionItem,
+    AspectRatio,
+    Avatar,
+    Badge,
+    Separator,
+)
 
 
 class TestSeparator:
@@ -186,3 +194,71 @@ class TestAccordion:
     @staticmethod
     def test_import_str_simple(wrapper_simple: SimpleCompBuilder):
         wrapper_simple.run("imports", VALID_IMPORTS["accordion"])
+
+
+class TestAspectRatio:
+    @pytest.fixture
+    def aspect_ratio_simple(self) -> AspectRatio:
+        return AspectRatio(
+            img=Image(
+                src="./profile.png", alt="Image", styles="rounded-md object-cover"
+            ),
+            ratio=1,
+        )
+
+    @pytest.fixture
+    def aspect_ratio_eq_ratio(self) -> AspectRatio:
+        return AspectRatio(
+            img=Image(
+                src="https://example.com/",
+                alt="Photo by me",
+                styles="rounded-md object-cover",
+                fill=True,
+            ),
+            ratio="16 / 9",
+            styles="bg-muted",
+        )
+
+    @pytest.fixture
+    def wrapper_simple(self, aspect_ratio_simple: AspectRatio) -> SimpleCompBuilder:
+        return SimpleCompBuilder(
+            aspect_ratio_simple, COMPONENT_DETAILS_DICT["AspectRatio"]
+        )
+
+    @pytest.fixture
+    def wrapper_eq_ratio(self, aspect_ratio_eq_ratio: AspectRatio) -> SimpleCompBuilder:
+        return SimpleCompBuilder(
+            aspect_ratio_eq_ratio, COMPONENT_DETAILS_DICT["AspectRatio"]
+        )
+
+    @pytest.fixture
+    def wrapper_fail_check(
+        self, aspect_ratio_fail_check: AspectRatio
+    ) -> SimpleCompBuilder:
+        return SimpleCompBuilder(
+            aspect_ratio_fail_check, COMPONENT_DETAILS_DICT["AspectRatio"]
+        )
+
+    @staticmethod
+    def test_content_str_simple(wrapper_simple: SimpleCompBuilder):
+        wrapper_simple.run(
+            "content", VALID_VALS_MAP["aspect_ratio"]["content"]["simple"]
+        )
+
+    @staticmethod
+    def test_content_str_eq_ratio(wrapper_eq_ratio: SimpleCompBuilder):
+        wrapper_eq_ratio.run(
+            "content", VALID_VALS_MAP["aspect_ratio"]["content"]["eq_ratio"]
+        )
+
+    @staticmethod
+    def test_content_str_fail_check():
+        with pytest.raises(ValidationError):
+            return AspectRatio(
+                img=Image(src="$test", alt="Image", styles="rounded-md object-cover"),
+                ratio="16 + test9",
+            )
+
+    @staticmethod
+    def test_import_str_simple(wrapper_simple: SimpleCompBuilder):
+        wrapper_simple.run("imports", VALID_IMPORTS["aspect_ratio"], list_output=True)

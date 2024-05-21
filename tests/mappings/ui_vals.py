@@ -204,6 +204,15 @@ PROGRESS_VALID_VALS = {
     },
 }
 
+SKELETON_VALID_VALS = {
+    "content": {
+        "simple_custom": '<div className="flex items-center">\n<Skeleton className="h-[125px] w-[250px] rounded-xl" />\n</div>',
+        "advanced_custom": '<div className="flex items-center">\n<Skeleton className="h-4 w-4" />\n<div className="flex flex-col">\n<Skeleton className="h-4 w-4" />\n<Skeleton className="h-4 w-4" />\n</div>\n</div>',
+        "testimonial": '<div className="flex items-center space-x-4">\n<Skeleton className="h-12 w-12 rounded-full" />\n<div className="space-y-2">\n<Skeleton className="h-4 w-[250px]" />\n<Skeleton className="h-4 w-[250px]" />\n</div>\n</div>',
+        "card": '<div className="flex flex-col space-y-3">\n<Skeleton className="h-[125px] w-[250px] rounded-xl" />\n<div className="space-y-2">\n<Skeleton className="h-4 w-[250px]" />\n<Skeleton className="h-4 w-[200px]" />\n</div>\n</div>',
+    }
+}
+
 # UI NAVIGATION COMPONENTS
 DROPDOWN_MENU_VALID_VALS = {
     "content": {
@@ -258,6 +267,7 @@ VALID_VALS_MAP = {
     "accordion": ACCORDION_VALID_VALS,
     "aspect_ratio": ASPECT_RATIO_VALID_VALS,
     "progress": PROGRESS_VALID_VALS,
+    "skeleton": SKELETON_VALID_VALS,
 }
 
 

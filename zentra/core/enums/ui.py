@@ -104,3 +104,9 @@ class SeparatorVariant(str, Enum):
 class BCTriggerVariant(str, Enum):
     ELLIPSIS = "ellipsis"
     TEXT = "text"
+
+
+class SkeletonPreset(str, Enum):
+    CUSTOM = "custom"
+    TESTIMONIAL = "testimonial"
+    CARD = "card"

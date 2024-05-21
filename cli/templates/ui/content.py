@@ -1,7 +1,7 @@
 from cli.templates.builders import add_to_storage
 from cli.templates.builders.controller import BuildController
 from cli.templates.storage import JSXComponentExtras
-from cli.templates.ui.attributes import alt_attribute, src_attribute
+from cli.templates.ui.attributes import alt_attribute, src_attribute, str_attr
 from cli.templates.utils import compress, str_to_list, text_content
 
 from zentra.core import Component
@@ -35,7 +35,14 @@ from zentra.ui.navigation import (
     DDMRadioGroup,
 )
 from zentra.ui.notification import Alert, TextAlertDialog, Tooltip
-from zentra.ui.presentation import Accordion, AspectRatio, Avatar
+from zentra.ui.presentation import (
+    Accordion,
+    AspectRatio,
+    Avatar,
+    Skeleton,
+    SkeletonGroup,
+    SkeletonShell,
+)
 
 
 def controller() -> BuildController:
@@ -416,6 +423,75 @@ def accordion_content(acc: Accordion) -> list[str]:
         content.append(item_content)
 
     return content
+
+
+def skeleton_content(skel: Skeleton) -> list[str]:
+    """Returns a list of strings for the `Skeleton` content based on the components attributes."""
+
+    def shell(shell: SkeletonShell) -> str:
+        return f"<Skeleton{f' {str_attr("className", shell.styles) if shell.styles else ''}'} />"
+
+    def group(g: SkeletonGroup) -> list[str]:
+        content = []
+        for item in g.items:
+            content.append(shell(item))
+
+        return [add_wrapper("div", content, str_attr("className", g.styles))]
+
+    def handle_list(items_list: list[SkeletonShell | SkeletonGroup]) -> list[str]:
+        inner_content = []
+        for item in items_list:
+            if isinstance(item, SkeletonShell):
+                inner_content.append(shell(item))
+            elif isinstance(item, SkeletonGroup):
+                inner_content.extend(group(item))
+        return inner_content
+
+    def testimonial_content() -> list[str]:
+        return build_component(
+            Skeleton(
+                preset="custom",
+                items=[
+                    SkeletonShell(styles="h-12 w-12 rounded-full"),
+                    SkeletonGroup(
+                        styles="space-y-2",
+                        items=[
+                            SkeletonShell(styles="h-4 w-[250px]"),
+                            SkeletonShell(styles="h-4 w-[250px]"),
+                        ],
+                    ),
+                ],
+            )
+        )[1:-1]
+
+    def card_content() -> list[str]:
+        return build_component(
+            Skeleton(
+                preset="custom",
+                items=[
+                    SkeletonShell(styles="h-[125px] w-[250px] rounded-xl"),
+                    SkeletonGroup(
+                        styles="space-y-2",
+                        items=[
+                            SkeletonShell(styles="h-4 w-[250px]"),
+                            SkeletonShell(styles="h-4 w-[200px]"),
+                        ],
+                    ),
+                ],
+            )
+        )[1:-1]
+
+    def custom_content() -> list[str]:
+        if isinstance(skel.items, (SkeletonShell, SkeletonGroup)):
+            skel.items = [skel.items]
+        return handle_list(skel.items)
+
+    content_options = {
+        "custom": custom_content,
+        "testimonial": testimonial_content,
+        "card": card_content,
+    }
+    return content_options[skel.preset]()
 
 
 # Parent Components

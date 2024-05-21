@@ -221,4 +221,10 @@ COMPONENT_DETAILS_DICT = {
         name="Progress",
         child_names=[],
     ),
+    "Skeleton": ComponentDetails(
+        library="ui",
+        filename="skeleton.jsx",
+        name="Skeleton",
+        child_names=[],
+    ),
 }

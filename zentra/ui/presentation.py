@@ -1,10 +1,10 @@
 from typing import Optional
 
-from pydantic import Field, field_validator
+from pydantic import Field, ValidationInfo, field_validator
 from pydantic_core import PydanticCustomError
 
 from zentra.core import Component
-from zentra.core.enums.ui import BadgeVariant, Orientation, ToggleType
+from zentra.core.enums.ui import BadgeVariant, Orientation, SkeletonPreset, ToggleType
 from zentra.custom import CustomUrl
 from zentra.nextjs import Image, StaticImage
 from zentra.ui import ShadcnUi
@@ -216,13 +216,154 @@ class Separator(Component, ShadcnUi):
     orientation: Orientation = "vertical"
 
 
+class SkeletonShell(Component, ShadcnUi):
+    """
+    A helper Zentra model for the [Shadcn/ui Skeleton](https://ui.shadcn.com/docs/components/skeleton) component. Acts as an individual `Skeleton` component.
+
+    Cannot be used on its own, must be used inside a `zentra.ui.presentation.Skeleton` or `zentra.ui.presentation.SkeletonGroup` model.
+
+    Parameters:
+    - `styles` (`string`) - a set of custom CSS classes to apply to the skeleton shell. Automatically adds them to `className`. `None` by default
+    """
+
+    styles: str
+
+
+class SkeletonGroup(Component, ShadcnUi):
+    """
+    A helper Zentra model for the [Shadcn/ui Skeleton](https://ui.shadcn.com/docs/components/skeleton) component. Acts as a single group of `Skeleton` items.
+
+    Cannot be used on its own, must be used inside a `zentra.ui.presentation.Skeleton` model.
+
+    Parameters:
+    - `styles` (`string`) - a set of custom CSS classes to apply to the skeleton group container. Automatically adds them to `className`. `None` by default
+    - `items` (`list[zentra.ui.presentation.SkeletonShell]`) - a list of `SkeletonShell` models to use in the group
+    """
+
+    styles: str
+    items: list[SkeletonShell]
+
+
 class Skeleton(Component, ShadcnUi):
     """
     A Zentra model for the [Shadcn/ui Skeleton](https://ui.shadcn.com/docs/components/skeleton) component.
 
     Parameters:
-    - `name` (`str`) - the name of the component
+    - `preset` (`string`) - the type of skeleton to create. Either select an available preset or create your own. Valid options: `['custom', 'testimonial', 'card']`
+    - `styles` (`string, optional`) - a set of custom CSS classes to apply to the root `div` container of the skeleton items. Automatically adds them to `className`. `None` by default
+    - `items` (`zentra.ui.presentation.SkeletonShell | zentra.ui.presentation.SkeletonGroup | list[zentra.ui.presentation.SkeletonShell | zentra.ui.presentation.SkeletonGroup], optional`) - Can only be used when `preset="custom"`. Can be either:
+      1. A single `SkeletonShell` models
+      2. A single `SkeletonGroup` models for multiple `SkeletonShells` in a single `div` container
+      3. A list of `SkeletonShell` and/or `SkeletonGroup` models for multiple `SkeletonShells` in multiple separate `div` containers. Useful for creating complex skeletons
+      4. `None` when using a different `preset`. `None` by default
+
+    Examples:
+    1. Testimonial preset
+    ```python
+    from zentra.ui.presentation import Skeleton
+
+    comp = Skeleton(preset="testimonial")
+    ```
+    JSX equivalent ->
+    ```jsx
+    import { Skeleton } from "@/components/ui/skeleton"
+
+
+    <div className="flex items-center space-x-4">
+      <Skeleton className="h-12 w-12 rounded-full" />
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-[250px]" />
+        <Skeleton className="h-4 w-[200px]" />
+      </div>
+    </div>
+    ```
+
+    2. Card preset
+    ```python
+    from zentra.ui.presentation import Skeleton
+
+    comp = Skeleton(preset="card")
+    ```
+    JSX equivalent ->
+    ```jsx
+    import { Skeleton } from "@/components/ui/skeleton"
+
+
+    <div className="flex flex-col space-y-3">
+      <Skeleton className="h-[125px] w-[250px] rounded-xl" />
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-[250px]" />
+        <Skeleton className="h-4 w-[200px]" />
+      </div>
+    </div>
+    ```
+
+    3. Custom preset with a single shell
+    ```python
+    from zentra.ui.presentation import Skeleton, SkeletonShell
+
+    comp = Skeleton(
+        preset="custom",
+        styles="flex items-center",
+        items=SkeletonShell(styles="h-[125px] w-[250px] rounded-xl"),
+    )
+    ```
+    JSX equivalent ->
+    ```jsx
+    import { Skeleton } from "@/components/ui/skeleton"
+
+    <div className="flex items-center">
+      <Skeleton className="h-[125px] w-[250px] rounded-xl" />
+    </div>
+    ```
     """
+
+    preset: SkeletonPreset
+    styles: Optional[str] = Field(default=None, validate_default=True)
+    items: Optional[
+        SkeletonShell | SkeletonGroup | list[SkeletonShell | SkeletonGroup]
+    ] = Field(default=None, validate_default=True)
+
+    @field_validator("items")
+    def validate_items(
+        cls,
+        items: list[SkeletonShell | list[SkeletonGroup]] | None,
+        info: ValidationInfo,
+    ) -> list[SkeletonShell | list[SkeletonGroup]] | None:
+        preset: str = info.data.get("preset")
+
+        if preset != "custom" and items is not None:
+            raise PydanticCustomError(
+                "invalid_preset",
+                "cannot use 'items' without" + ' preset="custom"',
+                dict(wrong_value=preset),
+            )
+
+        if preset == "custom" and items is None:
+            raise PydanticCustomError(
+                "missing_items",
+                "missing 'items' with" + ' preset="custom"',
+                dict(wrong_value=items),
+            )
+
+        return items
+
+    @field_validator("styles")
+    def validate_styles(cls, styles: str | None, info: ValidationInfo) -> str | None:
+        styles_dict = {
+            "testimonial": "flex items-center space-x-4",
+            "card": "flex flex-col space-y-3",
+        }
+        preset = info.data.get("preset")
+
+        if styles is None and preset != "custom":
+            return styles_dict[preset]
+
+        return styles
+
+    @property
+    def container_name(self) -> str:
+        return "div"
 
 
 class Table(Component, ShadcnUi):

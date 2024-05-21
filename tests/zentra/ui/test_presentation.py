@@ -16,6 +16,9 @@ from zentra.ui.presentation import (
     Badge,
     Progress,
     Separator,
+    Skeleton,
+    SkeletonGroup,
+    SkeletonShell,
 )
 
 
@@ -305,3 +308,100 @@ class TestProgress:
     @staticmethod
     def test_import_str_custom(wrapper_custom: SimpleCompBuilder):
         wrapper_custom.run("imports", VALID_IMPORTS["progress"]["custom"])
+
+
+class TestSkeleton:
+    @pytest.fixture
+    def skeleton_simple_custom(self) -> Skeleton:
+        return Skeleton(
+            preset="custom",
+            styles="flex items-center",
+            items=SkeletonShell(styles="h-[125px] w-[250px] rounded-xl"),
+        )
+
+    @pytest.fixture
+    def skeleton_advanced_custom(self) -> Skeleton:
+        return Skeleton(
+            preset="custom",
+            styles="flex items-center",
+            items=[
+                SkeletonShell(styles="h-4 w-4"),
+                SkeletonGroup(
+                    styles="flex flex-col",
+                    items=[
+                        SkeletonShell(styles="h-4 w-4"),
+                        SkeletonShell(styles="h-4 w-4"),
+                    ],
+                ),
+            ],
+        )
+
+    @pytest.fixture
+    def skeleton_testimonial(self) -> Skeleton:
+        return Skeleton(preset="testimonial")
+
+    @pytest.fixture
+    def skeleton_card(self) -> Skeleton:
+        return Skeleton(preset="card")
+
+    @pytest.fixture
+    def wrapper_simple_custom(
+        self, skeleton_simple_custom: Skeleton
+    ) -> SimpleCompBuilder:
+        return SimpleCompBuilder(
+            skeleton_simple_custom, COMPONENT_DETAILS_DICT["Skeleton"]
+        )
+
+    @pytest.fixture
+    def wrapper_advanced_custom(
+        self, skeleton_advanced_custom: Skeleton
+    ) -> SimpleCompBuilder:
+        return SimpleCompBuilder(
+            skeleton_advanced_custom, COMPONENT_DETAILS_DICT["Skeleton"]
+        )
+
+    @pytest.fixture
+    def wrapper_testimonial(self, skeleton_testimonial: Skeleton) -> SimpleCompBuilder:
+        return SimpleCompBuilder(
+            skeleton_testimonial, COMPONENT_DETAILS_DICT["Skeleton"]
+        )
+
+    @pytest.fixture
+    def wrapper_card(self, skeleton_card: Skeleton) -> SimpleCompBuilder:
+        return SimpleCompBuilder(skeleton_card, COMPONENT_DETAILS_DICT["Skeleton"])
+
+    @staticmethod
+    def test_content_str_simple_custom(wrapper_simple_custom: SimpleCompBuilder):
+        wrapper_simple_custom.run(
+            "content", VALID_VALS_MAP["skeleton"]["content"]["simple_custom"]
+        )
+
+    @staticmethod
+    def test_content_str_advanced_custom(wrapper_advanced_custom: SimpleCompBuilder):
+        wrapper_advanced_custom.run(
+            "content", VALID_VALS_MAP["skeleton"]["content"]["advanced_custom"]
+        )
+
+    @staticmethod
+    def test_content_str_testimonial(wrapper_testimonial: SimpleCompBuilder):
+        wrapper_testimonial.run(
+            "content", VALID_VALS_MAP["skeleton"]["content"]["testimonial"]
+        )
+
+    @staticmethod
+    def test_content_str_card(wrapper_card: SimpleCompBuilder):
+        wrapper_card.run("content", VALID_VALS_MAP["skeleton"]["content"]["card"])
+
+    @staticmethod
+    def test_items_error_without_custom():
+        with pytest.raises(ValidationError):
+            Skeleton(preset="card", items=SkeletonShell(styles="w-full"))
+
+    @staticmethod
+    def test_custom_error_without_items():
+        with pytest.raises(ValidationError):
+            Skeleton(preset="custom")
+
+    @staticmethod
+    def test_import_str(wrapper_simple_custom: SimpleCompBuilder):
+        wrapper_simple_custom.run("imports", VALID_IMPORTS["skeleton"])

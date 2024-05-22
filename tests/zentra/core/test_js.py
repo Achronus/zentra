@@ -32,12 +32,12 @@ class TestMap:
     @pytest.fixture
     def js_map_figure(self) -> Map:
         fig = Figure(
-            key="$artwork.artist",
+            key="$.artwork.artist",
             styles="shrink-0",
             img_container_styles="overflow-hidden rounded-md",
             img=Image(
-                src="$artwork.art",
-                alt="Photo by $artwork.artist",
+                src="$.artwork.art",
+                alt="Photo by $.artwork.artist",
                 styles="aspect-[3/4] h-fit w-fit object-cover",
                 width=300,
                 height=400,
@@ -49,7 +49,7 @@ class TestMap:
                     HTMLContent(
                         tag="span",
                         styles="font-semibold text-foreground",
-                        text="$artwork.artist",
+                        text="$.artwork.artist",
                     ),
                 ],
             ),
@@ -66,7 +66,7 @@ class TestMap:
         return Map(
             obj_name="tags",
             param_name="tag",
-            content=Div(items="Test $tag"),
+            content=Div(items="Test $.tag"),
         )
 
     @pytest.fixture
@@ -75,7 +75,7 @@ class TestMap:
             obj_name="tags",
             param_name="tag",
             content=Image(
-                src="$test", width=200, height=200, alt="This is a test image"
+                src="$.test", width=200, height=200, alt="This is a test image"
             ),
         )
 
@@ -84,7 +84,7 @@ class TestMap:
         return Map(
             obj_name="tags",
             param_name="tag",
-            content=Label(name="test", text="Test $tag"),
+            content=Label(name="test", text="Test $.tag"),
         )
 
     @staticmethod

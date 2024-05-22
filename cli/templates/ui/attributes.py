@@ -1,5 +1,6 @@
 import re
 
+from zentra.core import PARAMETER_PREFIX
 from zentra.core.enums.ui import InputOTPPatterns
 from zentra.nextjs import Link, StaticImage, UrlQuery
 from zentra.ui.control import Calendar, Collapsible, InputOTP, Slider, Toggle
@@ -15,8 +16,8 @@ def param_attr(name: str, value: int | str | bool, backticks: bool = False) -> s
     """A helper function for creating parameter attribute strings, such as `size={48}`, `checked={false}`, or ```alt={`I have a {param} here`}```."""
     if isinstance(value, bool):
         value = str(value).lower()
-    elif isinstance(value, str) and value.startswith("$"):
-        value = value[1:]
+    elif isinstance(value, str) and value.startswith(PARAMETER_PREFIX):
+        value = value[len(PARAMETER_PREFIX) :]
 
     if backticks:
         return f"{name}={{`{value}`}}"
@@ -74,8 +75,8 @@ def size_attribute(value: str | int, attr_name: str = "size") -> str:
 def src_attribute(value: str | StaticImage, attr_name: str = "src") -> str:
     """Returns a string for the `src` attribute based on its given value."""
     if isinstance(value, str):
-        if value.startswith("$"):
-            return param_attr(attr_name, value[1:])
+        if value.startswith(PARAMETER_PREFIX):
+            return param_attr(attr_name, value[len(PARAMETER_PREFIX) :])
         else:
             return str_attr(attr_name, value)
 
@@ -90,8 +91,8 @@ def alt_attribute(alt: str, attr_name: str = "alt") -> str:
 
     new_alt = []
     for word in values:
-        if word and word.startswith("$"):
-            word = "{" + word[1:] + "}"
+        if word and word.startswith(PARAMETER_PREFIX):
+            word = "{" + word[len(PARAMETER_PREFIX) :] + "}"
             param_str = True
         new_alt.append(word)
 

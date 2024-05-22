@@ -2,6 +2,7 @@ import re
 from pydantic import BaseModel, Field
 from pydantic_core import PydanticCustomError
 
+from zentra.core import PARAMETER_PREFIX
 from zentra.core.enums.ui import LibraryType
 
 VALID_URL_SCHEMES = (
@@ -31,7 +32,7 @@ class CustomUrl(BaseModel, CustomModel):
     Parameters:
     - `url` (`string`) - can start with any of the following:
     `['/', './' '../', 'ftp://', 'file://', 'mailto:', 'tel:', 'http://', 'https://']`
-    - `plus_param` (`boolean, optional`) - a flag to include the `url` as a parameter (starting with a `$`). `False` by default
+    - `plus_param` (`boolean, optional`) - a flag to include the `url` as a parameter (starting with a `$.`). `False` by default
     """
 
     url: str = Field(max_length=2083)
@@ -39,7 +40,9 @@ class CustomUrl(BaseModel, CustomModel):
 
     def validate_url(self) -> None:
         valid_schemes = (
-            VALID_URL_SCHEMES + ("$",) if self.plus_param else VALID_URL_SCHEMES
+            VALID_URL_SCHEMES + (PARAMETER_PREFIX,)
+            if self.plus_param
+            else VALID_URL_SCHEMES
         )
 
         if not self.url.startswith(valid_schemes):

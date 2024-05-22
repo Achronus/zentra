@@ -1,4 +1,4 @@
-from zentra.core import Component
+from zentra.core import PARAMETER_PREFIX, Component
 from zentra.core.base import HTMLTag, JSIterable
 from zentra.core.enums.html import HTMLContentTagType
 from zentra.nextjs import Image
@@ -13,7 +13,7 @@ class HTMLContent(HTMLTag):
 
     Parameters:
     - `tag` (`string`) - the type of tag to wrap around the `text` attribute. Valid options: `['h1', 'h2', 'h3', 'h4', 'h5', h6', 'p', 'span']`
-    - `text` (`string`) - the text inside the tag. Can also include parameters, signified by a `$` at the start of the parameter name. This is useful when using the `Image` inside an `iterable` function like `map`
+    - `text` (`string`) - the text inside the tag. Can also include parameters, signified by a `$.` at the start of the parameter name. This is useful when using the `Image` inside an `iterable` function like `map`
     - `styles` (`string, optional`) - the CSS styles to apply to the tag. `None` by default
     """
 
@@ -31,12 +31,12 @@ class Div(HTMLTag):
 
     Parameters:
     - `items` (`string | zentra.core.Component | zentra.core.js.JSIterable | list[string | zentra.core.html.HTMLTag | zentra.core.Component | zentra.core.js.JSIterable]`) - Can be either:
-      1. A `string` of text. Can include parameter variables (indicated by starting the variable name with a `$`) or be one specifically
+      1. A `string` of text. Can include parameter variables (indicated by starting the variable name with a `$.`) or be one specifically
       2. Any `zentra.core.Component` model, such as `zentra.ui.control.Label`
       3. Any `zentra.core.js.JSIterable` model, such as `zentra.core.js.Map`
       4. A `list` of a combination of `strings` of text, `zentra.core.html.HTMLTag` models, `zentra.core.js.JSIterable` models, or `zentra.core.Component` models
     - `fragment` (`boolean, optional`) - A flag to switch the div to a React fragment (`<>`, `</>`). Often used in JSX when a single parent container is needed. `False` by default
-    - `key` (`string, optional`) - A unique identifier added to the container. Needed when using JS iterables like `map`. When provided, must be a parameter (start with a `$`). `None` by default
+    - `key` (`string, optional`) - A unique identifier added to the container. Needed when using JS iterables like `map`. When provided, must be a parameter (start with a `$.`). `None` by default
     - `styles` (`string, optional`) - the CSS styles to apply to the tag. `None` by default
     """
 
@@ -46,10 +46,10 @@ class Div(HTMLTag):
 
     @field_validator("key")
     def validate_key(cls, key: str) -> str:
-        if key and not key.startswith("$"):
+        if key and not key.startswith(PARAMETER_PREFIX):
             raise PydanticCustomError(
                 "key_must_be_a_parameter",
-                f"'{key}' != '${key}'! Must start with a '$' to set as a parameter\n",
+                f"'{key}' != '{PARAMETER_PREFIX}{key}'! Must start with a '{PARAMETER_PREFIX}' to set as a parameter\n",
                 dict(wrong_value=key),
             )
         return key
@@ -61,7 +61,7 @@ class FigCaption(HTMLTag):
 
     Parameters:
     - `text` (`string | zentra.core.html.HTMLContent | list[string | zentra.core.html.HTMLContent]`) - the text to put into the caption. Can either be:
-      1. A single or multi-line `string` of text without any tags wrapped around it. Can include parameter variables (indicated by starting the variable name with a `$`)
+      1. A single or multi-line `string` of text without any tags wrapped around it. Can include parameter variables (indicated by starting the variable name with a `$.`)
       2. A `zentra.core.html.HTMLContent` object for wrapping the text in a `heading`, `paragraph`, or `span` tag
       3. A `list` of combined `string` and `zentra.core.html.HTMLContent` objects for more advanced captions
     - `styles` (`string, optional`) - the CSS styles to apply to the tag. `None` by default
@@ -76,7 +76,7 @@ class FigCaption(HTMLTag):
             'Photo by ',
             HTMLContent(
                 tag="span",
-                text="{artwork.artist}",
+                text="$.artwork.artist",
                 styles="font-semibold text-foreground",
             ),
         ],
@@ -105,7 +105,7 @@ class Figure(HTMLTag):
     - `img` (`zentra.nextjs.Image`) - a NextJS `Image` component defining the image to display in the figure
     - `caption` (`zentra.core.html.FigCaption`) - a `FigCaption` component representing the caption of the Image
     - `styles` (`string, optional`) - the CSS styles to apply to the tag. `None` by default
-    - `key` (`string, optional`) -A unique identifier added to the figure. Needed if using a JS iterable like `map`. When provided, must be a parameter (start with a `$`). `None` by default
+    - `key` (`string, optional`) -A unique identifier added to the figure. Needed if using a JS iterable like `map`. When provided, must be a parameter (start with a `$.`). `None` by default
     - `img_container_styles` (`string, optional`) - a string of CSS styles to apply to a `div` tag around the image. When provided, a `div` tag is automatically wrapped around the image with the styles supplied to its `className` attribute. `None` by default
 
     Example usage:
@@ -116,8 +116,8 @@ class Figure(HTMLTag):
 
     Figure(
         img=Image(
-            src="$artwork.art",
-            alt="Photo by $artwork.artist",
+            src="$.artwork.art",
+            alt="Photo by $.artwork.artist",
             width=300,
             height=400,
             styles="aspect-[3/4] h-fit w-fit object-cover",
@@ -127,13 +127,13 @@ class Figure(HTMLTag):
                 'Photo by ',
                 HTMLContent(
                     tag="span",
-                    text="$artwork.artist",
+                    text="$.artwork.artist",
                     styles="font-semibold text-foreground",
                 )
             ],
             styles="pt-2 text-xs text-muted-foreground",
         ),
-        key="$artwork.art",
+        key="$.artwork.art",
         img_container_styles="overflow-hidden rounded-md",
     )
     ```
@@ -166,10 +166,10 @@ class Figure(HTMLTag):
 
     @field_validator("key")
     def validate_key(cls, key: str) -> str:
-        if key and not key.startswith("$"):
+        if key and not key.startswith(PARAMETER_PREFIX):
             raise PydanticCustomError(
                 "key_must_be_a_parameter",
-                f"'{key}' != '${key}'! Must start with a '$' to set as a parameter\n",
+                f"'{key}' != '{PARAMETER_PREFIX}{key}'! Must start with a '{PARAMETER_PREFIX}' to set as a parameter\n",
                 dict(wrong_value=key),
             )
         return key

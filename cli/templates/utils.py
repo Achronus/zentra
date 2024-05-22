@@ -1,5 +1,7 @@
 import re
 
+from zentra.core import PARAMETER_PREFIX
+
 
 def compress(values: list[str], chars: str = "\n") -> str:
     """Compresses values into a string."""
@@ -85,8 +87,8 @@ def param_reformat_helper(text: str) -> list[str]:
     new_text = []
     for word in text.split(" "):
         if word:
-            if word.startswith("$"):
-                new_text.append(f"{{{word[1:]}}}")
+            if word.startswith(PARAMETER_PREFIX):
+                new_text.append(f"{{{word[len(PARAMETER_PREFIX):]}}}")
             else:
                 new_text.append(word)
 

@@ -23,7 +23,7 @@ class UrlQuery(BaseModel, NextJs):
 
     Parameter:
     - `pathname` (`string`) - the name of the route to link to. Can be predefined (e.g., `/about`) or dynamic (e.g., `/blog/[slug]`). Must start with a `/`
-    - `query` (`dict[string, string]`) - a dictionary object containing the query parameters and values assigned to them. Start values with a `$` to indicate they are a function parameter. Otherwise, they are treated as a static value
+    - `query` (`dict[string, string]`) - a dictionary object containing the query parameters and values assigned to them. Start values with a `$.` to indicate they are a function parameter. Otherwise, they are treated as a static value
 
     Example usage:
     1. A predefined route (`/about?name=test`).
@@ -48,7 +48,7 @@ class UrlQuery(BaseModel, NextJs):
     ```jsx
     {{
         pathname: '/blog/[slug]',
-        query: { slig: 'my-post' },
+        query: { slug: 'my-post' },
     }}
     ```
 
@@ -56,7 +56,7 @@ class UrlQuery(BaseModel, NextJs):
     ```python
     from zentra.nextjs import Url
 
-    Url(pathname="/about", query={'name': '$name'})
+    Url(pathname="/about", query={'name': '$.name'})
     ```
     JSX equivalent ->
     ```jsx
@@ -130,11 +130,11 @@ class Image(Component, NextJs):
         2. A statically imported image file represented by a `StaticImage` model
         3. An absolute external URL starting with `http://`, `https://`, `ftp://`, or `file://`
         4. An informative path string starting with `mailto:`, or `tel:`
-        5. Or a parameter, signified by a `$` at the start of the parameter name. Parameters are useful when using the `Image` inside an `iterable` function like `zentra.js.Map`
+        5. Or a parameter, signified by a `$.` at the start of the parameter name. Parameters are useful when using the `Image` inside an `iterable` function like `zentra.js.Map`
     - `width` (`integer, optional`) - a static width for the image
     - `height` (`integer, optional`) - a static height for the image
     - `fill` (`boolean, optional`) - a flag for setting the image to fill its parent component. Adds the `fill` property to the image. Can be used as a useful alternative to the `width` and `height` parameters. `False` by default
-    - `alt` (`string`) - an `alt` tag used to describe the image for screen readers and search engines. Also, acts as fallback text if the image is disabled, errors, or fails to load. Can also include parameters, signified by a `$` at the start of the parameter name. This is useful when using the `Image` inside an `iterable` function like `zentra.js.Map`
+    - `alt` (`string`) - an `alt` tag used to describe the image for screen readers and search engines. Also, acts as fallback text if the image is disabled, errors, or fails to load. Can also include parameters, signified by a `$.` at the start of the parameter name. This is useful when using the `Image` inside an `iterable` function like `zentra.js.Map`
     - `styles` (`string, optional`) - a set of custom CSS classes to apply to the image. Automatically adds them to `className`. `None` by default
 
     Example Usage:
@@ -180,7 +180,7 @@ class Image(Component, NextJs):
     ```python
     from zentra.nextjs import Image
 
-    Image(src='$artwork.art', width=500, height=500, alt='Picture of the $author $name')
+    Image(src='$.artwork.art', width=500, height=500, alt='Picture of the $.author $.name')
     ```
     JSX equivalent ->
     ```jsx

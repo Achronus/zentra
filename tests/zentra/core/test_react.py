@@ -75,7 +75,7 @@ class TestLucideIconWithText:
 
     @pytest.fixture
     def italic_icon_param(self) -> LucideIconWithText:
-        return LucideIconWithText(name="Italic", text="test $tag")
+        return LucideIconWithText(name="Italic", text="test $.tag")
 
     @pytest.fixture
     def italic_icon_position(self) -> LucideIconWithText:
@@ -83,13 +83,13 @@ class TestLucideIconWithText:
 
     @pytest.fixture
     def italic_icon_param_position(self) -> LucideIconWithText:
-        return LucideIconWithText(name="Italic", text="test $tag", position="end")
+        return LucideIconWithText(name="Italic", text="test $.tag", position="end")
 
     @pytest.fixture
     def italic_icon_full(self) -> LucideIconWithText:
         return LucideIconWithText(
             name="Italic",
-            text="test $tag",
+            text="test $.tag",
             position="end",
             size=24,
             color="red",

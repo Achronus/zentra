@@ -32,7 +32,7 @@ class Button(Component, ShadcnUi):
     A Zentra model for the [Shadcn/ui Button](https://ui.shadcn.com/docs/components/button) component focusing on text.
 
     Parameters:
-    - `content` (`string | zentra.core.react.LucideIconWithText`) - the information displayed inside the button. Can be a string of text or a `LucideIconWithText` Zentra model. Can include parameter variables (indicated by starting the variable name with a `$`)
+    - `content` (`string | zentra.core.react.LucideIconWithText`) - the information displayed inside the button. Can be a string of text or a `LucideIconWithText` Zentra model. Can include parameter variables (indicated by starting the variable name with a `$.`)
     - `url` (`string, optional`) - the URL the button links to. `None` by default. When `None` removes it from `Button`. Can be a path or URL starting with any of the following:
       1. Local paths - `/`, `./`, or `../`
       2. File urls - `ftp://` or `file://`
@@ -339,7 +339,7 @@ class Label(Component, ShadcnUi):
 
     Parameters:
     - `name` (`string`) - an identifier for the component. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
-    - `text` (`string`) - the descriptive text to put into the label. Can include parameter variables (indicated by starting the variable name with a `$`)
+    - `text` (`string`) - the descriptive text to put into the label. Can include parameter variables (indicated by starting the variable name with a `$.`)
     """
 
     name: str = Field(min_length=1, max_length=15)
@@ -406,7 +406,7 @@ class RadioButton(Component, ShadcnUi):
     Parameters:
     - `id` (`string`) - an identifier for the component. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
     - `value` (`string`) - the value for the radio button. Up to a maximum of `30` characters. Must be `lowercase` and a `single word`
-    - `text` (`string`) - the text to display for the radio button. Can include parameter variables (indicated by starting the variable name with a `$`)
+    - `text` (`string`) - the text to display for the radio button. Can include parameter variables (indicated by starting the variable name with a `$.`)
     """
 
     id: str = Field(min_length=1, max_length=15)
@@ -508,12 +508,12 @@ class ScrollArea(Component, ShadcnUi):
             obj_name="works",
             param_name="artwork",
             content=Figure(
-                key="$artwork.artist",
+                key="$.artwork.artist",
                 styles="shrink-0",
                 img_container_styles="overflow-hidden rounded-md",
                 img=Image(
-                    src="$artwork.art",
-                    alt="Photo by $artwork.artist",
+                    src="$.artwork.art",
+                    alt="Photo by $.artwork.artist",
                     styles="aspect-[3/4] h-fit w-fit object-cover",
                     width=300,
                     height=400
@@ -525,7 +525,7 @@ class ScrollArea(Component, ShadcnUi):
                         HTMLContent(
                             tag="span",
                             styles="font-semibold text-foreground",
-                            text="$artwork.artist"
+                            text="$.artwork.artist"
                         )
                     ]
                 ),
@@ -598,9 +598,9 @@ class ScrollArea(Component, ShadcnUi):
             shell=True,
             items=[
                 Div(
-                    key="$tag",
+                    key="$.tag",
                     styles="text-sm",
-                    items="$tag"
+                    items="$.tag"
                 ),
                 Separator(styles="my-2"),
             ]
@@ -793,7 +793,7 @@ class Toggle(Component, ShadcnUi):
     A Zentra model for the [Shadcn/ui Toggle](https://ui.shadcn.com/docs/components/toggle) component.
 
     Parameters:
-    - `content` (`string | zentra.core.react.LucideIconWithText`) - the information displayed inside the toggle. Can be a string of text or a `LucideIconWithText` Zentra model. Can include parameter variables (indicated by starting the variable name with a `$`)
+    - `content` (`string | zentra.core.react.LucideIconWithText`) - the information displayed inside the toggle. Can be a string of text or a `LucideIconWithText` Zentra model. Can include parameter variables (indicated by starting the variable name with a `$.`)
     - `style` (`string, optional`) - the style of the toggle text (`aria-label`). Valid options: `['default', 'bold', 'outline', 'italic', 'underline']`. `default` by default
     - `size` (`string, optional`) - the size of the toggle. Valid options: `['default', 'sm', 'lg']`. `default` by default
     - `variant` (`string, optional`) - the style of the toggle. Valid options: `['default', 'outline']`. `default` by default

@@ -609,7 +609,7 @@ class TestScrollArea:
                         content=Div(
                             fragment=True,
                             items=[
-                                Div(key="$tag", styles="text-sm", items="$tag"),
+                                Div(key="$.tag", styles="text-sm", items="$.tag"),
                                 Separator(styles="my-2"),
                             ],
                         ),
@@ -628,12 +628,12 @@ class TestScrollArea:
                     obj_name="works",
                     param_name="artwork",
                     content=Figure(
-                        key="$artwork.artist",
+                        key="$.artwork.artist",
                         styles="shrink-0",
                         img_container_styles="overflow-hidden rounded-md",
                         img=Image(
-                            src="$artwork.art",
-                            alt="Photo by $artwork.artist",
+                            src="$.artwork.art",
+                            alt="Photo by $.artwork.artist",
                             styles="aspect-[3/4] h-fit w-fit object-cover",
                             width=300,
                             height=400,
@@ -645,7 +645,7 @@ class TestScrollArea:
                                 HTMLContent(
                                     tag="span",
                                     styles="font-semibold text-foreground",
-                                    text="$artwork.artist",
+                                    text="$.artwork.artist",
                                 ),
                             ],
                         ),
@@ -954,11 +954,11 @@ class TestTextarea:
 class TestToggle:
     @pytest.fixture
     def toggle(self) -> Toggle:
-        return Toggle(content="test $text")
+        return Toggle(content="test $.text")
 
     @pytest.fixture
     def toggle_icon(self) -> Toggle:
-        return Toggle(content=LucideIconWithText(name="Italic", text="icon $text"))
+        return Toggle(content=LucideIconWithText(name="Italic", text="icon $.text"))
 
     @pytest.fixture
     def wrapper(self, toggle: Toggle) -> SimpleCompBuilder:
@@ -972,7 +972,7 @@ class TestToggle:
     def wrapper_full(self) -> SimpleCompBuilder:
         return SimpleCompBuilder(
             Toggle(
-                content="test $text",
+                content="test $.text",
                 style="outline",
                 size="sm",
                 variant="outline",
@@ -987,7 +987,7 @@ class TestToggle:
         return SimpleCompBuilder(
             Toggle(
                 content=LucideIconWithText(
-                    name="Italic", text="icon $text", position="end"
+                    name="Italic", text="icon $.text", position="end"
                 ),
                 style="bold",
                 size="lg",
@@ -1046,17 +1046,19 @@ class TestToggleGroup:
         return ToggleGroup(
             items=[
                 Toggle(
-                    content=LucideIconWithText(name="Italic", text="italic $text"),
+                    content=LucideIconWithText(name="Italic", text="italic $.text"),
                     pressed=True,
                 ),
                 Toggle(
                     content=LucideIconWithText(
-                        name="Bold", text="bold $text", position="end"
+                        name="Bold", text="bold $.text", position="end"
                     ),
                     disabled=True,
                 ),
                 Toggle(
-                    content=LucideIconWithText(name="Underline", text="undeline $text"),
+                    content=LucideIconWithText(
+                        name="Underline", text="undeline $.text"
+                    ),
                 ),
             ],
             type="single",

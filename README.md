@@ -1,6 +1,6 @@
 ## THIS TOOL IS A WORK IN PROGRESS, PLEASE WAIT UNTIL A VERSION RELEASE.
 
-_Last updated 21/05/2024_
+_Last updated 22/05/2024_
 
 ![Logo](/docs/assets/imgs/zentra-logo.jpg)
 
@@ -119,12 +119,12 @@ artwork_map = Div(
         obj_name="works",
         param_name="artwork",
         content=Figure(
-            key="$artwork.artist",
+            key="$.artwork.artist",
             styles="shrink-0",
             img_container_styles="overflow-hidden rounded-md",
             img=Image(
-                src="$artwork.art",
-                alt="Photo by $artwork.artist",
+                src="$.artwork.art",
+                alt="Photo by $.artwork.artist",
                 styles="aspect-[3/4] h-fit w-fit object-cover",
                 width=300,
                 height=400
@@ -136,7 +136,7 @@ artwork_map = Div(
                     HTMLContent(
                         tag="span",
                         styles="font-semibold text-foreground",
-                        text="$artwork.artist"
+                        text="$.artwork.artist"
                     )
                 ]
             ),

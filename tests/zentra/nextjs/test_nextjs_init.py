@@ -28,8 +28,8 @@ class TestImage:
     @pytest.fixture
     def image(self) -> Image:
         return Image(
-            src="$artwork.art",
-            alt="Photo by $artwork.artist",
+            src="$.artwork.art",
+            alt="Photo by $.artwork.artist",
             styles="aspect-[3/4] h-fit w-fit object-cover",
             width=300,
             height=400,
@@ -39,7 +39,7 @@ class TestImage:
     def image_static_src(self) -> Image:
         return Image(
             src=StaticImage(name="profilePic", path="./me.png"),
-            alt="Photo by $artwork.artist",
+            alt="Photo by $.artwork.artist",
             width=300,
             height=400,
         )
@@ -67,8 +67,8 @@ class TestImage:
     @staticmethod
     def test_content_no_styles():
         img = Image(
-            src="$artwork.art",
-            alt="Photo by $artwork.artist",
+            src="$.artwork.art",
+            alt="Photo by $.artwork.artist",
             width=300,
             height=400,
         )
@@ -79,7 +79,7 @@ class TestImage:
     def test_content_with_url():
         img = Image(
             src="http://example.com",
-            alt="Photo by $artwork.artist",
+            alt="Photo by $.artwork.artist",
             width=300,
             height=400,
         )
@@ -120,7 +120,7 @@ class TestImage:
         with pytest.raises(ValidationError):
             Image(
                 src="artwork",
-                alt="Photo by $artwork.artist",
+                alt="Photo by $.artwork.artist",
                 width=300,
                 height=400,
             )

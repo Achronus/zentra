@@ -20,11 +20,11 @@ class Map(JSIterable):
     from zentra.core.html import Figure, FigCaption, HTMLContent
 
     fig = Figure(
-        key="$artwork.artist",
+        key="$.artwork.artist",
         styles="shrink-0",
         img_container_styles="overflow-hidden rounded-md",
         img=Image(
-            src="$artwork.art",
+            src="$.artwork.art",
             alt="Photo by $artwork.artist",
             styles="aspect-[3/4] h-fit w-fit object-cover",
             width=300,
@@ -37,7 +37,7 @@ class Map(JSIterable):
                 HTMLContent(
                     tag="span",
                     styles="font-semibold text-foreground",
-                    text="$artwork.artist"
+                    text="$.artwork.artist"
                 )
             ]
         ),

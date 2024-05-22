@@ -70,7 +70,7 @@ class LucideIconWithText(LucideIcon):
     Parameters:
     - `name` (`string`) - the name of the [Lucide React Icon](https://lucide.dev/icons). Must be in React format (PascalCase). E.g., `CircleArrowDown` or `Loader`
     - `position` (`string, optional`) - the position of the icon. When set to `start`, icon appears before a components text. When `end`, it appears after the text.  Valid options: `['start', 'end']`. `start` by default
-    - `text` (`string, optional`) - the text displayed alongside the icon. Can include parameter variables (indicated by starting the variable name with a `$`). `None` by default
+    - `text` (`string, optional`) - the text displayed alongside the icon. Can include parameter variables (indicated by starting the variable name with a `$.`). `None` by default
     - `styles` (`string, optional`) - a set of custom CSS classes to apply to the icon. Automatically adds them to `className`. `mr-2 h-4 w-4` by default
     - `size` (`integer, optional`) - a custom size for the icon. `None` by default
     - `color` (`string, optional`) - a custom colour for the icon. `None` by default

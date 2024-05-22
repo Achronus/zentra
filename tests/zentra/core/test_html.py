@@ -49,7 +49,7 @@ class TestHTMLContent:
                 model=HTMLContent(
                     tag=tag,
                     styles="font-semibold text-foreground",
-                    text="$artwork.artist",
+                    text="$.artwork.artist",
                 )
             )
             builder.content(HTML_VALID_VALS_MAP["html_content"]["content"][tag])
@@ -60,7 +60,7 @@ class TestHTMLContent:
             model=HTMLContent(
                 tag="span",
                 styles="font-semibold text-foreground",
-                text="This is a long string and I'm $testing it",
+                text="This is a long string and I'm $.testing it",
             )
         )
         builder.content(HTML_VALID_VALS_MAP["html_content"]["content"]["text_standard"])
@@ -70,7 +70,7 @@ class TestHTMLContent:
         builder = Builder(
             model=HTMLContent(
                 tag="h1",
-                text="This is a long string for $testing",
+                text="This is a long string for $.testing",
             )
         )
         builder.content(HTML_VALID_VALS_MAP["html_content"]["content"]["no_styles"])
@@ -80,7 +80,7 @@ class TestDiv:
     @pytest.fixture
     def div_with_label(self) -> Div:
         return Div(
-            items=Label(name="example", text="A test $label"),
+            items=Label(name="example", text="A test $.label"),
         )
 
     @pytest.fixture
@@ -88,12 +88,12 @@ class TestDiv:
         return Div(
             items=[
                 "This is a",
-                HTMLContent(tag="span", styles="red-500", text="complete $test"),
+                HTMLContent(tag="span", styles="red-500", text="complete $.test"),
                 Label(name="name", text="First name"),
                 Map(
                     obj_name="tags",
                     param_name="tag",
-                    content=HTMLContent(tag="h4", text="An epic $tag heading"),
+                    content=HTMLContent(tag="h4", text="An epic $.tag heading"),
                 ),
                 Label(name="email", text="Email address"),
             ],
@@ -109,7 +109,7 @@ class TestDiv:
     @staticmethod
     def test_content_str_params_with_styles():
         builder = Builder(
-            model=Div(items="This is a $test string", styles="w-80"),
+            model=Div(items="This is a $.test string", styles="w-80"),
         )
         builder.content(HTML_VALID_VALS_MAP["div"]["content"]["with_styles"])
 
@@ -127,11 +127,11 @@ class TestDiv:
     def test_content_str_with_map():
         builder = Builder(
             model=Div(
-                key="$tag",
+                key="$.tag",
                 items=Map(
                     obj_name="tags",
                     param_name="tag",
-                    content=HTMLContent(tag="h4", text="An epic $tag heading"),
+                    content=HTMLContent(tag="h4", text="An epic $.tag heading"),
                 ),
             ),
         )
@@ -153,14 +153,14 @@ class TestDiv:
             model=Div(
                 styles="w-8 h-12",
                 items=[
-                    HTMLContent(tag="h1", text="Test h1 $tag"),
+                    HTMLContent(tag="h1", text="Test h1 $.tag"),
                     Figure(
-                        key="$artwork.artist",
+                        key="$.artwork.artist",
                         styles="shrink-0",
                         img_container_styles="overflow-hidden rounded-md",
                         img=Image(
-                            src="$artwork.art",
-                            alt="Photo by $artwork.artist",
+                            src="$.artwork.art",
+                            alt="Photo by $.artwork.artist",
                             styles="aspect-[3/4] h-fit w-fit object-cover",
                             width=300,
                             height=400,
@@ -172,7 +172,7 @@ class TestDiv:
                                 HTMLContent(
                                     tag="span",
                                     styles="font-semibold text-foreground",
-                                    text="$artwork.artist",
+                                    text="$.artwork.artist",
                                 ),
                             ],
                         ),
@@ -212,7 +212,7 @@ class TestFigCaption:
                     HTMLContent(
                         tag="span",
                         styles="font-semibold text-foreground",
-                        text="$artwork.artist",
+                        text="$.artwork.artist",
                     ),
                 ],
             )
@@ -224,7 +224,7 @@ class TestFigCaption:
         builder = CaptionBuilder(
             model=FigCaption(
                 styles="pt-2 text-xs text-muted-foreground",
-                text=HTMLContent(text="test $here", tag="h1"),
+                text=HTMLContent(text="test $.here", tag="h1"),
             )
         )
         builder.content(
@@ -246,7 +246,7 @@ class TestFigCaption:
         builder = CaptionBuilder(
             model=FigCaption(
                 styles="pt-2 text-xs text-muted-foreground",
-                text="Photo by $author",
+                text="Photo by $.author",
             )
         )
         builder.content(
@@ -267,12 +267,12 @@ class TestFigure:
     @pytest.fixture
     def figure_full(self) -> Figure:
         return Figure(
-            key="$artwork.artist",
+            key="$.artwork.artist",
             styles="shrink-0",
             img_container_styles="overflow-hidden rounded-md",
             img=Image(
-                src="$artwork.art",
-                alt="Photo by $artwork.artist",
+                src="$.artwork.art",
+                alt="Photo by $.artwork.artist",
                 styles="aspect-[3/4] h-fit w-fit object-cover",
                 width=300,
                 height=400,
@@ -284,7 +284,7 @@ class TestFigure:
                     HTMLContent(
                         tag="span",
                         styles="font-semibold text-foreground",
-                        text="$artwork.artist",
+                        text="$.artwork.artist",
                     ),
                 ],
             ),
@@ -322,8 +322,8 @@ class TestFigure:
                 styles="shrink-0",
                 img_container_styles="overflow-hidden rounded-md",
                 img=Image(
-                    src="$artwork.art",
-                    alt="Photo by $artwork.artist",
+                    src="$.artwork.art",
+                    alt="Photo by $.artwork.artist",
                     styles="aspect-[3/4] h-fit w-fit object-cover",
                     width=300,
                     height=400,
@@ -335,7 +335,7 @@ class TestFigure:
                         HTMLContent(
                             tag="span",
                             styles="font-semibold text-foreground",
-                            text="$artwork.artist",
+                            text="$.artwork.artist",
                         ),
                     ],
                 ),
@@ -349,8 +349,8 @@ class TestFigure:
             model=Figure(
                 img_container_styles="overflow-hidden rounded-md",
                 img=Image(
-                    src="$artwork.art",
-                    alt="Photo by $artwork.artist",
+                    src="$.artwork.art",
+                    alt="Photo by $.artwork.artist",
                     styles="aspect-[3/4] h-fit w-fit object-cover",
                     width=300,
                     height=400,
@@ -372,7 +372,7 @@ class TestFigure:
         builder = Builder(
             model=Figure(
                 img=Image(
-                    src="$artwork.art",
+                    src="$.artwork.art",
                     alt="Photo by me",
                     width=300,
                     height=400,
@@ -407,7 +407,7 @@ class TestFigure:
             Figure(
                 key="testFail",
                 img=Image(
-                    src="$artwork.art",
+                    src="$.artwork.art",
                     alt="Photo by me",
                     width=300,
                     height=400,

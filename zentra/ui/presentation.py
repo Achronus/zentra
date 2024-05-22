@@ -89,8 +89,8 @@ class Avatar(Component, ShadcnUi):
         2. A statically imported image file represented by a `StaticImage` model
         3. An absolute external URL starting with `http://`, `https://`, `ftp://`, or `file://`
         4. An informative path string starting with `mailto:`, or `tel:`
-        5. Or a parameter, signified by a `$` at the start of the parameter name. Parameters are useful when using the `Image` inside an `iterable` function like `zentra.js.Map`
-    - `alt` (`string`) - an `alt` tag used to describe the image for screen readers and search engines. Also, acts as fallback text if the image is disabled, errors, or fails to load. Can also include parameters, signified by a `$` at the start of the parameter name
+        5. Or a parameter, signified by a `$.` at the start of the parameter name. Parameters are useful when using the `Image` inside an `iterable` function like `zentra.js.Map`
+    - `alt` (`string`) - an `alt` tag used to describe the image for screen readers and search engines. Also, acts as fallback text if the image is disabled, errors, or fails to load. Can also include parameters, signified by a `$.` at the start of the parameter name
     - `fallback_text` (`string`) - the fallback text if the avatar image doesn't load. Up to a maximum of `2` characters
     """
 
@@ -119,7 +119,7 @@ class Badge(Component, ShadcnUi):
     A Zentra model for the [Shadcn/ui Badge](https://ui.shadcn.com/docs/components/badge) component.
 
     Parameters:
-    - `text` (`string`) - the descriptive text to put into the badge. Can include parameter variables (indicated by starting the variable name with a `$`)
+    - `text` (`string`) - the descriptive text to put into the badge. Can include parameter variables (indicated by starting the variable name with a `$.`)
     - `variant` (`string, optional`) - the style of the badge. Valid options: `['default', 'secondary', 'destructive', 'outline']`. `default` by default
     """
 

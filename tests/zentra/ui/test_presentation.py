@@ -65,7 +65,7 @@ class TestAvatar:
     def avatar_path(self) -> Avatar:
         return Avatar(
             src="/profile.png",
-            alt="Awesome photo of $me",
+            alt="Awesome photo of $.me",
             fallback_text="AA",
         )
 
@@ -73,7 +73,7 @@ class TestAvatar:
     def avatar_static(self) -> Avatar:
         return Avatar(
             src=StaticImage(name="profilePic", path="./me.png"),
-            alt="Awesome photo of $me",
+            alt="Awesome photo of $.me",
             fallback_text="AA",
         )
 
@@ -259,7 +259,7 @@ class TestAspectRatio:
     def test_content_str_fail_check():
         with pytest.raises(ValidationError):
             return AspectRatio(
-                img=Image(src="$test", alt="Image", styles="rounded-md object-cover"),
+                img=Image(src="$.test", alt="Image", styles="rounded-md object-cover"),
                 ratio="16 + test9",
             )
 

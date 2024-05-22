@@ -19,6 +19,11 @@ from zentra.ui.presentation import (
     Skeleton,
     SkeletonGroup,
     SkeletonShell,
+    Table,
+    TableCell,
+    TableMap,
+    TableMapRow,
+    TableRow,
 )
 
 
@@ -405,3 +410,163 @@ class TestSkeleton:
     @staticmethod
     def test_import_str(wrapper_simple_custom: SimpleCompBuilder):
         wrapper_simple_custom.run("imports", VALID_IMPORTS["skeleton"])
+
+
+class TestTable:
+    @pytest.fixture
+    def table_text(self) -> Table:
+        return Table(
+            headings=[
+                TableCell(text="Invoice", styles="w-[100px]"),
+                "Status",
+                "Method",
+                TableCell(text="Amount", styles="text-right"),
+            ],
+            body=[
+                TableRow(
+                    cells=[
+                        TableCell(text="INV001", styles="font-medium"),
+                        "Paid",
+                        "Credit Card",
+                        TableCell(text="$250.00", styles="text-right"),
+                    ],
+                    key="INV001",
+                ),
+                TableRow(
+                    cells=[
+                        TableCell(text="INV002", styles="font-medium"),
+                        "Pending",
+                        "PayPal",
+                        TableCell(text="$150.00", styles="text-right"),
+                    ],
+                    key="INV002",
+                ),
+            ],
+            footer=[
+                TableCell(text="Total", col_span=3),
+                TableCell(text="$2,500.00", styles="text-right"),
+            ],
+            caption="A list of your recent invoices.",
+        )
+
+    @pytest.fixture
+    def table_map(self) -> Table:
+        return Table(
+            headings=[
+                TableCell(text="Invoice", styles="w-[100px]"),
+                "Status",
+                "Method",
+                TableCell(text="Amount", styles="text-right"),
+            ],
+            body=TableMap(
+                obj_name="invoices",
+                param_name="invoice",
+                row=TableMapRow(
+                    cells=[
+                        TableCell(text="invoice", styles="font-medium"),
+                        "paymentStatus",
+                        "paymentMethod",
+                        TableCell(text="totalAmount", styles="text-right"),
+                    ],
+                    key="invoice",
+                ),
+                map_idx=False,
+            ),
+            footer=[
+                TableCell(text="Total", col_span=3),
+                TableCell(text="$2,500.00", styles="text-right"),
+            ],
+        )
+
+    @pytest.fixture
+    def table_map_idx_prefix(self) -> Table:
+        return Table(
+            headings=[
+                TableCell(text="Invoice", styles="w-[100px]"),
+                "Status",
+                "Method",
+                TableCell(text="Amount", styles="text-right"),
+            ],
+            body=TableMap(
+                obj_name="invoices",
+                param_name="invoice",
+                row=TableMapRow(
+                    cells=[
+                        TableCell(text="invoice", styles="font-medium"),
+                        "$.invoice.paymentStatus",
+                        "$.invoice.paymentMethod.payment",
+                        TableCell(text="totalAmount", styles="text-right"),
+                    ]
+                ),
+                map_idx=True,
+            ),
+            footer=[
+                TableCell(text="Total", col_span=3),
+                TableCell(text="$2,500.00", styles="text-right"),
+            ],
+            caption="A list of your recent invoices.",
+        )
+
+    @pytest.fixture
+    def wrapper_text(self, table_text: Table) -> SimpleCompBuilder:
+        return SimpleCompBuilder(table_text, COMPONENT_DETAILS_DICT["Table"])
+
+    @pytest.fixture
+    def wrapper_map(self, table_map: Table) -> SimpleCompBuilder:
+        return SimpleCompBuilder(table_map, COMPONENT_DETAILS_DICT["Table"])
+
+    @pytest.fixture
+    def wrapper_map_idx_prefix(self, table_map_idx_prefix: Table) -> SimpleCompBuilder:
+        return SimpleCompBuilder(table_map_idx_prefix, COMPONENT_DETAILS_DICT["Table"])
+
+    @staticmethod
+    def test_content_str_text(wrapper_text: SimpleCompBuilder):
+        wrapper_text.run("content", VALID_VALS_MAP["table"]["content"]["text"])
+
+    @staticmethod
+    def test_content_str_map(wrapper_map: SimpleCompBuilder):
+        wrapper_map.run("content", VALID_VALS_MAP["table"]["content"]["map"])
+
+    @staticmethod
+    def test_content_str_map_idx_prefix(wrapper_map_idx_prefix: SimpleCompBuilder):
+        wrapper_map_idx_prefix.run(
+            "content", VALID_VALS_MAP["table"]["content"]["map_idx_prefix"]
+        )
+
+    @staticmethod
+    def test_import_str_text(wrapper_text: SimpleCompBuilder):
+        wrapper_text.run("imports", VALID_IMPORTS["table"]["text"])
+
+    @staticmethod
+    def test_import_str_map(wrapper_map: SimpleCompBuilder):
+        wrapper_map.run("imports", VALID_IMPORTS["table"]["map"])
+
+    @staticmethod
+    def test_map_error_str():
+        with pytest.raises(ValidationError):
+            Table(
+                headings=["Status"],
+                body=TableMap(
+                    obj_name="invoices",
+                    param_name="invoice",
+                    row=TableMapRow(cells=["$.invoice.paymentStatus test"]),
+                ),
+                footer=["Total"],
+                caption="A list of your recent invoices.",
+            )
+
+    @staticmethod
+    def test_map_error_table_cell_text():
+        with pytest.raises(ValidationError):
+            Table(
+                headings=["Status"],
+                body=TableMap(
+                    obj_name="invoices",
+                    param_name="invoice",
+                    row=TableMapRow(
+                        cells=[TableCell(text="invoice test", styles="font-medium")]
+                    ),
+                ),
+                footer=["Total"],
+                caption="A list of your recent invoices.",
+            )

@@ -31,6 +31,7 @@ from cli.templates.ui.content import (
     scroll_area_content,
     select_content,
     skeleton_content,
+    table_content,
     text_alert_dialog_content,
     text_content,
     toggle_content,
@@ -157,6 +158,7 @@ COMPONENT_CONTENT_MAPPING = {
     "Pagination": lambda comp: pagination_content(comp),
     "Accordion": lambda comp: accordion_content(comp),
     "Skeleton": lambda comp: skeleton_content(comp),
+    "Table": lambda comp: table_content(comp),
     # Parent components
     "ScrollArea": lambda sa: scroll_area_content(sa),
     "Tooltip": lambda tt: tooltip_content(tt),

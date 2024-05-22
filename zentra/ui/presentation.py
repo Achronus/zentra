@@ -3,7 +3,7 @@ from typing import Optional
 from pydantic import Field, ValidationInfo, field_validator
 from pydantic_core import PydanticCustomError
 
-from zentra.core import Component
+from zentra.core import LOWER_CAMELCASE_SINGLE_WORD, Component, has_valid_pattern
 from zentra.core.enums.ui import BadgeVariant, Orientation, SkeletonPreset, ToggleType
 from zentra.custom import CustomUrl
 from zentra.nextjs import Image, StaticImage
@@ -366,10 +366,113 @@ class Skeleton(Component, ShadcnUi):
         return "div"
 
 
+class TableCell(Component, ShadcnUi):
+    """
+    A helper Zentra model for the [Shadcn/ui Table](https://ui.shadcn.com/docs/components/table) component. Represents a single table cell.
+
+    Cannot be used on its own, must be used inside a `zentra.ui.presentation.Table` or `zentra.ui.presentation.TableMap` model.
+
+    Parameters:
+    - `text` (`string`) - the descriptive text to put into the cell. Can include parameter variables (indicated by starting the variable name with a `$.`)
+    - `col_span` (`integer, optional`) - an optional positive integer to indicate how many columns this cell takes up. `None` by default
+    - `styles` (`string, optional`) - a set of custom CSS classes to apply to the cell. Automatically adds them to `className`. `None` by default
+    """
+
+    text: str
+    col_span: Optional[int] = Field(default=None, ge=1)
+    styles: Optional[str] = None
+
+
+class TableRow(Component, ShadcnUi):
+    """
+    A helper Zentra model for the [Shadcn/ui Table](https://ui.shadcn.com/docs/components/table) component. Represents a single table row.
+
+    Cannot be used on its own, must be used inside a `zentra.ui.presentation.Table` model.
+
+    Parameters:
+    - `cells` (`list[string | zentra.ui.presentation.TableCell`]) - A list of strings or `TableCell` models containing the body content. When `string` can include parameter variables (indicated by starting the variable name with a `$.`)
+    - `key` (`string | integer, optional`) - an optional unique identifier for each row. Added to the `key` prop. `None` by default
+    """
+
+    cells: list[str | TableCell]
+    key: Optional[str | int] = None
+
+
+class TableMapRow(TableRow, ShadcnUi):
+    """
+    A helper Zentra model for the [Shadcn/ui Table](https://ui.shadcn.com/docs/components/table) component. Represents a single table row for a `TableMap`.
+
+    Cannot be used on its own, must be used inside a `zentra.ui.presentation.TableMap` model.
+
+    Parameters:
+    - `cells` (`list[string | zentra.ui.presentation.TableCell`]) - A list of strings or `TableCell` models containing the body content. Cell text is automatically converted to a parameter string and prepended with the `param_name`
+    - `key` (`string | integer, optional`) - an optional unique identifier for each row. Added to the `key` prop. `None` by default
+    """
+
+    @field_validator("cells")
+    def validate_cells(cls, cells: list[str | TableCell]) -> list[str | TableCell]:
+        for idx, item in enumerate(cells):
+            item_type = "str"
+
+            if isinstance(item, TableCell):
+                item = item.text
+                item_type = "TableCell.text"
+
+            if " " in item:
+                raise PydanticCustomError(
+                    "invalid_parameter_string",
+                    f"'cells.{idx}' contains whitespace in '{item_type}'. Cannot be converted to a parameter",
+                    dict(wrong_value=item, value_idx=idx),
+                )
+        return cells
+
+
+class TableMap(Component, ShadcnUi):
+    """
+    A helper Zentra model for the [Shadcn/ui Table](https://ui.shadcn.com/docs/components/table) component. Wraps a set of table cells in a `JavaScript Map` function.
+
+    Cannot be used on its own, must be used inside a `zentra.ui.presentation.Table` model.
+
+    Parameters:
+    - `obj_name` (`string`) - the name of the data object array to iterate over. Must be `lowercase` or `camelCase`, a `single word`, and up to a maximum of `20` characters
+    - `param_name` (`string`) - the name of the parameter to iterate over inside the map. Must be `lowercase` or `camelCase`, a `single word`, and up to a maximum of `20` characters
+    - `row` (`TableMapRow`) - a `TableMapRow` model containing the body content
+    - `map_idx` (`boolean, optional`) - a flag for adding the map index as a parameter and automatically using it as the `TableRow` `key` value. `True` by default
+    """
+
+    obj_name: str = Field(min_length=1, max_length=20)
+    param_name: str = Field(min_length=1, max_length=20)
+    row: TableMapRow
+    map_idx: bool = True
+
+    @field_validator("obj_name", "param_name")
+    def validate_name(cls, v: str) -> str:
+        result = has_valid_pattern(pattern=LOWER_CAMELCASE_SINGLE_WORD, value=v)
+
+        if not result:
+            raise PydanticCustomError(
+                "string_pattern_mismatch",
+                f"'{v}'. Must be 'lowercase' or 'camelCase', a single word and a maximum of '20' characters\n",
+                dict(wrong_value=v, pattern=LOWER_CAMELCASE_SINGLE_WORD),
+            )
+
+        return v
+
+
 class Table(Component, ShadcnUi):
     """
     A Zentra model for the [Shadcn/ui Table](https://ui.shadcn.com/docs/components/table) component.
 
     Parameters:
-    - `name` (`str`) - the name of the component
+    - `headings` (`list[string | zentra.ui.presentation.TableCell]`) - a list of strings or `TableCell` models defining the `TableHeads` for the table columns
+    - `body` (`list[zentra.ui.presentation.TableRow] | zentra.ui.presentation.TableMap`) - can be either:
+      1. A list of `TableRow` models containing text based body content
+      2. A `TableMap` model containing the iterable body content. Useful for iterating over `Arrays` of data
+    - `footer` (`list[string | zentra.ui.presentation.TableCell], optional`) - a list of strings or `TableCell` models containing the footer content. `None` by default
+    - `caption` (`string, optional`) - optional descriptive text for adding a `TableCaption` to the table. `None` by default
     """
+
+    headings: list[str | TableCell]
+    body: list[TableRow] | TableMap
+    footer: Optional[list[str | TableCell]] = None
+    caption: Optional[str] = None

@@ -227,4 +227,18 @@ COMPONENT_DETAILS_DICT = {
         name="Skeleton",
         child_names=[],
     ),
+    "Table": ComponentDetails(
+        library="ui",
+        filename="table.jsx",
+        name="Table",
+        child_names=[
+            "TableHeader",
+            "TableBody",
+            "TableFooter",
+            "TableHead",
+            "TableRow",
+            "TableCell",
+            "TableCaption",
+        ],
+    ),
 }

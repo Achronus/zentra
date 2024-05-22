@@ -213,6 +213,14 @@ SKELETON_VALID_VALS = {
     }
 }
 
+TABLE_VALID_VALS = {
+    "content": {
+        "text": '<Table>\n<TableCaption>\nA list of your recent invoices.\n</TableCaption>\n<TableHeader>\n<TableRow>\n<TableHead className="w-[100px]">\nInvoice\n</TableHead>\n<TableHead>\nStatus\n</TableHead>\n<TableHead>\nMethod\n</TableHead>\n<TableHead className="text-right">\nAmount\n</TableHead>\n</TableRow>\n</TableHeader>\n<TableBody>\n<TableRow>\n<TableCell className="font-medium">\nINV001\n</TableCell>\n<TableCell>\nPaid\n</TableCell>\n<TableCell>\nCredit Card\n</TableCell>\n<TableCell className="text-right">\n$250.00\n</TableCell>\n</TableRow>\n<TableRow>\n<TableCell className="font-medium">\nINV002\n</TableCell>\n<TableCell>\nPending\n</TableCell>\n<TableCell>\nPayPal\n</TableCell>\n<TableCell className="text-right">\n$150.00\n</TableCell>\n</TableRow>\n</TableBody>\n<TableFooter>\n<TableRow>\n<TableCell colSpan={3}>\nTotal\n</TableCell>\n<TableCell className="text-right">\n$2,500.00\n</TableCell>\n</TableRow>\n</TableFooter>\n</Table>',
+        "map": '<Table>\n<TableHeader>\n<TableRow>\n<TableHead className="w-[100px]">\nInvoice\n</TableHead>\n<TableHead>\nStatus\n</TableHead>\n<TableHead>\nMethod\n</TableHead>\n<TableHead className="text-right">\nAmount\n</TableHead>\n</TableRow>\n</TableHeader>\n<TableBody>\n{invoices.map((invoice) => (\n<TableRow key={invoice.invoice}>\n<TableCell className="font-medium">\n{invoice.invoice}\n</TableCell>\n<TableCell>\n{invoice.paymentStatus}\n</TableCell>\n<TableCell>\n{invoice.paymentMethod}\n</TableCell>\n<TableCell className="text-right">\n{invoice.totalAmount}\n</TableCell>\n</TableRow>\n))}\n</TableBody>\n<TableFooter>\n<TableRow>\n<TableCell colSpan={3}>\nTotal\n</TableCell>\n<TableCell className="text-right">\n$2,500.00\n</TableCell>\n</TableRow>\n</TableFooter>\n</Table>',
+        "map_idx_prefix": '<Table>\n<TableCaption>\nA list of your recent invoices.\n</TableCaption>\n<TableHeader>\n<TableRow>\n<TableHead className="w-[100px]">\nInvoice\n</TableHead>\n<TableHead>\nStatus\n</TableHead>\n<TableHead>\nMethod\n</TableHead>\n<TableHead className="text-right">\nAmount\n</TableHead>\n</TableRow>\n</TableHeader>\n<TableBody>\n{invoices.map((invoice, mapIdx) => (\n<TableRow key={mapIdx}>\n<TableCell className="font-medium">\n{invoice.invoice}\n</TableCell>\n<TableCell>\n{invoice.paymentStatus}\n</TableCell>\n<TableCell>\n{invoice.paymentMethod.payment}\n</TableCell>\n<TableCell className="text-right">\n{invoice.totalAmount}\n</TableCell>\n</TableRow>\n))}\n</TableBody>\n<TableFooter>\n<TableRow>\n<TableCell colSpan={3}>\nTotal\n</TableCell>\n<TableCell className="text-right">\n$2,500.00\n</TableCell>\n</TableRow>\n</TableFooter>\n</Table>',
+    }
+}
+
 # UI NAVIGATION COMPONENTS
 DROPDOWN_MENU_VALID_VALS = {
     "content": {
@@ -268,6 +276,7 @@ VALID_VALS_MAP = {
     "aspect_ratio": ASPECT_RATIO_VALID_VALS,
     "progress": PROGRESS_VALID_VALS,
     "skeleton": SKELETON_VALID_VALS,
+    "table": TABLE_VALID_VALS,
 }
 
 

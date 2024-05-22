@@ -1,10 +1,15 @@
 from cli.templates.builders import add_to_storage
 from cli.templates.builders.controller import BuildController
 from cli.templates.storage import JSXComponentExtras
-from cli.templates.ui.attributes import alt_attribute, src_attribute, str_attr
+from cli.templates.ui.attributes import (
+    alt_attribute,
+    param_attr,
+    src_attribute,
+    str_attr,
+)
 from cli.templates.utils import compress, str_to_list, text_content
 
-from zentra.core import Component
+from zentra.core import PARAMETER_PREFIX, Component
 from zentra.core.base import HTMLTag
 from zentra.core.react import LucideIcon, LucideIconWithText
 from zentra.nextjs import Link, NextJs
@@ -42,6 +47,10 @@ from zentra.ui.presentation import (
     Skeleton,
     SkeletonGroup,
     SkeletonShell,
+    Table,
+    TableCell,
+    TableMap,
+    TableRow,
 )
 
 
@@ -492,6 +501,114 @@ def skeleton_content(skel: Skeleton) -> list[str]:
         "card": card_content,
     }
     return content_options[skel.preset]()
+
+
+def table_content(table: Table) -> list[str]:
+    """Returns a list of strings for the `Table` content based on the components attributes."""
+
+    def cell(name: str, item: TableCell) -> str:
+        attrs = [
+            param_attr("colSpan", item.col_span) if item.col_span else None,
+            str_attr("className", item.styles) if item.styles else None,
+        ]
+        attrs = compress([item for item in attrs if item is not None], chars=" ")
+        return add_wrapper(name, text_content(item.text), attrs=attrs)
+
+    def handle_list(
+        wrap_name: str, cell_name: str, cell_list: list[str | TableCell]
+    ) -> str:
+        content = []
+
+        for item in cell_list:
+            if isinstance(item, str):
+                content.append(add_wrapper(cell_name, text_content(item)))
+            else:
+                content.append(cell(cell_name, item))
+
+        return add_wrapper(wrap_name, content)
+
+    def handle_prefix(item: str) -> str:
+        if item.startswith(PARAMETER_PREFIX):
+            item = item.split(".")[len(PARAMETER_PREFIX) :]
+            item = ".".join(item) if len(item) > 1 else item[0]
+            return item
+
+        return item
+
+    def handle_cell_reformatting(
+        param_name: str,
+        row_cells: list[str | TableCell],
+    ) -> list[str | TableCell]:
+        param_text_cells = []
+
+        for item in row_cells:
+            if isinstance(item, str):
+                item = handle_prefix(item)
+                param_text_cells.append(f"$.{param_name}.{item}")
+            else:
+                item.text = handle_prefix(item.text)
+                item.text = f"$.{param_name}.{item.text}"
+                param_text_cells.append(item)
+
+        return param_text_cells
+
+    def handle_table_map(wrap_name: str, cell_name: str, map: TableMap) -> str:
+        map_attrs = f"{map.param_name}{', mapIdx' if map.map_idx else ''}"
+        map.row.cells = handle_cell_reformatting(map.param_name, map.row.cells)
+
+        content = compress(
+            [
+                "{" + f"{map.obj_name}.map(({map_attrs}) => (",
+                handle_list(wrap_name, cell_name, map.row.cells),
+                "))}",
+            ]
+        )
+
+        if map.row.key is not None or map.map_idx:
+            if map.map_idx:
+                key_attr = param_attr("key", "mapIdx")
+            else:
+                key_val = handle_prefix(map.row.key)
+                key_attr = param_attr("key", f"$.{map.param_name}.{key_val}")
+
+            content = content.replace("<TableRow>", f"<TableRow {key_attr}>")
+
+        return content
+
+    def handle_body(
+        wrap_name: str, cell_name: str, cell_list: list[TableRow] | TableMap
+    ) -> str:
+        content = []
+        if isinstance(cell_list, list):
+            for item in cell_list:
+                content.append(handle_list(wrap_name, cell_name, item.cells))
+        else:
+            content.append(handle_table_map(wrap_name, cell_name, cell_list))
+
+        return content
+
+    content = []
+
+    if table.caption:
+        content.append(add_wrapper("TableCaption", table.caption))
+
+    content.extend(
+        [
+            add_wrapper(
+                "TableHeader", handle_list("TableRow", "TableHead", table.headings)
+            ),
+            add_wrapper("TableBody", handle_body("TableRow", "TableCell", table.body)),
+        ]
+    )
+
+    if table.footer:
+        content.append(
+            add_wrapper(
+                "TableFooter", handle_list("TableRow", "TableCell", table.footer)
+            )
+        )
+
+    return content
 
 
 # Parent Components

@@ -71,6 +71,10 @@ VALID_IMPORTS = {
         "custom": '"use client"\nimport { useState } from "react"\nimport { Progress } from "@/components/ui/progress"',
     },
     "skeleton": 'import { Skeleton } from "@/components/ui/skeleton"',
+    "table": {
+        "text": 'import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"',
+        "map": 'import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"',
+    },
     # NAVIGATION COMPONENTS
     "dropdown_menu": {
         "radio_group": '"use client"\nimport { useState } from "react"\nimport { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"\nimport { Button } from "@/components/ui/button"',

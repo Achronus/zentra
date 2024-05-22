@@ -29,7 +29,7 @@ Core component libraries and custom models in development:
 - [X] Custom HTML Models (4/4)
 - [ ] Custom JavaScript Models (1/4)
 - [ ] [Shadcn/ui Form](https://ui.shadcn.com/docs/components/form) Models (0/13)
-- [ ] [Shadcn/ui](https://ui.shadcn.com/) (27/48)
+- [ ] [Shadcn/ui](https://ui.shadcn.com/) (28/48)
 - [ ] [NextJS](https://nextjs.org/docs/app/api-reference/components) (2/4)
 - [X] [Uploadthing](https://docs.uploadthing.com/getting-started/appdir) (1/1)
 - [X] [Lucide React Icons](https://lucide.dev/guide/packages/lucide-react) (1/1 - 1 component for all icons)

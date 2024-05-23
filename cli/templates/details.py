@@ -241,4 +241,13 @@ COMPONENT_DETAILS_DICT = {
             "TableCaption",
         ],
     ),
+    "Popover": ComponentDetails(
+        library="ui",
+        filename="popover.jsx",
+        name="Popover",
+        child_names=[
+            "PopoverTrigger",
+            "PopoverContent",
+        ],
+    ),
 }

@@ -246,6 +246,12 @@ BREADCRUMB_VALID_VALS = {
     }
 }
 
+# UI MODAL COMPONENTS
+POPOVER_VALID_VALS = {
+    "content": {
+        "advanced": '<Popover>\n<PopoverTrigger asChild>\n<Button variant="outline">\nOpen popover\n</Button>\n</PopoverTrigger>\n<PopoverContent className="w-80">\n<div className="grid gap-4">\n<div className="space-y-2">\n<h4 className="font-medium leading-none">\nDimensions\n</h4>\n<p className="text-sm text-muted-foreground">\nSet the dimensions for the layer.\n</p>\n</div>\n<div className="grid gap-2">\n<div className="grid grid-cols-3 items-center gap-4">\n<Label htmlFor="width">\nWidth\n</Label>\n<Input id="width" type="text" className="col-span-2 h-8" defaultValue="100%" />\n</div>\n<div className="grid grid-cols-3 items-center gap-4">\n<Label htmlFor="maxWidth">\nMax. width\n</Label>\n<Input id="maxWidth" type="text" className="col-span-2 h-8" defaultValue="300px" />\n</div>\n<div className="grid grid-cols-3 items-center gap-4">\n<Label htmlFor="height">\nHeight\n</Label>\n<Input id="height" type="text" className="col-span-2 h-8" defaultValue="25px" />\n</div>\n<div className="grid grid-cols-3 items-center gap-4">\n<Label htmlFor="maxHeight">\nMax. height\n</Label>\n<Input id="maxHeight" type="text" className="col-span-2 h-8" defaultValue="none" />\n</div>\n</div>\n</div>\n</PopoverContent>\n</Popover>',
+    }
+}
 
 # CORE UI MAPPING
 VALID_VALS_MAP = {
@@ -277,6 +283,7 @@ VALID_VALS_MAP = {
     "progress": PROGRESS_VALID_VALS,
     "skeleton": SKELETON_VALID_VALS,
     "table": TABLE_VALID_VALS,
+    "popover": POPOVER_VALID_VALS,
 }
 
 

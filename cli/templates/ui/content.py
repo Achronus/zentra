@@ -27,6 +27,7 @@ from zentra.ui.control import (
     Toggle,
     ToggleGroup,
 )
+from zentra.ui.modal import Popover
 from zentra.ui.navigation import (
     BCDropdownMenu,
     BCItem,
@@ -938,3 +939,32 @@ def aspect_ratio_content(ar: AspectRatio) -> tuple[list[str], JSXComponentExtras
     """Returns a list of strings for the `AspectRatio` content based on the components attributes."""
     img_content, storage = build_component(ar.img, output_storage=True)
     return img_content, storage
+
+
+def popover_content(pop: Popover) -> tuple[list[str], JSXComponentExtras]:
+    """Returns a list of strings for the `Popover` content based on the components attributes."""
+    inner_content, storage = build_html_tag(pop.content, output_storage=True)
+
+    if isinstance(pop.trigger, str):
+        trigger_content = [pop.trigger]
+        setAsChild = False
+    else:
+        trigger_content, trigger_storage = build_component(
+            pop.trigger, output_storage=True
+        )
+        setAsChild = True
+        storage = add_to_storage(storage, trigger_storage, extend=True)
+
+    content = [
+        add_wrapper(
+            "PopoverTrigger",
+            trigger_content,
+            attrs=f'{"asChild" if setAsChild else ''}',
+        ),
+        add_wrapper(
+            "PopoverContent",
+            inner_content,
+            attrs=f'{str_attr("className", pop.styles) if pop.styles else ''}',
+        ),
+    ]
+    return content, storage

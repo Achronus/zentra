@@ -27,6 +27,7 @@ from cli.templates.ui.content import (
     dropdown_menu_content,
     input_otp_content,
     pagination_content,
+    popover_content,
     radio_group_content,
     scroll_area_content,
     select_content,
@@ -113,7 +114,7 @@ COMMON_ATTR_MAPPING = {
     "max": lambda value: param_attr("max", value),
     "step": lambda value: param_attr("step", value),
     "orientation": lambda value: str_attr("orientation", value),
-    "default_value": lambda value: str_attr("defaultValue", value),
+    "default_value": lambda value: str_attr("defaultValue", value) if value else None,
     "fill": lambda value: "fill" if value else None,
     "ratio": lambda value: param_attr("ratio", value),
 }
@@ -156,6 +157,7 @@ COMPONENT_CONTENT_MAPPING = {
     "DropdownMenu": lambda dd: dropdown_menu_content(dd),
     "Breadcrumb": lambda bc: breadcrumb_content(bc),
     "AspectRatio": lambda ar: aspect_ratio_content(ar),
+    "Popover": lambda pop: popover_content(pop),
 }
 
 

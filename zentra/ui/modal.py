@@ -1,5 +1,9 @@
+from typing import Optional
 from zentra.core import Component
+from zentra.core.html import Div
+
 from zentra.ui import ShadcnUi
+from zentra.ui.control import Button
 
 
 class Dialog(Component, ShadcnUi):
@@ -16,8 +20,20 @@ class Popover(Component, ShadcnUi):
     A Zentra model for the [Shadcn/ui Popover](https://ui.shadcn.com/docs/components/popover) component.
 
     Parameters:
-    - `name` (`str`) - the name of the component
+    - `trigger` (`zentra.ui.control.Button | string`) - the item to activate the popover. Can be either:
+      1. A Zentra `Button` model
+      2. A string of text
+    - `content` (`zentra.core.html.Div`) - a zentra `Div` model containing the content of the popover
+    - `styles` (`string, optional`) - a set of custom CSS classes to apply to the `PopoverContent`. Automatically adds them to its `className`. `None` by default
     """
+
+    trigger: Button | str
+    content: Div
+    styles: Optional[str] = None
+
+    @property
+    def custom_common_attributes(self) -> list[str]:
+        return ["styles"]
 
 
 class Sheet(Component, ShadcnUi):

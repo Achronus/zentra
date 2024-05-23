@@ -100,6 +100,10 @@ VALID_IMPORTS = {
             'import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"',
         ],
     },
+    # MODAL COMPONENTS
+    "popover": {
+        "advanced": 'import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"\nimport { Button } from "@/components/ui/button"\nimport { Input } from "@/components/ui/input"\nimport { Label } from "@/components/ui/label"',
+    },
 }
 
 

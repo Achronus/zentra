@@ -191,15 +191,19 @@ class Input(Component, ShadcnUi):
 
     Parameters:
     - `id` (`string`) - an identifier for the component. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
-    - `type` (`string`) - the type of input field. Options `['text', 'email', 'password', 'number', 'file', 'tel', 'search', 'url', 'color']`
-    - `placeholder` (`string`) - the placeholder text for the input
+    - `type` (`string, optional`) - the type of input field. Options `['text', 'email', 'password', 'number', 'file', 'tel', 'search', 'url', 'color']`. `text` by default
+    - `placeholder` (`string, optional`) - the placeholder text for the input. `None` by default
     - `disabled` (`boolean, optional`) - adds the disabled property, preventing it from being selected. `False` by default
+    - `styles` (`string, optional`) - a set of custom CSS classes to apply to the input. Automatically adds them to `className`. `None` by default
+    - `default_value` (`string, optional`) - an optional string defining the initial value of the text input. `None` by default
     """
 
     id: str = Field(min_length=1, max_length=15)
-    type: InputTypes
-    placeholder: str
+    type: InputTypes = "text"
+    placeholder: Optional[str] = None
     disabled: bool = False
+    styles: Optional[str] = None
+    default_value: Optional[str] = None
 
     @field_validator("id")
     def validate_id(cls, id: str) -> str:

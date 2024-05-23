@@ -59,15 +59,6 @@ from cli.templates.ui.logic import (
 )
 
 
-# Components with content that returns a tuple: '(content, storage)'
-PARENT_COMPONENTS = [
-    "ScrollArea",
-    "Tooltip",
-    "DropdownMenu",
-    "Breadcrumb",
-    "AspectRatio",
-]
-
 # Dictionary of components with containers around them
 # (classname, attributes)
 COMPONENTS_TO_WRAP = {
@@ -191,7 +182,6 @@ MAPPING_DICT = {
     "additional_imports": EXTRA_IMPORTS_MAPPING,
     "wrappers": COMPONENTS_TO_WRAP,
     "use_client_map": USE_CLIENT_COMPONENTS,
-    "parent_components": PARENT_COMPONENTS,
 }
 
 ATTR_DICT = {

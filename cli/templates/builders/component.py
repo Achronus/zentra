@@ -24,7 +24,6 @@ class ComponentBuilder:
         self.component = component
         self.details = details
         self.wrapper_map = mappings.wrappers
-        self.parent_map = mappings.parents
         self.use_client_map = mappings.client
 
         self.storage = JSXComponentContentStorage()
@@ -55,11 +54,11 @@ class ComponentBuilder:
         self.storage.attributes = compress(self.attrs.build(), chars=" ")
         self.storage.logic = compress(self.logic.build())
 
-        if self.component.classname in self.parent_map:
-            content, storage_extras = self.content.build()
+        content = self.content.build()
+
+        if isinstance(content, tuple):
+            content, storage_extras = content
             self.add_extra_storage(storage_extras)
-        else:
-            content = self.content.build()
 
         self.storage.content = compress(
             self.apply_content_containers(content=content, full_shell=full_shell)

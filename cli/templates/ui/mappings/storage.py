@@ -13,7 +13,6 @@ class JSXMappings(BaseModel):
     additional_imports: MappingDict
     wrappers: dict[str, str]
     use_client_map: list[str]
-    parent_components: list[str]
 
 
 class ContentMappings(BaseModel):
@@ -44,7 +43,6 @@ class ComponentMappings(BaseModel):
     imports: ImportMappings
     logic: MappingDict
     wrappers: dict[str, str]
-    parents: list[str]
     client: list[str]
 
 
@@ -83,10 +81,3 @@ class ControllerMappings(BaseModel):
     component: ComponentMappings
     js_iterable: JSIterableMappings
     html: DivMappings
-
-
-class ParentMappings(BaseModel):
-    """A storage container for JSX mappings associated to the `ParentComponentBuilder`."""
-
-    parent: list[str]
-    controller: ControllerMappings

@@ -5,7 +5,6 @@ from cli.templates.ui.mappings.maps import (
     EXTRA_IMPORTS_MAPPING,
     LOGIC_MAPPING,
     MAPPING_DICT,
-    PARENT_COMPONENTS,
     USE_CLIENT_COMPONENTS,
 )
 from cli.templates.ui.mappings.storage import (
@@ -19,7 +18,6 @@ from cli.templates.ui.mappings.storage import (
     ImportMappings,
     JSIterableMappings,
     JSXMappings,
-    ParentMappings,
 )
 
 
@@ -35,7 +33,6 @@ COMPONENT_MAPPINGS = ComponentMappings(
     imports=IMPORT_MAPPINGS,
     logic=LOGIC_MAPPING,
     wrappers=COMPONENTS_TO_WRAP,
-    parents=PARENT_COMPONENTS,
     client=USE_CLIENT_COMPONENTS,
 )
 
@@ -64,9 +61,4 @@ CONTROLLER_MAPPINGS = ControllerMappings(
     component=COMPONENT_MAPPINGS,
     js_iterable=JS_ITERABLE_MAPPINGS,
     html=DIV_MAPPINGS,
-)
-
-PARENT_MAPPINGS = ParentMappings(
-    parent=PARENT_COMPONENTS,
-    controller=CONTROLLER_MAPPINGS,
 )

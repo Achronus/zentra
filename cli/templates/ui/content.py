@@ -625,9 +625,11 @@ def scroll_area_content(sa: ScrollArea) -> tuple[list[str], JSXComponentExtras]:
 
 def tooltip_content(tt: Tooltip) -> tuple[list[str], JSXComponentExtras]:
     """Returns a list of strings and component storage for the `Tooltip` content based on the components attributes."""
+    setAsChild = True
 
     if isinstance(tt.trigger, str):
         trigger_content = [tt.trigger]
+        setAsChild = False
         storage = JSXComponentExtras()
     elif isinstance(tt.trigger, (LucideIcon, LucideIconWithText)):
         trigger_content, storage = build_icon(tt.trigger, output_storage=True)
@@ -635,14 +637,17 @@ def tooltip_content(tt: Tooltip) -> tuple[list[str], JSXComponentExtras]:
         trigger_content, storage = build_component(tt.trigger, output_storage=True)
 
     return [
-        "<Tooltip>",
-        "<TooltipTrigger asChild>",
-        *trigger_content,
-        "</TooltipTrigger>",
-        "<TooltipContent>",
-        f"<p>{tt.text}</p>",
-        "</TooltipContent>",
-        "</Tooltip>",
+        add_wrapper(
+            "Tooltip",
+            [
+                add_wrapper(
+                    "TooltipTrigger",
+                    trigger_content,
+                    attrs=f'{"asChild" if setAsChild else ''}',
+                ),
+                add_wrapper("TooltipContent", f"<p>{tt.text}</p>"),
+            ],
+        ),
     ], storage
 
 
@@ -910,14 +915,14 @@ def breadcrumb_content(bc: Breadcrumb) -> tuple[list[str], JSXComponentExtras]:
     content, storage = [], JSXComponentExtras()
 
     sep_content, sep_storage = bc_seperator()
-    add_to_storage(storage, sep_storage, extend=True)
+    storage = add_to_storage(storage, sep_storage, extend=True)
 
     for item in bc.items:
         if isinstance(item, BCItem):
             item_content = bc_item(item)
         else:
             item_content, menu_storage = bc_menu(item)
-            add_to_storage(storage, menu_storage, extend=True)
+            storage = add_to_storage(storage, menu_storage, extend=True)
 
         content.append(add_wrapper("BreadcrumbItem", item_content))
         content.append(sep_content)

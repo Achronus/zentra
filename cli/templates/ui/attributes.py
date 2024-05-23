@@ -1,4 +1,5 @@
 import re
+from typing import Callable
 
 from zentra.core import PARAMETER_PREFIX
 from zentra.core.enums.ui import InputOTPPatterns
@@ -104,12 +105,60 @@ def alt_attribute(alt: str, attr_name: str = "alt") -> str:
 
 def calendar_attributes(cal: Calendar) -> list[str]:
     """Returns a list of strings for the `Calendar` attributes based on a given name value."""
-    return [
-        str_attr("mode", "single"),
-        param_attr("selected", f"{cal.name}Date"),
-        param_attr("onSelect", f"{cal.name}SetDate"),
-        str_attr("className", "rounded-md border"),
-    ]
+
+    def handle_selected() -> str:
+        if cal.mode == "range":
+            return param_attr("selected", cal.use_state_names_range[0])
+
+        return param_attr("selected", cal.use_state_names[0])
+
+    def handle_on_select() -> str:
+        if cal.mode == "single":
+            return param_attr("onSelect", cal.use_state_names[1])
+        elif cal.mode == "multiple":
+            return param_attr(
+                "onSelect", f"(dates) => {cal.use_state_names[1]}(dates || [])"
+            )
+
+        return param_attr("onSelect", cal.use_state_names_range[1])
+
+    def handle_custom_attrs(mapping: dict[str, Callable]) -> list[str]:
+        custom_attrs = []
+
+        for attr, value in cal.__dict__.items():
+            if attr in mapping.keys() and value:
+                result = mapping[attr](value)
+                custom_attrs.append(result)
+
+        return custom_attrs
+
+    attrs = [handle_selected(), handle_on_select()]
+
+    custom_attrs_map = {
+        "required": lambda _: "required",
+        "disable_nav": lambda _: "disableNavigation",
+        "num_months": lambda value: param_attr("numberOfMonths", value),
+        "default_month": lambda value: param_attr(
+            "defaultMonth", f"new Date({value[0]}, {value[1]})"
+        ),
+        "from_year": lambda value: param_attr("fromYear", value),
+        "to_year": lambda value: param_attr("toYear", value),
+        "from_month": lambda value: param_attr(
+            "fromMonth", f"new Date({value[0]}, {value[1]})"
+        ),
+        "to_month": lambda value: param_attr(
+            "toMonth", f"new Date({value[0]}, {value[1]})"
+        ),
+        "from_date": lambda value: param_attr(
+            "fromDate", f"new Date({value[0]}, {value[1]}, {value[2]})"
+        ),
+        "to_date": lambda value: param_attr(
+            "toDate", f"new Date({value[0]}, {value[1]}, {value[2]})"
+        ),
+    }
+
+    attrs.extend(handle_custom_attrs(custom_attrs_map))
+    return attrs
 
 
 def collapsible_attributes(comp: Collapsible) -> list[str]:

@@ -10,6 +10,7 @@ from zentra.core import (
 from zentra.core.enums.ui import (
     ButtonSize,
     ButtonVariant,
+    CalendarMode,
     InputOTPPatterns,
     InputTypes,
     Orientation,
@@ -63,19 +64,59 @@ class Calendar(Component, ShadcnUi):
 
     Parameters:
     - `name` (`string`) - an identifier for the component. Prepended to `get` and `set` for the `useState()` hook. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
-
-    Example:
-    1. `name='monthly'` ->
-        `const [monthlyDate, monthlySetDate] = useState(new Date());"`
-    2. `name='yearlyCalendar'` ->
-        `const [yearlyCalendarDate, yearlyCalendarSetDate] = useState(new Date());"`
+    - `mode` (`string, optional`) - the selection mode for the calendar. Valid options: `['single', 'multiple', 'range']`. `single` by default
+    - `required` (`boolean, optional`) - a flag for making the date selection mandatory. Only accessible when `mode='single'`. `False` by default
+    - `disable_nav` (`boolean, optional`) - a flag for disabling the navigation between months. `False` by default
+    - `min` (`integer, optional`) - the minimum selectable number of dates. Only accessible when `mode='multiple'` or `mode='range'`. `None` by default
+    - `max` (`integer, optional`) - the maximum selectable number of dates. Only accessible when `mode='multiple'` or `mode='range'`. `None` by default.
+    - `num_months` (`integer, optional`) - the number of displayed months. Can be as low as `2` or as high as `12`. `None` by default. When `None` shows a single month
+    - `default_month` (`tuple[integer, integer], optional`) - a tuple containing the `(year, month)` to set as the initial month to show in the calendar. `None` by default. When `None` sets the `current month` automatically
+    - `from_year` (`integer, optional`) - the earliest year to start the navigation. `None` by default. When `None` there is no limit
+    - `to_year` (`integer, optional`) - the latest year to end the navigation. `None` by default. When `None` there is no limit
+    - `from_month` (`tuple[integer, integer], optional`) - the earliest month to start the navigation in the form of `(year, month)`. `None` by default. When `None` there is no limit
+    - `to_month` (`tuple[integer, integer], optional`) - the latest month to end the navigation in the form of `(year, month)`. `None` by default. When `None` there is no limit
+    - `from_date` (`tuple[integer, integer, integer], optional`) - the earliest day to start the navigation in the form of `(year, month, date)`. `None` by default. When `None` there is no limit
+    - `to_date` (`tuple[integer, integer, integer], optional`) - the latest day to end the navigation in the form of `(year, month, date)`. `None` by default. When `None` there is no limit
     """
 
     name: str = Field(min_length=1, max_length=15)
+    mode: CalendarMode = "single"
+    required: bool = False
+    disable_nav: bool = False
+    min: Optional[int] = None
+    max: Optional[int] = None
+    num_months: Optional[int] = Field(default=None, ge=2, le=12)
+    default_month: Optional[tuple[int, int]] = None
+    from_year: Optional[int] = None
+    to_year: Optional[int] = None
+    from_month: Optional[tuple[int, int]] = None
+    to_month: Optional[tuple[int, int]] = None
+    from_date: Optional[tuple[int, int, int]] = None
+    to_date: Optional[tuple[int, int, int]] = None
 
     @property
     def custom_common_attributes(self) -> list[str]:
         return ["name"]
+
+    @property
+    def use_state_names(self) -> tuple[str, str]:
+        """Defines the `useState` hook `get` and `set` names."""
+        return [f"{self.name}Date", f"{self.name}SetDate"]
+
+    @property
+    def use_state_names_range(self) -> tuple[str, str]:
+        """Defines the `useState` hook `get` and `set` names for `mode='range'`."""
+        return [f"{self.name}DateRange", f"{self.name}SetDateRange"]
+
+    @property
+    def trigger_styles(self) -> list[str]:
+        """Defines the default trigger styles."""
+        return [
+            "{cn(",
+            "w-[280px] justify-start text-left font-normal ",
+            f'!{self.use_state_names[0]} && "text-muted-foreground"',
+            ")}",
+        ]
 
     @field_validator("name")
     def validate_id(cls, name: str) -> str:
@@ -86,6 +127,32 @@ class Calendar(Component, ShadcnUi):
                 dict(wrong_value=name, pattern=LOWER_CAMELCASE_WITH_DIGITS),
             )
         return name
+
+    @field_validator("required")
+    def validate_required(cls, req: bool, info: ValidationInfo) -> bool:
+        mode = info.data.get("mode")
+
+        if mode != "single":
+            raise PydanticCustomError(
+                "incorrect_mode",
+                "cannot be used unless `mode='single'`. Change 'mode' or remove attribute",
+                dict(wrong_value=mode),
+            )
+
+        return req
+
+    @field_validator("min, max")
+    def validate_min_max(cls, val: int, info: ValidationInfo) -> int:
+        mode = info.data.get("mode")
+
+        if mode == "single":
+            raise PydanticCustomError(
+                "incorrect_mode",
+                "cannot be used when `mode='single'`. Change 'mode' or remove attribute",
+                dict(wrong_value=mode),
+            )
+
+        return val
 
 
 class Checkbox(Component, ShadcnUi):

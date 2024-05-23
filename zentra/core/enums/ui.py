@@ -110,3 +110,9 @@ class SkeletonPreset(str, Enum):
     CUSTOM = "custom"
     TESTIMONIAL = "testimonial"
     CARD = "card"
+
+
+class CalendarMode(str, Enum):
+    SINGLE = "single"
+    MULTIPLE = "multiple"
+    RANGE = "range"

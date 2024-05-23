@@ -42,6 +42,7 @@ from cli.templates.ui.content import (
 from cli.templates.ui.imports import (
     alert_imports,
     button_imports,
+    calendar_imports,
     collapsible_imports,
     image_imports,
     input_opt_imports,
@@ -110,17 +111,19 @@ COMMON_ATTR_MAPPING = {
     "pressed": lambda pressed: param_attr("pressed", pressed),
     "color": lambda value: str_attr("color", value),
     "stroke_width": lambda value: param_attr("strokeWidth", value),
-    "min": lambda value: param_attr("min", value),
-    "max": lambda value: param_attr("max", value),
+    "min": lambda value: param_attr("min", value) if value else None,
+    "max": lambda value: param_attr("max", value) if value else None,
     "step": lambda value: param_attr("step", value),
     "orientation": lambda value: str_attr("orientation", value),
     "default_value": lambda value: str_attr("defaultValue", value) if value else None,
     "fill": lambda value: "fill" if value else None,
     "ratio": lambda value: param_attr("ratio", value),
+    "mode": lambda value: str_attr("mode", value),
 }
 
 
 EXTRA_IMPORTS_MAPPING = {
+    "Calendar": lambda comp: calendar_imports(comp),
     "Collapsible": lambda _: collapsible_imports(),
     "InputOTP": lambda comp: input_opt_imports(comp),
     "RadioGroup": lambda _: radio_group_imports(),

@@ -16,6 +16,7 @@ from zentra.ui.control import (
     Calendar,
     Checkbox,
     Collapsible,
+    DatePicker,
     Input,
     InputOTP,
     Label,
@@ -1186,3 +1187,89 @@ class TestToggleGroup:
     @staticmethod
     def test_import_str(wrapper: SimpleCompBuilder):
         wrapper.run("imports", VALID_IMPORTS["toggle_group"])
+
+
+class TestDatePicker:
+    @pytest.fixture
+    def date_picker_single(self) -> DatePicker:
+        return DatePicker(
+            trigger="Pick a date",
+            content=Calendar(name="datePicker"),
+            styles="w-auto p-0",
+        )
+
+    @pytest.fixture
+    def date_picker_multiple(self) -> DatePicker:
+        return DatePicker(
+            trigger="Pick a date",
+            content=Calendar(name="datePicker", mode="multiple"),
+            styles="w-auto p-0",
+        )
+
+    @pytest.fixture
+    def date_picker_range(self) -> DatePicker:
+        return DatePicker(
+            trigger="Pick a date",
+            content=Calendar(name="datePicker", mode="range"),
+            styles="w-auto p-0",
+        )
+
+    @pytest.fixture
+    def wrapper_single(self, date_picker_single: DatePicker) -> SimpleCompBuilder:
+        return SimpleCompBuilder(
+            date_picker_single, COMPONENT_DETAILS_DICT["DatePicker"]
+        )
+
+    @pytest.fixture
+    def wrapper_multiple(self, date_picker_multiple: DatePicker) -> SimpleCompBuilder:
+        return SimpleCompBuilder(
+            date_picker_multiple, COMPONENT_DETAILS_DICT["DatePicker"]
+        )
+
+    @pytest.fixture
+    def wrapper_range(self, date_picker_range: DatePicker) -> SimpleCompBuilder:
+        return SimpleCompBuilder(
+            date_picker_range, COMPONENT_DETAILS_DICT["DatePicker"]
+        )
+
+    @staticmethod
+    def test_content_str_single(wrapper_single: SimpleCompBuilder):
+        wrapper_single.run(
+            "content", VALID_VALS_MAP["date_picker"]["content"]["single"]
+        )
+
+    @staticmethod
+    def test_content_str_multiple(wrapper_multiple: SimpleCompBuilder):
+        wrapper_multiple.run(
+            "content", VALID_VALS_MAP["date_picker"]["content"]["multiple"]
+        )
+
+    @staticmethod
+    def test_content_str_range(wrapper_range: SimpleCompBuilder):
+        wrapper_range.run("content", VALID_VALS_MAP["date_picker"]["content"]["range"])
+
+    @staticmethod
+    def test_logic_str_single(wrapper_single: SimpleCompBuilder):
+        wrapper_single.run("logic", VALID_VALS_MAP["date_picker"]["logic"]["single"])
+
+    @staticmethod
+    def test_logic_str_multiple(wrapper_multiple: SimpleCompBuilder):
+        wrapper_multiple.run(
+            "logic", VALID_VALS_MAP["date_picker"]["logic"]["multiple"]
+        )
+
+    @staticmethod
+    def test_logic_str_range(wrapper_range: SimpleCompBuilder):
+        wrapper_range.run("logic", VALID_VALS_MAP["date_picker"]["logic"]["range"])
+
+    @staticmethod
+    def test_import_str_single(wrapper_single: SimpleCompBuilder):
+        wrapper_single.run("imports", VALID_IMPORTS["date_picker"]["single"])
+
+    @staticmethod
+    def test_import_str_multiple(wrapper_multiple: SimpleCompBuilder):
+        wrapper_multiple.run("imports", VALID_IMPORTS["date_picker"]["multiple"])
+
+    @staticmethod
+    def test_import_str_range(wrapper_range: SimpleCompBuilder):
+        wrapper_range.run("imports", VALID_IMPORTS["date_picker"]["range"])

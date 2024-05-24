@@ -11,7 +11,7 @@ class JSXMappings(BaseModel):
     component_content: MappingDict
     common_logic: MappingDict
     additional_imports: MappingDict
-    wrappers: dict[str, str]
+    wrappers: dict[str, str | tuple[str, str, str]]
     use_client_map: list[str]
 
 
@@ -42,7 +42,7 @@ class ComponentMappings(BaseModel):
     attribute: AttributeMappings
     imports: ImportMappings
     logic: MappingDict
-    wrappers: dict[str, str]
+    wrappers: dict[str, str | tuple[str, str, str]]
     client: list[str]
 
 

@@ -6,7 +6,6 @@ from zentra.nextjs import Image, Link, StaticImage
 from zentra.ui.control import (
     Button,
     Calendar,
-    DatePicker,
     InputOTP,
     Toggle,
     ToggleGroup,
@@ -103,3 +102,11 @@ def toggle_group_imports(tg: ToggleGroup) -> list[str]:
         imports.extend(toggle_imports(item))
 
     return compress_imports(imports)
+
+
+def date_picker_imports() -> list[str]:
+    """Returns a list of strings for the additional `DatePicker` imports."""
+    return [
+        'import { format } from "date-fns"',
+        'import { cn } from "@/lib/utils"',
+    ]

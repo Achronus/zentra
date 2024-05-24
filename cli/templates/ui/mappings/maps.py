@@ -24,6 +24,7 @@ from cli.templates.ui.content import (
     button_content,
     checkbox_content,
     collapsible_content,
+    date_picker_content,
     dropdown_menu_content,
     input_otp_content,
     pagination_content,
@@ -44,6 +45,7 @@ from cli.templates.ui.imports import (
     button_imports,
     calendar_imports,
     collapsible_imports,
+    date_picker_imports,
     image_imports,
     input_opt_imports,
     radio_group_imports,
@@ -65,6 +67,7 @@ from cli.templates.ui.logic import (
 # (classname, attributes)
 COMPONENTS_TO_WRAP = {
     "Checkbox": 'className="flex items-top space-x-2"',
+    "DatePicker": ("calendar_mode", "range", 'className="grid gap-2"'),
 }
 
 
@@ -135,6 +138,7 @@ EXTRA_IMPORTS_MAPPING = {
     "Button": lambda comp: button_imports(comp),
     "Toggle": lambda comp: toggle_imports(comp),
     "ToggleGroup": lambda comp: toggle_group_imports(comp),
+    "DatePicker": lambda _: date_picker_imports(),
 }
 
 
@@ -161,6 +165,7 @@ COMPONENT_CONTENT_MAPPING = {
     "Breadcrumb": lambda bc: breadcrumb_content(bc),
     "AspectRatio": lambda ar: aspect_ratio_content(ar),
     "Popover": lambda pop: popover_content(pop),
+    "DatePicker": lambda dp: date_picker_content(dp),
 }
 
 

@@ -137,6 +137,19 @@ TOGGLE_GROUP_VALID_VALS = {
     }
 }
 
+DATE_PICKER_VALID_VALS = {
+    "content": {
+        "single": '<Popover>\n<PopoverTrigger asChild>\n<Button variant="outline" className={cn("w-[300px] justify-start text-left font-normal", !datePickerDate && "text-muted-foreground")}>\n<CalendarDays className="mr-2 h-4 w-4" />\n{datePickerDate ? format(datePickerDate, "PPP") : <span>Pick a date</span>}\n</Button>\n</PopoverTrigger>\n<PopoverContent className="w-auto p-0">\n<Calendar mode="single" className="rounded-md border" selected={datePickerDate} onSelect={datePickerSetDate} />\n</PopoverContent>\n</Popover>',
+        "multiple": '<Popover>\n<PopoverTrigger asChild>\n<Button variant="outline" className={cn("w-[300px] justify-start text-left font-normal", !datePickerSelectedDates && "text-muted-foreground")}>\n<CalendarDays className="mr-2 h-4 w-4" />\n{datePickerSelectedDates ? format(datePickerSelectedDates, "PPP") : <span>Pick a date</span>}\n</Button>\n</PopoverTrigger>\n<PopoverContent className="w-auto p-0">\n<Calendar mode="multiple" className="rounded-md border" selected={datePickerSelectedDates} onSelect={(dates) => datePickerSetSelectedDates(dates || [])} />\n</PopoverContent>\n</Popover>',
+        "range": '<div className="grid gap-2">\n<Popover>\n<PopoverTrigger asChild>\n<Button variant="outline" className={cn("w-[300px] justify-start text-left font-normal", !datePickerDateRange && "text-muted-foreground")}>\n<CalendarDays className="mr-2 h-4 w-4" />\n{\ndatePickerDateRange?.from ? (datePickerDateRange.to ? (\n<>{format(\ndatePickerDateRange.from, "LLL dd, y")\n} -{" "}{format(\ndatePickerDateRange.to, "LLL dd, y")}</>) : (format(\ndatePickerDateRange.from, "LLL dd, y"))) : (\n<span>Pick a date</span>\n)}\n</Button>\n</PopoverTrigger>\n<PopoverContent className="w-auto p-0" align="start">\n<Calendar mode="range" className="rounded-md border" selected={datePickerDateRange} onSelect={datePickerSetDateRange} defaultMonth={datePickerDateRange?.from} />\n</PopoverContent>\n</Popover>\n</div>',
+    },
+    "logic": {
+        "single": "const [datePickerDate, datePickerSetDate] = useState<Date | undefined>(new Date());",
+        "multiple": "const initiallySelectedDates = [new Date(), addDays(new Date(), 1)];\nconst [datePickerSelectedDates, datePickerSetSelectedDates] = useState<Date[]>([]);",
+        "range": "const [datePickerDateRange, datePickerSetDateRange] = useState<DateRange | undefined>({ from: new Date(), to: addDays(new Date(), 4)});",
+    },
+}
+
 # UI NOTIFICATION COMPONENTS
 ALERT_VALID_VALS = {
     "content": {
@@ -289,6 +302,7 @@ VALID_VALS_MAP = {
     "skeleton": SKELETON_VALID_VALS,
     "table": TABLE_VALID_VALS,
     "popover": POPOVER_VALID_VALS,
+    "date_picker": DATE_PICKER_VALID_VALS,
 }
 
 

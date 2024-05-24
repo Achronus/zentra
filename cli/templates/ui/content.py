@@ -11,12 +11,14 @@ from cli.templates.utils import compress, str_to_list, text_content
 
 from zentra.core import PARAMETER_PREFIX, Component
 from zentra.core.base import HTMLTag
+from zentra.core.enums.ui import CalendarMode
 from zentra.core.react import LucideIcon, LucideIconWithText
 from zentra.nextjs import Link, NextJs
 from zentra.ui.control import (
     Button,
     Checkbox,
     Collapsible,
+    DatePicker,
     InputOTP,
     Pagination,
     RadioButton,
@@ -967,4 +969,62 @@ def popover_content(pop: Popover) -> tuple[list[str], JSXComponentExtras]:
             attrs=f'{str_attr("className", pop.styles) if pop.styles else ''}',
         ),
     ]
+    return content, storage
+
+
+def date_picker_content(dp: DatePicker) -> tuple[list[str], JSXComponentExtras]:
+    """Returns a list of strings for the `DatePicker` content based on the components attributes."""
+
+    def create_btn() -> tuple[list[str], JSXComponentExtras]:
+        content, storage = build_component(
+            Button(
+                variant="outline",
+                content=LucideIconWithText(
+                    name="CalendarDays", text=compress(dp.trigger_text)
+                ),
+            ),
+            output_storage=True,
+        )
+        content[0] = content[0].replace(
+            ">", f" {param_attr("className", dp.trigger_styles)}>"
+        )
+        return content, storage
+
+    def single_mode_content(
+        btn_content: list[str], calendar_content: list[str]
+    ) -> list[str]:
+        return [
+            add_wrapper("PopoverTrigger", btn_content, attrs="asChild"),
+            add_wrapper(
+                "PopoverContent",
+                calendar_content,
+                attrs=f'{str_attr("className", dp.styles) if dp.styles else ''}',
+            ),
+        ]
+
+    def range_mode_content(
+        btn_content: list[str], calendar_content: list[str]
+    ) -> list[str]:
+        calendar_content = calendar_content[0].replace(
+            "/>", f"defaultMonth={{{dp.content.use_state_names[0]}?.from}} />"
+        )
+
+        return [
+            add_wrapper("PopoverTrigger", btn_content, attrs="asChild"),
+            add_wrapper(
+                "PopoverContent",
+                calendar_content,
+                attrs=f'{str_attr("className", dp.styles) if dp.styles else ''} align="start"',
+            ),
+        ]
+
+    btn_content, storage = create_btn()
+    calendar_content, cal_storage = build_component(dp.content, output_storage=True)
+    storage = add_to_storage(storage, cal_storage, extend=True)
+
+    if dp.calendar_mode == CalendarMode.RANGE.value:
+        content = range_mode_content(btn_content, calendar_content)
+    else:
+        content = single_mode_content(btn_content, calendar_content)
+
     return content, storage

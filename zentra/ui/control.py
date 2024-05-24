@@ -42,6 +42,7 @@ class Button(Component, ShadcnUi):
     - `variant` (`string, optional`) - the style of the button. Valid options: `['default', 'secondary', 'destructive', 'outline', 'ghost', 'link']`. `default` by default
     - `size` (`string, optional`) - the size of the button. Valid options: `['default', 'sm', 'lg', 'icon']`. `default` by default
     - `disabled` (`boolean, optional`) - adds the disabled property, preventing it from being clicked. `False` by default
+    - `styles` (`string, optional`) - a set of custom CSS classes to apply to the button. Automatically adds them to its `className`. `None` by default
     """
 
     content: str | LucideIconWithText
@@ -49,6 +50,7 @@ class Button(Component, ShadcnUi):
     variant: ButtonVariant = "default"
     size: ButtonSize = "default"
     disabled: bool = False
+    styles: Optional[str] = None
 
     @field_validator("url")
     def validate_url(cls, url: str) -> str:
@@ -111,16 +113,6 @@ class Calendar(Component, ShadcnUi):
             return [f"{self.name}SelectedDates", f"{self.name}SetSelectedDates"]
         else:
             return [f"{get_name}Range", f"{set_name}Range"]
-
-    @property
-    def trigger_styles(self) -> list[str]:
-        """Defines the default trigger styles."""
-        return [
-            "{cn(",
-            "w-[280px] justify-start text-left font-normal ",
-            f'!{self.use_state_names[0]} && "text-muted-foreground"',
-            ")}",
-        ]
 
     @field_validator("name")
     def validate_id(cls, name: str) -> str:
@@ -247,11 +239,55 @@ class DatePicker(Component, ShadcnUi):
     """
     A Zentra model for the [Shadcn/ui DatePicker](https://ui.shadcn.com/docs/components/date-picker) component.
 
+    Built using a composition of the `zentra.ui.modal.Popover` and `zentra.ui.control.Calendar` models.
+
     Parameters:
-    - `name` (`string`) - the name of the component
+    - `trigger` (`string`) - the text to display in the trigger button
+    - `content` (`zentra.ui.control.Calendar`) - a zentra `Calendar` model
+    - `styles` (`string, optional`) - a set of custom CSS classes to apply to the `PopoverContent`. Automatically adds them to its `className`. `None` by default
     """
 
-    # TODO: come back once 'popover' created
+    trigger: str
+    content: Calendar
+    styles: Optional[str] = None
+
+    _container_name = PrivateAttr(default="Popover")
+
+    @property
+    def custom_common_attributes(self) -> list[str]:
+        return ["styles"]
+
+    @property
+    def trigger_styles(self) -> str:
+        """Defines the default trigger styles."""
+        return f'cn("w-[300px] justify-start text-left font-normal", !{self.content.use_state_names[0]} && "text-muted-foreground")'
+
+    @property
+    def trigger_text(self) -> list[str]:
+        """Defines the trigger text for the date picker."""
+        get_name = self.content.use_state_names[0]
+
+        if self.calendar_mode == CalendarMode.RANGE.value:
+            return [
+                "{",
+                f"{get_name}?.from ? ({get_name}.to ? (",
+                "<>{format(",
+                f'{get_name}.from, "LLL dd, y")',
+                '} -{" "}{format(',
+                f'{get_name}.to, "LLL dd, y")' "}</>) : (format(",
+                f'{get_name}.from, "LLL dd, y"))) : (',
+                f"<span>{self.trigger}</span>",
+                ")}",
+            ]
+
+        return [
+            f'{{{get_name} ? format({get_name}, "PPP") : <span>{self.trigger}</span>}}'
+        ]
+
+    @property
+    def calendar_mode(self) -> str:
+        """Defines the mode of the calendar. Required for component wrapper when `mode='range'`."""
+        return self.content.mode
 
 
 class Input(Component, ShadcnUi):

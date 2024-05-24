@@ -250,4 +250,13 @@ COMPONENT_DETAILS_DICT = {
             "PopoverContent",
         ],
     ),
+    "DatePicker": ComponentDetails(
+        library="ui",
+        filename="popover.jsx",
+        name="Popover",
+        child_names=[
+            "PopoverTrigger",
+            "PopoverContent",
+        ],
+    ),
 }

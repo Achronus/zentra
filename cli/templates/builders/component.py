@@ -103,8 +103,16 @@ class ComponentBuilder:
             )
 
         if self.component.classname in self.wrapper_map.keys():
+            value = self.wrapper_map[self.component.classname]
+
+            if isinstance(value, tuple):
+                if getattr(self.component, value[0]) != value[1]:
+                    return wrapped_content
+
+                value = value[-1]
+
             wrapped_content = [
-                f"<div {self.wrapper_map[self.component.classname]}>",
+                f"<div {value}>",
                 *wrapped_content,
                 "</div>",
             ]

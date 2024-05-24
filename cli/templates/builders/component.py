@@ -80,7 +80,7 @@ class ComponentBuilder:
         def add_item(local_item: str, item: list[str]) -> str:
             if len(item) > 0:
                 local_item += "\n" + compress(item)
-            return local_item
+            return local_item.lstrip("\n")
 
         self.storage.imports = add_item(self.storage.imports, storage_extras.imports)
         self.storage.logic = add_item(self.storage.logic, storage_extras.logic)

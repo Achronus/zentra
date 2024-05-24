@@ -148,7 +148,7 @@ class ComponentBuilder:
 
     def handle_imports(self, logic: str, imports: str) -> str:
         """Performs import processing such as adding in additional imports and compressing them. Returns the updated version as a string."""
-        imports = compress(compress_imports(str_to_list(imports)))
         imports = self.add_use_state(logic, imports)
+        imports = compress(compress_imports(str_to_list(imports)))
         imports = self.add_use_client(logic, imports)
         return imports

@@ -62,7 +62,8 @@ def compress_imports(imports: list[str]) -> list[str]:
         else:
             comps = comps[0]
 
-        merged_imports.append(f"import {comps} from {module}")
+        if "use client" not in comps:
+            merged_imports.append(f"import {comps} from {module}")
 
     return merged_imports
 

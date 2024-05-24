@@ -17,10 +17,10 @@ beautifulsoup4 = "^4.12.3"
 
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^8.0.2"
+pytest = "^8.2.1"
 mkdocs = "^1.5.3"
-mkdocs-material = "^9.5.12"
-hypothesis = "^6.98.17"
+mkdocs-material = "^9.5.24"
+hypothesis = "^6.102.6"
 pytest-cov = "^4.1.0"
 mike = "^2.0.0"
 mkdocstrings = "^0.24.1"

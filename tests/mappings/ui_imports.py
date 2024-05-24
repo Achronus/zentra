@@ -9,7 +9,11 @@ VALID_IMPORTS = {
             'import { Loader } from "lucide-react"',
         ],
     },
-    "calendar": '"use client"\nimport { useState } from "react"\nimport { Calendar } from "@/components/ui/calendar"',
+    "calendar": {
+        "single": '"use client"\nimport { useState } from "react"\nimport { Calendar } from "@/components/ui/calendar"',
+        "multiple": '"use client"\nimport { useState } from "react"\nimport { Calendar } from "@/components/ui/calendar"',
+        "range": '"use client"\nimport { useState } from "react"\nimport { Calendar } from "@/components/ui/calendar"\nimport { addDays } from "date-fns"\nimport { DateRange } from "react-day-picker"',
+    },
     "checkbox": '"use client"\nimport { Checkbox } from "@/components/ui/checkbox"',
     "collapsible": '"use client"\nimport { useState } from "react"\nimport { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"\nimport { Button } from "@/components/ui/button"\nimport { ChevronsUpDown } from "lucide-react"',
     "input": 'import { Input } from "@/components/ui/input"',

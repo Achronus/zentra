@@ -2,7 +2,7 @@ import re
 from typing import Callable
 
 from zentra.core import PARAMETER_PREFIX
-from zentra.core.enums.ui import InputOTPPatterns
+from zentra.core.enums.ui import CalendarMode, InputOTPPatterns
 from zentra.nextjs import Link, StaticImage, UrlQuery
 from zentra.ui.control import Calendar, Collapsible, InputOTP, Slider, Toggle
 from zentra.ui.presentation import Accordion, Progress
@@ -107,20 +107,15 @@ def calendar_attributes(cal: Calendar) -> list[str]:
     """Returns a list of strings for the `Calendar` attributes based on a given name value."""
 
     def handle_selected() -> str:
-        if cal.mode == "range":
-            return param_attr("selected", cal.use_state_names_range[0])
-
         return param_attr("selected", cal.use_state_names[0])
 
     def handle_on_select() -> str:
-        if cal.mode == "single":
-            return param_attr("onSelect", cal.use_state_names[1])
-        elif cal.mode == "multiple":
+        if cal.mode == CalendarMode.MULTIPLE.value:
             return param_attr(
                 "onSelect", f"(dates) => {cal.use_state_names[1]}(dates || [])"
             )
 
-        return param_attr("onSelect", cal.use_state_names_range[1])
+        return param_attr("onSelect", cal.use_state_names[1])
 
     def handle_custom_attrs(mapping: dict[str, Callable]) -> list[str]:
         custom_attrs = []

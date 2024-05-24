@@ -63,8 +63,9 @@ class Calendar(Component, ShadcnUi):
     A Zentra model for the [Shadcn/ui Calendar](https://ui.shadcn.com/docs/components/calendar) component.
 
     Parameters:
-    - `name` (`string`) - an identifier for the component. Prepended to `get` and `set` for the `useState()` hook. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
+    - `name` (`string`) - an identifier for the component. Prepended to `get` and `set` for the `useState()` hook. Must be `lowercase` or `camelCase` and up to a maximum of `30` characters
     - `mode` (`string, optional`) - the selection mode for the calendar. Valid options: `['single', 'multiple', 'range']`. `single` by default
+    - `styles` (`string, optional`) - a set of custom CSS classes to apply to the calendar. Automatically adds them to `className`. `rounded-md border` by default
     - `required` (`boolean, optional`) - a flag for making the date selection mandatory. Only accessible when `mode='single'`. `False` by default
     - `disable_nav` (`boolean, optional`) - a flag for disabling the navigation between months. `False` by default
     - `min` (`integer, optional`) - the minimum selectable number of dates. Only accessible when `mode='multiple'` or `mode='range'`. `None` by default
@@ -79,8 +80,9 @@ class Calendar(Component, ShadcnUi):
     - `to_date` (`tuple[integer, integer, integer], optional`) - the latest day to end the navigation in the form of `(year, month, date)`. `None` by default. When `None` there is no limit
     """
 
-    name: str = Field(min_length=1, max_length=15)
+    name: str = Field(min_length=1, max_length=30)
     mode: CalendarMode = "single"
+    styles: Optional[str] = "rounded-md border"
     required: bool = False
     disable_nav: bool = False
     min: Optional[int] = None
@@ -101,12 +103,14 @@ class Calendar(Component, ShadcnUi):
     @property
     def use_state_names(self) -> tuple[str, str]:
         """Defines the `useState` hook `get` and `set` names."""
-        return [f"{self.name}Date", f"{self.name}SetDate"]
+        get_name, set_name = [f"{self.name}Date", f"{self.name}SetDate"]
 
-    @property
-    def use_state_names_range(self) -> tuple[str, str]:
-        """Defines the `useState` hook `get` and `set` names for `mode='range'`."""
-        return [f"{self.name}DateRange", f"{self.name}SetDateRange"]
+        if self.mode == CalendarMode.SINGLE.value:
+            return [get_name, set_name]
+        elif self.mode == CalendarMode.MULTIPLE.value:
+            return [f"{self.name}SelectedDates", f"{self.name}SetSelectedDates"]
+        else:
+            return [f"{get_name}Range", f"{set_name}Range"]
 
     @property
     def trigger_styles(self) -> list[str]:
@@ -132,7 +136,7 @@ class Calendar(Component, ShadcnUi):
     def validate_required(cls, req: bool, info: ValidationInfo) -> bool:
         mode = info.data.get("mode")
 
-        if mode != "single":
+        if mode != CalendarMode.SINGLE.value:
             raise PydanticCustomError(
                 "incorrect_mode",
                 "cannot be used unless `mode='single'`. Change 'mode' or remove attribute",
@@ -141,11 +145,11 @@ class Calendar(Component, ShadcnUi):
 
         return req
 
-    @field_validator("min, max")
+    @field_validator("min", "max")
     def validate_min_max(cls, val: int, info: ValidationInfo) -> int:
         mode = info.data.get("mode")
 
-        if mode == "single":
+        if mode == CalendarMode.SINGLE.value:
             raise PydanticCustomError(
                 "incorrect_mode",
                 "cannot be used when `mode='single'`. Change 'mode' or remove attribute",

@@ -1,23 +1,29 @@
 from cli.templates.utils import compress_imports
 
-from zentra.core.enums.ui import InputOTPPatterns
+from zentra.core.enums.ui import CalendarMode, InputOTPPatterns
 from zentra.core.react import LucideIcon, LucideIconWithText
 from zentra.nextjs import Image, Link, StaticImage
-from zentra.ui.control import Button, Calendar, InputOTP, Toggle, ToggleGroup
+from zentra.ui.control import (
+    Button,
+    Calendar,
+    DatePicker,
+    InputOTP,
+    Toggle,
+    ToggleGroup,
+)
 from zentra.ui.notification import Alert
 
 
 def calendar_imports(cal: Calendar) -> list[str]:
     """Returns a list of strings for the additional `Calendar` imports."""
-    cal_imports = [
-        'import { addDays, format } from "date-fns"',
-        'import { cn } from "@/lib/utils"',
-    ]
 
-    if cal.mode == "range":
-        cal_imports.append('import { DateRange } from "react-day-picker"')
+    if cal.mode == CalendarMode.RANGE.value:
+        return [
+            'import { addDays } from "date-fns"',
+            'import { DateRange } from "react-day-picker"',
+        ]
 
-    cal_imports
+    return []
 
 
 def collapsible_imports() -> list[str]:

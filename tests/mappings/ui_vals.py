@@ -1,16 +1,21 @@
 # UI CONTROL COMPONENTS
 CALENDAR_VALID_VALS = {
     "attributes": {
-        "standard": 'mode="single" selected={monthlyDate} onSelect={monthlySetDate} className="rounded-md border"',
-        "long_name": 'mode="single" selected={yearlyCalendarDate} onSelect={yearlyCalendarSetDate} className="rounded-md border"',
+        "standard": 'mode="single" className="rounded-md border" selected={monthlyDate} onSelect={monthlySetDate}',
+        "long_name": 'mode="single" className="rounded-md border" selected={yearlyCalendarDate} onSelect={yearlyCalendarSetDate}',
     },
     "logic": {
         "standard": "const [monthlyDate, monthlySetDate] = useState<Date | undefined>(new Date());",
         "long_name": "const [yearlyCalendarDate, yearlyCalendarSetDate] = useState<Date | undefined>(new Date());",
+        "multiple": "const initiallySelectedDates = [new Date(), addDays(new Date(), 1)];\nconst [monthlySelectedDates, monthlySetSelectedDates] = useState<Date[]>([]);",
+        "range": "const [monthlyDateRange, monthlySetDateRange] = useState<DateRange | undefined>({ from: new Date(), to: addDays(new Date(), 4)});",
     },
     "content": {
-        "standard": '<Calendar mode="single" selected={monthlyDate} onSelect={monthlySetDate} className="rounded-md border" />',
-        "long_name": '<Calendar mode="single" selected={yearlyCalendarDate} onSelect={yearlyCalendarSetDate} className="rounded-md border" />',
+        "standard": '<Calendar mode="single" className="rounded-md border" selected={monthlyDate} onSelect={monthlySetDate} />',
+        "long_name": '<Calendar mode="single" className="rounded-md border" selected={yearlyCalendarDate} onSelect={yearlyCalendarSetDate} />',
+        "single_all_attrs": '<Calendar mode="single" selected={monthlyDate} onSelect={monthlySetDate} required disableNavigation numberOfMonths={2} fromYear={2023} toYear={2025} fromMonth={new Date(2023, 1)} toMonth={new Date(2025, 12)} fromDate={new Date(2023, 1, 4)} toDate={new Date(2025, 12, 6)} />',
+        "multiple": '<Calendar mode="multiple" className="rounded-md border" min={1} max={10} selected={monthlySelectedDates} onSelect={(dates) => monthlySetSelectedDates(dates || [])} />',
+        "range": '<Calendar mode="range" className="rounded-md border" selected={monthlyDateRange} onSelect={monthlySetDateRange} />',
     },
 }
 

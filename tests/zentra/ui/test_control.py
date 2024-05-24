@@ -44,12 +44,40 @@ class TestCalendar:
         return Calendar(name="yearlyCalendar")
 
     @pytest.fixture
+    def calendar_multi_mode(self) -> Calendar:
+        return Calendar(
+            name="monthly",
+            mode="multiple",
+            min=1,
+            max=10,
+        )
+
+    @pytest.fixture
+    def calendar_range_mode(self) -> Calendar:
+        return Calendar(
+            name="monthly",
+            mode="range",
+        )
+
+    @pytest.fixture
     def wrapper(self, calendar: Calendar) -> SimpleCompBuilder:
         return SimpleCompBuilder(calendar, COMPONENT_DETAILS_DICT["Calendar"])
 
     @pytest.fixture
     def wrapper_long(self, calendar_long_name: Calendar) -> SimpleCompBuilder:
         return SimpleCompBuilder(calendar_long_name, COMPONENT_DETAILS_DICT["Calendar"])
+
+    @pytest.fixture
+    def wrapper_multi_mode(self, calendar_multi_mode: Calendar) -> SimpleCompBuilder:
+        return SimpleCompBuilder(
+            calendar_multi_mode, COMPONENT_DETAILS_DICT["Calendar"]
+        )
+
+    @pytest.fixture
+    def wrapper_range_mode(self, calendar_range_mode: Calendar) -> SimpleCompBuilder:
+        return SimpleCompBuilder(
+            calendar_range_mode, COMPONENT_DETAILS_DICT["Calendar"]
+        )
 
     @staticmethod
     def test_attr_str(wrapper: SimpleCompBuilder):
@@ -70,16 +98,65 @@ class TestCalendar:
         wrapper_long.run("logic", VALID_VALS_MAP["calendar"]["logic"]["long_name"])
 
     @staticmethod
+    def test_logic_str_multi_mode(wrapper_multi_mode: SimpleCompBuilder):
+        wrapper_multi_mode.run("logic", VALID_VALS_MAP["calendar"]["logic"]["multiple"])
+
+    @staticmethod
+    def test_logic_str_range_mode(wrapper_range_mode: SimpleCompBuilder):
+        wrapper_range_mode.run("logic", VALID_VALS_MAP["calendar"]["logic"]["range"])
+
+    @staticmethod
     def test_import_str(wrapper: SimpleCompBuilder):
-        wrapper.run("imports", VALID_IMPORTS["calendar"])
+        wrapper.run("imports", VALID_IMPORTS["calendar"]["single"])
+
+    @staticmethod
+    def test_import_str_multi_mode(wrapper_multi_mode: SimpleCompBuilder):
+        wrapper_multi_mode.run("imports", VALID_IMPORTS["calendar"]["multiple"])
+
+    @staticmethod
+    def test_import_str_range_mode(wrapper_range_mode: SimpleCompBuilder):
+        wrapper_range_mode.run("imports", VALID_IMPORTS["calendar"]["range"])
 
     @staticmethod
     def test_content_str(wrapper: SimpleCompBuilder):
         wrapper.run("content", VALID_VALS_MAP["calendar"]["content"]["standard"])
 
     @staticmethod
+    def test_content_str_multi_mode(wrapper_multi_mode: SimpleCompBuilder):
+        wrapper_multi_mode.run(
+            "content", VALID_VALS_MAP["calendar"]["content"]["multiple"]
+        )
+
+    @staticmethod
+    def test_content_str_range_mode(wrapper_range_mode: SimpleCompBuilder):
+        wrapper_range_mode.run(
+            "content", VALID_VALS_MAP["calendar"]["content"]["range"]
+        )
+
+    @staticmethod
     def test_content_str_long_name(wrapper_long: SimpleCompBuilder):
         wrapper_long.run("content", VALID_VALS_MAP["calendar"]["content"]["long_name"])
+
+    @staticmethod
+    def test_content_str_single_all_attrs():
+        calendar = Calendar(
+            name="monthly",
+            mode="single",
+            styles=None,
+            required=True,
+            disable_nav=True,
+            num_months=2,
+            from_year=2023,
+            to_year=2025,
+            from_month=(2023, 1),
+            to_month=(2025, 12),
+            from_date=(2023, 1, 4),
+            to_date=(2025, 12, 6),
+        )
+        builder = SimpleCompBuilder(calendar, COMPONENT_DETAILS_DICT["Calendar"])
+        builder.run(
+            "content", VALID_VALS_MAP["calendar"]["content"]["single_all_attrs"]
+        )
 
     @staticmethod
     def test_id_validation_whitespace():
@@ -104,6 +181,26 @@ class TestCalendar:
     @staticmethod
     def test_id_validation_camelcase():
         Calendar(name="testCorrect")
+
+    @staticmethod
+    def test_min_validation_error():
+        with pytest.raises(ValidationError):
+            Calendar(name="monthly", min=50)
+
+    @staticmethod
+    def test_max_validation_error():
+        with pytest.raises(ValidationError):
+            Calendar(name="monthly", max=50)
+
+    @staticmethod
+    def test_required_validation_error_mode_multiple():
+        with pytest.raises(ValidationError):
+            Calendar(name="monthly", mode="multiple", required=True)
+
+    @staticmethod
+    def test_required_validation_error_mode_range():
+        with pytest.raises(ValidationError):
+            Calendar(name="monthly", mode="range", required=True)
 
 
 class TestCheckbox:

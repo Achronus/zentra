@@ -1,3 +1,4 @@
+from zentra.core.enums.ui import CalendarMode
 from zentra.ui.control import Calendar, Collapsible, Pagination
 from zentra.ui.navigation import DDMCheckboxGroup, DropdownMenu, DDMRadioGroup
 from zentra.ui.presentation import Progress
@@ -12,20 +13,17 @@ def calendar_logic(comp: Calendar) -> list[str]:
     """Returns a list of strings for the `Calendar` logic based on the given name value."""
     assignment = hook_assignment(comp.use_state_names[0], comp.use_state_names[1])
 
-    if comp.mode == "single":
+    if comp.mode == CalendarMode.SINGLE.value:
         return [f"{assignment} useState<Date | undefined>(new Date());"]
-    elif comp.mode == "multiple":
+    elif comp.mode == CalendarMode.MULTIPLE.value:
         return [
             "const initiallySelectedDates = [new Date(), addDays(new Date(), 1)];",
             f"{assignment} useState<Date[]>([]);",
         ]
     else:
-        assignment = hook_assignment(
-            comp.use_state_names_range[0], comp.use_state_names_range[1]
-        )
         return [
             f"{assignment}"
-            + "useState<DateRange | undefined>({ from: new Date(), to: addDays(new Date(), 4)};",
+            + " useState<DateRange | undefined>({ from: new Date(), to: addDays(new Date(), 4)});",
         ]
 
 

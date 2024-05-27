@@ -24,6 +24,7 @@ from cli.templates.ui.content import (
     button_content,
     checkbox_content,
     collapsible_content,
+    command_content,
     date_picker_content,
     dropdown_menu_content,
     input_otp_content,
@@ -166,6 +167,7 @@ COMPONENT_CONTENT_MAPPING = {
     "AspectRatio": lambda ar: aspect_ratio_content(ar),
     "Popover": lambda pop: popover_content(pop),
     "DatePicker": lambda dp: date_picker_content(dp),
+    "Command": lambda cmd: command_content(cmd),
 }
 
 

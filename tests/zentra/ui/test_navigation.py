@@ -16,6 +16,9 @@ from zentra.ui.navigation import (
     BCItem,
     BCTrigger,
     Breadcrumb,
+    Command,
+    CommandGroup,
+    CommandItem,
     DDMCheckboxGroup,
     DDMGroup,
     DDMItem,
@@ -368,3 +371,140 @@ class TestBreadcrumb:
         wrapper_text_trigger.run(
             "imports", VALID_IMPORTS["breadcrumb"]["text_trigger"], list_output=True
         )
+
+
+class TestCommand:
+    @pytest.fixture
+    def command_simple(self) -> Command:
+        return Command(items=[CommandGroup(items=["Calendar", "Search Emoji"])])
+
+    @pytest.fixture
+    def command_simple_links(self) -> Command:
+        return Command(
+            items=[
+                CommandGroup(
+                    items=[
+                        CommandItem(
+                            text=Link(href="/", text="Calendar"),
+                            icon=LucideIcon(name="Calendar"),
+                        ),
+                        CommandItem(
+                            text=Link(href="/", text="Search Emoji"),
+                            icon=LucideIcon(name="Smile"),
+                        ),
+                    ],
+                    heading="Suggestions",
+                )
+            ]
+        )
+
+    @pytest.fixture
+    def command_group_simple(self) -> Command:
+        return Command(
+            items=[
+                CommandGroup(
+                    items=[
+                        CommandItem(text="Calendar"),
+                        CommandItem(text="Search Emoji"),
+                    ],
+                    heading="Suggestions",
+                )
+            ]
+        )
+
+    @pytest.fixture
+    def command_multi_groups(self) -> Command:
+        return Command(
+            items=[
+                CommandGroup(
+                    items=[
+                        CommandItem(text="Calendar", icon=LucideIcon(name="Calendar")),
+                        CommandItem(text="Search Emoji", icon=LucideIcon(name="Smile")),
+                        CommandItem(
+                            text="Calculator", icon=LucideIcon(name="Calculator")
+                        ),
+                    ],
+                    heading="Suggestions",
+                ),
+                CommandGroup(
+                    items=[
+                        CommandItem(
+                            text="Profile",
+                            icon=LucideIcon(name="User"),
+                            shortcut_key="⌘P",
+                        ),
+                        CommandItem(
+                            text="Billing",
+                            icon=LucideIcon(name="CreditCard"),
+                            shortcut_key="⌘B",
+                        ),
+                        CommandItem(
+                            text="Settings",
+                            icon=LucideIcon(name="Settings"),
+                            shortcut_key="⌘S",
+                        ),
+                    ],
+                    heading="Settings",
+                ),
+            ]
+        )
+
+    @pytest.fixture
+    def wrapper_simple(self, command_simple: Command) -> SimpleCompBuilder:
+        return SimpleCompBuilder(command_simple, COMPONENT_DETAILS_DICT["Command"])
+
+    @pytest.fixture
+    def wrapper_simple_links(self, command_simple_links: Command) -> SimpleCompBuilder:
+        return SimpleCompBuilder(
+            command_simple_links, COMPONENT_DETAILS_DICT["Command"]
+        )
+
+    @pytest.fixture
+    def wrapper_group_simple(self, command_group_simple: Command) -> SimpleCompBuilder:
+        return SimpleCompBuilder(
+            command_group_simple, COMPONENT_DETAILS_DICT["Command"]
+        )
+
+    @pytest.fixture
+    def wrapper_multi_groups(self, command_multi_groups: Command) -> SimpleCompBuilder:
+        return SimpleCompBuilder(
+            command_multi_groups, COMPONENT_DETAILS_DICT["Command"]
+        )
+
+    @staticmethod
+    def test_content_str_simple(wrapper_simple: SimpleCompBuilder):
+        wrapper_simple.run("content", VALID_VALS_MAP["command"]["content"]["simple"])
+
+    @staticmethod
+    def test_content_str_simple_links(wrapper_simple_links: SimpleCompBuilder):
+        wrapper_simple_links.run(
+            "content", VALID_VALS_MAP["command"]["content"]["simple_links"]
+        )
+
+    @staticmethod
+    def test_content_str_group_simple(wrapper_group_simple: SimpleCompBuilder):
+        wrapper_group_simple.run(
+            "content", VALID_VALS_MAP["command"]["content"]["group_simple"]
+        )
+
+    @staticmethod
+    def test_content_str_multi_groups(wrapper_multi_groups: SimpleCompBuilder):
+        wrapper_multi_groups.run(
+            "content", VALID_VALS_MAP["command"]["content"]["multi_groups"]
+        )
+
+    @staticmethod
+    def test_import_str_simple(wrapper_simple: SimpleCompBuilder):
+        wrapper_simple.run("imports", VALID_IMPORTS["command"]["simple"])
+
+    @staticmethod
+    def test_import_str_simple_links(wrapper_simple_links: SimpleCompBuilder):
+        wrapper_simple_links.run("imports", VALID_IMPORTS["command"]["simple_links"])
+
+    @staticmethod
+    def test_import_str_group_simple(wrapper_group_simple: SimpleCompBuilder):
+        wrapper_group_simple.run("imports", VALID_IMPORTS["command"]["group_simple"])
+
+    @staticmethod
+    def test_import_str_multi_groups(wrapper_multi_groups: SimpleCompBuilder):
+        wrapper_multi_groups.run("imports", VALID_IMPORTS["command"]["multi_groups"])

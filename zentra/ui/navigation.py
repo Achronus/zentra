@@ -204,13 +204,48 @@ class ContextMenu(Component, ShadcnUi):
     """
 
 
+class CommandItem(DDMItem, ShadcnUi):
+    """
+    A helper Zentra model for the [Shadcn/ui Command](https://ui.shadcn.com/docs/components/command) component. Represents a single menu item.
+
+    Cannot be used on its own, must be used inside a `zentra.ui.navigation.CommandGroup` model.
+
+    Parameters:
+    - `text` (`string | zentra.nextjs.Link`) - the text or `Link` model to display in the menu item. When `Link` model, `Link.text` and `Link.href` attributes are required
+    - `icon` (`zentra.core.react.LucideIcon, optional`) - a [Lucide React Icon](https://lucide.dev/icons) added before the text. `None` by default
+    - `shortcut_key` (`string, optional`) - the shortcut key for the menu item. `None` by default
+    - `disabled` (`boolean, optional`) - adds the disabled property, preventing it from being clicked. `False` by default
+    """
+
+
+class CommandGroup(Component, ShadcnUi):
+    """
+    A Zentra model for the [Shadcn/ui Command](https://ui.shadcn.com/docs/components/command) component. Represents a single menu group.
+
+    Cannot be used on its own, must be used inside a `zentra.ui.navigation.Command` model.
+
+    Parameters:
+    - `items` (`list[string | zentra.ui.navigation.CommandItem]`) - a list of `strings` and/or `CommandItem` models
+    - `heading` (`string, optional`) - The title displayed at the top of the menu group. `None` by default
+    """
+
+    items: list[str | CommandItem]
+    heading: Optional[str] = None
+
+
 class Command(Component, ShadcnUi):
     """
     A Zentra model for the [Shadcn/ui Command](https://ui.shadcn.com/docs/components/command) component.
 
     Parameters:
-    - `name` (`str`) - the name of the component
+    - `items` (`zentra.ui.navigation.CommandGroup | list[zentra.ui.navigation.CommandGroup]`) - a single or list of `CommandGroup` models
+    - `input_text` (`string, optional`) - the placeholder text to display in the `CommandInput` search box. `Type a command or search...` by default
+    - `styles` (`string, optional`) - a set of custom CSS classes to apply to the command component. Automatically adds them to `className`. `rounded-lg border shadow-md` by default
     """
+
+    items: CommandGroup | list[CommandGroup]
+    input_text: str = "Type a command or search..."
+    styles: Optional[str] = "rounded-lg border shadow-md"
 
 
 class BCTrigger(Component, ShadcnUi):

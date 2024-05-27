@@ -259,4 +259,19 @@ COMPONENT_DETAILS_DICT = {
             "PopoverContent",
         ],
     ),
+    "Command": ComponentDetails(
+        library="ui",
+        filename="command.jsx",
+        name="Command",
+        child_names=[
+            "CommandDialog",
+            "CommandInput",
+            "CommandList",
+            "CommandEmpty",
+            "CommandGroup",
+            "CommandItem",
+            "CommandShortcut",
+            "CommandSeparator",
+        ],
+    ),
 }

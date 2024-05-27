@@ -109,6 +109,12 @@ VALID_IMPORTS = {
             'import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"',
         ],
     },
+    "command": {
+        "simple": 'import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"',
+        "simple_links": 'import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"\nimport Link from \'next/link\'\nimport { Calendar, Smile } from "lucide-react"',
+        "group_simple": 'import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"',
+        "multi_groups": 'import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator, CommandShortcut } from "@/components/ui/command"\nimport { Calculator, Calendar, CreditCard, Settings, Smile, User } from "lucide-react"',
+    },
     # MODAL COMPONENTS
     "popover": {
         "advanced": 'import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"\nimport { Button } from "@/components/ui/button"\nimport { Input } from "@/components/ui/input"\nimport { Label } from "@/components/ui/label"',

@@ -34,6 +34,9 @@ from zentra.ui.navigation import (
     BCDropdownMenu,
     BCItem,
     Breadcrumb,
+    Command,
+    CommandGroup,
+    CommandItem,
     DDMCheckboxGroup,
     DDMGroup,
     DDMItem,
@@ -110,6 +113,51 @@ def build_html_tag(
         return content, comp_storage
 
     return content
+
+
+def handle_menu_item(
+    item: DDMItem | CommandItem, comp_name: str
+) -> tuple[list[str], JSXComponentExtras]:
+    """A helper function for handling the creation of a single menu item's content."""
+    content, storage = [], JSXComponentExtras()
+    icon_content, shortcut_content = [None], [None]
+    item_attrs = "disabled" if item.disabled else ""
+
+    if item.icon:
+        icon_content, icon_storage = build_icon(item.icon, output_storage=True)
+        add_to_storage(storage, icon_storage, extend=True)
+
+    if item.shortcut_key:
+        shortcut_content = [add_wrapper(f"{comp_name}Shortcut", item.shortcut_key)]
+
+    if isinstance(item.text, str):
+        text_content = [
+            *icon_content,
+            f"<span>{item.text}</span>",
+            *shortcut_content,
+        ]
+    else:
+        link_content, link_storage = build_component(item.text, output_storage=True)
+        start, middle, end = link_content
+        text_content = [
+            start,
+            *icon_content,
+            f"<span>{middle}</span>",
+            *shortcut_content,
+            end,
+        ]
+        item_attrs += " asChild"
+        add_to_storage(storage, link_storage, extend=True)
+
+    content.extend([text_str for text_str in text_content if text_str is not None])
+    content = [
+        add_wrapper(
+            name=f"{comp_name}Item",
+            content=content,
+            attrs=item_attrs.lstrip(),
+        )
+    ]
+    return content, storage
 
 
 def add_wrapper(name: str, content: str | list[str], attrs: str = None) -> str:
@@ -708,48 +756,6 @@ def dropdown_menu_content(dd: DropdownMenu) -> tuple[list[str], JSXComponentExtr
 
         return content
 
-    def create_ddm_item(item: DDMItem) -> tuple[list[str], JSXComponentExtras]:
-        """Handles the creation of the `DDMItem` model content."""
-        content, storage = [], JSXComponentExtras()
-        icon_content, shortcut_content = [None], [None]
-        item_attrs = "disabled" if item.disabled else ""
-
-        if item.icon:
-            icon_content, icon_storage = build_icon(item.icon, output_storage=True)
-            add_to_storage(storage, icon_storage, extend=True)
-
-        if item.shortcut_key:
-            shortcut_content = [add_wrapper("DropdownMenuShortcut", item.shortcut_key)]
-
-        if isinstance(item.text, str):
-            text_content = [
-                *icon_content,
-                f"<span>{item.text}</span>",
-                *shortcut_content,
-            ]
-        else:
-            link_content, link_storage = build_component(item.text, output_storage=True)
-            start, middle, end = link_content
-            text_content = [
-                start,
-                *icon_content,
-                f"<span>{middle}</span>",
-                *shortcut_content,
-                end,
-            ]
-            item_attrs += " asChild"
-            add_to_storage(storage, link_storage, extend=True)
-
-        content.extend([text_str for text_str in text_content if text_str is not None])
-        content = [
-            add_wrapper(
-                name="DropdownMenuItem",
-                content=content,
-                attrs=item_attrs.lstrip(),
-            )
-        ]
-        return content, storage
-
     def create_str_item(item: str) -> list[str]:
         return [add_wrapper("DropdownMenuItem", item)]
 
@@ -765,12 +771,12 @@ def dropdown_menu_content(dd: DropdownMenu) -> tuple[list[str], JSXComponentExtr
             item_content = [item.content_str]
             item_storage = None
         else:
-            item_content, item_storage = create_ddm_item(item)
+            item_content, item_storage = handle_menu_item(item, "DropdownMenu")
 
         return item_content, item_storage
 
     def ddm_sub_group(sub: DDMSubGroup) -> tuple[list[str], JSXComponentExtras]:
-        inner_content, storage = create_ddm_item(sub.trigger)
+        inner_content, storage = handle_menu_item(sub.trigger, "DropdownMenu")
         inner_content[0] = inner_content[0].replace(
             "DropdownMenuItem", "DropdownMenuSubTrigger"
         )
@@ -1027,4 +1033,47 @@ def date_picker_content(dp: DatePicker) -> tuple[list[str], JSXComponentExtras]:
     else:
         content = single_mode_content(btn_content, calendar_content)
 
+    return content, storage
+
+
+def command_content(cmd: Command) -> tuple[list[str], JSXComponentExtras]:
+    """Returns a list of strings for the `Command` content based on the components attributes."""
+
+    def cmd_group(group: CommandGroup) -> tuple[list[str], JSXComponentExtras]:
+        content, storage = [], JSXComponentExtras()
+
+        for item in group.items:
+            if isinstance(item, str):
+                content.append(add_wrapper("CommandItem", item))
+            else:
+                item_content, item_storage = handle_menu_item(item, "Command")
+                storage = add_to_storage(storage, item_storage, extend=True)
+                content.extend(item_content)
+
+        group_attrs = f'heading="{group.heading}"' if group.heading else ""
+        content = str_to_list(add_wrapper("CommandGroup", content, attrs=group_attrs))
+        content.append("<CommandSeparator />")
+        return content, storage
+
+    content, storage = [], JSXComponentExtras()
+
+    if isinstance(cmd.items, CommandGroup):
+        cmd.items = [cmd.items]
+
+    for group in cmd.items:
+        group_content, group_storage = cmd_group(group)
+        content.extend(group_content)
+        storage = add_to_storage(storage, group_storage, extend=True)
+
+    content.pop(-1)  # remove extra separator
+
+    cmd_list_content = add_wrapper(
+        "CommandList",
+        [add_wrapper("CommandEmpty", "No results found."), *content],
+    )
+
+    content = [
+        f'<CommandInput placeholder="{cmd.input_text}" />',
+        *str_to_list(cmd_list_content),
+    ]
     return content, storage

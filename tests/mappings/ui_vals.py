@@ -264,6 +264,15 @@ BREADCRUMB_VALID_VALS = {
     }
 }
 
+COMMAND_VALID_VALS = {
+    "content": {
+        "simple": '<Command className="rounded-lg border shadow-md">\n<CommandInput placeholder="Type a command or search..." />\n<CommandList>\n<CommandEmpty>\nNo results found.\n</CommandEmpty>\n<CommandGroup>\n<CommandItem>\nCalendar\n</CommandItem>\n<CommandItem>\nSearch Emoji\n</CommandItem>\n</CommandGroup>\n</CommandList>\n</Command>',
+        "simple_links": '<Command className="rounded-lg border shadow-md">\n<CommandInput placeholder="Type a command or search..." />\n<CommandList>\n<CommandEmpty>\nNo results found.\n</CommandEmpty>\n<CommandGroup heading="Suggestions">\n<CommandItem asChild>\n<Link href="/">\n<Calendar className="mr-2 h-4 w-4" />\n<span>Calendar</span>\n</Link>\n</CommandItem>\n<CommandItem asChild>\n<Link href="/">\n<Smile className="mr-2 h-4 w-4" />\n<span>Search Emoji</span>\n</Link>\n</CommandItem>\n</CommandGroup>\n</CommandList>\n</Command>',
+        "group_simple": '<Command className="rounded-lg border shadow-md">\n<CommandInput placeholder="Type a command or search..." />\n<CommandList>\n<CommandEmpty>\nNo results found.\n</CommandEmpty>\n<CommandGroup heading="Suggestions">\n<CommandItem>\n<span>Calendar</span>\n</CommandItem>\n<CommandItem>\n<span>Search Emoji</span>\n</CommandItem>\n</CommandGroup>\n</CommandList>\n</Command>',
+        "multi_groups": '<Command className="rounded-lg border shadow-md">\n<CommandInput placeholder="Type a command or search..." />\n<CommandList>\n<CommandEmpty>\nNo results found.\n</CommandEmpty>\n<CommandGroup heading="Suggestions">\n<CommandItem>\n<Calendar className="mr-2 h-4 w-4" />\n<span>Calendar</span>\n</CommandItem>\n<CommandItem>\n<Smile className="mr-2 h-4 w-4" />\n<span>Search Emoji</span>\n</CommandItem>\n<CommandItem>\n<Calculator className="mr-2 h-4 w-4" />\n<span>Calculator</span>\n</CommandItem>\n</CommandGroup>\n<CommandSeparator />\n<CommandGroup heading="Settings">\n<CommandItem>\n<User className="mr-2 h-4 w-4" />\n<span>Profile</span>\n<CommandShortcut>\n⌘P\n</CommandShortcut>\n</CommandItem>\n<CommandItem>\n<CreditCard className="mr-2 h-4 w-4" />\n<span>Billing</span>\n<CommandShortcut>\n⌘B\n</CommandShortcut>\n</CommandItem>\n<CommandItem>\n<Settings className="mr-2 h-4 w-4" />\n<span>Settings</span>\n<CommandShortcut>\n⌘S\n</CommandShortcut>\n</CommandItem>\n</CommandGroup>\n</CommandList>\n</Command>',
+    },
+}
+
 # UI MODAL COMPONENTS
 POPOVER_VALID_VALS = {
     "content": {
@@ -303,6 +312,7 @@ VALID_VALS_MAP = {
     "table": TABLE_VALID_VALS,
     "popover": POPOVER_VALID_VALS,
     "date_picker": DATE_PICKER_VALID_VALS,
+    "command": COMMAND_VALID_VALS,
 }
 
 

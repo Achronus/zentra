@@ -213,12 +213,12 @@ ASPECT_RATIO_VALID_VALS = {
 
 PROGRESS_VALID_VALS = {
     "content": {
-        "simple": '<Progress className="w-[60%]" value={progress} />',
-        "custom": '<Progress className="w-full" value={progress} />',
+        "simple": '<Progress className="w-[60%]" value={progressValue} />',
+        "custom": '<Progress className="w-full" value={progressValue} />',
     },
     "logic": {
-        "simple": "const [progress, setProgress] = useState(0);\nuseEffect(() =< {\nconst timer = setTimeout(() => setProgress(10), 100);\nreturn () => clearTimeout(timer);\n}, [])",
-        "custom": "const [progress, setProgress] = useState(0);\nuseEffect(() =< {\nconst timer = setTimeout(() => setProgress(66), 500);\nreturn () => clearTimeout(timer);\n}, [])",
+        "simple": "const [progressValue, progressSetValue] = useState(0);\nuseEffect(() => {\nconst timer = setTimeout(() => progressSetValue(10), 100);\nreturn () => {\nclearTimeout(timer);\n};\n}, [])",
+        "custom": "const [progressValue, progressSetValue] = useState(0);\nuseEffect(() => {\nconst timer = setTimeout(() => progressSetValue(66), 500);\nreturn () => {\nclearTimeout(timer);\n};\n}, [])",
     },
 }
 
@@ -250,7 +250,7 @@ DROPDOWN_MENU_VALID_VALS = {
         "with_links": '<DropdownMenu>\n<DropdownMenuTrigger>\nopen\n</DropdownMenuTrigger>\n<DropdownMenuContent className="w-56">\n<DropdownMenuLabel>\nAccount Settings\n</DropdownMenuLabel>\n<DropdownMenuSeparator />\n<DropdownMenuGroup>\n<DropdownMenuLabel>\nCore Settings\n</DropdownMenuLabel>\n<DropdownMenuItem>\n<User className="mr-2 h-4 w-4" />\n<span>Profile</span>\n</DropdownMenuItem>\n<DropdownMenuItem disabled asChild>\n<Link href="/billing">\n<CreditCard className="mr-2 h-4 w-4" />\n<span>Billing</span>\n<DropdownMenuShortcut>\n⌘B\n</DropdownMenuShortcut>\n</Link>\n</DropdownMenuItem>\n<DropdownMenuItem asChild>\n<Link href="/settings">\n<span>Settings</span>\n</Link>\n</DropdownMenuItem>\n<DropdownMenuItem asChild>\n<Link href="/settings">\n<span>Settings</span>\n<DropdownMenuShortcut>\n⌘B\n</DropdownMenuShortcut>\n</Link>\n</DropdownMenuItem>\n</DropdownMenuGroup>\n</DropdownMenuContent>\n</DropdownMenu>',
     },
     "logic": {
-        "radio_group": 'const [ddTopPosition, ddSetTopPosition] = useState("top")\nconst [ddBottomPosition, ddSetBottomPosition] = useState("bottom")\nconst [ddRightPosition, ddSetRightPosition] = useState("right")',
+        "radio_group": 'const [ddTopPosition, ddSetTopPosition] = useState("top");\nconst [ddBottomPosition, ddSetBottomPosition] = useState("bottom");\nconst [ddRightPosition, ddSetRightPosition] = useState("right");',
         "checkbox": "const [ddCheckboxShowStatusBar, ddCheckboxSetShowStatusBar] = useState<Checked>(true);\nconst [ddCheckboxShowActivityBar, ddCheckboxSetShowActivityBar] = useState<Checked>(false);\nconst [ddCheckboxShowPanel, ddCheckboxSetShowPanel] = useState<Checked>(false);",
         "str_list": "",
         "full": "",

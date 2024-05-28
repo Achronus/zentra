@@ -189,12 +189,14 @@ class Progress(Component, ShadcnUi):
     - `min` (`integer, optional`) - the minimum size of the progress bar. Assigned as the initial value of the `useState` hook. `0` by default
     - `max` (`integer, optional`) - the maximum size of the progress bar. Assigned as the maximum value of the `setTimeout` function in the `useEffect` hook. `100` by default
     - `styles` (`string, optional`) - a set of custom CSS classes to apply to the progress bar. Automatically adds them to `className`. `w-[60%]` by default
+    - `hook_name` (`string, optional`) - the prepended name added to all `use` hook values. For example, `hook_name='progress'` = `[progressValue, progressSetValue]`. `progress` by default
     """
 
     value: int = 10
     min: int = 0
     max: int = 100
     styles: Optional[str] = "w-[60%]"
+    hook_name: str = "progress"
 
     @property
     def custom_common_attributes(self) -> list[str]:
@@ -203,7 +205,11 @@ class Progress(Component, ShadcnUi):
     @property
     def use_state_names(self) -> tuple[str, str]:
         """Defines the `useState` hook `get` and `set` names."""
-        return ["progress", "setProgress"]
+        return [f"{self.hook_name}Value", f"{self.hook_name}SetValue"]
+
+    @field_validator("hook_name")
+    def validate_hook_name(cls, name: str) -> str:
+        return name.lower()
 
 
 class Resizeable(Component, ShadcnUi):

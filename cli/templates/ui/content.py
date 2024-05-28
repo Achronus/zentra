@@ -948,7 +948,10 @@ def aspect_ratio_content(ar: AspectRatio) -> tuple[list[str], JSXComponentExtras
 
 def popover_content(pop: Popover) -> tuple[list[str], JSXComponentExtras]:
     """Returns a list of strings for the `Popover` content based on the components attributes."""
-    inner_content, storage = build_html_tag(pop.content, output_storage=True)
+    if isinstance(pop.content, str):
+        inner_content, storage = [pop.content], JSXComponentExtras()
+    else:
+        inner_content, storage = build_html_tag(pop.content, output_storage=True)
 
     if isinstance(pop.trigger, str):
         trigger_content = [pop.trigger]
@@ -978,57 +981,37 @@ def popover_content(pop: Popover) -> tuple[list[str], JSXComponentExtras]:
 def date_picker_content(dp: DatePicker) -> tuple[list[str], JSXComponentExtras]:
     """Returns a list of strings for the `DatePicker` content based on the components attributes."""
 
-    def create_btn() -> tuple[list[str], JSXComponentExtras]:
-        content, storage = build_component(
-            Button(
-                variant="outline",
-                content=LucideIconWithText(
-                    name="CalendarDays", text=compress(dp.trigger_text)
-                ),
-            ),
-            output_storage=True,
-        )
-        content[0] = content[0].replace(
-            ">", f" {param_attr("className", dp.trigger_styles)}>"
-        )
-        return content, storage
+    def handle_range_mode_content(content: list[str]) -> list[str]:
+        for idx, item in enumerate(reversed(content)):
+            if "<Calendar " in item:
+                content[-(idx + 1)] = item.replace(
+                    "/>", "defaultMonth={datePickerDateRange?.from} />"
+                )
 
-    def single_mode_content(
-        btn_content: list[str], calendar_content: list[str]
-    ) -> list[str]:
-        return [
-            add_wrapper("PopoverTrigger", btn_content, attrs="asChild"),
-            add_wrapper(
-                "PopoverContent",
-                calendar_content,
-                attrs=f'{str_attr("className", dp.styles) if dp.styles else ''}',
-            ),
-        ]
+            if "<PopoverContent" in item:
+                content[-(idx + 1)] = item.replace(">", ' align="start">')
+                break
 
-    def range_mode_content(
-        btn_content: list[str], calendar_content: list[str]
-    ) -> list[str]:
-        calendar_content = calendar_content[0].replace(
-            "/>", f"defaultMonth={{{dp.content.use_state_names[0]}?.from}} />"
-        )
+        return str_to_list(add_wrapper("div", content, attrs='className="grid gap-2"'))
 
-        return [
-            add_wrapper("PopoverTrigger", btn_content, attrs="asChild"),
-            add_wrapper(
-                "PopoverContent",
-                calendar_content,
-                attrs=f'{str_attr("className", dp.styles) if dp.styles else ''} align="start"',
-            ),
-        ]
+    btn = Button(
+        variant="outline",
+        content=LucideIconWithText(name="CalendarDays", text=compress(dp.trigger_text)),
+        styles=dp.trigger_styles,
+    )
 
-    btn_content, storage = create_btn()
     calendar_content, cal_storage = build_component(dp.content, output_storage=True)
+    popover = Popover(
+        trigger=btn,
+        content=calendar_content[0],
+        styles=dp.styles,
+    )
+
+    content, storage = build_component(popover, output_storage=True)
     storage = add_to_storage(storage, cal_storage, extend=True)
 
     if dp.calendar_mode == CalendarMode.RANGE.value:
-        content = range_mode_content(btn_content, calendar_content)
-    else:
-        content = single_mode_content(btn_content, calendar_content)
+        content = handle_range_mode_content(content)
 
     return content, storage
 

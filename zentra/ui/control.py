@@ -255,8 +255,6 @@ class DatePicker(Component, ShadcnUi):
     content: Calendar
     styles: Optional[str] = None
 
-    _container_name = PrivateAttr(default="Popover")
-
     @property
     def custom_common_attributes(self) -> list[str]:
         return ["styles"]
@@ -292,6 +290,10 @@ class DatePicker(Component, ShadcnUi):
     def calendar_mode(self) -> str:
         """Defines the mode of the calendar. Required for component wrapper when `mode='range'`."""
         return self.content.mode
+
+    @property
+    def composition_only(self) -> bool:
+        return True
 
 
 class Input(Component, ShadcnUi):

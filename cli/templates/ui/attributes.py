@@ -73,6 +73,14 @@ def size_attribute(value: str | int, attr_name: str = "size") -> str:
         return param_attr(attr_name, value)
 
 
+def style_attribute(value: str, attr_name: str = "className") -> str:
+    """Returns a string for the `style` attribute based on its given value."""
+    if value.startswith("cn("):
+        return param_attr(attr_name, value)
+
+    return str_attr(attr_name, value)
+
+
 def src_attribute(value: str | StaticImage, attr_name: str = "src") -> str:
     """Returns a string for the `src` attribute based on its given value."""
     if isinstance(value, str):

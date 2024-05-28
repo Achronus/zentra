@@ -105,7 +105,10 @@ class ImportBuilder:
     def build(self) -> list[str]:
         """Builds the import statements for the component."""
         additional_imports = self.additional_imports()
-        imports = [self.core_import()]
+        imports = []
+
+        if not self.component.composition_only:
+            imports.append(self.core_import())
 
         if additional_imports:
             imports.extend(additional_imports)

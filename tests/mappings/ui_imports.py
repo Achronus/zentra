@@ -43,9 +43,9 @@ VALID_IMPORTS = {
     },
     "toggle_group": 'import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"\nimport { Bold, Italic, Underline } from "lucide-react"',
     "date_picker": {
-        "single": '"use client"\nimport { useState } from "react"\nimport { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"\nimport { format } from "date-fns"\nimport { cn } from "@/lib/utils"\nimport { Calendar } from "@/components/ui/calendar"\nimport { Button } from "@/components/ui/button"\nimport { CalendarDays } from "lucide-react"',
-        "multiple": '"use client"\nimport { useState } from "react"\nimport { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"\nimport { format } from "date-fns"\nimport { cn } from "@/lib/utils"\nimport { Calendar } from "@/components/ui/calendar"\nimport { Button } from "@/components/ui/button"\nimport { CalendarDays } from "lucide-react"',
-        "range": '"use client"\nimport { useState } from "react"\nimport { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"\nimport { addDays, format } from "date-fns"\nimport { cn } from "@/lib/utils"\nimport { Calendar } from "@/components/ui/calendar"\nimport { DateRange } from "react-day-picker"\nimport { Button } from "@/components/ui/button"\nimport { CalendarDays } from "lucide-react"',
+        "single": '"use client"\nimport { useState } from "react"\nimport { format } from "date-fns"\nimport { cn } from "@/lib/utils"\nimport { Calendar } from "@/components/ui/calendar"\nimport { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"\nimport { Button } from "@/components/ui/button"\nimport { CalendarDays } from "lucide-react"',
+        "multiple": '"use client"\nimport { useState } from "react"\nimport { format } from "date-fns"\nimport { cn } from "@/lib/utils"\nimport { Calendar } from "@/components/ui/calendar"\nimport { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"\nimport { Button } from "@/components/ui/button"\nimport { CalendarDays } from "lucide-react"',
+        "range": '"use client"\nimport { useState } from "react"\nimport { addDays, format } from "date-fns"\nimport { cn } from "@/lib/utils"\nimport { Calendar } from "@/components/ui/calendar"\nimport { DateRange } from "react-day-picker"\nimport { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"\nimport { Button } from "@/components/ui/button"\nimport { CalendarDays } from "lucide-react"',
     },
     # NOTIFICATION COMPONENTS
     "alert": {

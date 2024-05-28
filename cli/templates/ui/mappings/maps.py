@@ -13,6 +13,7 @@ from cli.templates.ui.attributes import (
     slider_attributes,
     src_attribute,
     str_attr,
+    style_attribute,
     toggle_attributes,
 )
 from cli.templates.ui.content import (
@@ -68,7 +69,6 @@ from cli.templates.ui.logic import (
 # (classname, attributes)
 COMPONENTS_TO_WRAP = {
     "Checkbox": 'className="flex items-top space-x-2"',
-    "DatePicker": ("calendar_mode", "range", 'className="grid gap-2"'),
 }
 
 
@@ -106,7 +106,7 @@ COMMON_ATTR_MAPPING = {
     "num_inputs": lambda value: param_attr("maxLength", value),
     "key": lambda key: param_attr("key", key),
     "new_tab": lambda value: str_attr("target", "_blank") if value else None,
-    "styles": lambda value: str_attr("className", value),
+    "styles": lambda value: style_attribute(value),
     "src": lambda value: src_attribute(value),
     "alt": lambda alt: alt_attribute(alt),
     "width": lambda width: param_attr("width", width),

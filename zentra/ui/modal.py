@@ -23,12 +23,12 @@ class Popover(Component, ShadcnUi):
     - `trigger` (`zentra.ui.control.Button | string`) - the item to activate the popover. Can be either:
       1. A Zentra `Button` model
       2. A string of text
-    - `content` (`zentra.core.html.Div`) - a zentra `Div` model containing the content of the popover
+    - `content` (`zentra.core.html.Div | string`) - a zentra `Div` model containing the content of the popover or a string of text
     - `styles` (`string, optional`) - a set of custom CSS classes to apply to the `PopoverContent`. Automatically adds them to its `className`. `None` by default
     """
 
     trigger: Button | str
-    content: Div
+    content: Div | str
     styles: Optional[str] = None
 
     @property

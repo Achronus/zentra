@@ -52,6 +52,11 @@ class Component(BaseModel):
         return []
 
     @property
+    def composition_only(self) -> bool:
+        """Signifies if a component is only made up of other components. When `False`, components have their own shell and import statement."""
+        return False
+
+    @property
     def inner_attributes(self) -> list[str]:
         """Returns a list of the attributes that are used in the components sub-components."""
         return []

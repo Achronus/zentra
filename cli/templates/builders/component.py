@@ -55,8 +55,12 @@ class ComponentBuilder:
             content, storage_extras = content
             self.add_extra_storage(storage_extras)
 
-        self.storage.content = compress(
-            self.apply_content_containers(content=content, full_shell=full_shell)
+        self.storage.content = (
+            compress(content)
+            if self.component.composition_only
+            else compress(
+                self.apply_content_containers(content=content, full_shell=full_shell)
+            )
         )
 
         if self.component.child_names:

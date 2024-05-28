@@ -1,5 +1,3 @@
-from cli.conf.storage import ComponentDetails
-
 from cli.templates.builders import add_to_storage
 from cli.templates.builders.html.utils import get_html_content
 
@@ -17,15 +15,9 @@ from zentra.nextjs import Image
 class FigureBuilder:
     """A builder for creating the `Figure` Zentra HTML model content as JSX."""
 
-    def __init__(
-        self,
-        model: Figure,
-        mappings: FigureMappings,
-        details_dict: dict[str, ComponentDetails],
-    ) -> None:
+    def __init__(self, model: Figure, mappings: FigureMappings) -> None:
         self.model = model
         self.maps = mappings
-        self.details_dict = details_dict
 
         self.caption_builder = FigCaptionBuilder(
             model=model.caption,

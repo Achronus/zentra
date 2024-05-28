@@ -28,6 +28,10 @@ class Alert(Component, ShadcnUi):
     icon: str = None
     variant: AlertVariant = "default"
 
+    @property
+    def child_names(self) -> list[str]:
+        return ["AlertTitle", "AlertDescription"]
+
     @field_validator("icon")
     def validate_icon(cls, icon: str) -> str:
         icon_name = name_from_pascal_case(icon)
@@ -124,6 +128,21 @@ class AlertDialog(Component, ShadcnUi):
     trigger: Button | str = None
     footer: list[Component | Div | HTMLContent] = None
 
+    @property
+    def child_names(self) -> list[str]:
+        return [
+            "AlertDialogPortal",
+            "AlertDialogOverlay",
+            "AlertDialogTrigger",
+            "AlertDialogContent",
+            "AlertDialogHeader",
+            "AlertDialogFooter",
+            "AlertDialogTitle",
+            "AlertDialogDescription",
+            "AlertDialogAction",
+            "AlertDialogCancel",
+        ]
+
 
 class Sonner(Component, ShadcnUi):
     """
@@ -164,3 +183,7 @@ class Tooltip(Component, ShadcnUi):
     @property
     def custom_common_content(self) -> list[str]:
         return ["text"]
+
+    @property
+    def child_names(self) -> list[str]:
+        return ["TooltipTrigger", "TooltipContent", "TooltipProvider"]

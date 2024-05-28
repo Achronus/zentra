@@ -2,7 +2,6 @@ import pytest
 
 from pydantic import ValidationError
 
-from cli.templates.details import COMPONENT_DETAILS_DICT
 from tests.mappings.ui_imports import VALID_IMPORTS
 from tests.mappings.ui_vals import VALID_VALS_MAP
 from tests.templates.helper import SimpleCompBuilder
@@ -38,11 +37,11 @@ class TestSeparator:
 
     @pytest.fixture
     def wrapper(self, separator: Separator) -> SimpleCompBuilder:
-        return SimpleCompBuilder(separator, COMPONENT_DETAILS_DICT["Separator"])
+        return SimpleCompBuilder(separator)
 
     @pytest.fixture
     def wrapper_full(self, separator_full: Separator) -> SimpleCompBuilder:
-        return SimpleCompBuilder(separator_full, COMPONENT_DETAILS_DICT["Separator"])
+        return SimpleCompBuilder(separator_full)
 
     @staticmethod
     def test_content_str(wrapper: SimpleCompBuilder):
@@ -84,15 +83,15 @@ class TestAvatar:
 
     @pytest.fixture
     def wrapper_url(self, avatar_url: Avatar) -> SimpleCompBuilder:
-        return SimpleCompBuilder(avatar_url, COMPONENT_DETAILS_DICT["Avatar"])
+        return SimpleCompBuilder(avatar_url)
 
     @pytest.fixture
     def wrapper_path(self, avatar_path: Avatar) -> SimpleCompBuilder:
-        return SimpleCompBuilder(avatar_path, COMPONENT_DETAILS_DICT["Avatar"])
+        return SimpleCompBuilder(avatar_path)
 
     @pytest.fixture
     def wrapper_static(self, avatar_static: Avatar) -> SimpleCompBuilder:
-        return SimpleCompBuilder(avatar_static, COMPONENT_DETAILS_DICT["Avatar"])
+        return SimpleCompBuilder(avatar_static)
 
     @staticmethod
     def test_content_str_url(wrapper_url: SimpleCompBuilder):
@@ -132,11 +131,11 @@ class TestBadge:
 
     @pytest.fixture
     def wrapper(self, badge: Badge) -> SimpleCompBuilder:
-        return SimpleCompBuilder(badge, COMPONENT_DETAILS_DICT["Badge"])
+        return SimpleCompBuilder(badge)
 
     @pytest.fixture
     def wrapper_outline(self, badge_outline: Badge) -> SimpleCompBuilder:
-        return SimpleCompBuilder(badge_outline, COMPONENT_DETAILS_DICT["Badge"])
+        return SimpleCompBuilder(badge_outline)
 
     @staticmethod
     def test_content_str(wrapper: SimpleCompBuilder):
@@ -186,11 +185,11 @@ class TestAccordion:
 
     @pytest.fixture
     def wrapper_simple(self, accordion_simple: Accordion) -> SimpleCompBuilder:
-        return SimpleCompBuilder(accordion_simple, COMPONENT_DETAILS_DICT["Accordion"])
+        return SimpleCompBuilder(accordion_simple)
 
     @pytest.fixture
     def wrapper_full(self, accordion_full: Accordion) -> SimpleCompBuilder:
-        return SimpleCompBuilder(accordion_full, COMPONENT_DETAILS_DICT["Accordion"])
+        return SimpleCompBuilder(accordion_full)
 
     @staticmethod
     def test_content_str_simple(wrapper_simple: SimpleCompBuilder):
@@ -230,23 +229,17 @@ class TestAspectRatio:
 
     @pytest.fixture
     def wrapper_simple(self, aspect_ratio_simple: AspectRatio) -> SimpleCompBuilder:
-        return SimpleCompBuilder(
-            aspect_ratio_simple, COMPONENT_DETAILS_DICT["AspectRatio"]
-        )
+        return SimpleCompBuilder(aspect_ratio_simple)
 
     @pytest.fixture
     def wrapper_eq_ratio(self, aspect_ratio_eq_ratio: AspectRatio) -> SimpleCompBuilder:
-        return SimpleCompBuilder(
-            aspect_ratio_eq_ratio, COMPONENT_DETAILS_DICT["AspectRatio"]
-        )
+        return SimpleCompBuilder(aspect_ratio_eq_ratio)
 
     @pytest.fixture
     def wrapper_fail_check(
         self, aspect_ratio_fail_check: AspectRatio
     ) -> SimpleCompBuilder:
-        return SimpleCompBuilder(
-            aspect_ratio_fail_check, COMPONENT_DETAILS_DICT["AspectRatio"]
-        )
+        return SimpleCompBuilder(aspect_ratio_fail_check)
 
     @staticmethod
     def test_content_str_simple(wrapper_simple: SimpleCompBuilder):
@@ -284,11 +277,11 @@ class TestProgress:
 
     @pytest.fixture
     def wrapper_simple(self, progress_simple: Progress) -> SimpleCompBuilder:
-        return SimpleCompBuilder(progress_simple, COMPONENT_DETAILS_DICT["Progress"])
+        return SimpleCompBuilder(progress_simple)
 
     @pytest.fixture
     def wrapper_custom(self, progress_custom: Progress) -> SimpleCompBuilder:
-        return SimpleCompBuilder(progress_custom, COMPONENT_DETAILS_DICT["Progress"])
+        return SimpleCompBuilder(progress_custom)
 
     @staticmethod
     def test_content_str_simple(wrapper_simple: SimpleCompBuilder):
@@ -353,27 +346,21 @@ class TestSkeleton:
     def wrapper_simple_custom(
         self, skeleton_simple_custom: Skeleton
     ) -> SimpleCompBuilder:
-        return SimpleCompBuilder(
-            skeleton_simple_custom, COMPONENT_DETAILS_DICT["Skeleton"]
-        )
+        return SimpleCompBuilder(skeleton_simple_custom)
 
     @pytest.fixture
     def wrapper_advanced_custom(
         self, skeleton_advanced_custom: Skeleton
     ) -> SimpleCompBuilder:
-        return SimpleCompBuilder(
-            skeleton_advanced_custom, COMPONENT_DETAILS_DICT["Skeleton"]
-        )
+        return SimpleCompBuilder(skeleton_advanced_custom)
 
     @pytest.fixture
     def wrapper_testimonial(self, skeleton_testimonial: Skeleton) -> SimpleCompBuilder:
-        return SimpleCompBuilder(
-            skeleton_testimonial, COMPONENT_DETAILS_DICT["Skeleton"]
-        )
+        return SimpleCompBuilder(skeleton_testimonial)
 
     @pytest.fixture
     def wrapper_card(self, skeleton_card: Skeleton) -> SimpleCompBuilder:
-        return SimpleCompBuilder(skeleton_card, COMPONENT_DETAILS_DICT["Skeleton"])
+        return SimpleCompBuilder(skeleton_card)
 
     @staticmethod
     def test_content_str_simple_custom(wrapper_simple_custom: SimpleCompBuilder):
@@ -509,15 +496,15 @@ class TestTable:
 
     @pytest.fixture
     def wrapper_text(self, table_text: Table) -> SimpleCompBuilder:
-        return SimpleCompBuilder(table_text, COMPONENT_DETAILS_DICT["Table"])
+        return SimpleCompBuilder(table_text)
 
     @pytest.fixture
     def wrapper_map(self, table_map: Table) -> SimpleCompBuilder:
-        return SimpleCompBuilder(table_map, COMPONENT_DETAILS_DICT["Table"])
+        return SimpleCompBuilder(table_map)
 
     @pytest.fixture
     def wrapper_map_idx_prefix(self, table_map_idx_prefix: Table) -> SimpleCompBuilder:
-        return SimpleCompBuilder(table_map_idx_prefix, COMPONENT_DETAILS_DICT["Table"])
+        return SimpleCompBuilder(table_map_idx_prefix)
 
     @staticmethod
     def test_content_str_text(wrapper_text: SimpleCompBuilder):

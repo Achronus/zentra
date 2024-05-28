@@ -1,5 +1,3 @@
-from cli.conf.storage import ComponentDetails
-
 from cli.templates.builders import FORM_SCHEMA_BASE, JSX_BASE
 from cli.templates.builders.component import ComponentBuilder
 from cli.templates.ui.mappings.storage import JSXMappings
@@ -11,38 +9,21 @@ from zentra.core import Component, Page
 class JSXPageBuilder:
     """A builder for creating Zentra `Page` models as JSX."""
 
-    def __init__(
-        self,
-        page: Page,
-        mappings: JSXMappings,
-        component_details: list[ComponentDetails],
-    ) -> None:
+    def __init__(self, page: Page, mappings: JSXMappings) -> None:
         self.page = page
         self.mappings = mappings
-        self.component_details = component_details
 
         self.storage = JSXPageContentStorage()
         self.use_client = False
         self.form_schema_base = FORM_SCHEMA_BASE
         self.jsx = JSX_BASE
 
-    def get_details(self, component: Component) -> ComponentDetails:
-        """Retrieves the component details for the component."""
-        for details in self.component_details:
-            if component.classname == details.name:
-                return details
-
     def build(self) -> None:
         """Builds the JSX for the page."""
 
         for component in self.page.components:
             self.check_for_use_client(component=component)
-            details = self.get_details(component=component)
-            builder = ComponentBuilder(
-                component=component,
-                mappings=self.mappings,
-                details=details,
-            )
+            builder = ComponentBuilder(component=component, mappings=self.mappings)
             builder.build()
             self.populate_storage(comp_store=builder.storage)
 

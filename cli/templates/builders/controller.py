@@ -1,5 +1,3 @@
-from cli.conf.storage import ComponentDetails
-
 from cli.templates.storage import JSXComponentContentStorage, JSXComponentExtras
 from cli.templates.ui.mappings.storage import ControllerMappings
 from cli.templates.utils import str_to_list
@@ -12,11 +10,8 @@ from zentra.core.react import LucideIcon
 class BuildController:
     """A controller for selecting Zentra model JSX builders."""
 
-    def __init__(
-        self, mappings: ControllerMappings, details_dict: dict[str, ComponentDetails]
-    ) -> None:
+    def __init__(self, mappings: ControllerMappings) -> None:
         self.maps = mappings
-        self.details_dict = details_dict
 
     def build_component(
         self, component: Component, full_shell: bool = False
@@ -24,11 +19,7 @@ class BuildController:
         """Creates the JSX for a `Component` model and returns its details as a tuple in the form of `(content, comp_storage)`."""
         from cli.templates.builders.component import ComponentBuilder
 
-        builder = ComponentBuilder(
-            component=component,
-            mappings=self.maps.component,
-            details=self.details_dict[component.classname],
-        )
+        builder = ComponentBuilder(component=component, mappings=self.maps.component)
         builder.build(full_shell=full_shell)
         return str_to_list(builder.storage.content), builder.storage
 
@@ -39,8 +30,7 @@ class BuildController:
         from cli.templates.builders.nextjs import NextJSComponentBuilder
 
         nextjs = NextJSComponentBuilder(
-            component=component,
-            mappings=self.maps.component,
+            component=component, mappings=self.maps.component
         )
         nextjs.build()
         return str_to_list(nextjs.storage.content), nextjs.storage
@@ -51,11 +41,7 @@ class BuildController:
         """Creates the JSX for a `JSIterable` model and returns its details as a tuple in the form of `(content, multi_comp_storage)`."""
         from cli.templates.builders.js import JSIterableBuilder
 
-        builder = JSIterableBuilder(
-            model=model,
-            mappings=self.maps.js_iterable,
-            details_dict=self.details_dict,
-        )
+        builder = JSIterableBuilder(model=model, mappings=self.maps.js_iterable)
         content = builder.build()
         return content, builder.comp_storage
 
@@ -63,11 +49,7 @@ class BuildController:
         """Creates the JSX for a `HTMLTag` model and returns its details as a tuple in the form of `(content, multi_comp_storage)`."""
         from cli.templates.builders.html import HTMLBuildController
 
-        builder = HTMLBuildController(
-            model=model,
-            mappings=self.maps.html,
-            details_dict=self.details_dict,
-        )
+        builder = HTMLBuildController(model=model, mappings=self.maps.html)
         content, storage = builder.build()
         return content, storage
 

@@ -1,5 +1,3 @@
-from cli.conf.storage import ComponentDetails
-
 from cli.templates.builders import add_to_storage
 from cli.templates.builders.html.content import HTMLContentBuilder
 from cli.templates.builders.html.figure import FigureBuilder
@@ -18,15 +16,9 @@ from zentra.core.html import Div, Figure, HTMLContent
 class DivBuilder:
     """A builder for creating the `Div` Zentra HTML model content as JSX."""
 
-    def __init__(
-        self,
-        model: Div,
-        mappings: DivMappings,
-        details_dict: dict[str, ComponentDetails],
-    ) -> None:
+    def __init__(self, model: Div, mappings: DivMappings) -> None:
         self.model = model
         self.maps = mappings
-        self.details_dict = details_dict
 
         self.storage = JSXComponentExtras()
         self.inner_content = []
@@ -55,7 +47,6 @@ class DivBuilder:
                 component=self.maps.component,
                 html=self.maps,
             ),
-            details_dict=self.details_dict,
         )
         content = builder.build()
         return content, builder.comp_storage
@@ -66,11 +57,7 @@ class DivBuilder:
         """Creates the JSX for a `Component` model and returns its details as a tuple in the form of `(content, comp_storage)`."""
         from cli.templates.builders.component import ComponentBuilder
 
-        builder = ComponentBuilder(
-            component=component,
-            mappings=self.maps.component,
-            details=self.details_dict[component.classname],
-        )
+        builder = ComponentBuilder(component=component, mappings=self.maps.component)
         builder.build(full_shell=full_shell)
         return str_to_list(builder.storage.content), builder.storage
 
@@ -93,11 +80,7 @@ class DivBuilder:
             self.storage = add_to_storage(self.storage, storage)
 
         elif isinstance(item, Figure):
-            builder = FigureBuilder(
-                model=item,
-                mappings=self.maps.figure,
-                details_dict=self.details_dict,
-            )
+            builder = FigureBuilder(model=item, mappings=self.maps.figure)
             content, storage = builder.build()
             self.inner_content.extend(content)
             self.storage = add_to_storage(self.storage, storage, extend=True)

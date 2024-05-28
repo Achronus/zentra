@@ -68,15 +68,6 @@ class CountStorage(BaseModel):
     remove: int = 0
 
 
-class ComponentDetails(BaseModel):
-    """A container for storing core component details extracted from base JSX files."""
-
-    library: str
-    filename: str
-    name: str
-    child_names: list[str]
-
-
 class ModelFileStorage(BaseModel):
     """A storage container for storing Zentra model `(library, filename)` pairs."""
 
@@ -100,5 +91,3 @@ class ModelStorage(BaseModel):
 
     pages: ModelFileStorage = ModelFileStorage()
     components: ModelFileStorage = ModelFileStorage()
-
-    initalised_models: list[ComponentDetails] = []

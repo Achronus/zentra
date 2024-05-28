@@ -213,6 +213,10 @@ class Collapsible(Component, ShadcnUi):
     def custom_common_attributes(self) -> list[str]:
         return ["name"]
 
+    @property
+    def child_names(self) -> list[str]:
+        return ["CollapsibleTrigger", "CollapsibleContent"]
+
     @field_validator("name")
     def validate_id(cls, name: str) -> str:
         if not has_valid_pattern(pattern=LOWER_CAMELCASE_WITH_DIGITS, value=name):
@@ -418,6 +422,10 @@ class InputOTP(Component, ShadcnUi):
     def custom_common_attributes(self) -> list[str]:
         return ["pattern"]
 
+    @property
+    def child_names(self) -> list[str]:
+        return ["InputOTPGroup", "InputOTPSlot", "InputOTPSeparator"]
+
     @field_validator("num_groups")
     def validate_num_groups(num_groups: int, info: ValidationInfo) -> int:
         num_inputs = info.data.get("num_inputs")
@@ -490,6 +498,17 @@ class Pagination(Component, ShadcnUi):
         return ["name"]
 
     @property
+    def child_names(self) -> list[str]:
+        return [
+            "PaginationContent",
+            "PaginationEllipsis",
+            "PaginationItem",
+            "PaginationLink",
+            "PaginationNext",
+            "PaginationPrevious",
+        ]
+
+    @property
     def start_idx_name(self) -> tuple[str, str]:
         """Defines the start index state hook `get` and `set` names."""
         return [f"{self.name}StartIndex", f"{self.name}SetStartIndex"]
@@ -556,6 +575,10 @@ class RadioGroup(Component, ShadcnUi):
 
     items: list[RadioButton]
     default_value: str = Field(min_length=1, max_length=30)
+
+    @property
+    def child_names(self) -> list[str]:
+        return ["RadioGroupItem"]
 
     @field_validator("items")
     def validate_items(cls, items: list[RadioButton]) -> list[RadioButton]:
@@ -760,6 +783,10 @@ class ScrollArea(Component, ShadcnUi):
     def inner_attributes(self) -> list[str]:
         return ["orientation"]
 
+    @property
+    def child_names(self) -> list[str]:
+        return ["ScrollBar"]
+
 
 class SelectGroup(Component, ShadcnUi):
     """
@@ -789,6 +816,17 @@ class Select(Component, ShadcnUi):
     groups: SelectGroup | list[SelectGroup]
     box_width: int = 280
     show_label: bool = True
+
+    @property
+    def child_names(self) -> list[str]:
+        return [
+            "SelectContent",
+            "SelectGroup",
+            "SelectItem",
+            "SelectLabel",
+            "SelectTrigger",
+            "SelectValue",
+        ]
 
 
 class Slider(Component, ShadcnUi):
@@ -939,3 +977,7 @@ class ToggleGroup(Component, ShadcnUi):
     size: ToggleSize = "default"
     variant: ToggleVariant = "default"
     orientation: Orientation = "horizontal"
+
+    @property
+    def child_names(self) -> list[str]:
+        return ["ToggleGroupItem"]

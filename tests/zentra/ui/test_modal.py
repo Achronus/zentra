@@ -1,6 +1,5 @@
 import pytest
 
-from cli.templates.details import COMPONENT_DETAILS_DICT
 from tests.mappings.ui_imports import VALID_IMPORTS
 from tests.mappings.ui_vals import VALID_VALS_MAP
 from tests.templates.helper import SimpleCompBuilder
@@ -89,7 +88,7 @@ class TestPopover:
 
     @pytest.fixture
     def wrapper_advanced(self, popover_advanced: Popover) -> SimpleCompBuilder:
-        return SimpleCompBuilder(popover_advanced, COMPONENT_DETAILS_DICT["Popover"])
+        return SimpleCompBuilder(popover_advanced)
 
     @staticmethod
     def test_content_str_advanced(wrapper_advanced: SimpleCompBuilder):

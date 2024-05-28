@@ -1,4 +1,3 @@
-from cli.conf.storage import ComponentDetails
 from cli.templates.builders import add_to_storage
 from cli.templates.storage import JSXComponentContentStorage, JSXComponentExtras
 
@@ -12,15 +11,9 @@ from zentra.nextjs import NextJs
 class JSIterableBuilder:
     """A builder for creating Zentra `JSIterable` model content as JSX."""
 
-    def __init__(
-        self,
-        model: JSIterable,
-        mappings: JSIterableMappings,
-        details_dict: dict[str, ComponentDetails],
-    ) -> None:
+    def __init__(self, model: JSIterable, mappings: JSIterableMappings) -> None:
         self.model = model
         self.maps = mappings
-        self.details_dict = details_dict
 
         self.comp_storage = JSXComponentExtras()
 
@@ -30,11 +23,7 @@ class JSIterableBuilder:
         """Creates the JSX for a `Component` model and returns its details as a tuple in the form of `(content, comp_storage)`."""
         from cli.templates.builders.component import ComponentBuilder
 
-        builder = ComponentBuilder(
-            component=component,
-            mappings=self.maps.component,
-            details=self.details_dict[component.classname],
-        )
+        builder = ComponentBuilder(component=component, mappings=self.maps.component)
         builder.build(full_shell=full_shell)
         return str_to_list(builder.storage.content), builder.storage
 
@@ -55,11 +44,7 @@ class JSIterableBuilder:
         """Creates the JSX for a `HTMLTag` model and returns its details as a tuple in the form of `(content, multi_comp_storage)`."""
         from cli.templates.builders.html import HTMLBuildController
 
-        builder = HTMLBuildController(
-            model=model,
-            mappings=self.maps.html,
-            details_dict=self.details_dict,
-        )
+        builder = HTMLBuildController(model=model, mappings=self.maps.html)
         content, storage = builder.build()
         return content, storage
 
@@ -77,13 +62,8 @@ class JSIterableBuilder:
             self.comp_storage = add_to_storage(self.comp_storage, storage)
 
         else:
-            try:
-                content, storage = self.build_component(inner_model)
-                self.comp_storage = add_to_storage(self.comp_storage, storage)
-            except AttributeError:
-                raise AttributeError(
-                    f"'JSIterableContentBuilder.build(details=None)'. Missing 'ComponentDetails' for provided '{inner_model.classname}' Component",
-                )
+            content, storage = self.build_component(inner_model)
+            self.comp_storage = add_to_storage(self.comp_storage, storage)
 
         return [start, *content, end]
 

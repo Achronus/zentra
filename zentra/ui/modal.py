@@ -35,6 +35,10 @@ class Popover(Component, ShadcnUi):
     def custom_common_attributes(self) -> list[str]:
         return ["styles"]
 
+    @property
+    def child_names(self) -> list[str]:
+        return ["PopoverTrigger", "PopoverContent"]
+
 
 class Sheet(Component, ShadcnUi):
     """

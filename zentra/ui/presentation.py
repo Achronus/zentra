@@ -49,6 +49,14 @@ class Accordion(Component, ShadcnUi):
     def custom_common_attributes(self) -> list[str]:
         return ["orientation"]
 
+    @property
+    def child_names(self) -> list[str]:
+        return [
+            "AccordionItem",
+            "AccordionTrigger",
+            "AccordionContent",
+        ]
+
 
 class AspectRatio(Component, ShadcnUi):
     """
@@ -101,6 +109,10 @@ class Avatar(Component, ShadcnUi):
     @property
     def inner_attributes(self) -> list[str]:
         return ["src", "alt"]
+
+    @property
+    def child_names(self) -> list[str]:
+        return ["AvatarImage", "AvatarFallback"]
 
     @field_validator("src")
     def validate_src(cls, src: str | StaticImage) -> str | StaticImage:
@@ -476,3 +488,15 @@ class Table(Component, ShadcnUi):
     body: list[TableRow] | TableMap
     footer: Optional[list[str | TableCell]] = None
     caption: Optional[str] = None
+
+    @property
+    def child_names(self) -> list[str]:
+        return [
+            "TableHeader",
+            "TableBody",
+            "TableFooter",
+            "TableHead",
+            "TableRow",
+            "TableCell",
+            "TableCaption",
+        ]

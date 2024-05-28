@@ -1,6 +1,5 @@
 import pytest
 
-from cli.templates.details import COMPONENT_DETAILS_DICT
 
 from tests.mappings.ui_imports import VALID_IMPORTS
 from tests.mappings.ui_vals import VALID_VALS_MAP
@@ -160,39 +159,29 @@ class TestDropdownMenu:
     def wrapper_radio_group(
         self, dropdown_menu_radio_group: DropdownMenu
     ) -> SimpleCompBuilder:
-        return SimpleCompBuilder(
-            dropdown_menu_radio_group, COMPONENT_DETAILS_DICT["DropdownMenu"]
-        )
+        return SimpleCompBuilder(dropdown_menu_radio_group)
 
     @pytest.fixture
     def wrapper_checkbox(
         self, dropdown_menu_checkbox: DropdownMenu
     ) -> SimpleCompBuilder:
-        return SimpleCompBuilder(
-            dropdown_menu_checkbox, COMPONENT_DETAILS_DICT["DropdownMenu"]
-        )
+        return SimpleCompBuilder(dropdown_menu_checkbox)
 
     @pytest.fixture
     def wrapper_str_list(
         self, dropdown_menu_str_list: DropdownMenu
     ) -> SimpleCompBuilder:
-        return SimpleCompBuilder(
-            dropdown_menu_str_list, COMPONENT_DETAILS_DICT["DropdownMenu"]
-        )
+        return SimpleCompBuilder(dropdown_menu_str_list)
 
     @pytest.fixture
     def wrapper_with_links(
         self, dropdown_menu_with_links: DropdownMenu
     ) -> SimpleCompBuilder:
-        return SimpleCompBuilder(
-            dropdown_menu_with_links, COMPONENT_DETAILS_DICT["DropdownMenu"]
-        )
+        return SimpleCompBuilder(dropdown_menu_with_links)
 
     @pytest.fixture
     def wrapper_full(self, dropdown_menu_full: DropdownMenu) -> SimpleCompBuilder:
-        return SimpleCompBuilder(
-            dropdown_menu_full, COMPONENT_DETAILS_DICT["DropdownMenu"]
-        )
+        return SimpleCompBuilder(dropdown_menu_full)
 
     @staticmethod
     def test_content_str_radio_group(wrapper_radio_group: SimpleCompBuilder):
@@ -222,7 +211,7 @@ class TestDropdownMenu:
             trigger="open",
             items=DDMGroup(items=["Top", "Bottom", "Right"]),
         )
-        wrapper = SimpleCompBuilder(comp, COMPONENT_DETAILS_DICT["DropdownMenu"])
+        wrapper = SimpleCompBuilder(comp)
         wrapper.run("content", VALID_VALS_MAP["dropdown_menu"]["content"]["no_label"])
 
     @staticmethod
@@ -336,17 +325,13 @@ class TestBreadcrumb:
     def wrapper_ellipsis_trigger(
         self, breadcrumb_ellipsis_trigger: Breadcrumb
     ) -> SimpleCompBuilder:
-        return SimpleCompBuilder(
-            breadcrumb_ellipsis_trigger, COMPONENT_DETAILS_DICT["Breadcrumb"]
-        )
+        return SimpleCompBuilder(breadcrumb_ellipsis_trigger)
 
     @pytest.fixture
     def wrapper_text_trigger(
         self, breadcrumb_text_trigger: Breadcrumb
     ) -> SimpleCompBuilder:
-        return SimpleCompBuilder(
-            breadcrumb_text_trigger, COMPONENT_DETAILS_DICT["Breadcrumb"]
-        )
+        return SimpleCompBuilder(breadcrumb_text_trigger)
 
     @staticmethod
     def test_content_str_ellipsis_trigger(wrapper_ellipsis_trigger: SimpleCompBuilder):
@@ -451,25 +436,19 @@ class TestCommand:
 
     @pytest.fixture
     def wrapper_simple(self, command_simple: Command) -> SimpleCompBuilder:
-        return SimpleCompBuilder(command_simple, COMPONENT_DETAILS_DICT["Command"])
+        return SimpleCompBuilder(command_simple)
 
     @pytest.fixture
     def wrapper_simple_links(self, command_simple_links: Command) -> SimpleCompBuilder:
-        return SimpleCompBuilder(
-            command_simple_links, COMPONENT_DETAILS_DICT["Command"]
-        )
+        return SimpleCompBuilder(command_simple_links)
 
     @pytest.fixture
     def wrapper_group_simple(self, command_group_simple: Command) -> SimpleCompBuilder:
-        return SimpleCompBuilder(
-            command_group_simple, COMPONENT_DETAILS_DICT["Command"]
-        )
+        return SimpleCompBuilder(command_group_simple)
 
     @pytest.fixture
     def wrapper_multi_groups(self, command_multi_groups: Command) -> SimpleCompBuilder:
-        return SimpleCompBuilder(
-            command_multi_groups, COMPONENT_DETAILS_DICT["Command"]
-        )
+        return SimpleCompBuilder(command_multi_groups)
 
     @staticmethod
     def test_content_str_simple(wrapper_simple: SimpleCompBuilder):

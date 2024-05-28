@@ -63,11 +63,8 @@ from zentra.ui.presentation import (
 def controller() -> BuildController:
     """A helper function to create a `BuildController`."""
     from cli.templates.ui.mappings import CONTROLLER_MAPPINGS
-    from cli.templates.details import COMPONENT_DETAILS_DICT
 
-    return BuildController(
-        mappings=CONTROLLER_MAPPINGS, details_dict=COMPONENT_DETAILS_DICT
-    )
+    return BuildController(mappings=CONTROLLER_MAPPINGS)
 
 
 def build_icon(

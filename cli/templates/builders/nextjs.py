@@ -20,10 +20,7 @@ class NextJSComponentBuilder:
             component_mapping=mappings.attribute.model,
         )
         self.import_builder = ImportBuilder(
-            component=component,
-            additional_imports_mapping=mappings.imports.extra,
-            core_name=component.container_name,
-            child_names=[],
+            component=component, additional_imports_mapping=mappings.imports.extra
         )
         self.content = ContentBuilder(
             model=component,

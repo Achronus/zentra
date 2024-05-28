@@ -97,16 +97,10 @@ class ImportBuilder:
     """A builder for creating Zentra `Component` import statements."""
 
     def __init__(
-        self,
-        component: Component,
-        additional_imports_mapping: MappingDict,
-        core_name: str,
-        child_names: list[str],
+        self, component: Component, additional_imports_mapping: MappingDict
     ) -> None:
         self.component = component
         self.additional_map = additional_imports_mapping
-        self.core_name = core_name
-        self.child_names = child_names
 
     def build(self) -> list[str]:
         """Builds the import statements for the component."""
@@ -120,9 +114,9 @@ class ImportBuilder:
 
     def core_import(self, child_names: list[str] = None) -> str:
         """Creates the core import statement for the component."""
-        filename = name_from_camel_case(self.core_name)
+        filename = name_from_camel_case(self.component.classname)
         import_pieces = self.core_import_pieces(
-            child_names if child_names else self.child_names
+            child_names if child_names else self.component.child_names
         )
         return f'import {{ {import_pieces} }} from "@/components/{self.component.library}/{filename}"'.replace(
             "'", " "
@@ -152,7 +146,7 @@ class ImportBuilder:
 
     def core_import_pieces(self, child_names: list[str]) -> str:
         """Creates the core import pieces including the main component and its children (if required)."""
-        return ", ".join([self.core_name] + child_names)
+        return ", ".join([self.component.classname] + child_names)
 
 
 class ContentBuilder:

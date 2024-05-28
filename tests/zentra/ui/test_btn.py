@@ -6,8 +6,6 @@ from operator import mul
 from typing import Any
 
 from cli.conf.logger import test_logger
-from cli.conf.storage import ComponentDetails
-from cli.templates.details import COMPONENT_DETAILS_DICT
 
 from tests.mappings.btn_content import BTN_VALID_VALS_MAP
 from tests.mappings.ui_imports import VALID_IMPORTS
@@ -25,14 +23,8 @@ def calc_valid_total(*iterables) -> int:
 class BtnCompBuilder:
     """A helper class that handles the logic for keeping complicated component test implementations unified."""
 
-    def __init__(
-        self,
-        iterable_dict: dict[list],
-        component_func: callable,
-        component_details: ComponentDetails,
-    ) -> None:
+    def __init__(self, iterable_dict: dict[list], component_func: callable) -> None:
         self.iterable_dict = iterable_dict
-        self.details = component_details
         self.comp_func = component_func
 
     @staticmethod
@@ -48,7 +40,7 @@ class BtnCompBuilder:
 
         for idx, items in enumerate(items_list):
             component = self.comp_func(**items)
-            builder = component_builder(component, self.details)
+            builder = component_builder(component)
             builder.build()
             content = builder.storage.content
 
@@ -71,7 +63,7 @@ class BtnCompBuilder:
         valid_value: str,
         list_output: bool = False,
     ):
-        builder = component_builder(component, self.details)
+        builder = component_builder(component)
         builder.build()
 
         result: str = getattr(builder.storage, result_attr)
@@ -124,35 +116,19 @@ class TestButton:
 
     @pytest.fixture
     def btn_text_wrapper(self, iterables, btn_text) -> BtnCompBuilder:
-        return BtnCompBuilder(
-            iterable_dict=iterables,
-            component_func=btn_text,
-            component_details=COMPONENT_DETAILS_DICT["Button"],
-        )
+        return BtnCompBuilder(iterable_dict=iterables, component_func=btn_text)
 
     @pytest.fixture
     def btn_icon_wrapper(self, iterables, btn_icon) -> BtnCompBuilder:
-        return BtnCompBuilder(
-            iterable_dict=iterables,
-            component_func=btn_icon,
-            component_details=COMPONENT_DETAILS_DICT["Button"],
-        )
+        return BtnCompBuilder(iterable_dict=iterables, component_func=btn_icon)
 
     @pytest.fixture
     def btn_text_url_wrapper(self, iterables, btn_text_url) -> BtnCompBuilder:
-        return BtnCompBuilder(
-            iterable_dict=iterables,
-            component_func=btn_text_url,
-            component_details=COMPONENT_DETAILS_DICT["Button"],
-        )
+        return BtnCompBuilder(iterable_dict=iterables, component_func=btn_text_url)
 
     @pytest.fixture
     def btn_icon_url_wrapper(self, iterables, btn_icon_url) -> BtnCompBuilder:
-        return BtnCompBuilder(
-            iterable_dict=iterables,
-            component_func=btn_icon_url,
-            component_details=COMPONENT_DETAILS_DICT["Button"],
-        )
+        return BtnCompBuilder(iterable_dict=iterables, component_func=btn_icon_url)
 
     @staticmethod
     def test_content_str_btn_text(btn_text_wrapper: BtnCompBuilder):

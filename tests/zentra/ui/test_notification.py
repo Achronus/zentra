@@ -1,6 +1,5 @@
 import pytest
 
-from cli.templates.details import COMPONENT_DETAILS_DICT
 
 from tests.mappings.ui_imports import VALID_IMPORTS
 from tests.mappings.ui_vals import VALID_VALS_MAP
@@ -40,15 +39,15 @@ class TestAlert:
 
     @pytest.fixture
     def wrapper(self, alert: Alert) -> SimpleCompBuilder:
-        return SimpleCompBuilder(alert, COMPONENT_DETAILS_DICT["Alert"])
+        return SimpleCompBuilder(alert)
 
     @pytest.fixture
     def wrapper_icon(self, alert_icon: Alert) -> SimpleCompBuilder:
-        return SimpleCompBuilder(alert_icon, COMPONENT_DETAILS_DICT["Alert"])
+        return SimpleCompBuilder(alert_icon)
 
     @pytest.fixture
     def wrapper_full(self, alert_full: Alert) -> SimpleCompBuilder:
-        return SimpleCompBuilder(alert_full, COMPONENT_DETAILS_DICT["Alert"])
+        return SimpleCompBuilder(alert_full)
 
     @staticmethod
     def test_content_str(wrapper: SimpleCompBuilder):
@@ -87,7 +86,7 @@ class TestTextAlertDialog:
 
     @pytest.fixture
     def wrapper(self, alert_dialog: TextAlertDialog) -> SimpleCompBuilder:
-        return SimpleCompBuilder(alert_dialog, COMPONENT_DETAILS_DICT["AlertDialog"])
+        return SimpleCompBuilder(alert_dialog)
 
     @staticmethod
     def test_content_str(wrapper: SimpleCompBuilder):
@@ -129,19 +128,19 @@ class TestTooltip:
 
     @pytest.fixture
     def wrapper_btn(self, tooltip_btn: Tooltip) -> SimpleCompBuilder:
-        return SimpleCompBuilder(tooltip_btn, COMPONENT_DETAILS_DICT["Tooltip"])
+        return SimpleCompBuilder(tooltip_btn)
 
     @pytest.fixture
     def wrapper_str(self, tooltip_str: Tooltip) -> SimpleCompBuilder:
-        return SimpleCompBuilder(tooltip_str, COMPONENT_DETAILS_DICT["Tooltip"])
+        return SimpleCompBuilder(tooltip_str)
 
     @pytest.fixture
     def wrapper_icon(self, tooltip_icon: Tooltip) -> SimpleCompBuilder:
-        return SimpleCompBuilder(tooltip_icon, COMPONENT_DETAILS_DICT["Tooltip"])
+        return SimpleCompBuilder(tooltip_icon)
 
     @pytest.fixture
     def wrapper_icon_text(self, tooltip_icon_text: Tooltip) -> SimpleCompBuilder:
-        return SimpleCompBuilder(tooltip_icon_text, COMPONENT_DETAILS_DICT["Tooltip"])
+        return SimpleCompBuilder(tooltip_icon_text)
 
     @staticmethod
     def test_content_str_btn(wrapper_btn: SimpleCompBuilder):

@@ -194,6 +194,25 @@ class DropdownMenu(Component, ShadcnUi):
     items: DDMGroup | DDMRadioGroup | DDMCheckboxGroup | list[DDMGroup]
     label: Optional[str] = None
 
+    @property
+    def child_names(self) -> list[str]:
+        return [
+            "DropdownMenuTrigger",
+            "DropdownMenuContent",
+            "DropdownMenuItem",
+            "DropdownMenuCheckboxItem",
+            "DropdownMenuRadioItem",
+            "DropdownMenuLabel",
+            "DropdownMenuSeparator",
+            "DropdownMenuShortcut",
+            "DropdownMenuGroup",
+            "DropdownMenuPortal",
+            "DropdownMenuSub",
+            "DropdownMenuSubContent",
+            "DropdownMenuSubTrigger",
+            "DropdownMenuRadioGroup",
+        ]
+
 
 class ContextMenu(Component, ShadcnUi):
     """
@@ -246,6 +265,19 @@ class Command(Component, ShadcnUi):
     items: CommandGroup | list[CommandGroup]
     input_text: str = "Type a command or search..."
     styles: Optional[str] = "rounded-lg border shadow-md"
+
+    @property
+    def child_names(self) -> list[str]:
+        return [
+            "CommandDialog",
+            "CommandInput",
+            "CommandList",
+            "CommandEmpty",
+            "CommandGroup",
+            "CommandItem",
+            "CommandShortcut",
+            "CommandSeparator",
+        ]
 
 
 class BCTrigger(Component, ShadcnUi):
@@ -342,6 +374,25 @@ class Breadcrumb(Component, ShadcnUi):
     items: list[BCItem | BCDropdownMenu]
     custom_sep: Optional[str] = None
 
+    @property
+    def child_names(self) -> list[str]:
+        return [
+            "BreadcrumbList",
+            "BreadcrumbItem",
+            "BreadcrumbLink",
+            "BreadcrumbPage",
+            "BreadcrumbSeparator",
+            "BreadcrumbEllipsis",
+        ]
+
+    @property
+    def separator_content(self) -> str | list[str]:
+        """Defines the separator content for the component."""
+        if self.custom_sep:
+            return SeparatorModel(variant="breadcrumb", full=True).content_str
+
+        return SeparatorModel(variant="breadcrumb").content_str
+
     @field_validator("custom_sep")
     def validate_custom_sep(cls, name: str) -> str:
         icon_name = name_from_pascal_case(name)
@@ -355,11 +406,3 @@ class Breadcrumb(Component, ShadcnUi):
             )
 
         return name
-
-    @property
-    def separator_content(self) -> str | list[str]:
-        """Defines the separator content for the component."""
-        if self.custom_sep:
-            return SeparatorModel(variant="breadcrumb", full=True).content_str
-
-        return SeparatorModel(variant="breadcrumb").content_str

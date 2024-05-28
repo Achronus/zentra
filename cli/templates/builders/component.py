@@ -1,4 +1,3 @@
-from cli.conf.storage import ComponentDetails
 from cli.templates.builders.jsx import (
     AttributeBuilder,
     ContentBuilder,
@@ -19,10 +18,8 @@ class ComponentBuilder:
         self,
         component: Component,
         mappings: ComponentMappings,
-        details: ComponentDetails,
     ) -> None:
         self.component = component
-        self.details = details
         self.wrapper_map = mappings.wrappers
         self.use_client_map = mappings.client
 
@@ -35,8 +32,6 @@ class ComponentBuilder:
         self.imports = ImportBuilder(
             component=component,
             additional_imports_mapping=mappings.imports.extra,
-            core_name=details.name,
-            child_names=details.child_names,
         )
         self.logic = LogicBuilder(
             component=component,
@@ -64,11 +59,12 @@ class ComponentBuilder:
             self.apply_content_containers(content=content, full_shell=full_shell)
         )
 
-        self.storage.imports = self.tidy_child_names(
-            self.details.child_names,
-            self.storage.imports,
-            self.storage.content,
-        )
+        if self.component.child_names:
+            self.storage.imports = self.tidy_child_names(
+                self.storage.imports,
+                self.storage.content,
+            )
+
         self.storage.imports = self.handle_imports(
             self.storage.logic,
             self.storage.imports,
@@ -135,12 +131,10 @@ class ComponentBuilder:
 
         return imports
 
-    def tidy_child_names(
-        self, child_names: list[str], imports: str, content: str
-    ) -> str:
+    def tidy_child_names(self, imports: str, content: str) -> str:
         """Removes component child names from the import statements, if they are not used in the components content."""
         used_child_names = []
-        for name in child_names:
+        for name in self.component.child_names:
             if name in content:
                 used_child_names.append(name)
 

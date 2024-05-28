@@ -47,6 +47,11 @@ class Component(BaseModel):
         return self._container_name if self._container_name else self.classname
 
     @property
+    def child_names(self) -> list[str]:
+        """Stores the component child names."""
+        return []
+
+    @property
     def inner_attributes(self) -> list[str]:
         """Returns a list of the attributes that are used in the components sub-components."""
         return []

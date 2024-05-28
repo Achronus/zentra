@@ -7,7 +7,7 @@ from cli.conf.create import (
     make_directories,
 )
 from cli.conf.format import name_to_camel_case
-from cli.conf.storage import ComponentDetails, GeneratePathStorage, ModelFileStorage
+from cli.conf.storage import GeneratePathStorage, ModelFileStorage
 from cli.conf.types import LibraryNamePairs
 from cli.templates import ComponentFileType
 from cli.templates.retrieval import CodeRetriever
@@ -32,7 +32,6 @@ class LocalBuilder:
         self.url = url
         self.paths = paths
         self.components = components
-        self.component_details: list[ComponentDetails] = []
 
         self.retriever = CodeRetriever(url=url)
         self.ut = Uploadthing(core_folder=os.path.basename(self.paths.lib))
@@ -61,9 +60,6 @@ class LocalBuilder:
                 content="\n".join(code_lines),
                 filename=filename,
                 dest_path=os.path.join(self.paths.components, folder),
-            )
-            self.store_component_details(
-                code_lines=code_lines, filename=filename, library_name=folder
             )
 
             if folder == LibraryType.UPLOADTHING.value:
@@ -120,19 +116,3 @@ class LocalBuilder:
             return [child for child in children if child != ""]
 
         return sanitise_children(children=get_children(lines=lines), filename=filename)
-
-    def store_component_details(
-        self, code_lines: list[str], filename: str, library_name: str
-    ) -> None:
-        """Extracts and stores a components details into the `component_details` list."""
-        child_components = self.extract_child_components(
-            lines=code_lines, filename=filename
-        )
-        self.component_details.append(
-            ComponentDetails(
-                library=library_name,
-                filename=filename,
-                name=name_to_camel_case(filename),
-                child_names=child_components,
-            )
-        )

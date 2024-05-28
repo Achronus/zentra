@@ -25,11 +25,15 @@ class Popover(Component, ShadcnUi):
       2. A string of text
     - `content` (`zentra.core.html.Div | string`) - a zentra `Div` model containing the content of the popover or a string of text
     - `styles` (`string, optional`) - a set of custom CSS classes to apply to the `PopoverContent`. Automatically adds them to its `className`. `None` by default
+    - `open` (`string, optional`) - a string defining the prop that controls the open state of the popover. Adds the value to the `open` prop. Automatically converted to a parameter value. `None` by default
+    - `open_change` (`string, optional`) - a string defining the event handler that controls the open state of the popover. Adds the value to the `onOpenChange` prop. Automatically converted to a parameter value. `None` by default
     """
 
     trigger: Button | str
     content: Div | str
     styles: Optional[str] = None
+    open: Optional[str] = None
+    open_change: Optional[str] = None
 
     @property
     def custom_common_attributes(self) -> list[str]:

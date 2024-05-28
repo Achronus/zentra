@@ -47,6 +47,7 @@ VALID_IMPORTS = {
         "multiple": '"use client"\nimport { useState } from "react"\nimport { format } from "date-fns"\nimport { cn } from "@/lib/utils"\nimport { Calendar } from "@/components/ui/calendar"\nimport { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"\nimport { Button } from "@/components/ui/button"\nimport { CalendarDays } from "lucide-react"',
         "range": '"use client"\nimport { useState } from "react"\nimport { addDays, format } from "date-fns"\nimport { cn } from "@/lib/utils"\nimport { Calendar } from "@/components/ui/calendar"\nimport { DateRange } from "react-day-picker"\nimport { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"\nimport { Button } from "@/components/ui/button"\nimport { CalendarDays } from "lucide-react"',
     },
+    "combobox": '"use client"\nimport { useState } from "react"\nimport { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command"\nimport { Check, ChevronsUpDown } from "lucide-react"\nimport { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"\nimport { Button } from "@/components/ui/button"',
     # NOTIFICATION COMPONENTS
     "alert": {
         "simple": 'import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"',

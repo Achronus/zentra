@@ -1,10 +1,10 @@
 from typing import Optional
 import requests
 
-from pydantic import ValidationInfo, field_validator
+from pydantic import Field, ValidationInfo, field_validator
 from pydantic_core import PydanticCustomError
 
-from zentra.core import Component
+from zentra.core import LOWER_CAMELCASE_SINGLE_WORD, Component, has_valid_pattern
 from zentra.core.enums.ui import BCTriggerVariant
 from zentra.core.react import LucideIcon, LucideIconWithText
 from zentra.core.utils import name_from_pascal_case
@@ -237,6 +237,36 @@ class CommandItem(DDMItem, ShadcnUi):
     """
 
 
+class CommandMap(Component, ShadcnUi):
+    """
+    A Zentra model for the [Shadcn/ui Command](https://ui.shadcn.com/docs/components/command) component. Represents a `CommandItem` mapping for a single `CommandGroup`.
+
+    Cannot be used on its own, must be used inside a `zentra.ui.navigation.Command` model.
+
+    Parameters:
+    - `obj_name` (`string`) - the name of the data object array to iterate over. Must be `lowercase` or `camelCase`, a `single word`, and up to a maximum of `20` characters
+    - `param_name` (`string`) - the name of the parameter to iterate over inside the map. Must be `lowercase` or `camelCase`, a `single word`, and up to a maximum of `20` characters
+    - `text` (`string`) - the descriptive text to put into the `CommandItem`. Can include parameter variables (indicated by starting the variable name with a `$.`)
+    """
+
+    obj_name: str = Field(min_length=1, max_length=20)
+    param_name: str = Field(min_length=1, max_length=20)
+    text: str
+
+    @field_validator("obj_name", "param_name")
+    def validate_name(cls, v: str) -> str:
+        result = has_valid_pattern(pattern=LOWER_CAMELCASE_SINGLE_WORD, value=v)
+
+        if not result:
+            raise PydanticCustomError(
+                "string_pattern_mismatch",
+                f"'{v}'. Must be 'lowercase' or 'camelCase', a single word and a maximum of '20' characters\n",
+                dict(wrong_value=v, pattern=LOWER_CAMELCASE_SINGLE_WORD),
+            )
+
+        return v
+
+
 class CommandGroup(Component, ShadcnUi):
     """
     A Zentra model for the [Shadcn/ui Command](https://ui.shadcn.com/docs/components/command) component. Represents a single menu group.
@@ -257,12 +287,15 @@ class Command(Component, ShadcnUi):
     A Zentra model for the [Shadcn/ui Command](https://ui.shadcn.com/docs/components/command) component.
 
     Parameters:
-    - `items` (`zentra.ui.navigation.CommandGroup | list[zentra.ui.navigation.CommandGroup]`) - a single or list of `CommandGroup` models
+    - `items` (`zentra.ui.navigation.CommandGroup | list[zentra.ui.navigation.CommandGroup] | zentra.ui.navigation.CommandMap`) - can be either:
+      1. A single `CommandGroup` model
+      2. A list of `CommandGroup` models
+      3. A `CommandMap` model. Use for iterating over an array of data
     - `input_text` (`string, optional`) - the placeholder text to display in the `CommandInput` search box. `Type a command or search...` by default
     - `styles` (`string, optional`) - a set of custom CSS classes to apply to the command component. Automatically adds them to `className`. `rounded-lg border shadow-md` by default
     """
 
-    items: CommandGroup | list[CommandGroup]
+    items: CommandGroup | list[CommandGroup] | CommandMap
     input_text: str = "Type a command or search..."
     styles: Optional[str] = "rounded-lg border shadow-md"
 

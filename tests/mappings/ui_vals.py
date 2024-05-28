@@ -150,6 +150,17 @@ DATE_PICKER_VALID_VALS = {
     },
 }
 
+COMBOBOX_VALID_VALS = {
+    "content": {
+        "simple": '<Popover open={open} onOpenChange={comboboxSetOpen}>\n<PopoverTrigger asChild>\n<Button variant="outline" className="w-[200px] justify-between" role="combobox" aria-expanded={open}>\n{value ? frameworks.find((fr) => fr.value === value)?.label : "Select framework..."}\n<ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />\n</Button>\n</PopoverTrigger>\n<PopoverContent className="w-[200px] p-0">\n<Command>\n<CommandInput placeholder="Search framework..." />\n<CommandEmpty>\nNo results found.\n</CommandEmpty>\n<CommandGroup>\n{frameworks.map((fr) => (\n<CommandItem key={fr.value} value={fr.value} onSelect={(currentValue) => {\ncomboboxSetValue(currentValue === value ? "" : currentValue)\ncomboboxSetOpen(false)\n}}>\n<Check className={cn("mr-2 h-4 w-4", value === fr.value ? "opacity-100" : "opacity-0")} />\n{fr.label}\n</CommandItem>\n))}\n</CommandGroup>\n</Command>\n</PopoverContent>\n</Popover>',
+        "custom": '<Popover open={open} onOpenChange={cbSetOpen}>\n<PopoverTrigger asChild>\n<Button variant="outline" className="w-[200px] justify-between" role="combobox" aria-expanded={open}>\n{value ? frameworks.find((fr) => fr.value === value)?.label : "Select framework..."}\n<ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />\n</Button>\n</PopoverTrigger>\n<PopoverContent className="w-[200px] p-0">\n<Command>\n<CommandInput placeholder="Search framework..." />\n<CommandEmpty>\nNo results found.\n</CommandEmpty>\n<CommandGroup>\n{frameworks.map((fr) => (\n<CommandItem key={fr.value} value={fr.value} onSelect={(currentValue) => {\ncbSetValue(currentValue === value ? "" : currentValue)\ncbSetOpen(false)\n}}>\n<Check className={cn("mr-2 h-4 w-4", value === fr.value ? "opacity-100" : "opacity-0")} />\n{fr.label}\n</CommandItem>\n))}\n</CommandGroup>\n</Command>\n</PopoverContent>\n</Popover>',
+    },
+    "logic": {
+        "simple": 'const [comboboxOpen, comboboxSetOpen] = useState(false);\nconst [comboboxValue, comboboxSetValue] = useState("");',
+        "custom": 'const [cbOpen, cbSetOpen] = useState(false);\nconst [cbValue, cbSetValue] = useState("");',
+    },
+}
+
 # UI NOTIFICATION COMPONENTS
 ALERT_VALID_VALS = {
     "content": {
@@ -313,6 +324,7 @@ VALID_VALS_MAP = {
     "popover": POPOVER_VALID_VALS,
     "date_picker": DATE_PICKER_VALID_VALS,
     "command": COMMAND_VALID_VALS,
+    "combobox": COMBOBOX_VALID_VALS,
 }
 
 

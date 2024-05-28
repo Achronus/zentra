@@ -6,6 +6,7 @@ from tests.templates.helper import SimpleCompBuilder
 from tests.mappings.ui_imports import VALID_IMPORTS
 from tests.mappings.ui_vals import VALID_VALS_MAP
 
+from zentra.core import DataArray
 from zentra.core.html import Div, FigCaption, Figure, HTMLContent
 from zentra.core.js import Map
 
@@ -15,6 +16,7 @@ from zentra.ui.control import (
     Calendar,
     Checkbox,
     Collapsible,
+    Combobox,
     DatePicker,
     Input,
     InputOTP,
@@ -1242,3 +1244,64 @@ class TestDatePicker:
     @staticmethod
     def test_import_str_range(wrapper_range: SimpleCompBuilder):
         wrapper_range.run("imports", VALID_IMPORTS["date_picker"]["range"])
+
+
+class TestCombobox:
+    @pytest.fixture
+    def combobox_simple(self) -> Combobox:
+        return Combobox(
+            data=DataArray(
+                name="frameworks",
+                type_name="FrameworkType",
+                data=[{"value": "next.js", "label": "Next.js"}],
+            ),
+            display_text="Select framework...",
+            search_text="Search framework...",
+        )
+
+    @pytest.fixture
+    def combobox_custom(self) -> Combobox:
+        return Combobox(
+            data=DataArray(
+                name="frameworks",
+                type_name="FrameworkType",
+                data=[
+                    {"value": "next.js", "label": "Next.js"},
+                    {"value": "sveltekit", "label": "SvelteKit"},
+                    {"value": "nuxt.js", "label": "Nuxt.js"},
+                    {"value": "remix", "label": "Remix"},
+                    {"value": "astro", "label": "Astro"},
+                ],
+            ),
+            display_text="Select framework...",
+            search_text="Search framework...",
+            hook_name="cb",
+        )
+
+    @pytest.fixture
+    def wrapper_simple(self, combobox_simple: Combobox) -> SimpleCompBuilder:
+        return SimpleCompBuilder(combobox_simple)
+
+    @pytest.fixture
+    def wrapper_custom(self, combobox_custom: Combobox) -> SimpleCompBuilder:
+        return SimpleCompBuilder(combobox_custom)
+
+    @staticmethod
+    def test_content_str_simple(wrapper_simple: SimpleCompBuilder):
+        wrapper_simple.run("content", VALID_VALS_MAP["combobox"]["content"]["simple"])
+
+    @staticmethod
+    def test_content_str_custom(wrapper_custom: SimpleCompBuilder):
+        wrapper_custom.run("content", VALID_VALS_MAP["combobox"]["content"]["custom"])
+
+    @staticmethod
+    def test_logic_str_simple(wrapper_simple: SimpleCompBuilder):
+        wrapper_simple.run("logic", VALID_VALS_MAP["combobox"]["logic"]["simple"])
+
+    @staticmethod
+    def test_logic_str_custom(wrapper_custom: SimpleCompBuilder):
+        wrapper_custom.run("logic", VALID_VALS_MAP["combobox"]["logic"]["custom"])
+
+    @staticmethod
+    def test_import_str_simple(wrapper_simple: SimpleCompBuilder):
+        wrapper_simple.run("imports", VALID_IMPORTS["combobox"])

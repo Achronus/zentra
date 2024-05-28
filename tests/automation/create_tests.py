@@ -55,7 +55,7 @@ def build_tests(input_model: Input) -> None:
             textwrap.dedent(f"""
         @pytest.fixture
         def wrapper_{item_type}(self, {func_name}: {model_name[1]}) -> SimpleCompBuilder:
-            return SimpleCompBuilder({func_name}"])
+            return SimpleCompBuilder({func_name})
         """),
             "    ",
         )

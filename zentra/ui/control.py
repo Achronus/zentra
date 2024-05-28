@@ -5,6 +5,7 @@ from zentra.core import (
     LOWER_CAMELCASE_WITH_DIGITS,
     LOWERCASE_SINGLE_WORD,
     Component,
+    DataArray,
     has_valid_pattern,
 )
 from zentra.core.enums.ui import (
@@ -43,6 +44,7 @@ class Button(Component, ShadcnUi):
     - `size` (`string, optional`) - the size of the button. Valid options: `['default', 'sm', 'lg', 'icon']`. `default` by default
     - `disabled` (`boolean, optional`) - adds the disabled property, preventing it from being clicked. `False` by default
     - `styles` (`string, optional`) - a set of custom CSS classes to apply to the button. Automatically adds them to its `className`. `None` by default
+    - `other` (`dict[string, string], optional`) - a dictionary of additional attributes that can be passed into a button. Accepted in the form of: `prop_name: prop_value`. `prop_value` can be a parameter (indicated by starting the variable name with a `$.`).  `None` by default
     """
 
     content: str | LucideIconWithText
@@ -51,6 +53,7 @@ class Button(Component, ShadcnUi):
     size: ButtonSize = "default"
     disabled: bool = False
     styles: Optional[str] = None
+    other: Optional[dict[str, str]] = None
 
     @field_validator("url")
     def validate_url(cls, url: str) -> str:
@@ -233,10 +236,34 @@ class Combobox(Component, ShadcnUi):
     A Zentra model for the [Shadcn/ui Combobox](https://ui.shadcn.com/docs/components/combobox) component.
 
     Parameters:
-    - `name` (`string`) - the name of the component
+    - `data` (`zentra.core.DataArray`) -
+    - `display_text` (`string`) -
+    - `search_text` (`string`) -
+    - `hook_name` (`string, optional`) - the prepended name added to all `use` hook values. For example, `hook_name='combobox'` = `[comboboxOpen, comboboxSetOpen]`. `comboBox` by default
     """
 
-    # TODO: come back once 'popover' and 'command' created
+    data: DataArray
+    display_text: str
+    search_text: str
+    hook_name: str = "combobox"
+
+    @field_validator("hook_name")
+    def validate_hook_name(cls, name: str) -> str:
+        return name.lower()
+
+    @property
+    def open_state_names(self) -> tuple[str, str]:
+        """Defines the open `useState` hook `get` and `set` names."""
+        return [f"{self.hook_name}Open", f"{self.hook_name}SetOpen"]
+
+    @property
+    def value_state_names(self) -> tuple[str, str]:
+        """Defines the value `useState` hook `get` and `set` names."""
+        return [f"{self.hook_name}Value", f"{self.hook_name}SetValue"]
+
+    @property
+    def composition_only(self) -> bool:
+        return True
 
 
 class DatePicker(Component, ShadcnUi):

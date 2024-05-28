@@ -18,6 +18,7 @@ from zentra.ui.control import (
     Button,
     Checkbox,
     Collapsible,
+    Combobox,
     DatePicker,
     InputOTP,
     Pagination,
@@ -37,6 +38,7 @@ from zentra.ui.navigation import (
     Command,
     CommandGroup,
     CommandItem,
+    CommandMap,
     DDMCheckboxGroup,
     DDMGroup,
     DDMItem,
@@ -1019,6 +1021,58 @@ def date_picker_content(dp: DatePicker) -> tuple[list[str], JSXComponentExtras]:
 def command_content(cmd: Command) -> tuple[list[str], JSXComponentExtras]:
     """Returns a list of strings for the `Command` content based on the components attributes."""
 
+    def handle_map(map: CommandMap) -> tuple[list[str], JSXComponentExtras]:
+        item_attrs = compress(
+            [
+                param_attr("key", f"{map.param_name}.value"),
+                param_attr("value", f"{map.param_name}.value"),
+            ],
+            chars=" ",
+        )
+        item_content, storage = build_icon(
+            LucideIcon(
+                name="Check",
+                styles=f'cn("mr-2 h-4 w-4", value === {map.param_name}.value ? "opacity-100" : "opacity-0")',
+            ),
+            output_storage=True,
+        )
+        item_content.extend(text_content(map.text))
+
+        content = [
+            f'<CommandInput placeholder="{cmd.input_text}" />',
+            add_wrapper("CommandEmpty", "No results found."),
+            add_wrapper(
+                "CommandGroup",
+                [
+                    "{" + f"{map.obj_name}.map(({map.param_name}) => (",
+                    add_wrapper("CommandItem", item_content, attrs=item_attrs),
+                    "))}",
+                ],
+            ),
+        ]
+        return content, storage
+
+    def handle_list(items: list[CommandGroup]) -> tuple[list[str], JSXComponentExtras]:
+        content, storage = [], JSXComponentExtras()
+
+        for group in items:
+            group_content, group_storage = cmd_group(group)
+            content.extend(group_content)
+            storage = add_to_storage(storage, group_storage, extend=True)
+
+        content.pop(-1)  # remove extra separator
+
+        cmd_list_content = add_wrapper(
+            "CommandList",
+            [add_wrapper("CommandEmpty", "No results found."), *content],
+        )
+
+        content = [
+            f'<CommandInput placeholder="{cmd.input_text}" />',
+            *str_to_list(cmd_list_content),
+        ]
+        return content, storage
+
     def cmd_group(group: CommandGroup) -> tuple[list[str], JSXComponentExtras]:
         content, storage = [], JSXComponentExtras()
 
@@ -1035,25 +1089,81 @@ def command_content(cmd: Command) -> tuple[list[str], JSXComponentExtras]:
         content.append("<CommandSeparator />")
         return content, storage
 
-    content, storage = [], JSXComponentExtras()
+    if isinstance(cmd.items, CommandMap):
+        return handle_map(cmd.items)
 
     if isinstance(cmd.items, CommandGroup):
         cmd.items = [cmd.items]
 
-    for group in cmd.items:
-        group_content, group_storage = cmd_group(group)
-        content.extend(group_content)
-        storage = add_to_storage(storage, group_storage, extend=True)
+    return handle_list(cmd.items)
 
-    content.pop(-1)  # remove extra separator
 
-    cmd_list_content = add_wrapper(
-        "CommandList",
-        [add_wrapper("CommandEmpty", "No results found."), *content],
+def combobox_content(box: Combobox) -> tuple[list[str], JSXComponentExtras]:
+    """Returns a list of strings for the `Combobox` content based on the components attributes."""
+
+    def handle_cmd_content(content: list[str]) -> list[str]:
+        for idx, item in enumerate(content):
+            if "<CommandItem" in item:
+                content[idx] = item.replace(
+                    ">",
+                    compress(
+                        [
+                            " onSelect={(currentValue) => {",
+                            f'{box.value_state_names[1]}(currentValue === value ? "" : currentValue)',
+                            f"{box.open_state_names[1]}(false)",
+                            "}}>",
+                        ]
+                    ),
+                )
+                break
+
+        return content
+
+    def handle_pop_content(content: list[str]) -> list[str]:
+        for idx, item in enumerate(content):
+            if "<Button" in item:
+                pass
+
+        return content
+
+    content, storage = [], JSXComponentExtras()
+
+    param_name = box.data.name[:2]
+    cmd = Command(
+        items=CommandMap(
+            obj_name=box.data.name,
+            param_name=param_name,
+            text=f"$.{param_name}.label",
+        ),
+        input_text=box.search_text,
+        styles=None,
     )
 
-    content = [
-        f'<CommandInput placeholder="{cmd.input_text}" />',
-        *str_to_list(cmd_list_content),
-    ]
+    cmd_content, cmd_storage = build_component(cmd, output_storage=True)
+    cmd_content = handle_cmd_content(cmd_content)
+
+    trigger = Button(
+        content=LucideIconWithText(
+            name="ChevronsUpDown",
+            styles="ml-2 h-4 w-4 shrink-0 opacity-50",
+            text="{"
+            + f'value ? {box.data.name}.find(({param_name}) => {param_name}.value === value)?.label : "{box.display_text}"'
+            + "}",
+            position="end",
+        ),
+        variant="outline",
+        styles="w-[200px] justify-between",
+        other={"role": "combobox", "aria-expanded": "$.open"},
+    )
+    pop = Popover(
+        trigger=trigger,
+        content=compress(cmd_content),
+        styles="w-[200px] p-0",
+        open="open",
+        open_change=box.open_state_names[1],
+    )
+    content, storage = build_component(pop, output_storage=True)
+    content = handle_pop_content(content)
+
+    storage = add_to_storage(storage, cmd_storage, extend=True)
     return content, storage

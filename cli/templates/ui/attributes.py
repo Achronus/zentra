@@ -4,7 +4,7 @@ from typing import Callable
 from zentra.core import PARAMETER_PREFIX
 from zentra.core.enums.ui import CalendarMode, InputOTPPatterns
 from zentra.nextjs import Link, StaticImage, UrlQuery
-from zentra.ui.control import Calendar, Collapsible, InputOTP, Slider, Toggle
+from zentra.ui.control import Button, Calendar, Collapsible, InputOTP, Slider, Toggle
 from zentra.ui.presentation import Accordion, Progress
 
 
@@ -109,6 +109,20 @@ def alt_attribute(alt: str, attr_name: str = "alt") -> str:
         return param_attr(attr_name, " ".join(new_alt), backticks=True)
 
     return str_attr(attr_name, " ".join(new_alt))
+
+
+def button_attributes(btn: Button) -> list[str]:
+    """Returns a list of strings for the `Calendar` attributes based on a given name value."""
+    attrs = []
+
+    if btn.other:
+        for key, val in btn.other.items():
+            if val.startswith(PARAMETER_PREFIX):
+                attrs.append(param_attr(key, val))
+            else:
+                attrs.append(str_attr(key, val))
+
+    return attrs
 
 
 def calendar_attributes(cal: Calendar) -> list[str]:

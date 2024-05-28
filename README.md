@@ -1,6 +1,6 @@
 ## THIS TOOL IS A WORK IN PROGRESS, PLEASE WAIT UNTIL A VERSION RELEASE.
 
-_Last updated 27/05/2024_
+_Last updated 28/05/2024_
 
 ![Logo](/docs/assets/imgs/zentra-logo.jpg)
 
@@ -29,7 +29,7 @@ Core component libraries and custom models in development:
 - [X] Custom HTML Models (4/4)
 - [ ] Custom JavaScript Models (1/4)
 - [ ] [Shadcn/ui Form](https://ui.shadcn.com/docs/components/form) Models (0/13)
-- [ ] [Shadcn/ui](https://ui.shadcn.com/) (31/48)
+- [ ] [Shadcn/ui](https://ui.shadcn.com/) (32/48)
 - [ ] [NextJS](https://nextjs.org/docs/app/api-reference/components) (2/4)
 - [X] [Uploadthing](https://docs.uploadthing.com/getting-started/appdir) (1/1)
 - [X] [Lucide React Icons](https://lucide.dev/guide/packages/lucide-react) (1/1 - 1 component for all icons)
@@ -37,6 +37,8 @@ Core component libraries and custom models in development:
 Future component libraries:
 - [Clerk](https://clerk.com/)
 - [Tremor](https://www.tremor.so/)
+- [Stripe](https://docs.stripe.com/stripe-js/react?locale=en-GB)
+- [LiveBlock](https://liveblocks.io/)
 - And more...
 
 ## Example Usage

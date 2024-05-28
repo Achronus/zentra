@@ -3,6 +3,7 @@ from pydantic_core import Url
 from cli.templates.ui.attributes import (
     accordion_attributes,
     alt_attribute,
+    button_attributes,
     calendar_attributes,
     collapsible_attributes,
     input_otp_attributes,
@@ -25,6 +26,7 @@ from cli.templates.ui.content import (
     button_content,
     checkbox_content,
     collapsible_content,
+    combobox_content,
     command_content,
     date_picker_content,
     dropdown_menu_content,
@@ -59,6 +61,7 @@ from cli.templates.ui.imports import (
 from cli.templates.ui.logic import (
     calendar_logic,
     collapsible_logic,
+    combobox_logic,
     dropdown_menu_logic,
     pagination_logic,
     progress_logic,
@@ -79,6 +82,7 @@ USE_CLIENT_COMPONENTS = [
 
 
 COMPONENT_ATTR_MAPPING = {
+    "Button": lambda comp: button_attributes(comp),
     "Calendar": lambda comp: calendar_attributes(comp),
     "Collapsible": lambda comp: collapsible_attributes(comp),
     "InputOTP": lambda comp: input_otp_attributes(comp),
@@ -123,6 +127,8 @@ COMMON_ATTR_MAPPING = {
     "fill": lambda value: "fill" if value else None,
     "ratio": lambda value: param_attr("ratio", value),
     "mode": lambda value: str_attr("mode", value),
+    "open": lambda value: param_attr("open", value),
+    "open_change": lambda value: param_attr("onOpenChange", value),
 }
 
 
@@ -168,6 +174,7 @@ COMPONENT_CONTENT_MAPPING = {
     "Popover": lambda pop: popover_content(pop),
     "DatePicker": lambda dp: date_picker_content(dp),
     "Command": lambda cmd: command_content(cmd),
+    "Combobox": lambda box: combobox_content(box),
 }
 
 
@@ -182,6 +189,7 @@ LOGIC_MAPPING = {
     "Pagination": lambda comp: pagination_logic(comp),
     "DropdownMenu": lambda comp: dropdown_menu_logic(comp),
     "Progress": lambda comp: progress_logic(comp),
+    "Combobox": lambda comp: combobox_logic(comp),
 }
 
 

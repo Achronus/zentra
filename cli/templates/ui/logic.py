@@ -1,5 +1,5 @@
 from zentra.core.enums.ui import CalendarMode
-from zentra.ui.control import Calendar, Collapsible, Pagination
+from zentra.ui.control import Calendar, Collapsible, Combobox, Pagination
 from zentra.ui.navigation import DDMCheckboxGroup, DropdownMenu, DDMRadioGroup
 from zentra.ui.presentation import Progress
 
@@ -134,4 +134,12 @@ def progress_logic(prog: Progress) -> list[str]:
             f"const timer = setTimeout(() => {prog.use_state_names[1]}({prog.value}), {prog.max});",
             cleanup="clearTimeout(timer);",
         ),
+    ]
+
+
+def combobox_logic(box: Combobox) -> list[str]:
+    """Returns a list of strings for the `Combobox` logic based on the given name value."""
+    return [
+        hook_simple(*box.open_state_names, value="false"),
+        hook_simple(*box.value_state_names, value='""'),
     ]

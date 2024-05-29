@@ -1119,13 +1119,6 @@ def combobox_content(box: Combobox) -> tuple[list[str], JSXComponentExtras]:
 
         return content
 
-    def handle_pop_content(content: list[str]) -> list[str]:
-        for idx, item in enumerate(content):
-            if "<Button" in item:
-                pass
-
-        return content
-
     content, storage = [], JSXComponentExtras()
 
     param_name = box.data.name[:2]
@@ -1133,7 +1126,7 @@ def combobox_content(box: Combobox) -> tuple[list[str], JSXComponentExtras]:
         items=CommandMap(
             obj_name=box.data.name,
             param_name=param_name,
-            text=f"$.{param_name}.label",
+            text=f"{PARAMETER_PREFIX}{param_name}.label",
         ),
         input_text=box.search_text,
         styles=None,
@@ -1153,7 +1146,7 @@ def combobox_content(box: Combobox) -> tuple[list[str], JSXComponentExtras]:
         ),
         variant="outline",
         styles="w-[200px] justify-between",
-        other={"role": "combobox", "aria-expanded": "$.open"},
+        other={"role": "combobox", "aria-expanded": f"{PARAMETER_PREFIX}open"},
     )
     pop = Popover(
         trigger=trigger,
@@ -1163,7 +1156,5 @@ def combobox_content(box: Combobox) -> tuple[list[str], JSXComponentExtras]:
         open_change=box.open_state_names[1],
     )
     content, storage = build_component(pop, output_storage=True)
-    content = handle_pop_content(content)
-
     storage = add_to_storage(storage, cmd_storage, extend=True)
     return content, storage

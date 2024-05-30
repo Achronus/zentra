@@ -21,3 +21,13 @@ def name_from_pascal_case(name: str) -> str:
     """
     converted_name = re.sub("([a-z0-9])([A-Z])", r"\1-\2", name)
     return converted_name.lower()
+
+
+def compress(values: list[str], chars: str = "\n") -> str:
+    """Compresses values into a string."""
+    return chars.join(values)
+
+
+def str_to_list(content: str, sep: str = "\n") -> list[str]:
+    """Converts a string into a list of strings based on a given separator."""
+    return content.split(sep=sep)

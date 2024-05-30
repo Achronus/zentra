@@ -1,6 +1,5 @@
 from zentra.core.enums.ui import CalendarMode
 from zentra.ui.control import Calendar, Collapsible, Combobox, Pagination
-from zentra.ui.navigation import DDMCheckboxGroup, DropdownMenu, DDMRadioGroup
 from zentra.ui.presentation import Progress
 
 
@@ -82,48 +81,6 @@ def pagination_logic(comp: Pagination) -> list[str]:
         hook_simple(comp.start_idx_name[0], comp.start_idx_name[1], value="0"),
         hook_simple(comp.end_idx_name[0], comp.end_idx_name[1], value="itemsPerPage"),
     ]
-
-
-def dropdown_menu_logic(dd: DropdownMenu) -> list[str]:
-    """Returns a list of strings for the `DropdownMenu` logic based on the given name value."""
-
-    def radio_group(rg: DDMRadioGroup) -> list[str]:
-        logic = []
-
-        for idx, text in enumerate(rg.texts):
-            hook_value = rg.values[0] if rg.values else text.split(" ")[0].lower()
-            logic.append(
-                hook_simple(
-                    rg.state_name_pairs[idx][0],
-                    rg.state_name_pairs[idx][1],
-                    value=f'"{hook_value}"',
-                )
-            )
-
-        return logic
-
-    def checkbox_group(cbg: DDMCheckboxGroup) -> list[str]:
-        logic = []
-
-        for idx, _ in enumerate(cbg.texts):
-            state_val = "true" if idx == 0 else "false"
-            logic.append(
-                hook_simple(
-                    cbg.state_name_pairs[idx][0],
-                    cbg.state_name_pairs[idx][1],
-                    value=state_val,
-                    value_type="Checked",
-                )
-            )
-
-        return logic
-
-    if isinstance(dd.items, DDMRadioGroup):
-        return radio_group(dd.items)
-    elif isinstance(dd.items, DDMCheckboxGroup):
-        return checkbox_group(dd.items)
-
-    return []
 
 
 def progress_logic(prog: Progress) -> list[str]:

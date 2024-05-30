@@ -101,6 +101,29 @@ class SeparatorVariant(str, Enum):
     CONTEXT_MENU = "context_menu"
 
 
+class TriggerVariant(str, Enum):
+    ACCORDION = "accordion"
+    ALERT_DIALOG = "alert_dialog"
+    COLLAPSIBLE = "collapsible"
+    DROPDOWN_MENU = "dropdown_menu"
+    POPOVER = "popover"
+    SELECT = "select"
+    TOOLTIP = "tooltip"
+
+
+class LabelVariant(str, Enum):
+    DROPDOWN_MENU = "dropdown_menu"
+    CONTEXT_MENU = "context_menu"
+
+
+class ContentVariant(str, Enum):
+    DROPDOWN_MENU = "dropdown_menu"
+
+
+class GroupVariant(str, Enum):
+    DROPDOWN_MENU = "dropdown_menu"
+
+
 class BCTriggerVariant(str, Enum):
     ELLIPSIS = "ellipsis"
     TEXT = "text"
@@ -116,3 +139,9 @@ class CalendarMode(str, Enum):
     SINGLE = "single"
     MULTIPLE = "multiple"
     RANGE = "range"
+
+
+class DDMenuType(str, Enum):
+    DEFAULT = "default"
+    RADIO = "radio"
+    CHECKBOX = "checkbox"

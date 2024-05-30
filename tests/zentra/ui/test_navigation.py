@@ -18,12 +18,10 @@ from zentra.ui.navigation import (
     Command,
     CommandGroup,
     CommandItem,
-    DDMCheckboxGroup,
     DDMGroup,
     DDMItem,
-    DDMRadioGroup,
     DDMSeparator,
-    DDMSubGroup,
+    DDMSubMenu,
     DropdownMenu,
 )
 
@@ -33,18 +31,18 @@ class TestDropdownMenu:
     def dropdown_menu_radio_group(self) -> DropdownMenu:
         return DropdownMenu(
             trigger=Button(content="open", variant="outline"),
-            items=DDMRadioGroup(
-                texts=["Top Position", "Bottom Position", "Right Position"]
-            ),
+            items=["Top Position", "Bottom Position", "Right Position"],
             label="Panel Position",
+            type="radio",
         )
 
     @pytest.fixture
     def dropdown_menu_checkbox(self) -> DropdownMenu:
         return DropdownMenu(
             trigger=Button(content="open", variant="outline"),
-            items=DDMCheckboxGroup(texts=["Status Bar", "Activity Bar", "Panel"]),
+            items=["Status Bar", "Activity Bar", "Panel"],
             label="Appearance",
+            type="checkbox",
         )
 
     @pytest.fixture
@@ -87,7 +85,7 @@ class TestDropdownMenu:
                 DDMGroup(
                     items=[
                         DDMItem(icon=LucideIcon(name="users"), text="Team"),
-                        DDMSubGroup(
+                        DDMSubMenu(
                             trigger=DDMItem(
                                 icon=LucideIcon(name="user-plus"), text="Invite users"
                             ),
@@ -275,11 +273,14 @@ class TestDropdownMenu:
             )
 
     @staticmethod
-    def test_item_values_error():
+    def test_wrong_items_for_type_error():
         with pytest.raises(ValidationError):
             DropdownMenu(
-                trigger="open",
-                items=DDMRadioGroup(texts=["test"], values=["test1", "test2"]),
+                type="radio",
+                trigger="Radio test",
+                items=[
+                    DDMGroup(items=["test", "test"]),
+                ],
             )
 
 

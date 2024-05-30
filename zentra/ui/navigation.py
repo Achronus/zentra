@@ -1,18 +1,18 @@
-from typing import Optional
+from typing import Optional, Union
 
 from pydantic import Field, ValidationInfo, field_validator
 from pydantic_core import PydanticCustomError
 
 from zentra.core import Component
 from zentra.core.constants import LOWER_CAMELCASE_SINGLE_WORD
-from zentra.core.enums.ui import BCTriggerVariant
+from zentra.core.enums.ui import BCTriggerVariant, DDMenuType
 from zentra.core.react import LucideIcon, LucideIconWithText
 from zentra.core.validation import (
     check_kebab_case,
     check_pattern_match,
     local_url_validation,
 )
-from zentra.core.validation.component import ddm_radio_group_validation
+from zentra.core.validation.component import ddm_type_validation
 
 from zentra.custom.ui import SeparatorModel
 from zentra.nextjs import Link
@@ -46,7 +46,7 @@ class DDMItem(Component, ShadcnUi):
 
     Parameters:
     - `text` (`string | zentra.nextjs.Link`) - the text or `Link` model to display in the menu item. When `Link` model, `Link.text` and `Link.href` attributes are required
-    - `icon` (`zentra.core.react.LucideIcon, optional`) - a [Lucide React Icon](https://lucide.dev/icons) added before the text. `None` by default
+    - `icon` (`zentra.core.react.LucideIcon, optional`) - a `LucideIcon` model added before the text. `None` by default
     - `shortcut_key` (`string, optional`) - the shortcut key for the menu item. `None` by default
     - `disabled` (`boolean, optional`) - adds the disabled property, preventing it from being clicked. `False` by default
     """
@@ -70,18 +70,13 @@ class DDMItem(Component, ShadcnUi):
 
 class DDMSeparator(Component, ShadcnUi):
     """
-    A helper Zentra model for the [Shadcn/ui DropdownMenu](https://ui.shadcn.com/docs/components/dropdown-menu) component. Represents a dropdown menu separator (`DropdownMenuSeparator`) child component.
+    A helper Zentra model for the [Shadcn/ui DropdownMenu](https://ui.shadcn.com/docs/components/dropdown-menu) component. Represents a dropdown menu separator.
 
-    Cannot be used on its own, must be used inside a `zentra.ui.navigation.DDMGroup`, or `zentra.ui.navigation.DDMSubGroup` model.
+    Cannot be used on its own, must be used inside a `zentra.ui.navigation.DDMGroup` or `zentra.ui.navigation.DDMSubGroup` model.
     """
 
-    @property
-    def content_str(self) -> str:
-        """Provides the JSX content for the component."""
-        return SeparatorModel(variant="dropdown_menu").content_str
 
-
-class DDMSubGroup(Component, ShadcnUi):
+class DDMSubMenu(Component, ShadcnUi):
     """
     A helper Zentra model for the [Shadcn/ui DropdownMenu](https://ui.shadcn.com/docs/components/dropdown-menu) component. Represents a single sub-menu group.
 
@@ -113,86 +108,41 @@ class DDMGroup(Component, ShadcnUi):
     - `label` (`string, optional`) - The label displayed at the top of the menu group. `None` by default
     """
 
-    items: list[str | DDMSeparator] | list[DDMItem | DDMSubGroup | DDMSeparator]
+    items: Union[
+        list[str | DDMSeparator],
+        list[DDMItem | DDMSubMenu | DDMSeparator],
+    ]
     label: Optional[str] = None
-
-
-class DDMCheckboxGroup(Component, ShadcnUi):
-    """
-    A helper Zentra model for the [Shadcn/ui DropdownMenu](https://ui.shadcn.com/docs/components/dropdown-menu) component with checkboxes. Represents a single checkbox item.
-
-    Cannot be used on its own, must be used inside a `zentra.ui.navigation.DropdownMenu` model.
-
-    Parameters:
-    - `texts` (`list[string]`) - a list of strings for each `DropdownMenuCheckboxItem`. Acts as the text displayed in the `RadioItem`
-    """
-
-    texts: list[str]
-
-    @property
-    def state_name_pairs(self) -> list[tuple[str, str]]:
-        """Defines the hook state name pairs `(get, set)` for each `CheckboxItem` based on the given text. Uses the first two words as a unique identifier for each one."""
-        pairs = []
-        for item in self.texts:
-            name = "".join([item.capitalize() for item in item.split(" ")[:2]])
-            pairs.append((f"ddCheckboxShow{name}", f"ddCheckboxSetShow{name}"))
-
-        return pairs
-
-
-class DDMRadioGroup(Component, ShadcnUi):
-    """
-    A Zentra model for the [Shadcn/ui DropdownMenu](https://ui.shadcn.com/docs/components/dropdown-menu#radio-group) component with a radio group. Represents a complete radio group.
-
-    Cannot be used on its own, must be used inside a `zentra.ui.navigation.DropdownMenu` model.
-
-    Parameters:
-    - `texts` (`list[string]`) - a list of strings for each `DropdownMenuRadioItem`. Acts as the text displayed in the `RadioItem`
-    - `values` (`list[string], optional`) - an optional list of values for each `item` in the `items` list. Adds the `value` prop to each item in the respective index. `None` by default. When `None` automatically uses a lowercase variant of the first word in each `item`
-
-    Note: `items` and `values` must match in size if `values` is provided.
-    """
-
-    texts: list[str]
-    values: Optional[list[str]] = None
-
-    @property
-    def state_name_pairs(self) -> list[tuple[str, str]]:
-        """Defines the hook state name pairs `(get, set)` for each `RadioItem` based on the given text. Uses the first two words as a unique identifier for each one."""
-        pairs = []
-        for item in self.texts:
-            name = "".join([item.capitalize() for item in item.split(" ")[:2]])
-            pairs.append((f"dd{name}", f"ddSet{name}"))
-
-        return pairs
-
-    @field_validator("values")
-    def validate_items_values(
-        cls, values: list[str], info: ValidationInfo
-    ) -> list[str]:
-        texts = info.data.get("texts")
-        return ddm_radio_group_validation(values, texts)
 
 
 class DropdownMenu(Component, ShadcnUi):
     """
     A Zentra model for the [Shadcn/ui DropdownMenu](https://ui.shadcn.com/docs/components/dropdown-menu) component.
 
+    Due to the versatility of `DropdownMenus`, one of the main ways to use the `items` parameter is to provide a sequence of `tuple[string, ...]` known as a `ItemTuple`. `tuple` items are limited to `string` values and can be between `2` to `4` values. These are allocated dynamically based on the tuple size. Available options for `tuples` include: `(name, url)`, `(name, icon)`, `(name, icon, url)`, `(name, icon, shortcut_key)`, `(name, icon, shortcut_key, url)` -
+      1. `Name`: The text to display inside the dropdown menu
+      2. `URL` (`optional`): The URL to wrap around the dropdown item
+      3. `Icon name` (`optional`): the name of the [Lucide React Icon](https://lucide.dev/icons). Must be in kebab-case format. E.g., `circle-arrow-down` or `loader`
+      4. `Shortcut key` (`optional`): the shortcut key for the item
+
+    For more information about the `items` parameter, refer to the `Parameters` section.
+
     Parameters:
     - `trigger` (`zentra.ui.control.Button | string`) - The item to activate the dropdown menu. Can be either:
       1. A Zentra `Button` model
       2. A string of text
-    - `items` (`zentra.ui.navigation.DDMGroup | zentra.ui.navigation.DDMRadioGroup | zentra.ui.navigation.DDMCheckboxGroup | list[zentra.ui.navigation.DDMGroup]`) - Can be either:
-      1. A `DDMGroup` model. For a single group of dropdown menu items. These can be either `strings` or `DDMItem` models
-      2. A `DDMRadioGroup` model containing a list of radio items
-      3. A `DDMCheckboxGroup` model containing a list of checkbox items
-      4. A list of `DDMGroup` models. For multiple groups of dropdown items, automatically separated by a `DropdownMenuSeparator`
+    - `items` (`zentra.ui.navigation.DDMGroup | list[string | zentra.ui.navigation.DDMGroup]`) - A list of items to apply to the dropdown menu. Can be either:
+      1. A `list[string]` values for a single group of menu items with text. Required when `type='radio'` or `type='checkbox'`
+      2. A `DDMGroup` model for a single group of menu items
+      3. A list of `DDMGroup` models for multiple groups of dropdown items. Groups are automatically separated by a `DropdownMenuSeparator`
     - `label` (`string, optional`) - The main label displayed at the top of the dropdown menu. `None` by default
+    - `type` (`string, optional`) - The type of dropdown menu to use. Valid options: `['default', 'radio', 'checkbox']`. When `radio` or `checkbox`, `items` are limited to a `list[string]`. `default` by default
     """
 
     trigger: Button | str
-    items: DDMGroup | DDMRadioGroup | DDMCheckboxGroup | list[DDMGroup]
+    items: Union[DDMGroup, list[str | DDMGroup]]
     label: Optional[str] = None
+    type: DDMenuType = "default"
 
     @property
     def child_names(self) -> list[str]:
@@ -212,6 +162,15 @@ class DropdownMenu(Component, ShadcnUi):
             "DropdownMenuSubTrigger",
             "DropdownMenuRadioGroup",
         ]
+
+    @property
+    def custom_common_attributes(self) -> list[str]:
+        return ["type"]
+
+    @field_validator("type")
+    def validate_type(cls, type: str, info: ValidationInfo) -> str:
+        items = info.data.get("items")
+        return ddm_type_validation(type, items)
 
 
 class ContextMenu(Component, ShadcnUi):

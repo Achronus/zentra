@@ -2,7 +2,7 @@ import re
 from typing import Any, Optional
 from pydantic_core import PydanticCustomError
 
-from zentra.core.enums.ui import InputOTPPatterns
+from zentra.core.enums.ui import DDMenuType, InputOTPPatterns
 
 
 def data_array_validation(data: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -130,17 +130,6 @@ def slider_validation(size: int, min: int, max: int) -> int:
     return size
 
 
-def ddm_radio_group_validation(values: list[str], texts: list[str]) -> list[str]:
-    """A helper validation function for validating the `DDMRadioGroup.values` attribute."""
-    if values is not None and len(texts) != len(values):
-        raise PydanticCustomError(
-            "size_mismatch",
-            f"'texts' and 'values' must match in size -> 'texts={len(texts)} != values={len(values)}'\n",
-            dict(texts_size=len(texts), values_size=len(values)),
-        )
-    return values
-
-
 def aspect_ratio_validation(ratio: str | int) -> str | int:
     """A helper validation function for validating the `AspectRatio.ratio` attribute."""
     if isinstance(ratio, str):
@@ -173,3 +162,15 @@ def skeleton_validation(items: Optional[list], preset: str) -> Optional[list]:
         )
 
     return items
+
+
+def ddm_type_validation(type: str, items: list) -> str:
+    """A helper validation function for validating the `DropdownMenu.type` attribute."""
+    if type == DDMenuType.CHECKBOX.value or type == DDMenuType.RADIO.value:
+        if any([not isinstance(item, str) for item in items]):
+            raise PydanticCustomError(
+                "invalid_items",
+                f"must be 'list[string]' for 'type='{type}''",
+                dict(wrong_value=items),
+            )
+    return type

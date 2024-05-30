@@ -62,7 +62,6 @@ from cli.templates.ui.logic import (
     calendar_logic,
     collapsible_logic,
     combobox_logic,
-    dropdown_menu_logic,
     pagination_logic,
     progress_logic,
 )
@@ -187,7 +186,6 @@ LOGIC_MAPPING = {
     "Calendar": lambda comp: calendar_logic(comp),
     "Collapsible": lambda comp: collapsible_logic(comp),
     "Pagination": lambda comp: pagination_logic(comp),
-    "DropdownMenu": lambda comp: dropdown_menu_logic(comp),
     "Progress": lambda comp: progress_logic(comp),
     "Combobox": lambda comp: combobox_logic(comp),
 }

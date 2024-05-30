@@ -12,7 +12,7 @@ from cli.templates.utils import compress, str_to_list, text_content
 from zentra.core import Component
 from zentra.core.base import HTMLTag
 from zentra.core.constants import PARAMETER_PREFIX
-from zentra.core.enums.ui import CalendarMode
+from zentra.core.enums.ui import CalendarMode, DDMenuType
 from zentra.core.react import LucideIcon, LucideIconWithText
 from zentra.nextjs import Link, NextJs
 from zentra.ui.control import (
@@ -31,6 +31,8 @@ from zentra.ui.control import (
     Toggle,
     ToggleGroup,
 )
+from zentra.ui.helper import ContentModel, LabelModel, SeparatorModel, TriggerModel
+from zentra.ui.helper.ddm import DDMCheckboxGroup, DDMRadioGroup
 from zentra.ui.modal import Popover
 from zentra.ui.navigation import (
     BCDropdownMenu,
@@ -40,13 +42,11 @@ from zentra.ui.navigation import (
     CommandGroup,
     CommandItem,
     CommandMap,
-    DDMCheckboxGroup,
     DDMGroup,
     DDMItem,
     DDMSeparator,
-    DDMSubGroup,
+    DDMSubMenu,
     DropdownMenu,
-    DDMRadioGroup,
 )
 from zentra.ui.notification import Alert, TextAlertDialog, Tooltip
 from zentra.ui.presentation import (
@@ -158,6 +158,41 @@ def handle_menu_item(
         )
     ]
     return content, storage
+
+
+def build_trigger(
+    variant: str, content: Button | str
+) -> tuple[list[str], JSXComponentExtras]:
+    """A helper function to build `TriggerModel` child components. Returns a tuple in the form: `(content, JSXComponentExtras)`."""
+    model = TriggerModel(variant=variant)
+
+    if isinstance(content, str):
+        return model.build(content), JSXComponentExtras()
+    else:
+        content, storage = build_component(content, output_storage=True)
+        return model.build(content, attrs="asChild"), storage
+
+
+def build_label(variant: str, content: str | list[str]) -> list[str]:
+    """A helper function to build `LabelModel` child components. Returns the JSX content as a `list[string]`."""
+    model = LabelModel(variant=variant)
+    return model.build(content)
+
+
+def build_separator(
+    variant: str, content: str | list[str] = None, styles: str = None
+) -> list[str]:
+    """A helper function to build `SeparatorModel` child components. Returns the JSX content as a `list[string]`."""
+    model = SeparatorModel(variant=variant, styles=styles)
+    return model.build(content)
+
+
+def build_content(
+    variant: str, content: str | list[str] = None, styles: str = None
+) -> list[str]:
+    """A helper function to build `ContentModel` child components. Returns the JSX content as a `list[string]`."""
+    model = ContentModel(variant=variant, styles=styles)
+    return model.build(content)
 
 
 def add_wrapper(name: str, content: str | list[str], attrs: str = None) -> str:
@@ -705,84 +740,33 @@ def tooltip_content(tt: Tooltip) -> tuple[list[str], JSXComponentExtras]:
 def dropdown_menu_content(dd: DropdownMenu) -> tuple[list[str], JSXComponentExtras]:
     """Returns a list of strings and component storage for the `DropdownMenu` content based on the components attributes."""
 
-    def trigger() -> tuple[list[str], JSXComponentExtras]:
-        if isinstance(dd.trigger, str):
-            return [
-                add_wrapper("DropdownMenuTrigger", dd.trigger),
-            ], JSXComponentExtras()
-        else:
-            trigger_content, storage = build_component(dd.trigger, output_storage=True)
-
-            return [
-                add_wrapper("DropdownMenuTrigger", trigger_content, attrs="asChild")
-            ], storage
-
-    def radio_group(rg: DDMRadioGroup) -> list[str]:
-        if rg.values:
-            item_content = [
-                add_wrapper("DropdownMenuRadioItem", text, f'value="{value}"')
-                for text, value in zip(rg.texts, rg.values)
-            ]
-        else:
-            item_content = [
-                add_wrapper(
-                    "DropdownMenuRadioItem",
-                    text,
-                    f'value="{text.split(" ")[0].lower()}"',
-                )
-                for text in rg.texts
-            ]
-
-        return [
-            add_wrapper(
-                "DropdownMenuRadioGroup",
-                item_content,
-                "value={position} onValueChange={setPosition}",
-            )
-        ]
-
-    def checkbox_group(cbg: DDMCheckboxGroup) -> list[str]:
-        content = []
-        for item, (start_name, end_name) in zip(cbg.texts, cbg.state_name_pairs):
-            content.extend(
-                [
-                    add_wrapper(
-                        "DropdownMenuCheckboxItem",
-                        item,
-                        f"checked={{{start_name}}} onCheckedChange={{{end_name}}}",
-                    )
-                ]
-            )
-
-        return content
-
     def create_str_item(item: str) -> list[str]:
         return [add_wrapper("DropdownMenuItem", item)]
 
     def ddm_group_iteration(
-        item: str | DDMSubGroup | DDMItem | DDMSeparator,
+        item: str | DDMSubMenu | DDMItem | DDMSeparator,
     ) -> tuple[list[str], JSXComponentExtras]:
+        item_storage = JSXComponentExtras()
+
         if isinstance(item, str):
             item_content = create_str_item(item)
-            item_storage = None
-        elif isinstance(item, DDMSubGroup):
+        elif isinstance(item, DDMSubMenu):
             item_content, item_storage = ddm_sub_group(item)
         elif isinstance(item, DDMSeparator):
-            item_content = [item.content_str]
-            item_storage = None
+            item_content = build_separator("dropdown_menu")
         else:
             item_content, item_storage = handle_menu_item(item, "DropdownMenu")
 
         return item_content, item_storage
 
-    def ddm_sub_group(sub: DDMSubGroup) -> tuple[list[str], JSXComponentExtras]:
+    def ddm_sub_group(sub: DDMSubMenu) -> tuple[list[str], JSXComponentExtras]:
         inner_content, storage = handle_menu_item(sub.trigger, "DropdownMenu")
         inner_content[0] = inner_content[0].replace(
             "DropdownMenuItem", "DropdownMenuSubTrigger"
         )
 
         if sub.label:
-            inner_content.append(add_wrapper("DropdownMenuLabel", sub.label))
+            inner_content.append(build_label("dropdown_menu", sub.label))
 
         inner_item_content = []
         for item in sub.items:
@@ -805,11 +789,10 @@ def dropdown_menu_content(dd: DropdownMenu) -> tuple[list[str], JSXComponentExtr
         return content, storage
 
     def ddm_group(group: DDMGroup) -> tuple[list[str], JSXComponentExtras]:
-        inner_content = []
-        storage = JSXComponentExtras()
+        inner_content, storage = [], JSXComponentExtras()
 
         if group.label:
-            inner_content.append(add_wrapper("DropdownMenuLabel", group.label))
+            inner_content.extend(build_label("dropdown_menu", group.label))
 
         for item in group.items:
             item_content, item_storage = ddm_group_iteration(item)
@@ -823,43 +806,50 @@ def dropdown_menu_content(dd: DropdownMenu) -> tuple[list[str], JSXComponentExtr
         return content, storage
 
     def handle_groups(items: list[DDMGroup]) -> tuple[list[str], JSXComponentExtras]:
-        content = []
-        storage = JSXComponentExtras()
+        content, storage = [], JSXComponentExtras()
 
         for item in items:
             item_content, item_storage = ddm_group(item)
             content.extend(item_content)
             storage = add_to_storage(storage, item_storage, extend=True)
-            content.append(DDMSeparator().content_str)
+            content.extend(build_separator("dropdown_menu"))
 
         content.pop()  # Remove trailing separator
         return content, storage
 
-    content, storage = trigger()
+    content, storage = build_trigger("dropdown_menu", dd.trigger)
     inner_content = []
 
     if dd.label:
         inner_content.extend(
-            [add_wrapper("DropdownMenuLabel", dd.label), DDMSeparator().content_str]
+            [
+                *build_label("dropdown_menu", dd.label),
+                *build_separator("dropdown_menu"),
+            ]
         )
 
-    group_storage = None
-    if isinstance(dd.items, DDMRadioGroup):
-        group_content = radio_group(dd.items)
-    elif isinstance(dd.items, DDMCheckboxGroup):
-        group_content = checkbox_group(dd.items)
+    if dd.type == DDMenuType.CHECKBOX.value:
+        cbg = DDMCheckboxGroup(items=dd.items)
+        group_content = cbg.content()
+        storage.logic.extend(cbg.logic())
+
+    elif dd.type == DDMenuType.RADIO.value:
+        rg = DDMRadioGroup(items=dd.items)
+        group_content = rg.content()
+        storage.logic.extend(rg.logic())
+
     elif isinstance(dd.items, (DDMGroup, list)):
         if isinstance(dd.items, DDMGroup):
             dd.items = [dd.items]
         group_content, group_storage = handle_groups(dd.items)
 
-    if group_storage:
-        storage = add_to_storage(storage, group_storage, extend=True)
+        if group_storage:
+            storage = add_to_storage(storage, group_storage, extend=True)
 
     inner_content.extend(group_content)
     content = [
         *content,
-        add_wrapper("DropdownMenuContent", inner_content, 'className="w-56"'),
+        *build_content("dropdown_menu", inner_content, styles="w-56"),
     ]
     return content, storage
 

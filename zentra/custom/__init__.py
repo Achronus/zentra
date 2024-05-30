@@ -2,7 +2,7 @@ import re
 from pydantic import BaseModel, Field
 from pydantic_core import PydanticCustomError
 
-from zentra.core import PARAMETER_PREFIX
+from zentra.core.constants import PARAMETER_PREFIX
 from zentra.core.enums.ui import LibraryType
 
 VALID_URL_SCHEMES = (

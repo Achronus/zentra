@@ -1,13 +1,7 @@
-import re
 from typing import Optional
 
-from zentra.core import (
-    LOWER_CAMELCASE_WITH_DIGITS,
-    LOWERCASE_SINGLE_WORD,
-    Component,
-    DataArray,
-    has_valid_pattern,
-)
+from zentra.core import Component, DataArray
+from zentra.core.constants import LOWER_CAMELCASE_WITH_DIGITS, LOWERCASE_SINGLE_WORD
 from zentra.core.enums.ui import (
     ButtonSize,
     ButtonVariant,
@@ -22,11 +16,20 @@ from zentra.core.enums.ui import (
 )
 from zentra.core.html import Div
 from zentra.core.react import LucideIconWithText
-from zentra.custom import CustomUrl
 from zentra.ui import ShadcnUi
 
 from pydantic import Field, PrivateAttr, ValidationInfo, field_validator
-from pydantic_core import PydanticCustomError
+
+from zentra.validation import check_pattern_match, url_validation
+from zentra.validation.component import (
+    calendar_validation,
+    input_otp_num_groups_validation,
+    input_otp_pattern_validation,
+    pagination_validation,
+    radio_group_default_value_validation,
+    radio_group_items_validation,
+    slider_validation,
+)
 
 
 class Button(Component, ShadcnUi):
@@ -57,10 +60,7 @@ class Button(Component, ShadcnUi):
 
     @field_validator("url")
     def validate_url(cls, url: str) -> str:
-        if isinstance(url, str):
-            CustomUrl(url=url).validate_url()
-
-        return url
+        return url_validation(url)
 
 
 class Calendar(Component, ShadcnUi):
@@ -119,39 +119,31 @@ class Calendar(Component, ShadcnUi):
 
     @field_validator("name")
     def validate_id(cls, name: str) -> str:
-        if not has_valid_pattern(pattern=LOWER_CAMELCASE_WITH_DIGITS, value=name):
-            raise PydanticCustomError(
-                "string_pattern_mismatch",
-                "must be lowercase or camelCase",
-                dict(wrong_value=name, pattern=LOWER_CAMELCASE_WITH_DIGITS),
-            )
-        return name
+        return check_pattern_match(
+            LOWER_CAMELCASE_WITH_DIGITS, name, err_msg="must be lowercase or camelCase"
+        )
 
     @field_validator("required")
     def validate_required(cls, req: bool, info: ValidationInfo) -> bool:
         mode = info.data.get("mode")
 
-        if mode != CalendarMode.SINGLE.value:
-            raise PydanticCustomError(
-                "incorrect_mode",
-                "cannot be used unless `mode='single'`. Change 'mode' or remove attribute",
-                dict(wrong_value=mode),
-            )
-
-        return req
+        return calendar_validation(
+            req,
+            mode,
+            condition=(mode != CalendarMode.SINGLE.value),
+            err_msg_word="unless",
+        )
 
     @field_validator("min", "max")
     def validate_min_max(cls, val: int, info: ValidationInfo) -> int:
         mode = info.data.get("mode")
 
-        if mode == CalendarMode.SINGLE.value:
-            raise PydanticCustomError(
-                "incorrect_mode",
-                "cannot be used when `mode='single'`. Change 'mode' or remove attribute",
-                dict(wrong_value=mode),
-            )
-
-        return val
+        return calendar_validation(
+            val,
+            mode,
+            condition=(mode == CalendarMode.SINGLE.value),
+            err_msg_word="when",
+        )
 
 
 class Checkbox(Component, ShadcnUi):
@@ -174,13 +166,9 @@ class Checkbox(Component, ShadcnUi):
 
     @field_validator("id")
     def validate_id(cls, id: str) -> str:
-        if not has_valid_pattern(pattern=LOWER_CAMELCASE_WITH_DIGITS, value=id):
-            raise PydanticCustomError(
-                "string_pattern_mismatch",
-                "must be lowercase or camelCase",
-                dict(wrong_value=id, pattern=LOWER_CAMELCASE_WITH_DIGITS),
-            )
-        return id
+        return check_pattern_match(
+            LOWER_CAMELCASE_WITH_DIGITS, id, err_msg="must be lowercase or camelCase"
+        )
 
 
 class MultiCheckbox(Component, ShadcnUi):
@@ -222,13 +210,11 @@ class Collapsible(Component, ShadcnUi):
 
     @field_validator("name")
     def validate_id(cls, name: str) -> str:
-        if not has_valid_pattern(pattern=LOWER_CAMELCASE_WITH_DIGITS, value=name):
-            raise PydanticCustomError(
-                "string_pattern_mismatch",
-                "must be lowercase or camelCase",
-                dict(wrong_value=name, pattern=LOWER_CAMELCASE_WITH_DIGITS),
-            )
-        return name
+        return check_pattern_match(
+            LOWER_CAMELCASE_WITH_DIGITS,
+            name,
+            err_msg="must be lowercase or camelCase",
+        )
 
 
 class Combobox(Component, ShadcnUi):
@@ -347,13 +333,11 @@ class Input(Component, ShadcnUi):
 
     @field_validator("id")
     def validate_id(cls, id: str) -> str:
-        if not has_valid_pattern(pattern=LOWER_CAMELCASE_WITH_DIGITS, value=id):
-            raise PydanticCustomError(
-                "string_pattern_mismatch",
-                "must be lowercase or camelCase",
-                dict(wrong_value=id, pattern=LOWER_CAMELCASE_WITH_DIGITS),
-            )
-        return id
+        return check_pattern_match(
+            LOWER_CAMELCASE_WITH_DIGITS,
+            id,
+            err_msg="must be lowercase or camelCase",
+        )
 
 
 class InputOTP(Component, ShadcnUi):
@@ -458,27 +442,11 @@ class InputOTP(Component, ShadcnUi):
     @field_validator("num_groups")
     def validate_num_groups(num_groups: int, info: ValidationInfo) -> int:
         num_inputs = info.data.get("num_inputs")
-        if num_groups > num_inputs:
-            raise PydanticCustomError(
-                "size_out_of_bounds",
-                f"cannot have more groups ({num_groups}) than input slots ({num_inputs})\n",
-                dict(wrong_value=num_groups, input_size=num_inputs),
-            )
-        return num_groups
+        return input_otp_num_groups_validation(num_groups, num_inputs)
 
     @field_validator("pattern")
     def validate_pattern(pattern: str) -> str:
-        if pattern not in InputOTPPatterns:
-            try:
-                re.compile(pattern)
-            except re.error:
-                official_patterns = [pattern.value for pattern in InputOTPPatterns]
-                raise PydanticCustomError(
-                    "invalid_regex_pattern",
-                    f"must be an official pattern option ({official_patterns}) or a valid regex string\n",
-                    dict(wrong_value=pattern, official_patterns=official_patterns),
-                )
-        return pattern
+        return input_otp_pattern_validation(pattern)
 
 
 class Label(Component, ShadcnUi):
@@ -495,13 +463,9 @@ class Label(Component, ShadcnUi):
 
     @field_validator("name")
     def validate_id(cls, name: str) -> str:
-        if not has_valid_pattern(pattern=LOWER_CAMELCASE_WITH_DIGITS, value=name):
-            raise PydanticCustomError(
-                "string_pattern_mismatch",
-                "must be lowercase or camelCase",
-                dict(wrong_value=name, pattern=LOWER_CAMELCASE_WITH_DIGITS),
-            )
-        return name
+        return check_pattern_match(
+            LOWER_CAMELCASE_WITH_DIGITS, name, err_msg="must be lowercase or camelCase"
+        )
 
 
 class Pagination(Component, ShadcnUi):
@@ -549,13 +513,7 @@ class Pagination(Component, ShadcnUi):
 
     @field_validator("links")
     def validate_links(cls, links: list[str]) -> list[str]:
-        if len(links) > 5:
-            PydanticCustomError(
-                "too_many_links",
-                "exceeds maximum link count (5)",
-                dict(wrong_value=links, count=len(links)),
-            )
-        return links
+        return pagination_validation(links, 5)
 
 
 class RadioButton(Component, ShadcnUi):
@@ -574,23 +532,19 @@ class RadioButton(Component, ShadcnUi):
 
     @field_validator("id")
     def validate_id(cls, id: str) -> str:
-        if not has_valid_pattern(pattern=LOWER_CAMELCASE_WITH_DIGITS, value=id):
-            raise PydanticCustomError(
-                "string_pattern_mismatch",
-                "must be lowercase or camelCase",
-                dict(wrong_value=id, pattern=LOWER_CAMELCASE_WITH_DIGITS),
-            )
-        return id
+        return check_pattern_match(
+            LOWER_CAMELCASE_WITH_DIGITS,
+            id,
+            err_msg="must be lowercase or camelCase",
+        )
 
     @field_validator("value")
     def validate_value(cls, value: str) -> str:
-        if not has_valid_pattern(pattern=LOWERCASE_SINGLE_WORD, value=value):
-            raise PydanticCustomError(
-                "string_pattern_mismatch",
-                "must be lowercase and a single word",
-                dict(wrong_value=value, pattern=LOWERCASE_SINGLE_WORD),
-            )
-        return value
+        return check_pattern_match(
+            LOWERCASE_SINGLE_WORD,
+            value,
+            err_msg="must be lowercase and a single word",
+        )
 
 
 class RadioGroup(Component, ShadcnUi):
@@ -611,39 +565,18 @@ class RadioGroup(Component, ShadcnUi):
 
     @field_validator("items")
     def validate_items(cls, items: list[RadioButton]) -> list[RadioButton]:
-        if not items or len(items) == 0:
-            raise PydanticCustomError(
-                "missing_radio_button",
-                "must have at least one 'RadioButton'",
-                dict(wrong_value=items),
-            )
-        return items
+        return radio_group_items_validation(items)
 
     @field_validator("default_value")
     def validate_default_value(cls, default_value: str, info: ValidationInfo) -> str:
-        if not has_valid_pattern(pattern=LOWERCASE_SINGLE_WORD, value=default_value):
-            raise PydanticCustomError(
-                "string_pattern_mismatch",
-                "must be lowercase and a single word",
-                dict(wrong_value=default_value, pattern=LOWERCASE_SINGLE_WORD),
-            )
+        default_value = check_pattern_match(
+            LOWERCASE_SINGLE_WORD,
+            default_value,
+            err_msg="must be lowercase and a single word",
+        )
 
-        present = False
         radio_buttons: list[RadioButton] = info.data.get("items")
-        if radio_buttons:
-            for rb in radio_buttons:
-                if rb.value == default_value:
-                    present = True
-                    break
-
-            if not present:
-                raise PydanticCustomError(
-                    "default_value_missing",
-                    f"""'value="{default_value}"' missing from 'items'. Provided -> \n    '{radio_buttons}'\n""",
-                    dict(wrong_value=default_value, items=radio_buttons),
-                )
-
-        return default_value
+        return radio_group_default_value_validation(default_value, radio_buttons)
 
 
 class ScrollArea(Component, ShadcnUi):
@@ -888,23 +821,15 @@ class Slider(Component, ShadcnUi):
 
     @field_validator("name")
     def validate_name(cls, name: str) -> str:
-        if not has_valid_pattern(pattern=LOWER_CAMELCASE_WITH_DIGITS, value=name):
-            raise PydanticCustomError(
-                "string_pattern_mismatch",
-                "must be lowercase or camelCase",
-                dict(wrong_value=name, pattern=LOWER_CAMELCASE_WITH_DIGITS),
-            )
-        return name
+        return check_pattern_match(
+            LOWER_CAMELCASE_WITH_DIGITS,
+            name,
+            err_msg="must be lowercase or camelCase",
+        )
 
     @field_validator("bar_size")
     def validate_bar_size(cls, size: int) -> int:
-        if not (0 <= size <= 100):
-            raise PydanticCustomError(
-                "out_of_range",
-                "must be between '0' and '100'",
-                dict(wrong_value=size, accepted_min=0, accepted_max=100),
-            )
-        return size
+        return slider_validation(size, 0, 100)
 
 
 class Switch(Component, ShadcnUi):
@@ -923,13 +848,11 @@ class Switch(Component, ShadcnUi):
 
     @field_validator("id")
     def validate_id(cls, id: str) -> str:
-        if not has_valid_pattern(pattern=LOWER_CAMELCASE_WITH_DIGITS, value=id):
-            raise PydanticCustomError(
-                "string_pattern_mismatch",
-                "must be lowercase or camelCase",
-                dict(wrong_value=id, pattern=LOWER_CAMELCASE_WITH_DIGITS),
-            )
-        return id
+        return check_pattern_match(
+            LOWER_CAMELCASE_WITH_DIGITS,
+            id,
+            err_msg="must be lowercase or camelCase",
+        )
 
 
 class Tabs(Component, ShadcnUi):
@@ -957,13 +880,11 @@ class Textarea(Component, ShadcnUi):
 
     @field_validator("id")
     def validate_id(cls, id: str) -> str:
-        if not has_valid_pattern(pattern=LOWER_CAMELCASE_WITH_DIGITS, value=id):
-            raise PydanticCustomError(
-                "string_pattern_mismatch",
-                "must be lowercase or camelCase",
-                dict(wrong_value=id, pattern=LOWER_CAMELCASE_WITH_DIGITS),
-            )
-        return id
+        return check_pattern_match(
+            LOWER_CAMELCASE_WITH_DIGITS,
+            id,
+            err_msg="must be lowercase or camelCase",
+        )
 
 
 class Toggle(Component, ShadcnUi):

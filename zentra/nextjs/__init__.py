@@ -1,12 +1,11 @@
 from typing import Optional
 
-from zentra.core import LOWER_CAMELCASE_SINGLE_WORD, Component, has_valid_pattern
+from zentra.core import Component
+from zentra.core.constants import LOWER_CAMELCASE_SINGLE_WORD
 from zentra.core.enums.ui import LibraryType
+from zentra.validation import check_pattern_match, pathname_validation, url_validation
 
 from pydantic import BaseModel, Field, field_validator
-from pydantic_core import PydanticCustomError
-
-from zentra.custom import CustomUrl
 
 
 class NextJs:
@@ -72,13 +71,7 @@ class UrlQuery(BaseModel, NextJs):
 
     @field_validator("pathname")
     def validate_pathname(cls, pathname: str) -> str:
-        if not pathname.startswith("/"):
-            raise PydanticCustomError(
-                "invalid_string",
-                "must start with a '/'",
-                dict(wrong_value=pathname),
-            )
-        return pathname
+        return pathname_validation(pathname)
 
 
 class StaticImage(BaseModel, NextJs):
@@ -110,14 +103,11 @@ class StaticImage(BaseModel, NextJs):
 
     @field_validator("name")
     def validate_import_name(cls, name: str) -> str:
-        if not has_valid_pattern(pattern=LOWER_CAMELCASE_SINGLE_WORD, value=name):
-            raise PydanticCustomError(
-                "string_pattern_mismatch",
-                "must be 'lowercase' or 'camelCase', a 'single word' and a maximum of '30' characters",
-                dict(wrong_value=name, pattern=LOWER_CAMELCASE_SINGLE_WORD),
-            )
-
-        return name
+        return check_pattern_match(
+            LOWER_CAMELCASE_SINGLE_WORD,
+            name,
+            err_msg="must be 'lowercase' or 'camelCase', a 'single word' and a maximum of '30' characters",
+        )
 
 
 class Image(Component, NextJs):
@@ -223,10 +213,7 @@ class Image(Component, NextJs):
     # TODO: add optional attributes such as loader
     @field_validator("src")
     def validate_src(cls, src: str | StaticImage) -> str | StaticImage:
-        if isinstance(src, str):
-            CustomUrl(url=src, is_param=True).validate_url()
-
-        return src
+        return url_validation(src, is_param=True)
 
 
 class Link(Component, NextJs):
@@ -325,7 +312,4 @@ class Link(Component, NextJs):
 
     @field_validator("href")
     def validate_href(cls, href: str | UrlQuery) -> str | UrlQuery:
-        if isinstance(href, str):
-            CustomUrl(url=href).validate_url()
-
-        return href
+        return url_validation(href)

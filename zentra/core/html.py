@@ -1,10 +1,11 @@
-from zentra.core import PARAMETER_PREFIX, Component
+from zentra.core import Component
 from zentra.core.base import HTMLTag, JSIterable
 from zentra.core.enums.html import HTMLContentTagType
 from zentra.nextjs import Image
 
 from pydantic import field_validator
-from pydantic_core import PydanticCustomError
+
+from zentra.validation import key_attr_validation
 
 
 class HTMLContent(HTMLTag):
@@ -46,13 +47,7 @@ class Div(HTMLTag):
 
     @field_validator("key")
     def validate_key(cls, key: str) -> str:
-        if key and not key.startswith(PARAMETER_PREFIX):
-            raise PydanticCustomError(
-                "key_must_be_a_parameter",
-                f"'{key}' != '{PARAMETER_PREFIX}{key}'! Must start with a '{PARAMETER_PREFIX}' to set as a parameter\n",
-                dict(wrong_value=key),
-            )
-        return key
+        return key_attr_validation(key)
 
 
 class FigCaption(HTMLTag):
@@ -166,10 +161,4 @@ class Figure(HTMLTag):
 
     @field_validator("key")
     def validate_key(cls, key: str) -> str:
-        if key and not key.startswith(PARAMETER_PREFIX):
-            raise PydanticCustomError(
-                "key_must_be_a_parameter",
-                f"'{key}' != '{PARAMETER_PREFIX}{key}'! Must start with a '{PARAMETER_PREFIX}' to set as a parameter\n",
-                dict(wrong_value=key),
-            )
-        return key
+        return key_attr_validation(key)

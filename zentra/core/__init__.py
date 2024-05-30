@@ -1,31 +1,18 @@
-import re
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, field_validator
-from pydantic_core import PydanticCustomError
 
 from cli.conf.storage import BasicNameStorage
 from cli.conf.types import LibraryNamePairs
+from zentra.core.constants import (
+    LOWER_CAMELCASE_SINGLE_WORD,
+    PASCALCASE_SINGLE_WORD,
+    PASCALCASE_WITH_DIGITS,
+    COMPONENT_FILTER_LIST,
+)
 from zentra.core.utils import name_from_pascal_case
-
-
-LOWER_CAMELCASE_WITH_DIGITS = r"^[a-z]+(?:[A-Z][a-z]*)*\d*$"
-LOWER_CAMELCASE_SINGLE_WORD = r"^[a-z]+(?:[A-Z][a-z]*)*$"
-LOWERCASE_SINGLE_WORD = r"^[a-z]+\b$"
-PASCALCASE_SINGLE_WORD = r"^[A-Z][a-zA-Z]*$"
-PASCALCASE_WITH_DIGITS = r"^[A-Z][a-zA-Z0-9]*$"
-COMPONENT_TAG_NAME_PATTERN = r"<([A-Z][a-zA-Z]*)"
-
-PARAMETER_PREFIX = "$."
-
-COMPONENT_FILTER_LIST = [
-    "FormField",
-]
-
-
-def has_valid_pattern(*, pattern: str, value: str) -> bool:
-    match = re.match(pattern, value)
-    return bool(match)
+from zentra.validation import check_pattern_match
+from zentra.validation.component import data_array_validation
 
 
 class Component(BaseModel):
@@ -128,57 +115,23 @@ class DataArray(BaseModel):
 
     @field_validator("data")
     def validate_data(cls, data: list[dict[str, Any]]) -> list[dict[str, Any]]:
-        if len(data) == 0 or len(data[0]) == 0:
-            raise PydanticCustomError(
-                "missing_data",
-                "No data exists in the list",
-                dict(wrong_value=data),
-            )
-
-        reference_dict = data[0]
-        for idx, d in enumerate(data[1:], start=1):
-            if set(d.keys()) != set(reference_dict.keys()):
-                raise PydanticCustomError(
-                    "invalid_dictionary_keys",
-                    f"position: 2.{idx} -> '{d.keys()} != {reference_dict.keys()}'\n",
-                    dict(wrong_value=d, full_data=data),
-                )
-
-            for key, value in reference_dict.items():
-                if type(d[key]) != type(value):
-                    raise PydanticCustomError(
-                        "invalid_value_type",
-                        f"position: 2.{idx} -> '{type(d[key])} ({d[key]}) != {type(value)} ({value})'\n",
-                        dict(wrong_value=d, full_data=data),
-                    )
-
-        return data
+        return data_array_validation(data)
 
     @field_validator("name")
     def validate_name(cls, v: str) -> str:
-        result = has_valid_pattern(pattern=LOWER_CAMELCASE_SINGLE_WORD, value=v)
-
-        if not result:
-            raise PydanticCustomError(
-                "string_pattern_mismatch",
-                f"'{v}'. Must be 'lowercase' or 'camelCase', a single word and a maximum of '30' characters\n",
-                dict(wrong_value=v, pattern=LOWER_CAMELCASE_SINGLE_WORD),
-            )
-
-        return v
+        return check_pattern_match(
+            LOWER_CAMELCASE_SINGLE_WORD,
+            v,
+            err_msg=f"'{v}'. Must be 'lowercase' or 'camelCase', a single word and a maximum of '30' characters\n",
+        )
 
     @field_validator("type_name")
     def validate_type_name(cls, v: str) -> str:
-        result = has_valid_pattern(pattern=PASCALCASE_SINGLE_WORD, value=v)
-
-        if not result:
-            raise PydanticCustomError(
-                "string_pattern_mismatch",
-                f"'{v}'. Must be 'PascalCase', a single word and a maximum of '40' characters\n",
-                dict(wrong_value=v, pattern=PASCALCASE_SINGLE_WORD),
-            )
-
-        return v
+        return check_pattern_match(
+            PASCALCASE_SINGLE_WORD,
+            v,
+            err_msg=f"'{v}'. Must be 'PascalCase', a single word and a maximum of '40' characters\n",
+        )
 
 
 class Page(BaseModel):
@@ -195,13 +148,9 @@ class Page(BaseModel):
 
     @field_validator("name")
     def validate_id(cls, name: str) -> str:
-        if not has_valid_pattern(pattern=PASCALCASE_WITH_DIGITS, value=name):
-            raise PydanticCustomError(
-                "string_pattern_mismatch",
-                "must be PascalCase",
-                dict(wrong_value=name, pattern=PASCALCASE_WITH_DIGITS),
-            )
-        return name
+        return check_pattern_match(
+            PASCALCASE_WITH_DIGITS, name, err_msg="must be PascalCase"
+        )
 
     def get_schema(self, node: BaseModel = None) -> dict:
         """Returns a JSON tree of the `Page` components as nodes with a type (the component name) and its attributes (attrs)."""

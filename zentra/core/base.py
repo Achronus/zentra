@@ -1,8 +1,8 @@
 from typing import Optional
 from pydantic import BaseModel, ConfigDict, field_validator, Field
-from pydantic_core import PydanticCustomError
 
-from zentra.core import LOWER_CAMELCASE_SINGLE_WORD, has_valid_pattern
+from zentra.core.constants import LOWER_CAMELCASE_SINGLE_WORD
+from zentra.validation import check_pattern_match
 
 
 class HTMLTag(BaseModel):
@@ -48,13 +48,8 @@ class JSIterable(BaseModel):
 
     @field_validator("obj_name", "param_name")
     def validate_name(cls, v: str) -> str:
-        result = has_valid_pattern(pattern=LOWER_CAMELCASE_SINGLE_WORD, value=v)
-
-        if not result:
-            raise PydanticCustomError(
-                "string_pattern_mismatch",
-                f"'{v}'. Must be 'lowercase' or 'camelCase', a single word and a maximum of '20' characters\n",
-                dict(wrong_value=v, pattern=LOWER_CAMELCASE_SINGLE_WORD),
-            )
-
-        return v
+        return check_pattern_match(
+            LOWER_CAMELCASE_SINGLE_WORD,
+            v,
+            err_msg=f"'{v}'. Must be 'lowercase' or 'camelCase', a single word and a maximum of '20' characters\n",
+        )

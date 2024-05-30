@@ -1,6 +1,6 @@
 import re
 
-from zentra.core import PARAMETER_PREFIX
+from zentra.core.constants import PARAMETER_PREFIX
 
 
 def compress(values: list[str], chars: str = "\n") -> str:

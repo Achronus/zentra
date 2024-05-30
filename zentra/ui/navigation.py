@@ -3,14 +3,20 @@ from typing import Optional
 from pydantic import Field, ValidationInfo, field_validator
 from pydantic_core import PydanticCustomError
 
-from zentra.core import LOWER_CAMELCASE_SINGLE_WORD, Component, has_valid_pattern
+from zentra.core import Component
+from zentra.core.constants import LOWER_CAMELCASE_SINGLE_WORD
 from zentra.core.enums.ui import BCTriggerVariant
 from zentra.core.react import LucideIcon, LucideIconWithText
 from zentra.custom.ui import SeparatorModel
 from zentra.nextjs import Link
 from zentra.ui import ShadcnUi
 from zentra.ui.control import Button
-from zentra.validation import check_kebab_case
+from zentra.validation import (
+    check_kebab_case,
+    check_pattern_match,
+    local_url_validation,
+)
+from zentra.validation.component import ddm_radio_group_validation
 
 
 class Menubar(Component, ShadcnUi):
@@ -164,13 +170,7 @@ class DDMRadioGroup(Component, ShadcnUi):
         cls, values: list[str], info: ValidationInfo
     ) -> list[str]:
         texts = info.data.get("texts")
-        if values is not None and len(texts) != len(values):
-            raise PydanticCustomError(
-                "size_mismatch",
-                f"'texts' and 'values' must match in size -> 'texts={len(texts)} != values={len(values)}'\n",
-                dict(texts_size=len(texts), values_size=len(values)),
-            )
-        return values
+        return ddm_radio_group_validation(values, texts)
 
 
 class DropdownMenu(Component, ShadcnUi):
@@ -254,16 +254,11 @@ class CommandMap(Component, ShadcnUi):
 
     @field_validator("obj_name", "param_name")
     def validate_name(cls, v: str) -> str:
-        result = has_valid_pattern(pattern=LOWER_CAMELCASE_SINGLE_WORD, value=v)
-
-        if not result:
-            raise PydanticCustomError(
-                "string_pattern_mismatch",
-                f"'{v}'. Must be 'lowercase' or 'camelCase', a single word and a maximum of '20' characters\n",
-                dict(wrong_value=v, pattern=LOWER_CAMELCASE_SINGLE_WORD),
-            )
-
-        return v
+        return check_pattern_match(
+            LOWER_CAMELCASE_SINGLE_WORD,
+            v,
+            err_msg=f"'{v}'. Must be 'lowercase' or 'camelCase', a single word and a maximum of '20' characters\n",
+        )
 
 
 class CommandGroup(Component, ShadcnUi):
@@ -367,14 +362,7 @@ class BCItem(Component, ShadcnUi):
 
     @field_validator("href")
     def validate_url(cls, href: str) -> str:
-        if not href.startswith("/"):
-            raise PydanticCustomError(
-                "invalid_href",
-                "'href' must be a local URL and start with a '/'!",
-                dict(wrong_value=href),
-            )
-
-        return href
+        return local_url_validation(href)
 
 
 class BCDropdownMenu(Component, ShadcnUi):

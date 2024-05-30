@@ -3,11 +3,13 @@ from typing import Optional
 from pydantic import Field, ValidationInfo, field_validator
 from pydantic_core import PydanticCustomError
 
-from zentra.core import LOWER_CAMELCASE_SINGLE_WORD, Component, has_valid_pattern
+from zentra.core import Component
+from zentra.core.constants import LOWER_CAMELCASE_SINGLE_WORD
 from zentra.core.enums.ui import BadgeVariant, Orientation, SkeletonPreset, ToggleType
-from zentra.custom import CustomUrl
 from zentra.nextjs import Image, StaticImage
 from zentra.ui import ShadcnUi
+from zentra.validation import check_pattern_match, url_validation
+from zentra.validation.component import aspect_ratio_validation, skeleton_validation
 
 
 class AccordionItem(Component, ShadcnUi):
@@ -74,17 +76,7 @@ class AspectRatio(Component, ShadcnUi):
 
     @field_validator("ratio")
     def validate_ratio(cls, ratio: str | int) -> str | int:
-        if isinstance(ratio, str):
-            try:
-                eval(ratio)
-            except NameError as e:
-                raise PydanticCustomError(
-                    "invalid_equation",
-                    f"ratio must be an 'integer' or a valid 'numeric equation' that results in an 'integer'\n  Equation error -> NameError: {e}\n",
-                    dict(wrong_value=ratio),
-                )
-
-        return ratio
+        return aspect_ratio_validation(ratio)
 
 
 class Avatar(Component, ShadcnUi):
@@ -116,10 +108,7 @@ class Avatar(Component, ShadcnUi):
 
     @field_validator("src")
     def validate_src(cls, src: str | StaticImage) -> str | StaticImage:
-        if isinstance(src, str):
-            CustomUrl(url=src, is_param=True).validate_url()
-
-        return src
+        return url_validation(src)
 
     @field_validator("fallback_text")
     def validate_fallback_text(cls, text: str) -> str:
@@ -349,25 +338,12 @@ class Skeleton(Component, ShadcnUi):
         info: ValidationInfo,
     ) -> list[SkeletonShell | list[SkeletonGroup]] | None:
         preset: str = info.data.get("preset")
-
-        if preset != "custom" and items is not None:
-            raise PydanticCustomError(
-                "invalid_preset",
-                "cannot use 'items' without" + ' preset="custom"',
-                dict(wrong_value=preset),
-            )
-
-        if preset == "custom" and items is None:
-            raise PydanticCustomError(
-                "missing_items",
-                "missing 'items' with" + ' preset="custom"',
-                dict(wrong_value=items),
-            )
-
-        return items
+        return skeleton_validation(items, preset)
 
     @field_validator("styles")
-    def validate_styles(cls, styles: str | None, info: ValidationInfo) -> str | None:
+    def validate_styles(
+        cls, styles: Optional[str], info: ValidationInfo
+    ) -> Optional[str]:
         styles_dict = {
             "testimonial": "flex items-center space-x-4",
             "card": "flex flex-col space-y-3",
@@ -465,16 +441,11 @@ class TableMap(Component, ShadcnUi):
 
     @field_validator("obj_name", "param_name")
     def validate_name(cls, v: str) -> str:
-        result = has_valid_pattern(pattern=LOWER_CAMELCASE_SINGLE_WORD, value=v)
-
-        if not result:
-            raise PydanticCustomError(
-                "string_pattern_mismatch",
-                f"'{v}'. Must be 'lowercase' or 'camelCase', a single word and a maximum of '20' characters\n",
-                dict(wrong_value=v, pattern=LOWER_CAMELCASE_SINGLE_WORD),
-            )
-
-        return v
+        return check_pattern_match(
+            LOWER_CAMELCASE_SINGLE_WORD,
+            v,
+            err_msg=f"'{v}'. Must be 'lowercase' or 'camelCase', a single word and a maximum of '20' characters\n",
+        )
 
 
 class Table(Component, ShadcnUi):

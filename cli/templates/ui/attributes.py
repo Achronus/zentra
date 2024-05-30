@@ -1,7 +1,7 @@
 import re
 from typing import Callable
 
-from zentra.core import PARAMETER_PREFIX
+from zentra.core.constants import PARAMETER_PREFIX
 from zentra.core.enums.ui import CalendarMode, InputOTPPatterns
 from zentra.nextjs import Link, StaticImage, UrlQuery
 from zentra.ui.control import Button, Calendar, Collapsible, InputOTP, Slider, Toggle

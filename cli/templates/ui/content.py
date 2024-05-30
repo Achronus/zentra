@@ -902,14 +902,13 @@ def breadcrumb_content(bc: Breadcrumb) -> tuple[list[str], JSXComponentExtras]:
 
     def bc_seperator() -> tuple[str, JSXComponentExtras]:
         if bc.custom_sep:
-            start, end = bc.separator_content
             content, storage = build_icon(
                 LucideIcon(name=bc.custom_sep, styles=None), output_storage=True
             )
-            content = compress(content)
-            return f"{start}\n{content}\n{end}", storage
+            content = compress(build_separator("breadcrumb", content))
+            return content, storage
 
-        return bc.separator_content, JSXComponentExtras()
+        return compress(build_separator("breadcrumb")), JSXComponentExtras()
 
     content, storage = [], JSXComponentExtras()
 
@@ -1079,7 +1078,7 @@ def command_content(cmd: Command) -> tuple[list[str], JSXComponentExtras]:
 
         group_attrs = f'heading="{group.heading}"' if group.heading else ""
         content = str_to_list(add_wrapper("CommandGroup", content, attrs=group_attrs))
-        content.append("<CommandSeparator />")
+        content.extend(build_separator("command"))
         return content, storage
 
     if isinstance(cmd.items, CommandMap):

@@ -14,7 +14,6 @@ from zentra.core.validation import (
 )
 from zentra.core.validation.component import ddm_type_validation
 
-from zentra.custom.ui import SeparatorModel
 from zentra.nextjs import Link
 from zentra.ui import ShadcnUi
 from zentra.ui.control import Button
@@ -364,14 +363,6 @@ class Breadcrumb(Component, ShadcnUi):
             "BreadcrumbSeparator",
             "BreadcrumbEllipsis",
         ]
-
-    @property
-    def separator_content(self) -> str | list[str]:
-        """Defines the separator content for the component."""
-        if self.custom_sep:
-            return SeparatorModel(variant="breadcrumb", full=True).content_str
-
-        return SeparatorModel(variant="breadcrumb").content_str
 
     @field_validator("custom_sep")
     def validate_custom_sep(cls, name: str) -> str:

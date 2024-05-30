@@ -27,11 +27,11 @@ class Builder:
 class TestLucideIcon:
     @pytest.fixture
     def italic_icon(self) -> LucideIcon:
-        return LucideIcon(name="Italic")
+        return LucideIcon(name="italic")
 
     @pytest.fixture
     def italic_icon_full(self) -> LucideIcon:
-        return LucideIcon(name="Italic", size=24, color="red", stroke_width=2)
+        return LucideIcon(name="italic", size=24, color="red", stroke_width=2)
 
     @pytest.fixture
     def wrapper(self, italic_icon: LucideIcon) -> Builder:
@@ -55,7 +55,7 @@ class TestLucideIcon:
 
     @staticmethod
     def test_import_str_loader():
-        builder = Builder(model=LucideIcon(name="Loader"))
+        builder = Builder(model=LucideIcon(name="loader"))
         builder.import_str(REACT_VALID_IMPORTS["lucide_icon"]["loader"])
 
     @staticmethod
@@ -67,28 +67,28 @@ class TestLucideIcon:
 class TestLucideIconWithText:
     @pytest.fixture
     def italic_icon(self) -> LucideIconWithText:
-        return LucideIconWithText(name="Italic")
+        return LucideIconWithText(name="italic")
 
     @pytest.fixture
     def italic_icon_text(self) -> LucideIconWithText:
-        return LucideIconWithText(name="Italic", text="test tag")
+        return LucideIconWithText(name="italic", text="test tag")
 
     @pytest.fixture
     def italic_icon_param(self) -> LucideIconWithText:
-        return LucideIconWithText(name="Italic", text="test $.tag")
+        return LucideIconWithText(name="italic", text="test $.tag")
 
     @pytest.fixture
     def italic_icon_position(self) -> LucideIconWithText:
-        return LucideIconWithText(name="Italic", text="test tag", position="end")
+        return LucideIconWithText(name="italic", text="test tag", position="end")
 
     @pytest.fixture
     def italic_icon_param_position(self) -> LucideIconWithText:
-        return LucideIconWithText(name="Italic", text="test $.tag", position="end")
+        return LucideIconWithText(name="italic", text="test $.tag", position="end")
 
     @pytest.fixture
     def italic_icon_full(self) -> LucideIconWithText:
         return LucideIconWithText(
-            name="Italic",
+            name="italic",
             text="test $.tag",
             position="end",
             size=24,
@@ -135,7 +135,7 @@ class TestLucideIconWithText:
 
     @staticmethod
     def test_import_str_loader():
-        builder = Builder(model=LucideIconWithText(name="Loader"))
+        builder = Builder(model=LucideIconWithText(name="loader"))
         builder.import_str(REACT_VALID_IMPORTS["lucide_icon"]["loader"])
 
     @staticmethod

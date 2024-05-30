@@ -23,7 +23,7 @@ class TestAlert:
     @pytest.fixture
     def alert_icon(self) -> Alert:
         return Alert(
-            icon="Terminal",
+            icon="terminal",
             title="Heads up!",
             description="You can add components to your app using the cli.",
         )
@@ -31,7 +31,7 @@ class TestAlert:
     @pytest.fixture
     def alert_full(self) -> Alert:
         return Alert(
-            icon="AlertCircle",
+            icon="circle-alert",
             title="Error",
             description="Your session has expired. Please log in again.",
             variant="destructive",
@@ -116,14 +116,14 @@ class TestTooltip:
     def tooltip_icon(self) -> Tooltip:
         return Tooltip(
             text="Loading...",
-            trigger=LucideIcon(name="Loader", size=30),
+            trigger=LucideIcon(name="loader", size=30),
         )
 
     @pytest.fixture
     def tooltip_icon_text(self) -> Tooltip:
         return Tooltip(
             text="Load me up!",
-            trigger=LucideIconWithText(name="Loader", text="Loading"),
+            trigger=LucideIconWithText(name="loader", text="Loading"),
         )
 
     @pytest.fixture

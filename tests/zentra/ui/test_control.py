@@ -1037,7 +1037,7 @@ class TestToggle:
 
     @pytest.fixture
     def toggle_icon(self) -> Toggle:
-        return Toggle(content=LucideIconWithText(name="Italic", text="icon $.text"))
+        return Toggle(content=LucideIconWithText(name="italic", text="icon $.text"))
 
     @pytest.fixture
     def wrapper(self, toggle: Toggle) -> SimpleCompBuilder:
@@ -1065,7 +1065,7 @@ class TestToggle:
         return SimpleCompBuilder(
             Toggle(
                 content=LucideIconWithText(
-                    name="Italic", text="icon $.text", position="end"
+                    name="italic", text="icon $.text", position="end"
                 ),
                 style="bold",
                 size="lg",
@@ -1107,13 +1107,13 @@ class TestToggleGroup:
         return ToggleGroup(
             items=[
                 Toggle(
-                    content=LucideIconWithText(name="Italic"),
+                    content=LucideIconWithText(name="italic"),
                 ),
                 Toggle(
-                    content=LucideIconWithText(name="Bold"),
+                    content=LucideIconWithText(name="bold"),
                 ),
                 Toggle(
-                    content=LucideIconWithText(name="Underline"),
+                    content=LucideIconWithText(name="underline"),
                 ),
             ]
         )
@@ -1123,18 +1123,18 @@ class TestToggleGroup:
         return ToggleGroup(
             items=[
                 Toggle(
-                    content=LucideIconWithText(name="Italic", text="italic $.text"),
+                    content=LucideIconWithText(name="italic", text="italic $.text"),
                     pressed=True,
                 ),
                 Toggle(
                     content=LucideIconWithText(
-                        name="Bold", text="bold $.text", position="end"
+                        name="bold", text="bold $.text", position="end"
                     ),
                     disabled=True,
                 ),
                 Toggle(
                     content=LucideIconWithText(
-                        name="Underline", text="undeline $.text"
+                        name="underline", text="undeline $.text"
                     ),
                 ),
             ],

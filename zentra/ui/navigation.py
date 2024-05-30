@@ -1,5 +1,4 @@
 from typing import Optional
-import requests
 
 from pydantic import Field, ValidationInfo, field_validator
 from pydantic_core import PydanticCustomError
@@ -7,11 +6,11 @@ from pydantic_core import PydanticCustomError
 from zentra.core import LOWER_CAMELCASE_SINGLE_WORD, Component, has_valid_pattern
 from zentra.core.enums.ui import BCTriggerVariant
 from zentra.core.react import LucideIcon, LucideIconWithText
-from zentra.core.utils import name_from_pascal_case
 from zentra.custom.ui import SeparatorModel
 from zentra.nextjs import Link
 from zentra.ui import ShadcnUi
 from zentra.ui.control import Button
+from zentra.validation import check_kebab_case
 
 
 class Menubar(Component, ShadcnUi):
@@ -77,7 +76,7 @@ class DDMSeparator(Component, ShadcnUi):
 
 class DDMSubGroup(Component, ShadcnUi):
     """
-    A helper Zentra model for the [Shadcn/ui DropdownMenu](https://ui.shadcn.com/docs/components/dropdown-menu) component. Represents a single sub-menu group for the `DropdownMenuSub` child component.
+    A helper Zentra model for the [Shadcn/ui DropdownMenu](https://ui.shadcn.com/docs/components/dropdown-menu) component. Represents a single sub-menu group.
 
     Cannot be used on its own, must be used inside a `zentra.ui.navigation.DDMGroup` model.
 
@@ -348,7 +347,7 @@ class BCTrigger(Component, ShadcnUi):
             return f'<BreadcrumbEllipsis className="{styles}" />\n<span className="sr-only">Toggle menu</span>'
         elif self.variant == "text":
             return LucideIconWithText(
-                name="ChevronDown", text=self.text, position="end", styles=styles
+                name="chevron-down", text=self.text, position="end", styles=styles
             )
 
 
@@ -400,7 +399,7 @@ class Breadcrumb(Component, ShadcnUi):
     Parameters:
     - `page_name` (`str`) - the name of the current resource, added as the last item inside a `BreadcrumbPage` child component
     - `items` (`list[zentra.ui.navigation.BCItem | zentra.ui.navigation.BCDropdownMenu]`) - a list of `BCItem` models and/or `BCDropdownMenu` models. Automatically adds a separator between each item
-    - `custom_sep` (`string, optional`) - the name of a custom separator pulled from [Lucide React Icons](https://lucide.dev/icons). Name must be in React format (PascalCase). E.g., `Slash` or `MoveRight`. `None` by default
+    - `custom_sep` (`string, optional`) - the name of a custom separator pulled from [Lucide React Icons](https://lucide.dev/icons). Must be in kebab-case format. E.g., `slash` or `move-right`. `None` by default
     """
 
     page_name: str
@@ -428,14 +427,4 @@ class Breadcrumb(Component, ShadcnUi):
 
     @field_validator("custom_sep")
     def validate_custom_sep(cls, name: str) -> str:
-        icon_name = name_from_pascal_case(name)
-        response = requests.get(f"https://lucide.dev/icons/{icon_name}")
-
-        if response.status_code != 200:
-            raise PydanticCustomError(
-                "invalid_icon",
-                f"'{name}' at '{response.url}' does not exist",
-                dict(wrong_value=name, error_code=response.status_code),
-            )
-
-        return name
+        return check_kebab_case(name)

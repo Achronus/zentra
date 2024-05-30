@@ -63,22 +63,22 @@ class TestDropdownMenu:
                 DDMGroup(
                     items=[
                         DDMItem(
-                            icon=LucideIcon(name="User"),
+                            icon=LucideIcon(name="user"),
                             text="Profile",
                             shortcut_key="⇧⌘P",
                         ),
                         DDMItem(
-                            icon=LucideIcon(name="CreditCard"),
+                            icon=LucideIcon(name="credit-card"),
                             text="Billing",
                             shortcut_key="⌘B",
                         ),
                         DDMItem(
-                            icon=LucideIcon(name="Settings"),
+                            icon=LucideIcon(name="settings"),
                             text="Settings",
                             shortcut_key="⌘S",
                         ),
                         DDMItem(
-                            icon=LucideIcon(name="Keyboard"),
+                            icon=LucideIcon(name="keyboard"),
                             text="Keyboard Shortcuts",
                             shortcut_key="⌘K",
                         ),
@@ -86,25 +86,25 @@ class TestDropdownMenu:
                 ),
                 DDMGroup(
                     items=[
-                        DDMItem(icon=LucideIcon(name="Users"), text="Team"),
+                        DDMItem(icon=LucideIcon(name="users"), text="Team"),
                         DDMSubGroup(
                             trigger=DDMItem(
-                                icon=LucideIcon(name="UserPlus"), text="Invite users"
+                                icon=LucideIcon(name="user-plus"), text="Invite users"
                             ),
                             items=[
-                                DDMItem(icon=LucideIcon(name="Mail"), text="Email"),
+                                DDMItem(icon=LucideIcon(name="mail"), text="Email"),
                                 DDMItem(
-                                    icon=LucideIcon(name="MessageSquare"),
+                                    icon=LucideIcon(name="message-square"),
                                     text="Message",
                                 ),
                                 DDMSeparator(),
                                 DDMItem(
-                                    icon=LucideIcon(name="PlusCircle"), text="More..."
+                                    icon=LucideIcon(name="circle-plus"), text="More..."
                                 ),
                             ],
                         ),
                         DDMItem(
-                            icon=LucideIcon(name="Plus"),
+                            icon=LucideIcon(name="plus"),
                             text="New Team",
                             shortcut_key="⌘+T",
                         ),
@@ -112,14 +112,14 @@ class TestDropdownMenu:
                 ),
                 DDMGroup(
                     items=[
-                        DDMItem(icon=LucideIcon(name="Github"), text="Github"),
-                        DDMItem(icon=LucideIcon(name="LifeBuoy"), text="Support"),
+                        DDMItem(icon=LucideIcon(name="github"), text="Github"),
+                        DDMItem(icon=LucideIcon(name="life-buoy"), text="Support"),
                         DDMItem(
-                            icon=LucideIcon(name="Cloud"), text="API", disabled=True
+                            icon=LucideIcon(name="cloud"), text="API", disabled=True
                         ),
                         DDMSeparator(),
                         DDMItem(
-                            icon=LucideIcon(name="LogOut"),
+                            icon=LucideIcon(name="log-out"),
                             text="Log out",
                             shortcut_key="⇧⌘Q",
                         ),
@@ -136,10 +136,10 @@ class TestDropdownMenu:
             items=DDMGroup(
                 label="Core Settings",
                 items=[
-                    DDMItem(text="Profile", icon=LucideIcon(name="User")),
+                    DDMItem(text="Profile", icon=LucideIcon(name="user")),
                     DDMItem(
                         text=Link(href="/billing", text="Billing"),
-                        icon=LucideIcon(name="CreditCard"),
+                        icon=LucideIcon(name="credit-card"),
                         shortcut_key="⌘B",
                         disabled=True,
                     ),
@@ -318,7 +318,7 @@ class TestBreadcrumb:
                 ),
                 BCItem(text="Components", href="/docs/components"),
             ],
-            custom_sep="Slash",
+            custom_sep="slash",
         )
 
     @pytest.fixture
@@ -371,11 +371,11 @@ class TestCommand:
                     items=[
                         CommandItem(
                             text=Link(href="/", text="Calendar"),
-                            icon=LucideIcon(name="Calendar"),
+                            icon=LucideIcon(name="calendar"),
                         ),
                         CommandItem(
                             text=Link(href="/", text="Search Emoji"),
-                            icon=LucideIcon(name="Smile"),
+                            icon=LucideIcon(name="smile"),
                         ),
                     ],
                     heading="Suggestions",
@@ -403,10 +403,10 @@ class TestCommand:
             items=[
                 CommandGroup(
                     items=[
-                        CommandItem(text="Calendar", icon=LucideIcon(name="Calendar")),
-                        CommandItem(text="Search Emoji", icon=LucideIcon(name="Smile")),
+                        CommandItem(text="Calendar", icon=LucideIcon(name="calendar")),
+                        CommandItem(text="Search Emoji", icon=LucideIcon(name="smile")),
                         CommandItem(
-                            text="Calculator", icon=LucideIcon(name="Calculator")
+                            text="Calculator", icon=LucideIcon(name="calculator")
                         ),
                     ],
                     heading="Suggestions",
@@ -415,17 +415,17 @@ class TestCommand:
                     items=[
                         CommandItem(
                             text="Profile",
-                            icon=LucideIcon(name="User"),
+                            icon=LucideIcon(name="user"),
                             shortcut_key="⌘P",
                         ),
                         CommandItem(
                             text="Billing",
-                            icon=LucideIcon(name="CreditCard"),
+                            icon=LucideIcon(name="credit-card"),
                             shortcut_key="⌘B",
                         ),
                         CommandItem(
                             text="Settings",
-                            icon=LucideIcon(name="Settings"),
+                            icon=LucideIcon(name="settings"),
                             shortcut_key="⌘S",
                         ),
                     ],

@@ -99,7 +99,7 @@ class TestButton:
     def btn_icon(self) -> partial:
         return partial(
             self.button,
-            content=LucideIconWithText(name="Italic", text="test $.tag"),
+            content=LucideIconWithText(name="italic", text="test $.tag"),
         )
 
     @pytest.fixture
@@ -110,7 +110,7 @@ class TestButton:
     def btn_icon_url(self) -> partial:
         return partial(
             self.button,
-            content=LucideIconWithText(name="Italic", text="test $.tag"),
+            content=LucideIconWithText(name="italic", text="test $.tag"),
             url="https://example.com/",
         )
 
@@ -157,7 +157,7 @@ class TestButton:
     @staticmethod
     def test_import_str_icon(btn_text_wrapper: BtnCompBuilder):
         btn_text_wrapper.comp_other(
-            Button(content=LucideIconWithText(name="Loader")),
+            Button(content=LucideIconWithText(name="loader")),
             "imports",
             VALID_IMPORTS["button"]["icon"],
         )
@@ -166,7 +166,7 @@ class TestButton:
     def test_import_str_icon_url(btn_text_wrapper: BtnCompBuilder):
         btn_text_wrapper.comp_other(
             Button(
-                content=LucideIconWithText(name="Loader"), url="https://example.com/"
+                content=LucideIconWithText(name="loader"), url="https://example.com/"
             ),
             "imports",
             VALID_IMPORTS["button"]["icon_url"],

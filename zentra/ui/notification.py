@@ -1,15 +1,14 @@
-import requests
-
+from typing import Optional
 from zentra.core import Component
 from zentra.core.enums.ui import AlertVariant
 from zentra.core.html import Div, HTMLContent
 from zentra.core.react import LucideIcon, LucideIconWithText
-from zentra.core.utils import name_from_pascal_case
 from zentra.ui import ShadcnUi
 from zentra.ui.control import Button
 
 from pydantic import Field, PrivateAttr, field_validator
-from pydantic_core import PydanticCustomError
+
+from zentra.validation import check_kebab_case
 
 
 class Alert(Component, ShadcnUi):
@@ -19,13 +18,13 @@ class Alert(Component, ShadcnUi):
     Parameters:
     - `title` (`string`) - the text for the `AlertTitle`
     - `description` (`string`) - the text for the `AlertDescription`
-    - `icon` (`string, optional`) - the name of the [Lucide React Icon](https://lucide.dev/icons). Must be in React format (Capitalised camelCase). E.g., `CircleArrowDown` or `Loader`. When provided, adds the icon to the start of the `Alert`. `None` by default
+    - `icon` (`string, optional`) - the name of the [Lucide React Icon](https://lucide.dev/icons). Must be in kebab-case format. E.g., `circle-arrow-down` or `loader`. When provided, adds the icon to the start of the `Alert`. `None` by default
     - `variant` (`string, optional`) - the style of the alert. Valid options: `['default', 'destructive']`. `default` by default
     """
 
     title: str = Field(min_length=1)
     description: str = Field(min_length=1)
-    icon: str = None
+    icon: Optional[str] = None
     variant: AlertVariant = "default"
 
     @property
@@ -34,17 +33,7 @@ class Alert(Component, ShadcnUi):
 
     @field_validator("icon")
     def validate_icon(cls, icon: str) -> str:
-        icon_name = name_from_pascal_case(icon)
-        response = requests.get(f"https://lucide.dev/icons/{icon_name}")
-
-        if response.status_code != 200:
-            raise PydanticCustomError(
-                "invalid_icon",
-                f"'{icon}' at '{response.url}' does not exist",
-                dict(wrong_value=icon, error_code=response.status_code),
-            )
-
-        return icon
+        return check_kebab_case(icon)
 
 
 class TextAlertDialog(Component, ShadcnUi):

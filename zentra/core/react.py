@@ -1,11 +1,9 @@
 from typing import Optional
-import requests
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
-from pydantic_core import PydanticCustomError
 
 from zentra.core.enums.ui import ButtonIconPosition
-from zentra.core.utils import name_from_pascal_case
+from zentra.validation import icon_name_validation
 
 
 class LucideIcon(BaseModel):
@@ -13,7 +11,7 @@ class LucideIcon(BaseModel):
     A Zentra model dedicated to [Lucide React Icons](https://lucide.dev/icons) based on the [Lucide React Package](https://lucide.dev/guide/packages/lucide-react).
 
     Parameters:
-    - `name` (`string`) - the name of the [Lucide React Icon](https://lucide.dev/icons). Must be in React format (PascalCase). E.g., `CircleArrowDown` or `Loader`
+    - `name` (`string`) - the name of the [Lucide React Icon](https://lucide.dev/icons). Must be in kebab-case format. E.g., `circle-arrow-down` or `loader`
     - `styles` (`string, optional`) - a set of custom CSS classes to apply to the icon. Automatically adds them to `className`. `mr-2 h-4 w-4` by default
     - `size` (`integer, optional`) - a custom size for the icon. `None` by default
     - `color` (`string, optional`) - a custom colour for the icon. `None` by default
@@ -40,17 +38,7 @@ class LucideIcon(BaseModel):
 
     @field_validator("name")
     def validate_name(cls, name: str) -> str:
-        icon_name = name_from_pascal_case(name)
-        response = requests.get(f"https://lucide.dev/icons/{icon_name}")
-
-        if response.status_code != 200:
-            raise PydanticCustomError(
-                "invalid_icon",
-                f"'{name}' at '{response.url}' does not exist",
-                dict(wrong_value=name, error_code=response.status_code),
-            )
-
-        return name
+        return icon_name_validation(name)
 
     @property
     def import_str(self) -> str:
@@ -68,7 +56,7 @@ class LucideIconWithText(LucideIcon):
     A Zentra model dedicated to [Lucide React Icons](https://lucide.dev/icons) with text, based on the [Lucide React Package](https://lucide.dev/guide/packages/lucide-react).
 
     Parameters:
-    - `name` (`string`) - the name of the [Lucide React Icon](https://lucide.dev/icons). Must be in React format (PascalCase). E.g., `CircleArrowDown` or `Loader`
+    - `name` (`string`) - the name of the [Lucide React Icon](https://lucide.dev/icons). Must be in kebab-case format. E.g., `circle-arrow-down` or `loader`
     - `position` (`string, optional`) - the position of the icon. When set to `start`, icon appears before a components text. When `end`, it appears after the text.  Valid options: `['start', 'end']`. `start` by default
     - `text` (`string, optional`) - the text displayed alongside the icon. Can include parameter variables (indicated by starting the variable name with a `$.`). `None` by default
     - `styles` (`string, optional`) - a set of custom CSS classes to apply to the icon. Automatically adds them to `className`. `mr-2 h-4 w-4` by default

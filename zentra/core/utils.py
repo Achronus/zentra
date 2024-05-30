@@ -1,14 +1,14 @@
 import re
 
 
-def name_to_pascal_case(name: str) -> str:
+def name_to_pascal_case(name: str, char: str = "_") -> str:
     """
-    Converts a name from lowercase underscored format to pascal case.
+    Converts a name to pascal case based on a given `name` and `character` to split the name on.
 
     Example:
     - dropdown_menu -> DropdownMenu
     """
-    components = name.split("_")
+    components = name.split(char)
     return "".join(item.title() for item in components)
 
 

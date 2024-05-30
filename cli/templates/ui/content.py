@@ -998,7 +998,9 @@ def date_picker_content(dp: DatePicker) -> tuple[list[str], JSXComponentExtras]:
 
     btn = Button(
         variant="outline",
-        content=LucideIconWithText(name="CalendarDays", text=compress(dp.trigger_text)),
+        content=LucideIconWithText(
+            name="calendar-days", text=compress(dp.trigger_text)
+        ),
         styles=dp.trigger_styles,
     )
 
@@ -1031,7 +1033,7 @@ def command_content(cmd: Command) -> tuple[list[str], JSXComponentExtras]:
         )
         item_content, storage = build_icon(
             LucideIcon(
-                name="Check",
+                name="check",
                 styles=f'cn("mr-2 h-4 w-4", value === {map.param_name}.value ? "opacity-100" : "opacity-0")',
             ),
             output_storage=True,
@@ -1137,7 +1139,7 @@ def combobox_content(box: Combobox) -> tuple[list[str], JSXComponentExtras]:
 
     trigger = Button(
         content=LucideIconWithText(
-            name="ChevronsUpDown",
+            name="chevrons-up-down",
             styles="ml-2 h-4 w-4 shrink-0 opacity-50",
             text="{"
             + f'value ? {box.data.name}.find(({param_name}) => {param_name}.value === value)?.label : "{box.display_text}"'

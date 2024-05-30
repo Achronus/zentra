@@ -32,16 +32,16 @@ class CustomUrl(BaseModel, CustomModel):
     Parameters:
     - `url` (`string`) - can start with any of the following:
     `['/', './' '../', 'ftp://', 'file://', 'mailto:', 'tel:', 'http://', 'https://']`
-    - `plus_param` (`boolean, optional`) - a flag to include the `url` as a parameter (starting with a `$.`). `False` by default
+    - `is_param` (`boolean, optional`) - a flag to include the `url` as a parameter (starting with a `$.`). `False` by default
     """
 
     url: str = Field(max_length=2083)
-    plus_param: bool = False
+    is_param: bool = False
 
     def validate_url(self) -> None:
         valid_schemes = (
             VALID_URL_SCHEMES + (PARAMETER_PREFIX,)
-            if self.plus_param
+            if self.is_param
             else VALID_URL_SCHEMES
         )
 

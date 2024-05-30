@@ -117,7 +117,7 @@ class Avatar(Component, ShadcnUi):
     @field_validator("src")
     def validate_src(cls, src: str | StaticImage) -> str | StaticImage:
         if isinstance(src, str):
-            CustomUrl(url=src, plus_param=True).validate_url()
+            CustomUrl(url=src, is_param=True).validate_url()
 
         return src
 

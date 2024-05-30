@@ -2,7 +2,7 @@ from typing import Optional
 from pydantic import BaseModel, ConfigDict, field_validator, Field
 
 from zentra.core.constants import LOWER_CAMELCASE_SINGLE_WORD
-from zentra.validation import check_pattern_match
+from zentra.core.validation import check_pattern_match
 
 
 class HTMLTag(BaseModel):

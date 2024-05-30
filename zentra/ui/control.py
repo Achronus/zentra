@@ -20,8 +20,8 @@ from zentra.ui import ShadcnUi
 
 from pydantic import Field, PrivateAttr, ValidationInfo, field_validator
 
-from zentra.validation import check_pattern_match, url_validation
-from zentra.validation.component import (
+from zentra.core.validation import check_pattern_match, url_validation
+from zentra.core.validation.component import (
     calendar_validation,
     input_otp_num_groups_validation,
     input_otp_pattern_validation,

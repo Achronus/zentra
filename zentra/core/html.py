@@ -1,11 +1,11 @@
 from zentra.core import Component
 from zentra.core.base import HTMLTag, JSIterable
 from zentra.core.enums.html import HTMLContentTagType
+from zentra.core.validation import key_attr_validation
+
 from zentra.nextjs import Image
 
 from pydantic import field_validator
-
-from zentra.validation import key_attr_validation
 
 
 class HTMLContent(HTMLTag):

@@ -3,7 +3,7 @@ from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from zentra.core.enums.ui import ButtonIconPosition
-from zentra.validation import icon_name_validation
+from zentra.core.validation import icon_name_validation
 
 
 class LucideIcon(BaseModel):

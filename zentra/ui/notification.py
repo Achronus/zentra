@@ -1,14 +1,15 @@
 from typing import Optional
+
 from zentra.core import Component
 from zentra.core.enums.ui import AlertVariant
 from zentra.core.html import Div, HTMLContent
 from zentra.core.react import LucideIcon, LucideIconWithText
+from zentra.core.validation import check_kebab_case
+
 from zentra.ui import ShadcnUi
 from zentra.ui.control import Button
 
 from pydantic import Field, PrivateAttr, field_validator
-
-from zentra.validation import check_kebab_case
 
 
 class Alert(Component, ShadcnUi):

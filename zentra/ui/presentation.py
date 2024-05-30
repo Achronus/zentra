@@ -6,10 +6,14 @@ from pydantic_core import PydanticCustomError
 from zentra.core import Component
 from zentra.core.constants import LOWER_CAMELCASE_SINGLE_WORD
 from zentra.core.enums.ui import BadgeVariant, Orientation, SkeletonPreset, ToggleType
+from zentra.core.validation import check_pattern_match, url_validation
+from zentra.core.validation.component import (
+    aspect_ratio_validation,
+    skeleton_validation,
+)
+
 from zentra.nextjs import Image, StaticImage
 from zentra.ui import ShadcnUi
-from zentra.validation import check_pattern_match, url_validation
-from zentra.validation.component import aspect_ratio_validation, skeleton_validation
 
 
 class AccordionItem(Component, ShadcnUi):

@@ -11,8 +11,8 @@ from zentra.core.constants import (
     COMPONENT_FILTER_LIST,
 )
 from zentra.core.utils import name_from_pascal_case
-from zentra.validation import check_pattern_match
-from zentra.validation.component import data_array_validation
+from zentra.core.validation import check_pattern_match
+from zentra.core.validation.component import data_array_validation
 
 
 class Component(BaseModel):

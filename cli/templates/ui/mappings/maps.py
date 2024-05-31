@@ -3,7 +3,7 @@ from pydantic_core import Url
 from cli.templates.ui.attributes import (
     accordion_attributes,
     alt_attribute,
-    button_attributes,
+    other_attribute,
     calendar_attributes,
     collapsible_attributes,
     input_otp_attributes,
@@ -81,7 +81,6 @@ USE_CLIENT_COMPONENTS = [
 
 
 COMPONENT_ATTR_MAPPING = {
-    "Button": lambda comp: button_attributes(comp),
     "Calendar": lambda comp: calendar_attributes(comp),
     "Collapsible": lambda comp: collapsible_attributes(comp),
     "InputOTP": lambda comp: input_otp_attributes(comp),
@@ -128,6 +127,7 @@ COMMON_ATTR_MAPPING = {
     "mode": lambda value: str_attr("mode", value),
     "open": lambda value: param_attr("open", value),
     "open_change": lambda value: param_attr("onOpenChange", value),
+    "other": lambda value: other_attribute(value),
 }
 
 

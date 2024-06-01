@@ -18,7 +18,7 @@ from zentra.core.html import Div
 from zentra.core.react import LucideIconWithText
 from zentra.ui import ShadcnUi
 
-from pydantic import Field, PrivateAttr, ValidationInfo, field_validator
+from pydantic import Field, ValidationInfo, field_validator
 
 from zentra.core.validation import check_pattern_match, url_validation
 from zentra.core.validation.component import (
@@ -34,7 +34,7 @@ from zentra.core.validation.component import (
 
 class Button(Component, ShadcnUi):
     """
-    A Zentra model for the [Shadcn/ui Button](https://ui.shadcn.com/docs/components/button) component focusing on text.
+    A Zentra model for the [Shadcn/ui Button](https://ui.shadcn.com/docs/components/button) component.
 
     Parameters:
     - `content` (`string | zentra.core.react.LucideIconWithText`) - the information displayed inside the button. Can be a string of text or a `LucideIconWithText` Zentra model. Can include parameter variables (indicated by starting the variable name with a `$.`)
@@ -154,14 +154,14 @@ class Checkbox(Component, ShadcnUi):
     - `id` (`string`) - an identifier for the component. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
     - `label` (`string`) - the text associated to the checkbox
     - `checked` (`boolean, optional`) - a flag that determines whether the checkbox is ticked or not. `False` by default
-    - `more_info` (`string, optional`) - additional information to add under the checkbox. `None` by default. When `None` removes it from `Checkbox`
+    - `text` (`string, optional`) - text to add under the checkbox. `None` by default. When `None` removes it from `Checkbox`
     - `disabled` (`boolean, optional`) - adds the disabled property, preventing it from being selected. `False` by default
     """
 
     id: str = Field(min_length=1, max_length=15)
     label: str = Field(min_length=1)
     checked: bool = False
-    more_info: Optional[str] = None
+    text: Optional[str] = None
     disabled: bool = False
 
     @field_validator("id")
@@ -441,10 +441,16 @@ class Label(Component, ShadcnUi):
     Parameters:
     - `name` (`string`) - an identifier for the component. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
     - `text` (`string`) - the descriptive text to put into the label. Can include parameter variables (indicated by starting the variable name with a `$.`)
+    - `styles` (`string, optional`) - a set of custom CSS classes to apply to the label. Automatically adds them to `className`. `None` by default
     """
 
     name: str = Field(min_length=1, max_length=15)
     text: str = Field(min_length=1)
+    styles: Optional[str] = None
+
+    @property
+    def content_attributes(self) -> list[str]:
+        return ["text"]
 
     @field_validator("name")
     def validate_id(cls, name: str) -> str:

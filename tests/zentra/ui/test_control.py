@@ -212,7 +212,7 @@ class TestCheckbox:
             id="terms",
             label="Accept the terms and conditions.",
             disabled=True,
-            more_info="Pretty please!",
+            text="Pretty please!",
         )
 
     @pytest.fixture

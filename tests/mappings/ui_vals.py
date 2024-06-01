@@ -21,12 +21,12 @@ CALENDAR_VALID_VALS = {
 
 CHECKBOX_VALID_VALS = {
     "attributes": {
-        "standard": 'id="terms" checked={false}',
-        "with_disabled": 'id="terms" checked={false} disabled',
+        "standard": 'id="terms"',
+        "with_disabled": 'id="terms" disabled',
     },
     "content": {
-        "standard": '<div className="flex items-top space-x-2">\n<Checkbox id="terms" checked={false}>\n<div className="grid gap-1.5 leading-none">\n<label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">\nAccept the terms and conditions.\n</label>\n</div>\n</Checkbox>\n</div>',
-        "with_disabled": '<div className="flex items-top space-x-2">\n<Checkbox id="terms" checked={false} disabled>\n<div className="grid gap-1.5 leading-none">\n<label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">\nAccept the terms and conditions.\n</label>\n<p className="text-sm text-muted-foreground">\nPretty please!\n</p>\n</div>\n</Checkbox>\n</div>',
+        "standard": '<div className="flex items-center space-x-2">\n<Checkbox id="terms" />\n<div className="grid gap-1.5 leading-none">\n<label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">\nAccept the terms and conditions.\n</label>\n</div>\n</Checkbox>\n</div>',
+        "with_disabled": '<div className="flex items-top space-x-2">\n<Checkbox id="terms" disabled />\n<div className="grid gap-1.5 leading-none">\n<label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">\nAccept the terms and conditions.\n</label>\n<p className="text-sm text-muted-foreground">\nPretty please!\n</p>\n</div>\n</Checkbox>\n</div>',
     },
 }
 

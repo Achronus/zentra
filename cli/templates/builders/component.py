@@ -1,9 +1,11 @@
 from cli.templates.builders.jsx import (
     AttributeBuilder,
     ContentBuilder,
+    GraphBuilder,
     ImportBuilder,
     LogicBuilder,
 )
+from cli.templates.builders.nodes import ComponentNode
 from cli.templates.storage import JSXComponentContentStorage, JSXComponentExtras
 from cli.templates.ui.mappings.storage import ComponentMappings
 from cli.templates.utils import compress, compress_imports, str_to_list
@@ -42,6 +44,7 @@ class ComponentBuilder:
             model_mapping=mappings.content.model,
             common_mapping=mappings.content.common,
         )
+        self.graph = GraphBuilder(model=self.component, mapping=mappings.attribute)
 
     def build(self, full_shell: bool = False) -> None:
         """Builds the JSX for the component."""
@@ -55,13 +58,19 @@ class ComponentBuilder:
             content, storage_extras = content
             self.add_extra_storage(storage_extras)
 
-        self.storage.content = (
-            compress(content)
-            if self.component.composition_only
-            else compress(
-                self.apply_content_containers(content=content, full_shell=full_shell)
+            self.storage.content = (
+                compress(content)
+                if self.component.composition_only
+                else compress(
+                    self.apply_content_containers(
+                        content=content, full_shell=full_shell
+                    )
+                )
             )
-        )
+
+        else:
+            content = str_to_list(self.create_jsx_content(self.graph.build()))
+            self.storage.content = compress([item.strip() for item in content])
 
         if self.component.child_names:
             self.storage.imports = self.tidy_child_names(
@@ -158,3 +167,20 @@ class ComponentBuilder:
         imports = compress(compress_imports(str_to_list(imports)))
         imports = self.add_use_client(logic, imports)
         return imports
+
+    def create_jsx_content(self, node: ComponentNode, level: int = 0) -> str:
+        """Builds the JSX from the tree nodes."""
+        indent = "  " * level
+
+        if isinstance(node.content, str):
+            return node.full_str(indent)
+        elif not node.content:
+            return node.simple_str(indent)
+
+        children = "\n".join(
+            self.create_jsx_content(child, level + 1)
+            for child in node.content
+            if isinstance(child, ComponentNode)
+        )
+
+        return node.full_str(indent, content=f"\n{children}\n{indent}")

@@ -1,6 +1,7 @@
-from builder.tree import ComponentNode, IconNode
 from cli.conf.format import name_from_camel_case
 from cli.conf.types import MappingDict
+
+from cli.templates.builders.nodes import ComponentNode, IconNode
 from cli.templates.storage import JSXComponentExtras
 from cli.templates.ui.mappings.storage import AttributeMappings
 from cli.templates.utils import remove_none, text_content
@@ -258,16 +259,24 @@ class GraphBuilder:
         if model is None:
             model = self.model
 
-        attrs_builder = AttributeBuilder(
+        builder = AttributeBuilder(
             component=model,
             common_mapping=self.map.common,
             component_mapping=self.map.model,
         )
 
-        return compress(attrs_builder.build(), chars=" ")
+        return compress(builder.build(), chars=" ")
 
     def get_content(self, model: Component = None) -> list[ComponentNode | str]:
         """Extracts the content attributes from the component and converts it into a list of nodes."""
+
+        def comp_node(comp: Component) -> ComponentNode:
+            return ComponentNode(
+                name=comp.container_name,
+                attributes=self.get_attributes(comp),
+                content=self.get_content(comp),
+            )
+
         if model is None:
             model = self.model
 
@@ -283,6 +292,11 @@ class GraphBuilder:
                     )
                 )
             elif isinstance(item, str):
-                return item
+                return text_content(item)[0]
+            elif isinstance(item, Component):
+                content.append(comp_node(item))
+            elif isinstance(item, list):
+                for i in item:
+                    content.append(comp_node(i))
 
         return content if content else ""

@@ -4,7 +4,8 @@ from cli.templates.storage import JSXComponentContentStorage, JSXComponentExtras
 from cli.templates.ui.mappings.storage import JSIterableMappings
 from cli.templates.utils import str_to_list
 from zentra.core import Component
-from zentra.core.base import HTMLTag, JSIterable
+from zentra.base.html import HTMLTag
+from zentra.base.js import JSIterable
 from zentra.nextjs import NextJs
 
 

@@ -1,10 +1,10 @@
 from typing import Optional
 
-from zentra.base import ZentraBase
+from zentra.base import ZentraModel
 from zentra.base.library import HTML
 
 
-class HTMLTag(ZentraBase, HTML):
+class HTMLTag(ZentraModel, HTML):
     """
     A parent model for all HTML tags.
 

@@ -6,7 +6,7 @@ from cli.templates.builders.html.figure import FigureBuilder
 from cli.templates.storage import JSXComponentExtras
 
 from cli.templates.ui.mappings.storage import DivMappings
-from zentra.core.base import HTMLTag
+from zentra.base.html import HTMLTag
 from zentra.core.html import Div, Figure, HTMLContent
 
 

@@ -1,11 +1,11 @@
 from pydantic import Field, field_validator
-from zentra.base import ZentraBase
+from zentra.base import ZentraModel
 from zentra.base.library import JavaScript
 from zentra.core.constants import LOWER_CAMELCASE_SINGLE_WORD
 from zentra.core.validation import check_pattern_match
 
 
-class JSIterable(ZentraBase, JavaScript):
+class JSIterable(ZentraModel, JavaScript):
     """
     A parent model for all JavaScript iterable functions.
 

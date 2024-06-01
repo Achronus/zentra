@@ -1,6 +1,6 @@
 from cli.templates.builders.jsx import AttributeBuilder, ContentBuilder
 from cli.templates.ui.mappings.storage import HTMLShellMappings
-from zentra.core.base import HTMLTag
+from zentra.base.html import HTMLTag
 from zentra.core.html import Div
 
 

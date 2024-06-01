@@ -7,7 +7,7 @@ from cli.templates.ui.content import text_content
 
 from cli.templates.ui.mappings.storage import FigureMappings, HTMLShellMappings
 from cli.templates.utils import str_to_list
-from zentra.core.base import HTMLTag
+from zentra.base.html import HTMLTag
 from zentra.core.html import FigCaption, Figure
 from zentra.nextjs import Image
 

@@ -1,5 +1,6 @@
 from zentra.core import Component
-from zentra.core.base import JSIterable, HTMLTag
+from zentra.base.html import HTMLTag
+from zentra.base.js import JSIterable
 
 
 class Map(JSIterable):

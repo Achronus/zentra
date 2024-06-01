@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field, PrivateAttr, field_validator
 
 from cli.conf.storage import BasicNameStorage
 from cli.conf.types import LibraryNamePairs
-from zentra.base import ZentraBase
+from zentra.base import ZentraModel
 from zentra.core.constants import (
     LOWER_CAMELCASE_SINGLE_WORD,
     PASCALCASE_SINGLE_WORD,
@@ -16,7 +16,7 @@ from zentra.core.validation import check_pattern_match
 from zentra.core.validation.component import data_array_validation
 
 
-class Component(ZentraBase):
+class Component(ZentraModel):
     """
     A Zentra model for all React components.
     """

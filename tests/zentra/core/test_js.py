@@ -3,7 +3,7 @@ import pytest
 from tests.mappings.js import JS_VALID_VALS_MAP
 from tests.templates.helper import js_iterable_content_builder
 
-from zentra.core.base import JSIterable
+from zentra.base.js import JSIterable
 from zentra.core.html import Div, FigCaption, Figure, HTMLContent
 from zentra.core.js import Map
 from zentra.nextjs import Image

@@ -16,7 +16,8 @@ from cli.templates.ui.mappings import (
 )
 
 from zentra.core import Component, Page
-from zentra.core.base import HTMLTag, JSIterable
+from zentra.base.html import HTMLTag
+from zentra.base.js import JSIterable
 from zentra.core.html import FigCaption
 from zentra.core.react import LucideIcon
 

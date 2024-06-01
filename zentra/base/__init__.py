@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict, PrivateAttr
 
 
-class ZentraBase(BaseModel):
+class ZentraModel(BaseModel):
     """A base for all Zentra models."""
 
     _container_name = PrivateAttr(default=None)

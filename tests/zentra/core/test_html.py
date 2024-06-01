@@ -3,7 +3,7 @@ import pytest
 
 from tests.mappings.html import HTML_VALID_VALS_MAP
 from tests.templates.helper import html_content_builder, fig_caption_builder
-from zentra.core.base import HTMLTag
+from zentra.base.html import HTMLTag
 from zentra.core.enums.html import HTMLContentTagType
 from zentra.core.html import Div, FigCaption, Figure, HTMLContent
 from zentra.core.js import Map

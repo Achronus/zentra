@@ -9,7 +9,8 @@ from cli.templates.ui.content import text_content
 from cli.templates.ui.mappings.storage import DivMappings
 from cli.templates.utils import str_to_list
 from zentra.core import Component
-from zentra.core.base import HTMLTag, JSIterable
+from zentra.base.html import HTMLTag
+from zentra.base.js import JSIterable
 from zentra.core.html import Div, Figure, HTMLContent
 
 

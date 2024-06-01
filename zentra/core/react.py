@@ -2,16 +2,9 @@ from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from zentra.core.enums.ui import ButtonIconPosition, LibraryType
+from zentra.base.library import Lucide
+from zentra.core.enums.ui import ButtonIconPosition
 from zentra.core.validation import icon_name_validation
-
-
-class Lucide:
-    """A Zentra model for all [Lucide React](https://lucide.dev/) components."""
-
-    @property
-    def library(self) -> str:
-        return LibraryType.LUCIDE.value
 
 
 class LucideIcon(BaseModel, Lucide):

@@ -1,34 +1,11 @@
-from typing import Optional
-from pydantic import BaseModel, ConfigDict, field_validator, Field
-
+from pydantic import Field, field_validator
+from zentra.base import ZentraBase
+from zentra.base.library import JavaScript
 from zentra.core.constants import LOWER_CAMELCASE_SINGLE_WORD
 from zentra.core.validation import check_pattern_match
 
 
-class HTMLTag(BaseModel):
-    """
-    A parent model for all HTML tags.
-
-    Parameters:
-    - `styles` (`string, optional`) - a set of custom CSS classes to apply to the tag. Automatically adds them to `className`. `None` by default
-    """
-
-    styles: Optional[str] = None
-
-    model_config = ConfigDict(use_enum_values=True)
-
-    @property
-    def classname(self) -> str:
-        """Stores the classname for the JSX builder."""
-        return self.__class__.__name__.lower()
-
-    @property
-    def custom_common_content(self) -> list[str]:
-        """Returns a list of the content that use the same name as a common content, but act differently with this specific model."""
-        return []
-
-
-class JSIterable(BaseModel):
+class JSIterable(ZentraBase, JavaScript):
     """
     A parent model for all JavaScript iterable functions.
 
@@ -38,8 +15,6 @@ class JSIterable(BaseModel):
 
     obj_name: str = Field(min_length=1, max_length=20)
     param_name: str = Field(min_length=1, max_length=20)
-
-    model_config = ConfigDict(use_enum_values=True)
 
     @property
     def classname(self) -> str:

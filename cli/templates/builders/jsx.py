@@ -6,7 +6,7 @@ from cli.templates.ui.mappings.storage import AttributeMappings
 from cli.templates.utils import remove_none, text_content
 
 from zentra.core import Component
-from zentra.core.base import HTMLTag
+from zentra.base.html import HTMLTag
 from zentra.core.react import LucideIcon
 from zentra.core.utils import compress
 from zentra.ui import Form

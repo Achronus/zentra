@@ -1,5 +1,6 @@
+from zentra.base.html import HTMLTag
+from zentra.base.js import JSIterable
 from zentra.core import Component
-from zentra.core.base import HTMLTag, JSIterable
 from zentra.core.enums.html import HTMLContentTagType
 from zentra.core.validation import key_attr_validation
 

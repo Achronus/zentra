@@ -2,8 +2,8 @@ import re
 from pydantic import BaseModel, Field
 from pydantic_core import PydanticCustomError
 
+from zentra.base.library import CustomModel
 from zentra.core.constants import PARAMETER_PREFIX
-from zentra.core.enums.ui import LibraryType
 
 VALID_URL_SCHEMES = (
     "/",
@@ -16,14 +16,6 @@ VALID_URL_SCHEMES = (
     "http://",
     "https://",
 )
-
-
-class CustomModel:
-    """A Zentra model for all custom component models."""
-
-    @property
-    def library(self) -> str:
-        return LibraryType.CUSTOM.value
 
 
 class CustomUrl(BaseModel, CustomModel):

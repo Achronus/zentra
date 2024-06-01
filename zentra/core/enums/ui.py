@@ -6,6 +6,8 @@ class LibraryType(str, Enum):
     UPLOADTHING = "uploadthing"
     NEXTJS = "nextjs"
     LUCIDE = "lucide"
+    HTML = "html"
+    JAVASCRIPT = "javascript"
     CUSTOM = "custom"
 
 

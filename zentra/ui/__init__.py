@@ -1,20 +1,12 @@
 import json
 from typing import Any
 
-from pydantic_core import PydanticCustomError
-
+from zentra.base.library import ShadcnUi
 from zentra.core import Component
+from zentra.core.enums.ui import FormFieldLayout
+
 from pydantic import ConfigDict, field_validator
-
-from zentra.core.enums.ui import FormFieldLayout, LibraryType
-
-
-class ShadcnUi:
-    """A Zentra model for all [shadcn/ui](https://ui.shadcn.com/) components."""
-
-    @property
-    def library(self) -> str:
-        return LibraryType.SHADCNUI.value
+from pydantic_core import PydanticCustomError
 
 
 class FormField(Component, ShadcnUi):

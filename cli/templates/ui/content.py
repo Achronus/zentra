@@ -9,8 +9,9 @@ from cli.templates.ui.attributes import (
 )
 from cli.templates.utils import compress, str_to_list, text_content
 
+from zentra.base import ZentraBase
 from zentra.core import Component
-from zentra.core.base import HTMLTag
+from zentra.base.html import HTMLTag
 from zentra.core.constants import PARAMETER_PREFIX
 from zentra.core.enums.ui import CalendarMode, DDMenuType
 from zentra.core.react import LucideIcon, LucideIconWithText

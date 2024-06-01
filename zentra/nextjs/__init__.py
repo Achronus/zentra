@@ -1,8 +1,8 @@
 from typing import Optional
 
+from zentra.base.library import NextJs
 from zentra.core import Component
 from zentra.core.constants import LOWER_CAMELCASE_SINGLE_WORD
-from zentra.core.enums.ui import LibraryType
 from zentra.core.validation import (
     check_pattern_match,
     pathname_validation,
@@ -10,14 +10,6 @@ from zentra.core.validation import (
 )
 
 from pydantic import BaseModel, Field, field_validator
-
-
-class NextJs:
-    """A Zentra model for all [NextJS](https://nextjs.org/docs/app/api-reference/components) components."""
-
-    @property
-    def library(self) -> str:
-        return LibraryType.NEXTJS.value
 
 
 class UrlQuery(BaseModel, NextJs):

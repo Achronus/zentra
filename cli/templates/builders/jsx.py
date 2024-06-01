@@ -1,11 +1,14 @@
+from builder.tree import ComponentNode, IconNode
 from cli.conf.format import name_from_camel_case
 from cli.conf.types import MappingDict
 from cli.templates.storage import JSXComponentExtras
+from cli.templates.ui.mappings.storage import AttributeMappings
 from cli.templates.utils import remove_none, text_content
 
 from zentra.core import Component
 from zentra.core.base import HTMLTag
 from zentra.core.react import LucideIcon
+from zentra.core.utils import compress
 from zentra.ui import Form
 
 
@@ -230,3 +233,56 @@ class LogicBuilder:
                 logic.extend(logic_list)
 
         return logic
+
+
+class GraphBuilder:
+    """Builds the components node graph."""
+
+    def __init__(self, model: Component, mapping: AttributeMappings) -> None:
+        self.model = model
+        self.map = mapping
+
+    def build(self) -> ComponentNode:
+        """Builds the component graph and returns it as a set of nodes."""
+        attrs = self.get_attributes(self.model)
+        content = self.get_content(self.model)
+
+        return ComponentNode(
+            name=self.model.container_name,
+            attributes=attrs,
+            content=content,
+        )
+
+    def get_attributes(self, model: Component = None) -> str:
+        """Process the components attributes and converts them to a string."""
+        if model is None:
+            model = self.model
+
+        attrs_builder = AttributeBuilder(
+            component=model,
+            common_mapping=self.map.common,
+            component_mapping=self.map.model,
+        )
+
+        return compress(attrs_builder.build(), chars=" ")
+
+    def get_content(self, model: Component = None) -> list[ComponentNode | str]:
+        """Extracts the content attributes from the component and converts it into a list of nodes."""
+        if model is None:
+            model = self.model
+
+        content = []
+        for item in model.content_attributes:
+            item = getattr(model, item)
+            if isinstance(item, LucideIcon):
+                content.append(
+                    IconNode(
+                        name=item.name,
+                        attributes=self.get_attributes(item),
+                        content=self.get_content(item),
+                    )
+                )
+            elif isinstance(item, str):
+                return item
+
+        return content if content else ""

@@ -2,11 +2,19 @@ from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from zentra.core.enums.ui import ButtonIconPosition
+from zentra.core.enums.ui import ButtonIconPosition, LibraryType
 from zentra.core.validation import icon_name_validation
 
 
-class LucideIcon(BaseModel):
+class Lucide:
+    """A Zentra model for all [Lucide React](https://lucide.dev/) components."""
+
+    @property
+    def library(self) -> str:
+        return LibraryType.LUCIDE.value
+
+
+class LucideIcon(BaseModel, Lucide):
     """
     A Zentra model dedicated to [Lucide React Icons](https://lucide.dev/icons) based on the [Lucide React Package](https://lucide.dev/guide/packages/lucide-react).
 
@@ -29,6 +37,11 @@ class LucideIcon(BaseModel):
     @property
     def inner_attributes(self) -> list[str]:
         """Returns a list of the attributes that are used in the components sub-components."""
+        return []
+
+    @property
+    def content_attributes(self) -> list[str]:
+        """Returns a list of attributes specific to the components content. Used for allocating the correct values to the builder."""
         return []
 
     @property
@@ -67,3 +80,7 @@ class LucideIconWithText(LucideIcon):
 
     position: ButtonIconPosition = "start"
     text: Optional[str] = None
+
+    @property
+    def content_attributes(self) -> list[str]:
+        return ["text"]

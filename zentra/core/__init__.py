@@ -44,6 +44,14 @@ class Component(BaseModel):
         return False
 
     @property
+    def content_attributes(self) -> list[str]:
+        """Returns a list of attributes specific to the components content. Used for allocating the correct values to the builder."""
+        if hasattr(self, "content"):
+            return ["content"]
+
+        return []
+
+    @property
     def inner_attributes(self) -> list[str]:
         """Returns a list of the attributes that are used in the components sub-components."""
         return []

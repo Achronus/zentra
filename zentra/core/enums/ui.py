@@ -5,6 +5,7 @@ class LibraryType(str, Enum):
     SHADCNUI = "ui"
     UPLOADTHING = "uploadthing"
     NEXTJS = "nextjs"
+    LUCIDE = "lucide"
     CUSTOM = "custom"
 
 

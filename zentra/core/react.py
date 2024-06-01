@@ -1,13 +1,15 @@
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import Field, field_validator
 
+from zentra.base import ZentraModel
 from zentra.base.library import Lucide
 from zentra.core.enums.ui import ButtonIconPosition
+from zentra.core.utils import name_to_pascal_case
 from zentra.core.validation import icon_name_validation
 
 
-class LucideIcon(BaseModel, Lucide):
+class LucideIcon(ZentraModel, Lucide):
     """
     A Zentra model dedicated to [Lucide React Icons](https://lucide.dev/icons) based on the [Lucide React Package](https://lucide.dev/guide/packages/lucide-react).
 
@@ -25,22 +27,14 @@ class LucideIcon(BaseModel, Lucide):
     color: Optional[str] = None
     stroke_width: Optional[int] = None
 
-    model_config = ConfigDict(use_enum_values=True)
-
-    @property
-    def inner_attributes(self) -> list[str]:
-        """Returns a list of the attributes that are used in the components sub-components."""
-        return []
-
-    @property
-    def content_attributes(self) -> list[str]:
-        """Returns a list of attributes specific to the components content. Used for allocating the correct values to the builder."""
-        return []
-
     @property
     def custom_common_attributes(self) -> list[str]:
         """Returns a list of the attributes that use the same name as a common attribute, but act differently with this specific component."""
         return ["name"]
+
+    @property
+    def container_name(self) -> str:
+        return name_to_pascal_case(self.name, char="-")
 
     @field_validator("name")
     def validate_name(cls, name: str) -> str:

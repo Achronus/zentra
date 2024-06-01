@@ -113,7 +113,7 @@ COMMON_ATTR_MAPPING = {
     "alt": lambda alt: alt_attribute(alt),
     "width": lambda width: param_attr("width", width),
     "height": lambda height: param_attr("height", height),
-    "checked": lambda checked: param_attr("checked", checked),
+    "checked": lambda checked: param_attr("checked", checked) if checked else None,
     "pressed": lambda pressed: param_attr("pressed", pressed),
     "color": lambda value: str_attr("color", value),
     "stroke_width": lambda value: param_attr("strokeWidth", value),

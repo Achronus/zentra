@@ -9,20 +9,22 @@ from cli.templates.ui.attributes import (
 )
 from cli.templates.utils import compress, str_to_list, text_content
 
-from zentra.base import ZentraBase
+from zentra.base import ZentraModel
+from zentra.ui.control import Checkbox
 from zentra.core import Component
 from zentra.base.html import HTMLTag
 from zentra.core.constants import PARAMETER_PREFIX
 from zentra.core.enums.ui import CalendarMode, DDMenuType
+from zentra.core.html import Div, HTMLContent
 from zentra.core.react import LucideIcon, LucideIconWithText
 from zentra.nextjs import Link, NextJs
 from zentra.ui.control import (
     Button,
-    Checkbox,
     Collapsible,
     Combobox,
     DatePicker,
     InputOTP,
+    Label,
     Pagination,
     RadioButton,
     RadioGroup,
@@ -220,22 +222,33 @@ def string_icon_content(content: str | LucideIconWithText) -> list[str]:
     return text
 
 
-def checkbox_content(cb: Checkbox) -> list[str]:
+def checkbox_content(cb: Checkbox) -> ZentraModel:
     """Returns a list of strings for the `Checkbox` content based on the components attributes."""
-    content = [
-        '<div className="grid gap-1.5 leading-none">',
-        f'<label htmlFor="{cb.id}" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">',
-        f"{cb.label}",
-        "</label>",
+    items = [
+        Label(
+            name=cb.id,
+            text=cb.label,
+            styles="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+        )
     ]
+    items_style = "items-center"
 
-    if cb.more_info:
-        content.extend(
-            ['<p className="text-sm text-muted-foreground">', cb.more_info, "</p>"]
+    if cb.text:
+        items_style = "items-top"
+        items.append(
+            HTMLContent(tag="p", styles="text-sm text-muted-foreground", text=cb.text)
         )
 
-    content.append("</div>")
-    return content
+    return Div(
+        styles=f"flex {items_style} space-x-2",
+        items=[
+            cb,
+            Div(
+                styles="grid gap-1.5 leading-none",
+                items=items,
+            ),
+        ],
+    )
 
 
 def collapsible_content(comp: Collapsible) -> list[str]:

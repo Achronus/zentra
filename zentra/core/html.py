@@ -26,6 +26,10 @@ class HTMLContent(HTMLTag):
     def classname(self) -> str:
         return self.tag
 
+    @property
+    def content_attributes(self) -> list[str]:
+        return ["text"]
+
 
 class Div(HTMLTag):
     """
@@ -45,6 +49,11 @@ class Div(HTMLTag):
     items: str | Component | JSIterable | list[str | HTMLTag | Component | JSIterable]
     fragment: bool = False
     key: str = None
+
+    @property
+    def content_attributes(self) -> list[str]:
+        """Returns a list of attributes specific to the components content. Used for allocating the correct values to the builder."""
+        return ["items"]
 
     @field_validator("key")
     def validate_key(cls, key: str) -> str:

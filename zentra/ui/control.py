@@ -171,21 +171,6 @@ class Checkbox(Component, ShadcnUi):
         )
 
 
-class MultiCheckbox(Component, ShadcnUi):
-    """
-    A Zentra model for multiple [Shadcn/ui Checkbox](https://ui.shadcn.com/docs/components/checkbox) components.
-
-    Parameters:
-    - `items` (`list[Checkbox]`) - a list of Checkbox components. Requires a `minimum` of `2` items
-    """
-
-    items: list[Checkbox] = Field(min_length=2)
-
-    _container_name = PrivateAttr(default="Checkbox")
-
-    # TODO: add logic specific to `Forms`
-
-
 class Collapsible(Component, ShadcnUi):
     """
     A Zentra model for the [Shadcn/ui Collapsible](https://ui.shadcn.com/docs/components/collapsible) component.

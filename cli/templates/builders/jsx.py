@@ -170,16 +170,19 @@ class ContentBuilder:
         self.model_map = model_mapping
         self.common_map = common_mapping
 
-    def get_content(self) -> Union[ZentraModel, list[ZentraModel]]:
+    def get_content(self, model: ZentraModel) -> Union[ZentraModel, list[ZentraModel]]:
         """A helper function to retrieve the content from the `model_map` for the zentra model."""
-        return self.model_map[self.model.classname](self.model)
+        return self.model_map[model.classname](model)
 
-    def build(self) -> Union[list[ZentraModel], ZentraModel]:
+    def build(self, model: ZentraModel = None) -> Union[list[ZentraModel], ZentraModel]:
         """Builds the content for the component."""
-        if self.model.classname in self.model_map.keys():
-            return self.get_content()
+        if model is None:
+            model = self.model
 
-        return self.model
+        if model.classname in self.model_map.keys():
+            return self.get_content(model)
+
+        return model
 
 
 class LogicBuilder:

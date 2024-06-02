@@ -11,6 +11,7 @@ from cli.templates.ui.mappings.storage import ComponentMappings
 from cli.templates.utils import compress, compress_imports, str_to_list
 
 from zentra.base import ZentraModel
+from zentra.core import Component
 
 
 class ComponentBuilder:
@@ -52,6 +53,9 @@ class ComponentBuilder:
         self.storage.imports = compress(self.imports.build())
         self.storage.attributes = compress(self.attrs.build(), chars=" ")
         self.storage.logic = compress(self.logic.build())
+
+        if isinstance(self.component, Component) and self.component.is_parent:
+            self.component = self.handle_parent_content(self.component)
 
         content = self.content.build()
 
@@ -182,6 +186,18 @@ class ComponentBuilder:
         imports = compress(compress_imports(str_to_list(imports)))
         imports = self.add_use_client(logic, imports)
         return imports
+
+    def handle_parent_content(self, component: Component) -> Component:
+        """Creates the inner content for child components and passes updates the required attributes for the parent component. Returns the updated component."""
+        for attr_name in component.content_attributes:
+            items = getattr(component, attr_name)
+
+            inner_content = []
+            for item in items:
+                inner_content.extend(self.content.build(item))
+
+            setattr(component, attr_name, inner_content)
+        return component
 
     def create_jsx_content(self, node: ComponentNode, level: int = 0) -> str:
         """Builds the JSX from the tree nodes."""

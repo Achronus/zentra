@@ -239,22 +239,33 @@ class LogicBuilder:
 class GraphBuilder:
     """Builds the components node graph."""
 
-    def __init__(self, model: Component, mapping: AttributeMappings) -> None:
+    def __init__(self, model: ZentraModel, mapping: AttributeMappings) -> None:
         self.model = model
         self.map = mapping
 
-    def build(self) -> ComponentNode:
+    def build(self, content: list[ZentraModel] = None) -> ComponentNode:
         """Builds the component graph and returns it as a set of nodes."""
         attrs = self.get_attributes(self.model)
-        content = self.get_content(self.model)
 
+        if content is None:
+            content = self.model
+
+        if isinstance(self.model, LucideIcon):
+            content = self.model.text if hasattr(self.model, "text") else ""
+            return IconNode(
+                name=self.model.name,
+                attributes=attrs,
+                content=content,
+            )
+
+        content = self.get_content(content)
         return ComponentNode(
             name=self.model.container_name,
             attributes=attrs,
             content=content,
         )
 
-    def get_attributes(self, model: Component = None) -> str:
+    def get_attributes(self, model: ZentraModel = None) -> str:
         """Process the components attributes and converts them to a string."""
         if model is None:
             model = self.model
@@ -267,36 +278,41 @@ class GraphBuilder:
 
         return compress(builder.build(), chars=" ")
 
-    def get_content(self, model: Component = None) -> list[ComponentNode | str]:
+    def get_content(self, model: list[ZentraModel]) -> list[ComponentNode | str]:
         """Extracts the content attributes from the component and converts it into a list of nodes."""
 
-        def comp_node(comp: Component) -> ComponentNode:
+        def comp_node(model: ZentraModel) -> ComponentNode:
             return ComponentNode(
-                name=comp.container_name,
-                attributes=self.get_attributes(comp),
-                content=self.get_content(comp),
+                name=model.container_name,
+                attributes=self.get_attributes(model),
+                content=self.get_content(model),
             )
 
-        if model is None:
-            model = self.model
+        def icon_node(model: LucideIcon) -> IconNode:
+            return IconNode(
+                name=model.name,
+                attributes=self.get_attributes(model),
+                content=self.get_content(model),
+            )
 
         content = []
-        for item in model.content_attributes:
-            item = getattr(model, item)
-            if isinstance(item, LucideIcon):
-                content.append(
-                    IconNode(
-                        name=item.name,
-                        attributes=self.get_attributes(item),
-                        content=self.get_content(item),
-                    )
-                )
-            elif isinstance(item, str):
-                return text_content(item)[0]
-            elif isinstance(item, Component):
-                content.append(comp_node(item))
-            elif isinstance(item, list):
-                for i in item:
-                    content.append(comp_node(i))
+
+        if isinstance(model, list):
+            for m in model:
+                if isinstance(m, LucideIcon):
+                    content.append(icon_node(m))
+                else:
+                    content.append(comp_node(m))
+
+        if isinstance(model, ZentraModel):
+            for item in model.content_attributes:
+                item = getattr(model, item)
+
+                if isinstance(item, str):
+                    return text_content(item)
+                elif isinstance(item, LucideIcon):
+                    content.append(icon_node(item))
+                else:
+                    return self.get_content(item)
 
         return content if content else ""

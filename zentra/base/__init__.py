@@ -8,6 +8,7 @@ class ZentraModel(BaseModel):
     _content_attrs = PrivateAttr(default=[])
     _no_container = PrivateAttr(default=False)
     _child_names = PrivateAttr(default=[])
+    _custom_common_attrs = PrivateAttr(default=[])
 
     model_config = ConfigDict(use_enum_values=True)
 
@@ -52,7 +53,7 @@ class ZentraModel(BaseModel):
     @property
     def custom_common_attributes(self) -> list[str]:
         """Returns a list of the attributes that use the same name as a common attribute, but act differently with this specific component."""
-        return []
+        return self._custom_common_attrs
 
     @property
     def custom_common_content(self) -> list[str]:

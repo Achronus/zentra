@@ -78,8 +78,7 @@ class AttributeBuilder:
 
         for attr_name, value in model_dict.items():
             if value is not None and attr_name in self.common_map.keys():
-                if isinstance(self.component, (Component, LucideIcon)):
-                    include_common = self.common_checks(attr_name)
+                include_common = self.common_checks(attr_name)
 
                 if include_common:
                     attr_str = self.get_common_attr(attr_name, value)

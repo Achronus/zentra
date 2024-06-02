@@ -1,14 +1,18 @@
 from enum import Enum
-from typing import Optional
+from typing import Optional, Union
 
-from pydantic import Field
+from pydantic import Field, PrivateAttr, field_validator
 
 from zentra.base import ZentraModel
-from zentra.core.enums.ui import (
+from zentra.core import Component
+from zentra.core.enums.child import (
     ContentVariant,
+    GroupVariant,
+    ItemVariant,
     LabelVariant,
     SeparatorVariant,
     TriggerVariant,
+    ValueVariant,
 )
 from zentra.core.utils import name_to_pascal_case, str_to_list
 
@@ -17,7 +21,7 @@ from zentra.ui.control import Button
 from zentra.ui.child.utils import full_container, simple_container, str_attr
 
 
-class ChildModel(ZentraModel):
+class ChildModel(Component, ShadcnUi):
     """
     A base class for all child models.
 
@@ -29,16 +33,14 @@ class ChildModel(ZentraModel):
     variant: Enum
     styles: Optional[str] = Field(default=None, validate_default=True)
 
+    _custom_common_attrs = PrivateAttr(default=["variant"])
+
     @property
     def name_prefix(self) -> str:
         return name_to_pascal_case(self.variant)
 
-    @property
-    def custom_common_attributes(self) -> list[str]:
-        return ["variant"]
 
-
-class SeparatorModel(ChildModel, ShadcnUi):
+class SeparatorModel(ChildModel):
     """
     A child model for `Separator` components in the [Shadcn/ui](https://ui.shadcn.com/) component library, such as `BreadcrumbSeparator` or `DropdownMenuSeparator`.
 
@@ -65,40 +67,70 @@ class SeparatorModel(ChildModel, ShadcnUi):
         return str_to_list(simple_container(self.container_name, attrs=attrs))
 
 
-class TriggerModel(ChildModel, ShadcnUi):
+class ValueModel(ChildModel):
+    """
+    A child model for `Value` components in the [Shadcn/ui](https://ui.shadcn.com/) component library, such as `SelectValue`.
+
+    Parameters:
+    - `variant` (`string`) - defines the value of label to create. Valid options: `['select']`. Each option applies a different name to the label which are converted to `PascalCase` and appended with `Value`.
+    - `placeholder` (`string`) - the placeholder text to display inside the label
+    - `styles` (`string, optional`) - a set of custom CSS classes to apply to the label. Automatically adds them to `className`. `None` by default
+    """
+
+    variant: ValueVariant
+    placeholder: str
+
+    @property
+    def container_name(self) -> str:
+        return f"{self.name_prefix}Value"
+
+
+class TriggerModel(ChildModel):
     """
     A child model for `Trigger` components in the [Shadcn/ui](https://ui.shadcn.com/) component library, such as `AccordionTrigger` or `DropdownMenuTrigger`.
 
     Parameters:
     - `variant` (`string`) - defines the type of trigger to create. Valid options: `['accordion', 'alert_dialog', 'collapsible', 'dropdown_menu', 'popover', 'select', 'tooltip']`. Each option applies a different name to the trigger which are converted to `PascalCase` and appended with `Trigger`
     - `styles` (`string, optional`) - a set of custom CSS classes to apply to the trigger. Automatically adds them to `className`. `None` by default
-    - `content` (`zentra.ui.control.Button | string`) - the item to add to the trigger. Can be either:
+    - `content` (`zentra.ui.control.Button | string | zentra.ui.child.ValueModel`) - the item to add to the trigger. Can be either:
       1. A Zentra `Button` model
       2. A string of text
+      3. A Zentra child `ValueModel` model
     """
 
     variant: TriggerVariant
-    content: Button | str
+    content: Union[Button, str, ValueModel]
 
     @property
     def container_name(self) -> str:
         return f"{self.name_prefix}Trigger"
+
+    @field_validator("content")
+    def validate_content(
+        cls, content: Union[Button, str, ValueModel]
+    ) -> Union[list[Button | ValueModel], str]:
+        if isinstance(content, str):
+            return content
+        else:
+            return [content]
 
     def build(self, content: str | list[str], attrs: str = None) -> list[str]:
         """Creates the JSX content for the component."""
         return str_to_list(full_container(self.container_name, content, attrs=attrs))
 
 
-class LabelModel(ChildModel, ShadcnUi):
+class LabelModel(ChildModel):
     """
     A child model for `Label` components in the [Shadcn/ui](https://ui.shadcn.com/) component library, such as `DropdownMenuLabel`.
 
     Parameters:
-    - `variant` (`string`) - defines the type of label to create. Valid options: `['context_menu', 'dropdown_menu']`. Each option applies a different name to the label which are converted to `PascalCase` and appended with `Label`.
+    - `variant` (`string`) - defines the type of label to create. Valid options: `['context_menu', 'dropdown_menu', 'select']`. Each option applies a different name to the label which are converted to `PascalCase` and appended with `Label`.
+    - `content` (`string`) - the content to display inside the label
     - `styles` (`string, optional`) - a set of custom CSS classes to apply to the label. Automatically adds them to `className`. `None` by default
     """
 
     variant: LabelVariant
+    content: str
 
     @property
     def container_name(self) -> str:
@@ -109,12 +141,58 @@ class LabelModel(ChildModel, ShadcnUi):
         return str_to_list(full_container(self.container_name, content))
 
 
-class ContentModel(ChildModel, ShadcnUi):
+class ItemModel(ChildModel):
+    """
+    A child model for `Item` components in the [Shadcn/ui](https://ui.shadcn.com/) component library, such as `SelectItem`.
+
+    Parameters:
+    - `variant` (`string`) - defines the type of item to create. Valid options: `['select']`. Each option applies a different name to the item which are converted to `PascalCase` and appended with `Item`
+    - `content` (`string`) - the content to display inside the item
+    - `value` (`string, optional`) - the value to pass to the `value` prop. `None` by default
+    - `styles` (`string, optional`) - a set of custom CSS classes to apply to the item. Automatically adds them to `className`. `None` by default
+    """
+
+    variant: ItemVariant
+    content: str
+    value: Optional[str] = None
+
+    @property
+    def container_name(self) -> str:
+        return f"{self.name_prefix}Item"
+
+    def build(self, content: str | list[str]) -> list[str]:
+        """Creates the JSX content for the component."""
+        return str_to_list(full_container(self.container_name, content))
+
+
+class GroupModel(ChildModel):
+    """
+    A child model for `Group` components in the [Shadcn/ui](https://ui.shadcn.com/) component library, such as `SelectGroup`.
+
+    Parameters:
+    - `variant` (`string`) - defines the type of group to create. Valid options: `['dropdown_menu', 'select']`. Each option applies a different name to the group which are converted to `PascalCase` and appended with `Group`
+    - `content` (`list[ZentraModel]`) - a list of `ZentraModels` to add as children
+    - `styles` (`string, optional`) - a set of custom CSS classes to apply to the group. Automatically adds them to `className`. `None` by default
+    """
+
+    variant: GroupVariant
+    content: list[ZentraModel]
+
+    @property
+    def container_name(self) -> str:
+        return f"{self.name_prefix}Group"
+
+    def build(self, content: str | list[str]) -> list[str]:
+        """Creates the JSX content for the component."""
+        return str_to_list(full_container(self.container_name, content))
+
+
+class ContentModel(ChildModel):
     """
     A child model for `Content` components in the [Shadcn/ui](https://ui.shadcn.com/) component library, such as `DropdownMenuContent`.
 
     Parameters:
-    - `variant` (`string`) - defines the type of content to create. Valid options: `['dropdown_menu', 'collapsible']`. Each option applies a different name to the content which are converted to `PascalCase` and appended with `Content`.
+    - `variant` (`string`) - defines the type of content to create. Valid options: `['dropdown_menu', 'collapsible', 'select']`. Each option applies a different name to the content which are converted to `PascalCase` and appended with `Content`
     - `styles` (`string, optional`) - a set of custom CSS classes to apply to the content. Automatically adds them to `className`. `None` by default
     - `content` (`list[ZentraModel]`) - a list of `ZentraModels` to add as children
     """

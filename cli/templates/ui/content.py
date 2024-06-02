@@ -33,7 +33,15 @@ from zentra.ui.control import (
     Toggle,
     ToggleGroup,
 )
-from zentra.ui.child import ContentModel, LabelModel, SeparatorModel, TriggerModel
+from zentra.ui.child import (
+    ContentModel,
+    GroupModel,
+    ItemModel,
+    LabelModel,
+    SeparatorModel,
+    TriggerModel,
+    ValueModel,
+)
 from zentra.ui.child.ddm import DDMCheckboxGroup, DDMRadioGroup
 from zentra.ui.modal import Popover
 from zentra.ui.navigation import (
@@ -297,7 +305,7 @@ def collapsible_content(comp: Collapsible) -> list[ZentraModel]:
 
 
 def radio_button_content(rb: RadioButton) -> list[ZentraModel]:
-    """Returns a list of strings for the `RadioButton` content based on the components attributes."""
+    """Returns a list of `ZentraModels` for the `RadioButton` content based on the components attributes."""
     return [
         Div(
             styles="flex items-center space-x-2",
@@ -309,35 +317,36 @@ def radio_button_content(rb: RadioButton) -> list[ZentraModel]:
     ]
 
 
-def select_content(select: Select) -> list[str]:
-    """Returns a list of strings for the `Select` content based on the components attributes."""
-    content = [
-        f'<SelectTrigger className="w-[{select.box_width}px]">',
-        f'<SelectValue placeholder="{select.display_text}" />',
-        "</SelectTrigger>",
-    ]
+def select_group_content(group: SelectGroup) -> list[ZentraModel]:
+    """Returns a list of `ZentraModels` for the `SelectGroup` content based on the components attributes."""
+    content = []
+    if group.label:
+        label = LabelModel(variant="select", content=group.label)
+        content.append(label)
 
+    for item in group.items:
+        value = item.split()[0].lower()
+        content.append(ItemModel(variant="select", value=value, content=item))
+
+    return [GroupModel(variant="select", content=content)]
+
+
+def select_content(select: Select) -> list[ZentraModel]:
+    """Returns a list of `ZentraModels` for the `Select` content based on the components attributes."""
     if isinstance(select.groups, SelectGroup):
         select.groups = [select.groups]
 
-    group_content = []
-    for group in select.groups:
-        group_content.extend(
-            ["<SelectGroup>", f"<SelectLabel>{group.label}</SelectLabel>"]
-        )
-        for item in group.items:
-            group_content.append(
-                f'<SelectItem value="{item[0]}">{item[1]}</SelectItem>'
-            )
-        group_content.append("</SelectGroup>")
-
-    if len(select.groups) == 1 and not select.show_label:
-        group_content.pop()
-        group_content.pop(0)
-        group_content.pop(0)
-
-    content.extend(group_content)
-    return content
+    return [
+        TriggerModel(
+            variant="select",
+            styles="w-[280px]",
+            content=ValueModel(variant="select", placeholder=select.display_text),
+        ),
+        ContentModel(
+            variant="select",
+            content=select.groups,
+        ),
+    ]
 
 
 def alert_content(alert: Alert) -> list[str]:

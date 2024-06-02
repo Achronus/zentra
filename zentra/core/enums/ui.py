@@ -96,38 +96,6 @@ class BadgeVariant(str, Enum):
     OUTLINE = "outline"
 
 
-class SeparatorVariant(str, Enum):
-    BREADCRUMB = "breadcrumb"
-    DROPDOWN_MENU = "dropdown_menu"
-    MENUBAR = "menubar"
-    COMMAND = "command"
-    CONTEXT_MENU = "context_menu"
-
-
-class TriggerVariant(str, Enum):
-    ACCORDION = "accordion"
-    ALERT_DIALOG = "alert_dialog"
-    COLLAPSIBLE = "collapsible"
-    DROPDOWN_MENU = "dropdown_menu"
-    POPOVER = "popover"
-    SELECT = "select"
-    TOOLTIP = "tooltip"
-
-
-class LabelVariant(str, Enum):
-    DROPDOWN_MENU = "dropdown_menu"
-    CONTEXT_MENU = "context_menu"
-
-
-class ContentVariant(str, Enum):
-    DROPDOWN_MENU = "dropdown_menu"
-    COLLAPSIBLE = "collapsible"
-
-
-class GroupVariant(str, Enum):
-    DROPDOWN_MENU = "dropdown_menu"
-
-
 class BCTriggerVariant(str, Enum):
     ELLIPSIS = "ellipsis"
     TEXT = "text"

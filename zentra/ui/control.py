@@ -752,15 +752,17 @@ class ScrollArea(Component, ShadcnUi):
 
 class SelectGroup(Component, ShadcnUi):
     """
-    A helper Zentra model for the [Shadcn/ui Select](https://ui.shadcn.com/docs/components/select) component. Cannot be used on its own, must be used inside a `Select` component.
+    A helper Zentra model for the [Shadcn/ui Select](https://ui.shadcn.com/docs/components/select) component.
+
+    Used inside the `zentra.ui.control.Select` component.
 
     Parameters:
-    - `label` (`string, optional`) - a name for the group
-    - `items` (`list[tuple[string, string]]`) - a list of tuple pairs of strings signifying the `(value, text)` for each `SelectItem`
+    - `items` (`list[string]`) - a list of text to display in each `SelectItem`. the `value` prop is automatically generated based on the content
+    - `label` (`string, optional`) - a name for the group. `None` by default
     """
 
-    label: str
-    items: list[tuple[str, str]]
+    items: list[str]
+    label: Optional[str] = None
 
 
 class Select(Component, ShadcnUi):
@@ -770,18 +772,16 @@ class Select(Component, ShadcnUi):
     Parameters:
     - `display_text` (`string`) - the display text for the `Select` component. Stored in the `SelectValue` placeholder inside the `SelectTrigger`. This text is the first thing people will see
     - `groups` (`SelectGroup | list[zentra.model.control.SelectGroup]`) - a single or list of `zentra.model.control.SelectGroup` models containing the `SelectItem` values
-    - `box_width` (`integer, optional`) - the size of the `Select` box width in pixels. `280` by default
-    - `show_label` (`boolean, optional`) - a flag for displaying the label for the single `SelectGroup`. Only compatiable with a single `SelectGroup` (`groups=SelectGroup()`). `True` by default
     """
 
     display_text: str
     groups: SelectGroup | list[SelectGroup]
-    box_width: int = 280
-    show_label: bool = True
 
-    @property
-    def child_names(self) -> list[str]:
-        return [
+    _parent = PrivateAttr(default=True)
+    _content_attrs = PrivateAttr(default=["groups"])
+
+    _child_names = PrivateAttr(
+        default=[
             "SelectContent",
             "SelectGroup",
             "SelectItem",
@@ -789,6 +789,7 @@ class Select(Component, ShadcnUi):
             "SelectTrigger",
             "SelectValue",
         ]
+    )
 
 
 class Slider(Component, ShadcnUi):

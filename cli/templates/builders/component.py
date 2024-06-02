@@ -190,13 +190,17 @@ class ComponentBuilder:
     def handle_parent_content(self, component: Component) -> Component:
         """Creates the inner content for child components and passes updates the required attributes for the parent component. Returns the updated component."""
         for attr_name in component.content_attributes:
-            items = getattr(component, attr_name)
+            sub_comp = getattr(component, attr_name)
+
+            if not isinstance(sub_comp, list):
+                sub_comp = [sub_comp]
 
             inner_content = []
-            for item in items:
+            for item in sub_comp:
                 inner_content.extend(self.content.build(item))
 
             setattr(component, attr_name, inner_content)
+
         return component
 
     def create_jsx_content(self, node: ComponentNode, level: int = 0) -> str:

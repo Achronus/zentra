@@ -174,12 +174,12 @@ class ContentBuilder:
         """A helper function to retrieve the content from the `model_map` for the zentra model."""
         return self.model_map[self.model.classname](self.model)
 
-    def build(self) -> Union[list[ZentraModel], None]:
+    def build(self) -> Union[list[ZentraModel], ZentraModel]:
         """Builds the content for the component."""
         if self.model.classname in self.model_map.keys():
             return self.get_content()
 
-        return None
+        return self.model
 
 
 class LogicBuilder:
@@ -216,12 +216,9 @@ class GraphBuilder:
         self.model = model
         self.map = mapping
 
-    def build(self, content: list[ZentraModel] = None) -> ComponentNode:
+    def build(self, content: Union[list[ZentraModel], ZentraModel]) -> ComponentNode:
         """Builds the component graph and returns it as a set of nodes."""
         attrs = self.get_attributes(self.model)
-
-        if content is None:
-            content = self.model
 
         if isinstance(self.model, LucideIcon):
             content = self.model.text if hasattr(self.model, "text") else ""
@@ -238,11 +235,8 @@ class GraphBuilder:
             content=content,
         )
 
-    def get_attributes(self, model: ZentraModel = None) -> str:
+    def get_attributes(self, model: ZentraModel) -> str:
         """Process the components attributes and converts them to a string."""
-        if model is None:
-            model = self.model
-
         builder = AttributeBuilder(
             component=model,
             common_mapping=self.map.common,

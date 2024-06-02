@@ -277,7 +277,7 @@ def collapsible_content(comp: Collapsible) -> list[ZentraModel]:
                         variant="ghost",
                         size="sm",
                         styles="w-9 p-0",
-                        content=LucideIconWithText(
+                        content=LucideIcon(
                             name="chevrons-up-down",
                             styles="h-4 w-4",
                             text=HTMLContent(

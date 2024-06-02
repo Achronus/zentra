@@ -559,7 +559,7 @@ class RadioGroup(Component, ShadcnUi):
     items: list[RadioButton]
     default_value: str = Field(min_length=1, max_length=30)
 
-    @property
+    _parent = PrivateAttr(default=True)
     _content_attrs = PrivateAttr(default=["items"])
     _child_names = PrivateAttr(default=["RadioGroupItem"])
 

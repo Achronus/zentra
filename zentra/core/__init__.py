@@ -21,6 +21,13 @@ class Component(ZentraModel):
     A Zentra model for all React components.
     """
 
+    _parent = PrivateAttr(default=False)
+
+    @property
+    def is_parent(self) -> bool:
+        """When `True` sets a component as a parent component and iterates over its children to get their content before graph conversion. `False` by default."""
+        return self._parent
+
 
 class DataArray(BaseModel):
     """

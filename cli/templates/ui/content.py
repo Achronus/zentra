@@ -27,7 +27,6 @@ from zentra.ui.control import (
     Label,
     Pagination,
     RadioButton,
-    RadioGroup,
     ScrollArea,
     Select,
     SelectGroup,
@@ -297,25 +296,17 @@ def collapsible_content(comp: Collapsible) -> list[ZentraModel]:
     ]
 
 
-def radio_button_content(rb: RadioButton) -> list[str]:
+def radio_button_content(rb: RadioButton) -> list[ZentraModel]:
     """Returns a list of strings for the `RadioButton` content based on the components attributes."""
     return [
-        '<div className="flex items-center space-x-2">',
-        f'<RadioGroupItem value="{rb.value}" id="{rb.id}" />',
-        f'<Label htmlFor="{rb.id}">',
-        rb.text,
-        "</Label>",
-        "</div>",
+        Div(
+            styles="flex items-center space-x-2",
+            content=[
+                rb,
+                Label(name=rb.id, text=rb.text),
+            ],
+        )
     ]
-
-
-def radio_group_content(rg: RadioGroup) -> list[str]:
-    """Returns a list of strings for the `RadioGroup` content based on the components attributes."""
-    content = []
-    for rb in rg.items:
-        content.extend(radio_button_content(rb))
-
-    return content
 
 
 def select_content(select: Select) -> list[str]:

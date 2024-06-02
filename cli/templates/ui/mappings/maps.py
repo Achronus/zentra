@@ -31,7 +31,7 @@ from cli.templates.ui.content import (
     input_otp_content,
     pagination_content,
     popover_content,
-    radio_group_content,
+    radio_button_content,
     scroll_area_content,
     select_content,
     skeleton_content,
@@ -125,6 +125,7 @@ COMMON_ATTR_MAPPING = {
     "open": lambda value: param_attr("open", value),
     "open_change": lambda value: param_attr("onOpenChange", value),
     "other": lambda value: other_attribute(value),
+    "value": lambda value: str_attr("value", value),
 }
 
 
@@ -148,7 +149,7 @@ EXTRA_IMPORTS_MAPPING = {
 COMPONENT_CONTENT_MAPPING = {
     "Checkbox": lambda cb: checkbox_content(cb),
     "Collapsible": lambda comp: collapsible_content(comp),
-    "RadioGroup": lambda rg: radio_group_content(rg),
+    "RadioButton": lambda rb: radio_button_content(rb),
     "Select": lambda select: select_content(select),
     "Alert": lambda alert: alert_content(alert),
     "TextAlertDialog": lambda ad: text_alert_dialog_content(ad),

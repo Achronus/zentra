@@ -10,7 +10,7 @@ from cli.templates.storage import JSXComponentContentStorage, JSXComponentExtras
 from cli.templates.ui.mappings.storage import ComponentMappings
 from cli.templates.utils import compress, compress_imports, str_to_list
 
-from zentra.core import Component
+from zentra.base import ZentraModel
 
 
 class ComponentBuilder:
@@ -18,12 +18,13 @@ class ComponentBuilder:
 
     def __init__(
         self,
-        component: Component,
+        component: ZentraModel,
         mappings: ComponentMappings,
     ) -> None:
         self.component = component
         self.wrapper_map = mappings.wrappers
         self.use_client_map = mappings.client
+        self.attr_maps = mappings.attribute
 
         self.storage = JSXComponentContentStorage()
         self.attrs = AttributeBuilder(
@@ -69,8 +70,22 @@ class ComponentBuilder:
             )
 
         else:
-            content = str_to_list(self.create_jsx_content(self.graph.build()))
-            self.storage.content = compress([item.strip() for item in content])
+            content = self.graph.build(content)
+            content = str_to_list(self.create_jsx_content(content))
+            content = [item.strip() for item in content]
+
+            if self.component.no_container:
+                content = content[1:-1]
+
+            self.storage.content = (
+                compress(content)
+                if self.component.no_container
+                else compress(
+                    self.apply_content_containers(
+                        content=content, full_shell=full_shell
+                    )
+                )
+            )
 
         if self.component.child_names:
             self.storage.imports = self.tidy_child_names(

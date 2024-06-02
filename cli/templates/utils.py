@@ -83,8 +83,8 @@ def handle_single_quotes(content: list[str]) -> list[str]:
     return content
 
 
-def param_reformat_helper(text: str) -> list[str]:
-    """A helper function to reformat a string of text with parameter values. Returns the new version as a list of strings."""
+def text_content(text: str) -> str:
+    """Returns a list of strings of text content with variable preprocessing."""
     new_text = []
     for word in text.split(" "):
         if word:
@@ -94,13 +94,4 @@ def param_reformat_helper(text: str) -> list[str]:
                 new_text.append(word)
 
     new_text = handle_single_quotes(new_text)
-    return [" ".join(new_text)]
-
-
-def text_content(text: str | list[str]) -> list[str]:
-    """Returns a list of strings of text content with variable preprocessing
-    (if required)."""
-    if isinstance(text, str):
-        return param_reformat_helper(text)
-
-    return text
+    return " ".join(new_text)

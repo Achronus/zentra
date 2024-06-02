@@ -15,7 +15,7 @@ from zentra.core.enums.ui import (
     ToggleVariant,
 )
 from zentra.core.html import Div
-from zentra.core.react import LucideIconWithText
+from zentra.core.react import LucideIcon, LucideIconWithText
 from zentra.ui import ShadcnUi
 
 from pydantic import Field, ValidationInfo, field_validator
@@ -50,7 +50,7 @@ class Button(Component, ShadcnUi):
     - `other` (`dict[string, string], optional`) - a dictionary of additional attributes that can be passed into a button. Accepted in the form of: `prop_name: prop_value`. `prop_value` can be a parameter (indicated by starting the variable name with a `$.`).  `None` by default
     """
 
-    content: str | LucideIconWithText
+    content: str | LucideIconWithText | LucideIcon
     url: Optional[str] = None
     variant: ButtonVariant = "default"
     size: ButtonSize = "default"
@@ -164,6 +164,10 @@ class Checkbox(Component, ShadcnUi):
     text: Optional[str] = None
     disabled: bool = False
 
+    @property
+    def no_container(self) -> bool:
+        return True
+
     @field_validator("id")
     def validate_id(cls, id: str) -> str:
         return check_pattern_match(
@@ -179,11 +183,17 @@ class Collapsible(Component, ShadcnUi):
     - `name` (`string`) - an identifier for the component. Prepended to `get` and `set` for the `useState()` hook. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
     - `title` (`string`) - the main heading of the collapsible
     - `items` (`list[str]`) - a list of strings representing the text to add into each collapsible block. Requires a `minimum` of `1` item
+    - `styles` (`string, optional`) - a set of custom CSS classes to apply to the collapsible. Automatically adds them to `className`. `w-[350px] space-y-2` by default
+    - `open` (`string, optional`) - a string defining the prop that controls the open state of the collapsible. Adds the value to the `open` prop. Automatically converted to a parameter value. `isOpen` by default
+    - `open_change` (`string, optional`) - a string defining the event handler that controls the open state of the collapsible. Adds the value to the `onOpenChange` prop. Automatically converted to a parameter value. `setIsOpen` by default
     """
 
     name: str = Field(min_length=1, max_length=15)
     title: str = Field(min_length=1)
     items: list[str] = Field(min_length=1)
+    styles: Optional[str] = "w-[350px] space-y-2"
+    open: str = "isOpen"
+    open_change: str = "setIsOpen"
 
     @property
     def custom_common_attributes(self) -> list[str]:

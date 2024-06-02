@@ -5,6 +5,7 @@ from pydantic import Field, field_validator
 from zentra.base import ZentraModel
 from zentra.base.library import Lucide
 from zentra.core.enums.ui import ButtonIconPosition
+from zentra.core.html import HTMLContent
 from zentra.core.utils import name_to_pascal_case
 from zentra.core.validation import icon_name_validation
 
@@ -19,6 +20,9 @@ class LucideIcon(ZentraModel, Lucide):
     - `size` (`integer, optional`) - a custom size for the icon. `None` by default
     - `color` (`string, optional`) - a custom colour for the icon. `None` by default
     - `stroke_width` (`integer, optional`) - a custom stroke width for the icon. `None` by default
+    - `text` (`string | zentra.core.html.HTMLContent, optional`) - the text displayed alongside the icon. `None` by default. Can be either:
+      1. A string of text. Can include parameter variables (indicated by starting the variable name with a `$.`)
+      2. A `HTMLContent` model, such as a HTML `span` tag
     """
 
     name: str = Field(min_length=1)
@@ -26,10 +30,14 @@ class LucideIcon(ZentraModel, Lucide):
     size: Optional[int] = None
     color: Optional[str] = None
     stroke_width: Optional[int] = None
+    text: Optional[str | HTMLContent] = None
+
+    @property
+    def content_attributes(self) -> list[str]:
+        return ["text"]
 
     @property
     def custom_common_attributes(self) -> list[str]:
-        """Returns a list of the attributes that use the same name as a common attribute, but act differently with this specific component."""
         return ["name"]
 
     @property

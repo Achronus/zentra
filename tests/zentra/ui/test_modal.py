@@ -16,10 +16,10 @@ class TestPopover:
             trigger=Button(content="Open popover", variant="outline"),
             content=Div(
                 styles="grid gap-4",
-                items=[
+                content=[
                     Div(
                         styles="space-y-2",
-                        items=[
+                        content=[
                             HTMLContent(
                                 styles="font-medium leading-none",
                                 tag="h4",
@@ -34,10 +34,10 @@ class TestPopover:
                     ),
                     Div(
                         styles="grid gap-2",
-                        items=[
+                        content=[
                             Div(
                                 styles="grid grid-cols-3 items-center gap-4",
-                                items=[
+                                content=[
                                     Label(name="width", text="Width"),
                                     Input(
                                         id="width",
@@ -48,7 +48,7 @@ class TestPopover:
                             ),
                             Div(
                                 styles="grid grid-cols-3 items-center gap-4",
-                                items=[
+                                content=[
                                     Label(name="maxWidth", text="Max. width"),
                                     Input(
                                         id="maxWidth",
@@ -59,7 +59,7 @@ class TestPopover:
                             ),
                             Div(
                                 styles="grid grid-cols-3 items-center gap-4",
-                                items=[
+                                content=[
                                     Label(name="height", text="Height"),
                                     Input(
                                         id="height",
@@ -70,7 +70,7 @@ class TestPopover:
                             ),
                             Div(
                                 styles="grid grid-cols-3 items-center gap-4",
-                                items=[
+                                content=[
                                     Label(name="maxHeight", text="Max. height"),
                                     Input(
                                         id="maxHeight",

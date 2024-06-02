@@ -121,6 +121,7 @@ class LabelVariant(str, Enum):
 
 class ContentVariant(str, Enum):
     DROPDOWN_MENU = "dropdown_menu"
+    COLLAPSIBLE = "collapsible"
 
 
 class GroupVariant(str, Enum):

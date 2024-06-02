@@ -80,13 +80,13 @@ class TestDiv:
     @pytest.fixture
     def div_with_label(self) -> Div:
         return Div(
-            items=Label(name="example", text="A test $.label"),
+            content=Label(name="example", text="A test $.label"),
         )
 
     @pytest.fixture
     def div_with_multi_items(self) -> Div:
         return Div(
-            items=[
+            content=[
                 "This is a",
                 HTMLContent(tag="span", styles="red-500", text="complete $.test"),
                 Label(name="name", text="First name"),
@@ -102,14 +102,14 @@ class TestDiv:
     @staticmethod
     def test_content_str_simple():
         builder = Builder(
-            model=Div(items="This is a long test string I'm testing"),
+            model=Div(content="This is a long test string I'm testing"),
         )
         builder.content(HTML_VALID_VALS_MAP["div"]["content"]["simple"])
 
     @staticmethod
     def test_content_str_params_with_styles():
         builder = Builder(
-            model=Div(items="This is a $.test string", styles="w-80"),
+            model=Div(content="This is a $.test string", styles="w-80"),
         )
         builder.content(HTML_VALID_VALS_MAP["div"]["content"]["with_styles"])
 
@@ -117,7 +117,7 @@ class TestDiv:
     def test_content_str_with_shell():
         builder = Builder(
             model=Div(
-                items="This is a shell test",
+                content="This is a shell test",
                 fragment=True,
             ),
         )
@@ -128,7 +128,7 @@ class TestDiv:
         builder = Builder(
             model=Div(
                 key="$.tag",
-                items=Map(
+                content=Map(
                     obj_name="tags",
                     param_name="tag",
                     content=HTMLContent(tag="h4", text="An epic $.tag heading"),
@@ -152,7 +152,7 @@ class TestDiv:
         builder = Builder(
             model=Div(
                 styles="w-8 h-12",
-                items=[
+                content=[
                     HTMLContent(tag="h1", text="Test h1 $.tag"),
                     Figure(
                         key="$.artwork.artist",
@@ -198,7 +198,7 @@ class TestDiv:
     @staticmethod
     def test_key_param_invalid():
         with pytest.raises(ValidationError):
-            Div(items="key error here", key="keyError")
+            Div(content="key error here", key="keyError")
 
 
 class TestFigCaption:

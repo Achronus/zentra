@@ -686,7 +686,7 @@ class TestScrollArea:
             styles="h-72 w-48 rounded-md border",
             content=Div(
                 styles="p-4",
-                items=[
+                content=[
                     HTMLContent(
                         tag="h4",
                         styles="mb-4 text-sm font-medium leading-none",
@@ -697,8 +697,8 @@ class TestScrollArea:
                         param_name="tag",
                         content=Div(
                             fragment=True,
-                            items=[
-                                Div(key="$.tag", styles="text-sm", items="$.tag"),
+                            content=[
+                                Div(key="$.tag", styles="text-sm", content="$.tag"),
                                 Separator(styles="my-2"),
                             ],
                         ),
@@ -713,7 +713,7 @@ class TestScrollArea:
             styles="w-96 whitespace-nowrap rounded-md border",
             content=Div(
                 styles="flex w-max space-x-4 p-4",
-                items=Map(
+                content=Map(
                     obj_name="works",
                     param_name="artwork",
                     content=Figure(

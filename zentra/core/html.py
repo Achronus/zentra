@@ -1,6 +1,6 @@
+from typing import Union
+from zentra.base import ZentraModel
 from zentra.base.html import HTMLTag
-from zentra.base.js import JSIterable
-from zentra.core import Component
 from zentra.core.enums.html import HTMLContentTagType
 from zentra.core.validation import key_attr_validation
 
@@ -36,7 +36,7 @@ class Div(HTMLTag):
     A model dedicated to the `<div>` HTML tag.
 
     Parameters:
-    - `items` (`string | zentra.core.Component | zentra.core.js.JSIterable | list[string | zentra.core.html.HTMLTag | zentra.core.Component | zentra.core.js.JSIterable]`) - Can be either:
+    - `content` (`string | ZentraModel | list[string | ZentraModel]`) - Can be either:
       1. A `string` of text. Can include parameter variables (indicated by starting the variable name with a `$.`) or be one specifically
       2. Any `zentra.core.Component` model, such as `zentra.ui.control.Label`
       3. Any `zentra.core.js.JSIterable` model, such as `zentra.core.js.Map`
@@ -46,14 +46,9 @@ class Div(HTMLTag):
     - `styles` (`string, optional`) - the CSS styles to apply to the tag. `None` by default
     """
 
-    items: str | Component | JSIterable | list[str | HTMLTag | Component | JSIterable]
+    content: Union[str, ZentraModel] | list[Union[str, ZentraModel]]
     fragment: bool = False
     key: str = None
-
-    @property
-    def content_attributes(self) -> list[str]:
-        """Returns a list of attributes specific to the components content. Used for allocating the correct values to the builder."""
-        return ["items"]
 
     @field_validator("key")
     def validate_key(cls, key: str) -> str:
@@ -99,7 +94,7 @@ class FigCaption(HTMLTag):
     ```
     """
 
-    text: str | HTMLContent | list[str | HTMLContent]
+    text: Union[str, HTMLContent] | list[Union[str, HTMLContent]]
 
 
 class Figure(HTMLTag):

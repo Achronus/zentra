@@ -34,8 +34,8 @@ from zentra.ui.control import (
     Toggle,
     ToggleGroup,
 )
-from zentra.ui.helper import ContentModel, LabelModel, SeparatorModel, TriggerModel
-from zentra.ui.helper.ddm import DDMCheckboxGroup, DDMRadioGroup
+from zentra.ui.child import ContentModel, LabelModel, SeparatorModel, TriggerModel
+from zentra.ui.child.ddm import DDMCheckboxGroup, DDMRadioGroup
 from zentra.ui.modal import Popover
 from zentra.ui.navigation import (
     BCDropdownMenu,
@@ -222,8 +222,8 @@ def string_icon_content(content: str | LucideIconWithText) -> list[str]:
     return text
 
 
-def checkbox_content(cb: Checkbox) -> ZentraModel:
-    """Returns a list of strings for the `Checkbox` content based on the components attributes."""
+def checkbox_content(cb: Checkbox) -> list[ZentraModel]:
+    """Returns a `ZentraModel` for the `Checkbox` content based on the components attributes."""
     items = [
         Label(
             name=cb.id,
@@ -235,56 +235,66 @@ def checkbox_content(cb: Checkbox) -> ZentraModel:
 
     if cb.text:
         items_style = "items-top"
-        items.append(
-            HTMLContent(tag="p", styles="text-sm text-muted-foreground", text=cb.text)
-        )
-
-    return Div(
-        styles=f"flex {items_style} space-x-2",
-        items=[
-            cb,
+        items = [
             Div(
                 styles="grid gap-1.5 leading-none",
-                items=items,
+                content=[
+                    *items,
+                    HTMLContent(
+                        tag="p", styles="text-sm text-muted-foreground", text=cb.text
+                    ),
+                ],
             ),
-        ],
-    )
+        ]
 
-
-def collapsible_content(comp: Collapsible) -> list[str]:
-    """Returns a list of strings for the `Collapsible` content based on the components attributes."""
-    content = [
-        '<div className="flex items-center justify-between space-x-4 px-4">',
-        '<h4 className="text-sm font-semibold">',
-        comp.title,
-        "</h4>",
-        "<CollapsibleTrigger asChild>",
-        '<Button variant="ghost" size="sm" className="w-9 p-0">',
-        '<ChevronsUpDown className="h-4 w-4" />',
-        '<span className="sr-only">',
-        "Toggle",
-        "</span>",
-        "</Button>",
-        "</CollapsibleTrigger>",
-        "</div>",
-        '<div className="rounded-md border px-4 py-3 font-mono text-sm">',
-        comp.items[0],
-        "</div>",
-        '<CollapsibleContent className="space-y-2">',
+    return [
+        Div(
+            styles=f"flex {items_style} space-x-2",
+            content=[cb, *items],
+        )
     ]
 
+
+def collapsible_content(comp: Collapsible) -> list[ZentraModel]:
+    """Returns a list of `ZentraModels` for the `Collapsible` content based on the components attributes."""
+    items = []
     if len(comp.items) > 1:
-        for item in comp.items[1:]:
-            content.extend(
-                [
-                    '<div className="rounded-md border px-4 py-3 font-mono text-sm">',
-                    item,
-                    "</div>",
-                ]
+        for text in comp.items[1:]:
+            items.append(
+                Div(
+                    styles="rounded-md border px-4 py-3 font-mono text-sm", content=text
+                )
             )
 
-    content.append("</CollapsibleContent>")
-    return content
+    return [
+        Div(
+            styles="flex items-center justify-between space-x-4 px-4",
+            content=[
+                HTMLContent(tag="h4", styles="text-sm font-semibold", text=comp.title),
+                TriggerModel(
+                    variant="collapsible",
+                    content=Button(
+                        variant="ghost",
+                        size="sm",
+                        styles="w-9 p-0",
+                        content=LucideIconWithText(
+                            name="chevrons-up-down",
+                            styles="h-4 w-4",
+                            text=HTMLContent(
+                                tag="span", styles="sr-only", text="Toggle"
+                            ),
+                        ),
+                    ),
+                    styles="asChild",
+                ),
+            ],
+        ),
+        Div(
+            styles="rounded-md border px-4 py-3 font-mono text-sm",
+            content=comp.items[0],
+        ),
+        ContentModel(variant="collapsible", styles="space-y-2", content=items),
+    ]
 
 
 def radio_button_content(rb: RadioButton) -> list[str]:
@@ -416,16 +426,6 @@ def input_otp_content(otp: InputOTP) -> list[str]:
             content.append("<InputOTPSeparator />")
 
     return content
-
-
-def button_content(btn: Button) -> list[str]:
-    """Returns a list of strings for the `Button` content based on the components attributes."""
-    text = string_icon_content(btn.content)
-
-    if btn.url:
-        text = build_component(Link(href=btn.url, text=compress(text)))
-
-    return text
 
 
 def toggle_content(toggle: Toggle) -> list[str]:

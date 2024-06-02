@@ -66,7 +66,7 @@ class TestMap:
         return Map(
             obj_name="tags",
             param_name="tag",
-            content=Div(items="Test $.tag"),
+            content=Div(content="Test $.tag"),
         )
 
     @pytest.fixture

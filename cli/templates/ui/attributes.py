@@ -4,7 +4,7 @@ from typing import Callable
 from zentra.core.constants import PARAMETER_PREFIX
 from zentra.core.enums.ui import CalendarMode, InputOTPPatterns
 from zentra.nextjs import Link, StaticImage, UrlQuery
-from zentra.ui.control import Calendar, Collapsible, InputOTP, Slider, Toggle
+from zentra.ui.control import Calendar, InputOTP, Slider, Toggle
 from zentra.ui.presentation import Accordion, Progress
 
 
@@ -175,15 +175,6 @@ def calendar_attributes(cal: Calendar) -> list[str]:
 
     attrs.extend(handle_custom_attrs(custom_attrs_map))
     return attrs
-
-
-def collapsible_attributes(comp: Collapsible) -> list[str]:
-    """Returns a list of strings for the `Collapsible` attributes based on a given name value."""
-    return [
-        param_attr("open", f"{comp.name}IsOpen"),
-        param_attr("onOpenChange", f"{comp.name}SetIsOpen"),
-        str_attr("className", "w-[350px] space-y-2"),
-    ]
 
 
 def input_otp_attributes(comp: InputOTP) -> list[str] | None:

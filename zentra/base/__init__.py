@@ -23,6 +23,11 @@ class ZentraModel(BaseModel):
         return []
 
     @property
+    def no_container(self) -> bool:
+        """When `True`, stops wrapping the model in its own container. `False` by default."""
+        return False
+
+    @property
     def composition_only(self) -> bool:
         """Signifies if a component is only made up of other components. When `False`, components have their own shell and import statement."""
         return False

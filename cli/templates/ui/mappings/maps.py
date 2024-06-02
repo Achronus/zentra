@@ -5,7 +5,6 @@ from cli.templates.ui.attributes import (
     alt_attribute,
     other_attribute,
     calendar_attributes,
-    collapsible_attributes,
     input_otp_attributes,
     param_attr,
     nextjs_link_attributes,
@@ -23,7 +22,6 @@ from cli.templates.ui.content import (
     aspect_ratio_content,
     avatar_content,
     breadcrumb_content,
-    button_content,
     checkbox_content,
     collapsible_content,
     combobox_content,
@@ -82,7 +80,6 @@ USE_CLIENT_COMPONENTS = [
 
 COMPONENT_ATTR_MAPPING = {
     "Calendar": lambda comp: calendar_attributes(comp),
-    "Collapsible": lambda comp: collapsible_attributes(comp),
     "InputOTP": lambda comp: input_otp_attributes(comp),
     "Link": lambda comp: nextjs_link_attributes(comp),
     "Slider": lambda comp: slider_attributes(comp),
@@ -157,7 +154,6 @@ COMPONENT_CONTENT_MAPPING = {
     "TextAlertDialog": lambda ad: text_alert_dialog_content(ad),
     "Avatar": lambda avatar: avatar_content(avatar),
     "InputOTP": lambda otp: input_otp_content(otp),
-    "Button": lambda btn: button_content(btn),
     "Toggle": lambda comp: toggle_content(comp),
     "ToggleGroup": lambda comp: toggle_group_content(comp),
     "Pagination": lambda comp: pagination_content(comp),

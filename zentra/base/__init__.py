@@ -5,6 +5,10 @@ class ZentraModel(BaseModel):
     """A base for all Zentra models."""
 
     _container_name = PrivateAttr(default=None)
+    _content_attrs = PrivateAttr(default=[])
+    _no_container = PrivateAttr(default=False)
+    _child_names = PrivateAttr(default=[])
+
     model_config = ConfigDict(use_enum_values=True)
 
     @property
@@ -20,12 +24,12 @@ class ZentraModel(BaseModel):
     @property
     def child_names(self) -> list[str]:
         """Stores the component child names."""
-        return []
+        return self._child_names
 
     @property
     def no_container(self) -> bool:
         """When `True`, stops wrapping the model in its own container. `False` by default."""
-        return False
+        return self._no_container
 
     @property
     def composition_only(self) -> bool:
@@ -34,11 +38,11 @@ class ZentraModel(BaseModel):
 
     @property
     def content_attributes(self) -> list[str]:
-        """Returns a list of attributes specific to the components content. Used for allocating the correct values to the builder."""
+        """Returns a list of strings specifying the components content attributes. Required for passing the correct content values to the builder."""
         if hasattr(self, "content"):
-            return ["content"]
+            self._content_attrs = ["content"]
 
-        return []
+        return self._content_attrs
 
     @property
     def inner_attributes(self) -> list[str]:

@@ -18,7 +18,7 @@ from zentra.core.html import Div
 from zentra.core.react import LucideIcon, LucideIconWithText
 from zentra.ui import ShadcnUi
 
-from pydantic import Field, ValidationInfo, field_validator
+from pydantic import Field, PrivateAttr, ValidationInfo, field_validator
 
 from zentra.core.validation import check_pattern_match, url_validation
 from zentra.core.validation.component import (
@@ -164,9 +164,7 @@ class Checkbox(Component, ShadcnUi):
     text: Optional[str] = None
     disabled: bool = False
 
-    @property
-    def no_container(self) -> bool:
-        return True
+    _no_container = PrivateAttr(default=True)
 
     @field_validator("id")
     def validate_id(cls, id: str) -> str:
@@ -195,13 +193,11 @@ class Collapsible(Component, ShadcnUi):
     open: str = "isOpen"
     open_change: str = "setIsOpen"
 
+    _child_names = PrivateAttr(default=["CollapsibleTrigger", "CollapsibleContent"])
+
     @property
     def custom_common_attributes(self) -> list[str]:
         return ["name"]
-
-    @property
-    def child_names(self) -> list[str]:
-        return ["CollapsibleTrigger", "CollapsibleContent"]
 
     @field_validator("name")
     def validate_id(cls, name: str) -> str:
@@ -458,9 +454,7 @@ class Label(Component, ShadcnUi):
     text: str = Field(min_length=1)
     styles: Optional[str] = None
 
-    @property
-    def content_attributes(self) -> list[str]:
-        return ["text"]
+    _content_attrs = PrivateAttr(default=["text"])
 
     @field_validator("name")
     def validate_id(cls, name: str) -> str:
@@ -519,7 +513,9 @@ class Pagination(Component, ShadcnUi):
 
 class RadioButton(Component, ShadcnUi):
     """
-    A helper Zentra model for the [Shadcn/ui RadioGroup](https://ui.shadcn.com/docs/components/radio-group) component. Cannot be used on its own, must be used inside a `RadioGroup` component.
+    A helper Zentra model for the [Shadcn/ui RadioGroup](https://ui.shadcn.com/docs/components/radio-group) component.
+
+    Used inside a `zentra.ui.control.RadioGroup` component.
 
     Parameters:
     - `id` (`string`) - an identifier for the component. Must be `lowercase` or `camelCase` and up to a maximum of `15` characters
@@ -530,6 +526,9 @@ class RadioButton(Component, ShadcnUi):
     id: str = Field(min_length=1, max_length=15)
     value: str = Field(min_length=1, max_length=30)
     text: str = Field(min_length=1)
+
+    _container_name = PrivateAttr(default="RadioGroupItem")
+    _no_container = PrivateAttr(default=True)
 
     @field_validator("id")
     def validate_id(cls, id: str) -> str:
@@ -561,8 +560,8 @@ class RadioGroup(Component, ShadcnUi):
     default_value: str = Field(min_length=1, max_length=30)
 
     @property
-    def child_names(self) -> list[str]:
-        return ["RadioGroupItem"]
+    _content_attrs = PrivateAttr(default=["items"])
+    _child_names = PrivateAttr(default=["RadioGroupItem"])
 
     @field_validator("items")
     def validate_items(cls, items: list[RadioButton]) -> list[RadioButton]:

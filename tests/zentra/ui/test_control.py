@@ -277,8 +277,8 @@ class TestCollapsible:
     def collapsible(self) -> Collapsible:
         return Collapsible(
             name="test",
-            title="Starred repositories",
-            items=["Astrum-AI/Zentra", "Not Zentra"],
+            title="@peduarte starred 3 repositories",
+            items=["@radix-ui/primitives", "@radix-ui/colors", "@stitches/react"],
         )
 
     @pytest.fixture

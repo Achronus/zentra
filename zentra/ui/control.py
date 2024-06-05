@@ -194,10 +194,7 @@ class Collapsible(Component, ShadcnUi):
     open_change: str = "setIsOpen"
 
     _child_names = PrivateAttr(default=["CollapsibleTrigger", "CollapsibleContent"])
-
-    @property
-    def custom_common_attributes(self) -> list[str]:
-        return ["name"]
+    _custom_common_attrs = PrivateAttr(default=["name"])
 
     @field_validator("name")
     def validate_id(cls, name: str) -> str:
@@ -559,8 +556,6 @@ class RadioGroup(Component, ShadcnUi):
     items: list[RadioButton]
     default_value: str = Field(min_length=1, max_length=30)
 
-    _parent = PrivateAttr(default=True)
-    _content_attr = PrivateAttr(default="items")
     _child_names = PrivateAttr(default=["RadioGroupItem"])
 
     @field_validator("items")

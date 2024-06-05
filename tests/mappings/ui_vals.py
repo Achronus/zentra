@@ -25,15 +25,15 @@ CHECKBOX_VALID_VALS = {
         "with_disabled": 'id="terms" disabled',
     },
     "content": {
-        "standard": '<div className="flex items-center space-x-2">\n<Checkbox id="terms" />\n<div className="grid gap-1.5 leading-none">\n<label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">\nAccept the terms and conditions.\n</label>\n</div>\n</Checkbox>\n</div>',
-        "with_disabled": '<div className="flex items-top space-x-2">\n<Checkbox id="terms" disabled />\n<div className="grid gap-1.5 leading-none">\n<label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">\nAccept the terms and conditions.\n</label>\n<p className="text-sm text-muted-foreground">\nPretty please!\n</p>\n</div>\n</Checkbox>\n</div>',
+        "standard": '<div className="flex items-center space-x-2">\n<Checkbox id="terms" />\n<Label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">\nAccept the terms and conditions.\n</Label>\n</div>',
+        "with_disabled": '<div className="flex items-top space-x-2">\n<Checkbox id="terms" disabled />\n<div className="grid gap-1.5 leading-none">\n<Label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">\nAccept the terms and conditions.\n</Label>\n<p className="text-sm text-muted-foreground">\nPretty please!\n</p>\n</div>\n</div>',
     },
 }
 
 COLLAPSIBLE_VALID_VALS = {
-    "attributes": 'open={testIsOpen} onOpenChange={testSetIsOpen} className="w-[350px] space-y-2"',
+    "attributes": 'className="w-[350px] space-y-2" open={isOpen} onOpenChange={setIsOpen}',
     "logic": "const [testIsOpen, testSetIsOpen] = useState(false);",
-    "content": '<Collapsible open={testIsOpen} onOpenChange={testSetIsOpen} className="w-[350px] space-y-2">\n<div className="flex items-center justify-between space-x-4 px-4">\n<h4 className="text-sm font-semibold">\nStarred repositories\n</h4>\n<CollapsibleTrigger asChild>\n<Button variant="ghost" size="sm" className="w-9 p-0">\n<ChevronsUpDown className="h-4 w-4" />\n<span className="sr-only">\nToggle\n</span>\n</Button>\n</CollapsibleTrigger>\n</div>\n<div className="rounded-md border px-4 py-3 font-mono text-sm">\nAstrum-AI/Zentra\n</div>\n<CollapsibleContent className="space-y-2">\n<div className="rounded-md border px-4 py-3 font-mono text-sm">\nNot Zentra\n</div>\n</CollapsibleContent>\n</Collapsible>',
+    "content": '<Collapsible className="w-[350px] space-y-2" open={isOpen} onOpenChange={setIsOpen}>\n<div className="flex items-center justify-between space-x-4 px-4">\n<h4 className="text-sm font-semibold">\n@peduarte starred 3 repositories\n</h4>\n<CollapsibleTrigger asChild>\n<Button variant="ghost" size="sm" className="w-9 p-0">\n<ChevronsUpDown className="h-4 w-4" />\n<span className="sr-only">\nToggle\n</span>\n</Button>\n</CollapsibleTrigger>\n</div>\n<div className="rounded-md border px-4 py-3 font-mono text-sm">\n@radix-ui/primitives\n</div>\n<CollapsibleContent className="space-y-2">\n<div className="rounded-md border px-4 py-3 font-mono text-sm">\n@radix-ui/colors\n</div>\n<div className="rounded-md border px-4 py-3 font-mono text-sm">\n@stitches/react\n</div>\n</CollapsibleContent>\n</Collapsible>',
 }
 
 INPUT_VALID_VALS = {
@@ -78,7 +78,7 @@ PAGINATION_VALID_VALS = {
 
 RADIO_GROUP_VALID_VALS = {
     "attributes": 'defaultValue="comfortable"',
-    "content": '<RadioGroup defaultValue="comfortable">\n<div className="flex items-center space-x-2">\n<RadioGroupItem value="default" id="r1" />\n<Label htmlFor="r1">\nDefault\n</Label>\n</div>\n<div className="flex items-center space-x-2">\n<RadioGroupItem value="comfortable" id="r2" />\n<Label htmlFor="r2">\nComfortable\n</Label>\n</div>\n<div className="flex items-center space-x-2">\n<RadioGroupItem value="compact" id="r3" />\n<Label htmlFor="r3">\nCompact\n</Label>\n</div>\n</RadioGroup>',
+    "content": '<RadioGroup defaultValue="comfortable">\n<div className="flex items-center space-x-2">\n<RadioGroupItem id="r1" value="default" />\n<Label htmlFor="r1">\nDefault\n</Label>\n</div>\n<div className="flex items-center space-x-2">\n<RadioGroupItem id="r2" value="comfortable" />\n<Label htmlFor="r2">\nComfortable\n</Label>\n</div>\n<div className="flex items-center space-x-2">\n<RadioGroupItem id="r3" value="compact" />\n<Label htmlFor="r3">\nCompact\n</Label>\n</div>\n</RadioGroup>',
 }
 
 SCROLL_AREA_VALID_VALS = {

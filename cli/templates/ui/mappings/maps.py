@@ -32,6 +32,7 @@ from cli.templates.ui.content import (
     pagination_content,
     popover_content,
     radio_button_content,
+    radio_group_content,
     scroll_area_content,
     select_content,
     select_group_content,
@@ -127,6 +128,7 @@ COMMON_ATTR_MAPPING = {
     "open_change": lambda value: param_attr("onOpenChange", value),
     "other": lambda value: other_attribute(value),
     "value": lambda value: str_attr("value", value),
+    "child": lambda value: "asChild" if value else None,
 }
 
 
@@ -151,6 +153,7 @@ COMPONENT_CONTENT_MAPPING = {
     "Checkbox": lambda cb: checkbox_content(cb),
     "Collapsible": lambda comp: collapsible_content(comp),
     "RadioButton": lambda rb: radio_button_content(rb),
+    "RadioGroup": lambda rg: radio_group_content(rg),
     "SelectGroup": lambda gp: select_group_content(gp),
     "Select": lambda select: select_content(select),
     "Alert": lambda alert: alert_content(alert),

@@ -290,11 +290,13 @@ class GraphBuilder:
         if isinstance(model, str):
             return StringNode(content=text_content(model))
 
+        content = self.get_content(model) if model.content_attributes else ""
+
         if args is None:
             args = {
                 "name": self.get_name(model),
                 "attributes": self.get_attributes(model),
-                "content": self.get_content(model),
+                "content": content,
             }
 
         if isinstance(model, LucideIcon):
@@ -305,7 +307,7 @@ class GraphBuilder:
             return JSNode(
                 name=model.obj_name,
                 attributes=model.param_name,
-                content=self.get_content(model),
+                content=content,
             )
         else:
             return ComponentNode(**args)

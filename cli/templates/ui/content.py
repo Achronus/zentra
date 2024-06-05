@@ -10,7 +10,7 @@ from cli.templates.ui.attributes import (
 from cli.templates.utils import compress, str_to_list, text_content
 
 from zentra.base import ZentraModel
-from zentra.ui.control import Checkbox
+from zentra.ui.control import Checkbox, RadioGroup
 from zentra.core import Component
 from zentra.base.html import HTMLTag
 from zentra.core.constants import PARAMETER_PREFIX
@@ -292,7 +292,7 @@ def collapsible_content(comp: Collapsible) -> list[ZentraModel]:
                             ),
                         ),
                     ),
-                    styles="asChild",
+                    child=True,
                 ),
             ],
         ),
@@ -315,6 +315,14 @@ def radio_button_content(rb: RadioButton) -> list[ZentraModel]:
             ],
         )
     ]
+
+
+def radio_group_content(rg: RadioGroup) -> list[ZentraModel]:
+    """Returns a list of `ZentraModels` for the `RadioGroup` content based on the components attributes."""
+    content = []
+    for item in rg.items:
+        content.extend(radio_button_content(item))
+    return content
 
 
 def select_group_content(group: SelectGroup) -> list[ZentraModel]:

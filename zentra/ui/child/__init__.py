@@ -96,10 +96,12 @@ class TriggerModel(ChildModel):
       1. A Zentra `Button` model
       2. A string of text
       3. A Zentra child `ValueModel` model
+    - `child` (`boolean, optional`) - a flag to add the `asChild` prop to the trigger. `False` by default
     """
 
     variant: TriggerVariant
     content: Union[Button, str, ValueModel]
+    child: bool = False
 
     @property
     def container_name(self) -> str:

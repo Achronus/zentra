@@ -94,6 +94,8 @@ class FigCaption(HTMLTag):
 
     text: Union[str, HTMLContent] | list[Union[str, HTMLContent]]
 
+    _content_attr = PrivateAttr(default="text")
+
 
 class Figure(HTMLTag):
     """
@@ -104,7 +106,6 @@ class Figure(HTMLTag):
     - `caption` (`zentra.core.html.FigCaption`) - a `FigCaption` component representing the caption of the Image
     - `styles` (`string, optional`) - the CSS styles to apply to the tag. `None` by default
     - `key` (`string, optional`) -A unique identifier added to the figure. Needed if using a JS iterable like `map`. When provided, must be a parameter (start with a `$.`). `None` by default
-    - `img_container_styles` (`string, optional`) - a string of CSS styles to apply to a `div` tag around the image. When provided, a `div` tag is automatically wrapped around the image with the styles supplied to its `className` attribute. `None` by default
 
     Example usage:
     1. A detailed figure with variables.
@@ -132,7 +133,6 @@ class Figure(HTMLTag):
             styles="pt-2 text-xs text-muted-foreground",
         ),
         key="$.artwork.art",
-        img_container_styles="overflow-hidden rounded-md",
     )
     ```
     JSX equivalent ->
@@ -160,8 +160,13 @@ class Figure(HTMLTag):
     img: Image
     caption: FigCaption
     key: Optional[str] = None
-    img_container_styles: Optional[str] = None
+
+    _content_attrs = PrivateAttr(default=["img", "caption"])
 
     @field_validator("key")
     def validate_key(cls, key: str) -> str:
         return key_attr_validation(key)
+
+    @field_validator("img")
+    def validate_img(cls, img: Image) -> Div:
+        return Div(styles="overflow-hidden rounded-md", content=img)

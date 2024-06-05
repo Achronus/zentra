@@ -4,7 +4,7 @@ from cli.templates.builders.jsx import (
     ImportBuilder,
     LogicBuilder,
 )
-from cli.templates.builders.nodes import ComponentNode, HTMLNode
+from cli.templates.builders.nodes import ComponentNode
 from cli.templates.storage import JSXComponentContentStorage, JSXComponentExtras
 from cli.templates.ui.mappings.storage import ComponentMappings
 from cli.templates.utils import compress, compress_imports, str_to_list
@@ -172,7 +172,7 @@ class ComponentBuilder:
 
     def handle_parent_content(self, component: Component) -> Component:
         """Creates the inner content for child components and passes updates the required attributes for the parent component. Returns the updated component."""
-        for attr_name in component.content_attribute:
+        for attr_name in component.content_attributes:
             sub_comp = getattr(component, attr_name)
 
             if not isinstance(sub_comp, list):

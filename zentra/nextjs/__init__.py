@@ -9,7 +9,7 @@ from zentra.core.validation import (
     url_validation,
 )
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, PrivateAttr, field_validator
 
 
 class UrlQuery(BaseModel, NextJs):
@@ -300,6 +300,8 @@ class Link(Component, NextJs):
     replace: bool = False
     scroll: bool = True
     prefetch: Optional[bool] = None
+
+    _content_attr = PrivateAttr(default="text")
 
     @property
     def import_str(self) -> str:

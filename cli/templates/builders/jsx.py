@@ -178,18 +178,18 @@ class ContentBuilder:
             return self.get_content(self.model)
 
         # Handle other models
-        content_attr = self.model.content_attribute
+        content = []
+        if self.model.content_attributes:
+            for attr_name in self.model.content_attributes:
+                items = getattr(self.model, attr_name)
 
-        if content_attr:
-            content = getattr(self.model, content_attr)
+                if items:
+                    if isinstance(items, list):
+                        content.extend(items)
+                    else:
+                        content.append(items)
 
-            if isinstance(content, list):
-                return content
-
-            if content:
-                return [content]
-
-        return []
+        return content
 
 
 class LogicBuilder:

@@ -2,11 +2,12 @@ from typing import Union
 from cli.conf.format import name_from_camel_case
 from cli.conf.types import MappingDict
 
-from cli.templates.builders.nodes import ComponentNode, IconNode
+from cli.templates.builders.nodes import ComponentNode, HTMLNode, IconNode, StringNode
 from cli.templates.ui.mappings.storage import AttributeMappings
 from cli.templates.utils import remove_none, text_content
 
 from zentra.base import ZentraModel
+from zentra.base.html import HTMLTag
 from zentra.core import Component
 from zentra.core.react import LucideIcon
 from zentra.core.utils import compress
@@ -156,32 +157,38 @@ class ImportBuilder:
 
 
 class ContentBuilder:
-    """A builder for creating Zentra `Component` content."""
+    """A builder for retrieving Zentra model content."""
 
     def __init__(
         self,
         model: ZentraModel,
-        model_mapping: MappingDict,
-        common_mapping: MappingDict,
+        mapping: MappingDict,
     ) -> None:
         self.model = model
-
-        self.model_map = model_mapping
-        self.common_map = common_mapping
+        self.model_map = mapping
 
     def get_content(self, model: ZentraModel) -> Union[ZentraModel, list[ZentraModel]]:
         """A helper function to retrieve the content from the `model_map` for the zentra model."""
         return self.model_map[model.classname](model)
 
-    def build(self, model: ZentraModel = None) -> Union[list[ZentraModel], ZentraModel]:
-        """Builds the content for the component."""
-        if model is None:
-            model = self.model
+    def build(self) -> list[ZentraModel | str]:
+        """Builds the content for the model."""
+        # Handle unique component models
+        if self.model.classname in self.model_map.keys():
+            return self.get_content(self.model)
 
-        if model.classname in self.model_map.keys():
-            return self.get_content(model)
+        # Handle other models
+        content_attr = self.model.content_attribute
 
-        return model
+        if content_attr:
+            content = getattr(self.model, content_attr)
+
+            if isinstance(content, list):
+                return content
+
+            return [content]
+
+        return []
 
 
 class LogicBuilder:
@@ -212,76 +219,80 @@ class LogicBuilder:
 
 
 class GraphBuilder:
-    """Builds the components node graph."""
+    """Builds the models node graph."""
 
-    def __init__(self, model: ZentraModel, mapping: AttributeMappings) -> None:
+    def __init__(
+        self,
+        model: ZentraModel,
+        attr_maps: AttributeMappings,
+        content_map: MappingDict,
+    ) -> None:
         self.model = model
-        self.map = mapping
+        self.attr_maps = attr_maps
+        self.content_map = content_map
 
-    def build(self, content: Union[list[ZentraModel], ZentraModel]) -> ComponentNode:
-        """Builds the component graph and returns it as a set of nodes."""
+    def build(self) -> ComponentNode:
+        """Builds the component graph for the model and returns it as a `ComponentNode`."""
+        name = self.get_name(self.model)
         attrs = self.get_attributes(self.model)
+        content = self.get_content(self.model)
 
-        if isinstance(self.model, LucideIcon):
-            content = self.model.text if hasattr(self.model, "text") else ""
-            return IconNode(
-                name=self.model.name,
-                attributes=attrs,
-                content=content,
-            )
-
-        content = self.get_content(content)
-        return ComponentNode(
-            name=self.model.container_name,
-            attributes=attrs,
-            content=content,
+        return self.set_node(
+            self.model,
+            args={
+                "name": name,
+                "attributes": attrs,
+                "content": content,
+            },
         )
 
+    def get_name(self, model: ZentraModel) -> str:
+        """Identifies the name of the model based on its type."""
+        if isinstance(model, LucideIcon):
+            return model.name
+
+        return model.container_name
+
     def get_attributes(self, model: ZentraModel) -> str:
-        """Process the components attributes and converts them to a string."""
+        """Retrieves the attributes from the `AttributeBuilder` and converts them to a string."""
         builder = AttributeBuilder(
             component=model,
-            common_mapping=self.map.common,
-            component_mapping=self.map.model,
+            common_mapping=self.attr_maps.common,
+            component_mapping=self.attr_maps.model,
         )
 
         return compress(builder.build(), chars=" ")
 
-    def get_content(self, model: list[ZentraModel]) -> list[ComponentNode | str]:
-        """Extracts the content attributes from the component and converts it into a list of nodes."""
+    def __get_content(self, model: ZentraModel) -> list[ZentraModel | str]:
+        """Retrieves the content for the model from the `ContentBuilder`."""
+        builder = ContentBuilder(model=model, mapping=self.content_map)
+        return builder.build()
 
-        def comp_node(model: ZentraModel) -> ComponentNode:
-            return ComponentNode(
-                name=model.container_name,
-                attributes=self.get_attributes(model),
-                content=self.get_content(model),
-            )
+    def get_content(self, model: ZentraModel) -> list[ComponentNode]:
+        """Identifies the type of content for the model and assigns it accordingly."""
+        content = self.__get_content(model)
 
-        def icon_node(model: LucideIcon) -> IconNode:
-            return IconNode(
-                name=model.name,
-                attributes=self.get_attributes(model),
-                content=self.get_content(model),
-            )
+        if len(content) == 1:
+            return self.set_node(content[0])
 
-        content = []
+        return [self.set_node(model) for model in content]
 
-        if isinstance(model, list):
-            for m in model:
-                if isinstance(m, LucideIcon):
-                    content.append(icon_node(m))
-                else:
-                    content.append(comp_node(m))
+    def set_node(self, model: ZentraModel, args: dict = None) -> ComponentNode:
+        """Create a component node model based on the model type."""
+        if isinstance(model, str):
+            content = text_content(model)
+            return StringNode(content=content)
 
-        if isinstance(model, ZentraModel):
-            for item in model.content_attributes:
-                item = getattr(model, item)
+        if args is None:
+            args = {
+                "name": self.get_name(model),
+                "attributes": self.get_attributes(model),
+                "content": self.get_content(model),
+            }
 
-                if isinstance(item, str):
-                    return text_content(item)
-                elif isinstance(item, LucideIcon):
-                    content.append(icon_node(item))
-                else:
-                    return self.get_content(item)
+        if isinstance(model, LucideIcon):
+            return IconNode(**args)
+        elif isinstance(model, HTMLTag):
+            return HTMLNode(**args)
 
-        return content if content else ""
+        return ComponentNode(**args)

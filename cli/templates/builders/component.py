@@ -1,17 +1,17 @@
 from cli.templates.builders.jsx import (
     AttributeBuilder,
-    ContentBuilder,
     GraphBuilder,
     ImportBuilder,
     LogicBuilder,
 )
-from cli.templates.builders.nodes import ComponentNode
+from cli.templates.builders.nodes import ComponentNode, HTMLNode
 from cli.templates.storage import JSXComponentContentStorage, JSXComponentExtras
 from cli.templates.ui.mappings.storage import ComponentMappings
 from cli.templates.utils import compress, compress_imports, str_to_list
 
 from zentra.base import ZentraModel
 from zentra.core import Component
+from zentra.core.html import Div
 
 
 class ComponentBuilder:
@@ -41,12 +41,11 @@ class ComponentBuilder:
             component=component,
             logic_mapping=mappings.logic,
         )
-        self.content = ContentBuilder(
-            model=component,
-            model_mapping=mappings.content.model,
-            common_mapping=mappings.content.common,
+        self.graph = GraphBuilder(
+            model=self.component,
+            attr_maps=mappings.attribute,
+            content_map=mappings.content.model,
         )
-        self.graph = GraphBuilder(model=self.component, mapping=mappings.attribute)
 
     def build(self, full_shell: bool = False) -> None:
         """Builds the JSX for the component."""
@@ -57,39 +56,22 @@ class ComponentBuilder:
         if isinstance(self.component, Component) and self.component.is_parent:
             self.component = self.handle_parent_content(self.component)
 
-        content = self.content.build()
+        content = self.graph.build()
+        content = str_to_list(self.create_jsx_content(content))
+        content = [item.strip() for item in content]
 
-        if isinstance(content, tuple):
-            content, storage_extras = content
-            self.add_extra_storage(storage_extras)
+        content = self.handle_fragment(self.component, content)
 
-            self.storage.content = (
-                compress(content)
-                if self.component.composition_only
-                else compress(
-                    self.apply_content_containers(
-                        content=content, full_shell=full_shell
-                    )
-                )
+        if isinstance(self.component, Component) and self.component.no_container:
+            content = content[1:-1]
+
+        self.storage.content = (
+            compress(content)
+            if self.component.no_container
+            else compress(
+                self.apply_content_containers(content=content, full_shell=full_shell)
             )
-
-        else:
-            content = self.graph.build(content)
-            content = str_to_list(self.create_jsx_content(content))
-            content = [item.strip() for item in content]
-
-            if self.component.no_container:
-                content = content[1:-1]
-
-            self.storage.content = (
-                compress(content)
-                if self.component.no_container
-                else compress(
-                    self.apply_content_containers(
-                        content=content, full_shell=full_shell
-                    )
-                )
-            )
+        )
 
         if self.component.child_names:
             self.storage.imports = self.tidy_child_names(
@@ -97,10 +79,11 @@ class ComponentBuilder:
                 self.storage.content,
             )
 
-        self.storage.imports = self.handle_imports(
-            self.storage.logic,
-            self.storage.imports,
-        )
+        if isinstance(self.component, Component):
+            self.storage.imports = self.handle_imports(
+                self.storage.logic,
+                self.storage.imports,
+            )
 
     def add_extra_storage(self, storage_extras: JSXComponentExtras) -> None:
         """Adds the extra storage items to `self.storage`."""
@@ -189,7 +172,7 @@ class ComponentBuilder:
 
     def handle_parent_content(self, component: Component) -> Component:
         """Creates the inner content for child components and passes updates the required attributes for the parent component. Returns the updated component."""
-        for attr_name in component.content_attributes:
+        for attr_name in component.content_attribute:
             sub_comp = getattr(component, attr_name)
 
             if not isinstance(sub_comp, list):
@@ -203,19 +186,28 @@ class ComponentBuilder:
 
         return component
 
-    def create_jsx_content(self, node: ComponentNode, level: int = 0) -> str:
+    def create_jsx_content(self, node: ComponentNode) -> str:
         """Builds the JSX from the tree nodes."""
-        indent = "  " * level
-
         if isinstance(node.content, str):
-            return node.full_str(indent)
+            return node.full_str()
         elif not node.content:
-            return node.simple_str(indent)
+            return node.simple_str()
+
+        if not isinstance(node.content, list):
+            node.content = [node.content]
 
         children = "\n".join(
-            self.create_jsx_content(child, level + 1)
+            self.create_jsx_content(child)
             for child in node.content
             if isinstance(child, ComponentNode)
         )
 
-        return node.full_str(indent, content=f"\n{children}\n{indent}")
+        return node.full_str(content=children)
+
+    def handle_fragment(self, model: ZentraModel, content: list[str]) -> list[str]:
+        """Updates a `Div` tags content shell and turns it into a fragment."""
+        if isinstance(model, Div) and model.fragment:
+            content[0] = "<>"
+            content[-1] = "</>"
+
+        return content

@@ -1,31 +1,12 @@
 import pytest
 
 from tests.mappings.js import JS_VALID_VALS_MAP
-from tests.templates.helper import js_iterable_content_builder
 
-from zentra.base.js import JSIterable
+from tests.templates.helper import SimpleCompBuilder
 from zentra.core.html import Div, FigCaption, Figure, HTMLContent
 from zentra.core.js import Map
 from zentra.nextjs import Image
 from zentra.ui.control import Label
-
-
-class Builder:
-    """A helper class that handles the logic for keeping NextJS Component test implementations unified."""
-
-    def __init__(self, model: JSIterable) -> None:
-        self.model = model
-
-        self.builder = js_iterable_content_builder(model=self.model)
-
-    def content(self, valid_value: str):
-        result: str = "\n".join(self.builder.build())
-        assert result == valid_value, (result.split("\n"), valid_value.split("\n"))
-
-    def comp_other(self, result_attr: str, valid_value: str):
-        _ = self.builder.build()
-        result: list[str] = getattr(self.builder.comp_storage, result_attr)
-        assert result == valid_value, (result, valid_value)
 
 
 class TestMap:
@@ -89,25 +70,25 @@ class TestMap:
 
     @staticmethod
     def test_content_str_figure(js_map_figure: Map):
-        builder = Builder(model=js_map_figure)
-        builder.content(JS_VALID_VALS_MAP["map"]["content"]["figure"])
+        builder = SimpleCompBuilder(js_map_figure)
+        builder.run("content", JS_VALID_VALS_MAP["map"]["content"]["figure"])
 
     @staticmethod
     def test_content_str_div(js_map_div: Map):
-        builder = Builder(model=js_map_div)
-        builder.content(JS_VALID_VALS_MAP["map"]["content"]["div"])
+        builder = SimpleCompBuilder(js_map_div)
+        builder.run("content", JS_VALID_VALS_MAP["map"]["content"]["div"])
 
     @staticmethod
     def test_content_str_image(js_map_image: Map):
-        builder = Builder(model=js_map_image)
-        builder.content(JS_VALID_VALS_MAP["map"]["content"]["image"])
+        builder = SimpleCompBuilder(js_map_image)
+        builder.run("content", JS_VALID_VALS_MAP["map"]["content"]["image"])
 
     @staticmethod
     def test_content_str_label(js_map_label: Map):
-        builder = Builder(model=js_map_label)
-        builder.content(JS_VALID_VALS_MAP["map"]["content"]["label"])
+        builder = SimpleCompBuilder(js_map_label)
+        builder.run("content", JS_VALID_VALS_MAP["map"]["content"]["label"])
 
     @staticmethod
     def test_additional_imports_image(js_map_image: Map):
-        builder = Builder(model=js_map_image)
-        builder.comp_other("imports", JS_VALID_VALS_MAP["map"]["imports"]["image"])
+        builder = SimpleCompBuilder(js_map_image)
+        builder.run("imports", JS_VALID_VALS_MAP["map"]["imports"]["image"])

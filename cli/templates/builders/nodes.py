@@ -25,19 +25,19 @@ class ComponentNode:
         """Add a child child node to the content."""
         self.content.append(child)
 
-    def simple_str(self, indent: int) -> str:
-        """A string of JSX without content a self closing tag."""
-        return f"{indent}<{self.name}{self.attributes} />"
+    def simple_str(self) -> str:
+        """A string of JSX content without a self closing tag."""
+        return f"<{self.name}{self.attributes} />"
 
-    def full_str(self, indent: str = "", content: str = None) -> str:
-        """A string of JSX with content and an opening and closing tag."""
+    def full_str(self, content: str = None) -> str:
+        """A string of JSX content with an opening and closing tag."""
         if content is None:
             content = self.content
 
-        return f"{indent}<{self.name}{self.attributes}>{content}</{self.name}>"
+        return f"<{self.name}{self.attributes}>\n{content}\n</{self.name}>"
 
     def __repr__(self) -> str:
-        return f"'{self.full_str(content=self.content)}'"
+        return f"{self.__class__.__name__}(name='{self.name}', content='{self.content}', attributes='{self.attributes}')"
 
 
 class IconNode(ComponentNode):
@@ -52,9 +52,40 @@ class IconNode(ComponentNode):
         super().__init__(name, content, attributes)
         self.content = f" {content}" if content else ""
 
-    def full_str(self, indent: str = "", content: str = None) -> str:
+    def full_str(self, content: str = None) -> str:
         """A string of JSX with content to the right of the icon."""
         if content is None:
             content = self.content
 
-        return f"{indent}<{self.name}{self.attributes} />{content}"
+        return f"<{self.name}{self.attributes} />{content}"
+
+
+class HTMLNode(ComponentNode):
+    """A tree node representation a single Zentra HTML model."""
+
+    def __init__(
+        self,
+        name: str,
+        content: Optional[str] = None,
+        attributes: Optional[str] = None,
+    ) -> None:
+        super().__init__(name, content, attributes)
+
+
+class StringNode(ComponentNode):
+    """A tree node representation of a string."""
+
+    def __init__(
+        self,
+        content: str,
+        name: Optional[str] = None,
+        attributes: Optional[str] = None,
+    ) -> None:
+        super().__init__(name, content, attributes)
+
+    def full_str(self, content: str = None) -> str:
+        """A string of JSX content."""
+        if content is None:
+            content = self.content
+
+        return content

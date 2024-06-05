@@ -50,14 +50,13 @@ class IconNode(ComponentNode):
         attributes: Optional[str] = None,
     ) -> None:
         super().__init__(name, content, attributes)
-        self.content = f" {content}" if content else ""
 
     def full_str(self, content: str = None) -> str:
         """A string of JSX with content to the right of the icon."""
         if content is None:
             content = self.content
 
-        return f"<{self.name}{self.attributes} />{content}"
+        return f"<{self.name}{self.attributes} />\n{content}"
 
 
 class HTMLNode(ComponentNode):

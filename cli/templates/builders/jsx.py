@@ -186,7 +186,8 @@ class ContentBuilder:
             if isinstance(content, list):
                 return content
 
-            return [content]
+            if content:
+                return [content]
 
         return []
 

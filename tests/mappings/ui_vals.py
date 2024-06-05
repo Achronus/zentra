@@ -372,10 +372,9 @@ LUCIDE_ICON_VALID_VALS = {
     "content": {
         "simple": '<Italic className="mr-2 h-4 w-4" />',
         "text": '<Italic className="mr-2 h-4 w-4" />\ntest tag',
-        "text_end": 'test tag\n<Italic className="mr-2 h-4 w-4" />',
         "text_param": '<Italic className="mr-2 h-4 w-4" />\ntest {tag}',
-        "text_param_end": 'test {tag}\n<Italic className="mr-2 h-4 w-4" />',
-        "full": 'test {tag}\n<Italic className="mr-2 h-4 w-4" size={24} color="red" strokeWidth={2} />',
+        "html_content_text": '<Italic className="mr-2 h-4 w-4" />\n<span>\ntest {tag}\n</span>',
+        "full": '<Italic className="mr-2 h-4 w-4" size={24} color="red" strokeWidth={2} />\ntest {tag}',
         "full_no_text": '<Italic className="mr-2 h-4 w-4" size={24} color="red" strokeWidth={2} />',
     },
 }

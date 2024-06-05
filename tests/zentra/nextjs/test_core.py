@@ -2,26 +2,11 @@ import pytest
 
 from tests.mappings.ui_imports import NEXTJS_VALID_IMPORTS
 from tests.mappings.ui_vals import NEXTJS_VALID_VALS_MAP
-from tests.templates.helper import nextjs_component_builder
 
-from zentra.core import Component
+from tests.templates.helper import SimpleCompBuilder
 from zentra.nextjs import Image, Link, StaticImage, UrlQuery
 
 from pydantic import ValidationError
-
-
-class Builder:
-    """A helper class that handles the logic for keeping NextJS Component test implementations unified."""
-
-    def __init__(self, component: Component) -> None:
-        self.component = component
-
-    def run(self, result_attr: str, valid_value: str):
-        builder = nextjs_component_builder(self.component)
-        builder.build()
-
-        result: str = getattr(builder.storage, result_attr)
-        assert result == valid_value, (result.split("\n"), valid_value.split("\n"))
 
 
 class TestImage:
@@ -46,22 +31,22 @@ class TestImage:
 
     @staticmethod
     def test_imports_standard(image: Image):
-        builder = Builder(image)
+        builder = SimpleCompBuilder(image)
         builder.run("imports", NEXTJS_VALID_IMPORTS["image"]["standard"])
 
     @staticmethod
     def test_imports_with_extra(image_static_src: Image):
-        builder = Builder(image_static_src)
+        builder = SimpleCompBuilder(image_static_src)
         builder.run("imports", NEXTJS_VALID_IMPORTS["image"]["static_src"])
 
     @staticmethod
     def test_attributes_standard(image: Image):
-        builder = Builder(image)
+        builder = SimpleCompBuilder(image)
         builder.run("attributes", NEXTJS_VALID_VALS_MAP["image"]["attributes"])
 
     @staticmethod
     def test_content_standard(image: Image):
-        builder = Builder(image)
+        builder = SimpleCompBuilder(image)
         builder.run("content", NEXTJS_VALID_VALS_MAP["image"]["content"]["standard"])
 
     @staticmethod
@@ -72,7 +57,7 @@ class TestImage:
             width=300,
             height=400,
         )
-        builder = Builder(img)
+        builder = SimpleCompBuilder(img)
         builder.run("content", NEXTJS_VALID_VALS_MAP["image"]["content"]["no_styles"])
 
     @staticmethod
@@ -83,7 +68,7 @@ class TestImage:
             width=300,
             height=400,
         )
-        builder = Builder(img)
+        builder = SimpleCompBuilder(img)
         builder.run("content", NEXTJS_VALID_VALS_MAP["image"]["content"]["with_url"])
 
     @staticmethod
@@ -94,7 +79,7 @@ class TestImage:
             width=300,
             height=400,
         )
-        builder = Builder(img)
+        builder = SimpleCompBuilder(img)
         builder.run("content", NEXTJS_VALID_VALS_MAP["image"]["content"]["basic_path"])
 
     @staticmethod
@@ -105,12 +90,12 @@ class TestImage:
             width=300,
             height=400,
         )
-        builder = Builder(img)
+        builder = SimpleCompBuilder(img)
         builder.run("content", NEXTJS_VALID_VALS_MAP["image"]["content"]["basic_alt"])
 
     @staticmethod
     def test_content_static_img_src(image_static_src: Image):
-        builder = Builder(image_static_src)
+        builder = SimpleCompBuilder(image_static_src)
         builder.run(
             "content", NEXTJS_VALID_VALS_MAP["image"]["content"]["static_img_src"]
         )
@@ -154,18 +139,18 @@ class TestLink:
 
     @staticmethod
     def test_imports_valid(link: Link):
-        builder = Builder(link)
+        builder = SimpleCompBuilder(link)
         builder.run("imports", NEXTJS_VALID_IMPORTS["link"])
 
     @staticmethod
     def test_content_required(link: Link):
-        builder = Builder(link)
+        builder = SimpleCompBuilder(link)
         builder.run("content", NEXTJS_VALID_VALS_MAP["link"]["content"]["standard"])
 
     @staticmethod
     def test_content_with_text():
         link = Link(href="/dashboard", text="Dashboard")
-        builder = Builder(link)
+        builder = SimpleCompBuilder(link)
         builder.run("content", NEXTJS_VALID_VALS_MAP["link"]["content"]["with_text"])
 
     @staticmethod
@@ -182,25 +167,25 @@ class TestLink:
             scroll=False,
             prefetch=False,
         )
-        builder = Builder(link)
+        builder = SimpleCompBuilder(link)
         builder.run("content", NEXTJS_VALID_VALS_MAP["link"]["content"]["full"])
 
     @staticmethod
     def test_attr_styles():
         link = Link(href="/dashboard", styles="rounded-md border")
-        builder = Builder(link)
+        builder = SimpleCompBuilder(link)
         builder.run("attributes", NEXTJS_VALID_VALS_MAP["link"]["attributes"]["styles"])
 
     @staticmethod
     def test_attr_target():
         link = Link(href="/dashboard", new_tab=True)
-        builder = Builder(link)
+        builder = SimpleCompBuilder(link)
         builder.run("attributes", NEXTJS_VALID_VALS_MAP["link"]["attributes"]["target"])
 
     @staticmethod
     def test_attr_replace():
         link = Link(href="/dashboard", replace=True)
-        builder = Builder(link)
+        builder = SimpleCompBuilder(link)
         builder.run(
             "attributes", NEXTJS_VALID_VALS_MAP["link"]["attributes"]["replace"]
         )
@@ -208,13 +193,13 @@ class TestLink:
     @staticmethod
     def test_attr_scroll():
         link = Link(href="/dashboard", scroll=False)
-        builder = Builder(link)
+        builder = SimpleCompBuilder(link)
         builder.run("attributes", NEXTJS_VALID_VALS_MAP["link"]["attributes"]["scroll"])
 
     @staticmethod
     def test_attr_prefetch_false():
         link = Link(href="/dashboard", prefetch=False)
-        builder = Builder(link)
+        builder = SimpleCompBuilder(link)
         builder.run(
             "attributes", NEXTJS_VALID_VALS_MAP["link"]["attributes"]["prefetch_false"]
         )
@@ -222,7 +207,7 @@ class TestLink:
     @staticmethod
     def test_attr_prefetch_true():
         link = Link(href="/dashboard", prefetch=True)
-        builder = Builder(link)
+        builder = SimpleCompBuilder(link)
         builder.run(
             "attributes", NEXTJS_VALID_VALS_MAP["link"]["attributes"]["prefetch_true"]
         )
@@ -235,7 +220,7 @@ class TestLink:
                 query={"name": "test"},
             ),
         )
-        builder = Builder(link)
+        builder = SimpleCompBuilder(link)
         builder.run(
             "attributes", NEXTJS_VALID_VALS_MAP["link"]["attributes"]["href_url"]
         )
@@ -248,7 +233,7 @@ class TestLink:
                 query={"name": "test", "second": "test2"},
             ),
         )
-        builder = Builder(link)
+        builder = SimpleCompBuilder(link)
         builder.run(
             "attributes",
             NEXTJS_VALID_VALS_MAP["link"]["attributes"]["href_url_multi_query"],

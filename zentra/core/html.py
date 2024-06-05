@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Optional, Union
 from zentra.base import ZentraModel
 from zentra.base.html import HTMLTag
 from zentra.core.enums.html import HTMLContentTagType
@@ -6,7 +6,7 @@ from zentra.core.validation import key_attr_validation
 
 from zentra.nextjs import Image
 
-from pydantic import field_validator
+from pydantic import PrivateAttr, field_validator
 
 
 class HTMLContent(HTMLTag):
@@ -22,13 +22,11 @@ class HTMLContent(HTMLTag):
     tag: HTMLContentTagType
     text: str
 
+    _content_attr = PrivateAttr(default="text")
+
     @property
     def classname(self) -> str:
         return self.tag
-
-    @property
-    def content_attributes(self) -> list[str]:
-        return ["text"]
 
 
 class Div(HTMLTag):
@@ -46,9 +44,9 @@ class Div(HTMLTag):
     - `styles` (`string, optional`) - the CSS styles to apply to the tag. `None` by default
     """
 
-    content: Union[str, ZentraModel] | list[Union[str, ZentraModel]]
+    content: Union[str, ZentraModel, list[str | ZentraModel]]
     fragment: bool = False
-    key: str = None
+    key: Optional[str] = None
 
     @field_validator("key")
     def validate_key(cls, key: str) -> str:
@@ -161,8 +159,8 @@ class Figure(HTMLTag):
 
     img: Image
     caption: FigCaption
-    key: str = None
-    img_container_styles: str = None
+    key: Optional[str] = None
+    img_container_styles: Optional[str] = None
 
     @field_validator("key")
     def validate_key(cls, key: str) -> str:

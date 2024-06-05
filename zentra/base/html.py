@@ -1,5 +1,7 @@
 from typing import Optional
 
+from pydantic import PrivateAttr
+
 from zentra.base import ZentraModel
 from zentra.base.library import HTML
 
@@ -13,6 +15,8 @@ class HTMLTag(ZentraModel, HTML):
     """
 
     styles: Optional[str] = None
+
+    _no_container = PrivateAttr(default=True)
 
     @property
     def classname(self) -> str:

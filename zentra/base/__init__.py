@@ -5,7 +5,7 @@ class ZentraModel(BaseModel):
     """A base for all Zentra models."""
 
     _container_name = PrivateAttr(default=None)
-    _content_attrs = PrivateAttr(default=[])
+    _content_attr = PrivateAttr(default="")
     _no_container = PrivateAttr(default=False)
     _child_names = PrivateAttr(default=[])
     _custom_common_attrs = PrivateAttr(default=[])
@@ -38,12 +38,12 @@ class ZentraModel(BaseModel):
         return False
 
     @property
-    def content_attributes(self) -> list[str]:
-        """Returns a list of strings specifying the components content attributes. Required for passing the correct content values to the builder."""
+    def content_attribute(self) -> str:
+        """Returns a string for the components content attribute. Required for passing the correct content values to the builder."""
         if hasattr(self, "content"):
-            self._content_attrs = ["content"]
+            self._content_attr = "content"
 
-        return self._content_attrs
+        return self._content_attr
 
     @property
     def inner_attributes(self) -> list[str]:

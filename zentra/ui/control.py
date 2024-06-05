@@ -454,7 +454,7 @@ class Label(Component, ShadcnUi):
     text: str = Field(min_length=1)
     styles: Optional[str] = None
 
-    _content_attrs = PrivateAttr(default=["text"])
+    _content_attr = PrivateAttr(default="text")
 
     @field_validator("name")
     def validate_id(cls, name: str) -> str:
@@ -560,7 +560,7 @@ class RadioGroup(Component, ShadcnUi):
     default_value: str = Field(min_length=1, max_length=30)
 
     _parent = PrivateAttr(default=True)
-    _content_attrs = PrivateAttr(default=["items"])
+    _content_attr = PrivateAttr(default="items")
     _child_names = PrivateAttr(default=["RadioGroupItem"])
 
     @field_validator("items")
@@ -778,7 +778,7 @@ class Select(Component, ShadcnUi):
     groups: SelectGroup | list[SelectGroup]
 
     _parent = PrivateAttr(default=True)
-    _content_attrs = PrivateAttr(default=["groups"])
+    _content_attr = PrivateAttr(default="groups")
 
     _child_names = PrivateAttr(
         default=[

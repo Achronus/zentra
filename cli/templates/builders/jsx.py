@@ -2,12 +2,19 @@ from typing import Union
 from cli.conf.format import name_from_camel_case
 from cli.conf.types import MappingDict
 
-from cli.templates.builders.nodes import ComponentNode, HTMLNode, IconNode, StringNode
+from cli.templates.builders.nodes import (
+    ComponentNode,
+    HTMLNode,
+    IconNode,
+    JSNode,
+    StringNode,
+)
 from cli.templates.ui.mappings.storage import AttributeMappings
 from cli.templates.utils import remove_none, text_content
 
 from zentra.base import ZentraModel
 from zentra.base.html import HTMLTag
+from zentra.base.js import JSIterable
 from zentra.core import Component
 from zentra.core.react import LucideIcon
 from zentra.core.utils import compress
@@ -281,8 +288,7 @@ class GraphBuilder:
     def set_node(self, model: ZentraModel, args: dict = None) -> ComponentNode:
         """Create a component node model based on the model type."""
         if isinstance(model, str):
-            content = text_content(model)
-            return StringNode(content=content)
+            return StringNode(content=text_content(model))
 
         if args is None:
             args = {
@@ -295,5 +301,11 @@ class GraphBuilder:
             return IconNode(**args)
         elif isinstance(model, HTMLTag):
             return HTMLNode(**args)
-
-        return ComponentNode(**args)
+        elif isinstance(model, JSIterable):
+            return JSNode(
+                name=model.obj_name,
+                attributes=model.param_name,
+                content=self.get_content(model),
+            )
+        else:
+            return ComponentNode(**args)

@@ -21,7 +21,7 @@ DIV_VALID_VALS = {
         "map": "<div key={tag}>\n{tags.map((tag) => (\n<h4>\nAn epic {tag} heading\n</h4>\n))}\n</div>",
         "label": '<div>\n<Label htmlFor="example">\nA test {label}\n</Label>\n</div>',
         "multi_items": '<div>\nThis is a\n<span className="red-500">\ncomplete {test}\n</span>\n<Label htmlFor="name">\nFirst name\n</Label>\n{tags.map((tag) => (\n<h4>\nAn epic {tag} heading\n</h4>\n))}\n<Label htmlFor="email">\nEmail address\n</Label>\n</div>',
-        "multi_html": '<div className="w-8 h-12">\n<h1>\nTest h1 {tag}\n</h1>\n<figure className="shrink-0" key={artwork.artist}>\n<div className="overflow-hidden rounded-md"\n<Image src={artwork.art} alt={`Photo by {artwork.artist}`} width={300} height={400} className="aspect-[3/4] h-fit w-fit object-cover" />\n</div>\n<figcaption className="pt-2 text-xs text-muted-foreground">\nPhoto by\n<span className="font-semibold text-foreground">\n{artwork.artist}\n</span>\n</figcaption>\n</figure>\n<h2>\nTest h2 tag\n</h2>\n</div>',
+        "multi_html": '<div className="w-8 h-12">\n<h1>\nTest h1 {tag}\n</h1>\n<figure className="shrink-0" key={artwork.artist}>\n<div className="overflow-hidden rounded-md">\n<Image src={artwork.art} alt={`Photo by {artwork.artist}`} width={300} height={400} className="aspect-[3/4] h-fit w-fit object-cover" />\n</div>\n<figcaption className="pt-2 text-xs text-muted-foreground">\nPhoto by\n<span className="font-semibold text-foreground">\n{artwork.artist}\n</span>\n</figcaption>\n</figure>\n<h2>\nTest h2 tag\n</h2>\n</div>',
     },
     "imports": {
         "label": 'import { Label } from "@/components/ui/label"',

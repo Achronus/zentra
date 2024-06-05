@@ -88,3 +88,26 @@ class StringNode(ComponentNode):
             content = self.content
 
         return content
+
+
+class JSNode(ComponentNode):
+    """A tree node representation of a `JSIterable` model."""
+
+    def __init__(
+        self,
+        content: str,
+        name: Optional[str] = None,
+        attributes: Optional[str] = None,
+    ) -> None:
+        super().__init__(name, content, attributes)
+
+    def full_str(self, content: str = None) -> str:
+        """A string of JSX content."""
+        if content is None:
+            content = self.content
+
+        return (
+            "{"
+            + f"{self.name}.map(({self.attributes.lstrip()}) => (\n{content}"
+            + "\n))}"
+        )

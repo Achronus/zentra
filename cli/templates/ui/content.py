@@ -35,10 +35,12 @@ from zentra.ui.control import (
 )
 from zentra.ui.child import (
     ContentModel,
+    DescriptionModel,
     GroupModel,
     ItemModel,
     LabelModel,
     SeparatorModel,
+    TitleModel,
     TriggerModel,
     ValueModel,
 )
@@ -361,19 +363,15 @@ def select_content(select: Select) -> list[ZentraModel]:
     ]
 
 
-def alert_content(alert: Alert) -> list[str]:
-    """Returns a list of strings for the `Alert` content based on the components attributes."""
+def alert_content(alert: Alert) -> list[ZentraModel]:
+    """Returns a list of `ZentraModels` for the `Alert` content based on the components attributes."""
     content = [
-        "<AlertTitle>",
-        alert.title,
-        "</AlertTitle>",
-        "<AlertDescription>",
-        alert.description,
-        "</AlertDescription>",
+        TitleModel(variant="alert", content=alert.title),
+        DescriptionModel(variant="alert", content=alert.description),
     ]
 
     if alert.icon:
-        content.insert(0, LucideIcon(name=alert.icon, styles="h-4 w-4").content_str)
+        content.insert(0, LucideIcon(name=alert.icon, styles="h-4 w-4"))
 
     return content
 

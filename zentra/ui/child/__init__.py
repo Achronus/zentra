@@ -7,10 +7,12 @@ from zentra.base import ZentraModel
 from zentra.core import Component
 from zentra.core.enums.child import (
     ContentVariant,
+    DescriptionVariant,
     GroupVariant,
     ItemVariant,
     LabelVariant,
     SeparatorVariant,
+    TitleVariant,
     TriggerVariant,
     ValueVariant,
 )
@@ -216,3 +218,39 @@ class ContentModel(ChildModel):
             )
 
         return str_to_list(simple_container(self.container_name, attrs=attrs))
+
+
+class TitleModel(ChildModel):
+    """
+    A child model for `Title` components in the [Shadcn/ui](https://ui.shadcn.com/) component library, such as `AlertTitle`.
+
+    Parameters:
+    - `variant` (`string`) - defines the type of title to create. Valid options: `['alert']`. Each option applies a different name to the title which are converted to `PascalCase` and appended with `Content`
+    - `styles` (`string, optional`) - a set of custom CSS classes to apply to the title. Automatically adds them to `className`. `None` by default
+    - `content` (`string`) - the text to display inside the title
+    """
+
+    variant: TitleVariant
+    content: str
+
+    @property
+    def container_name(self) -> str:
+        return f"{self.name_prefix}Title"
+
+
+class DescriptionModel(ChildModel):
+    """
+    A child model for `Description` components in the [Shadcn/ui](https://ui.shadcn.com/) component library, such as `AlertDescription`.
+
+    Parameters:
+    - `variant` (`string`) - defines the type of description to create. Valid options: `['alert']`. Each option applies a different name to the description which are converted to `PascalCase` and appended with `Content`
+    - `styles` (`string, optional`) - a set of custom CSS classes to apply to the description. Automatically adds them to `className`. `None` by default
+    - `content` (`string`) - the text to display inside the description
+    """
+
+    variant: DescriptionVariant
+    content: str
+
+    @property
+    def container_name(self) -> str:
+        return f"{self.name_prefix}Description"

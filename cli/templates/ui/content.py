@@ -34,9 +34,13 @@ from zentra.ui.control import (
     ToggleGroup,
 )
 from zentra.ui.child import (
+    ActionModel,
+    CancelModel,
     ContentModel,
     DescriptionModel,
+    FooterModel,
     GroupModel,
+    HeaderModel,
     ItemModel,
     LabelModel,
     SeparatorModel,
@@ -60,7 +64,7 @@ from zentra.ui.navigation import (
     DDMSubMenu,
     DropdownMenu,
 )
-from zentra.ui.notification import Alert, TextAlertDialog, Tooltip
+from zentra.ui.notification import Alert, AlertDialog, Tooltip
 from zentra.ui.presentation import (
     Accordion,
     AspectRatio,
@@ -376,33 +380,61 @@ def alert_content(alert: Alert) -> list[ZentraModel]:
     return content
 
 
-def text_alert_dialog_content(ad: TextAlertDialog) -> list[str]:
-    """Returns a list of strings for the `TextAlertDialog` content based on the components attributes."""
-    return [
-        "<AlertDialogTrigger asChild>",
-        '<Button variant="outline">',
-        ad.trigger_text,
-        "</Button>",
-        "</AlertDialogTrigger>",
-        "<AlertDialogContent>",
-        "<AlertDialogHeader>",
-        "<AlertDialogTitle>",
-        ad.title,
-        "</AlertDialogTitle>",
-        "<AlertDialogDescription>",
-        ad.description,
-        "</AlertDialogDescription>",
-        "</AlertDialogHeader>",
-        "<AlertDialogFooter>",
-        "<AlertDialogCancel>",
-        ad.cancel_btn_text,
-        "</AlertDialogCancel>",
-        "<AlertDialogAction>",
-        ad.action_btn_text,
-        "</AlertDialogAction>",
-        "</AlertDialogFooter>",
-        "</AlertDialogContent>",
+def alert_dialog_content(ad: AlertDialog) -> list[ZentraModel]:
+    """Returns a list of `ZentraModels` for the `AlertDialog` content based on the components attributes."""
+
+    def extend_or_append(item, content: list) -> list:
+        if not isinstance(item, list):
+            content.append(item)
+        else:
+            content.extend(item)
+        return content
+
+    def footer_content() -> FooterModel:
+        content = []
+        if ad.footer:
+            content = extend_or_append(ad.footer, content)
+
+        if ad.cancel_btn:
+            content.append(CancelModel(variant="alert_dialog", content=ad.cancel_btn))
+
+        if ad.action_btn:
+            content.append(ActionModel(variant="alert_dialog", content=ad.action_btn))
+
+        return FooterModel(variant="alert_dialog", content=content)
+
+    def header_content() -> HeaderModel:
+        content = []
+
+        if ad.title:
+            content.append(TitleModel(variant="alert_dialog", content=ad.title))
+
+        if ad.header:
+            content = extend_or_append(ad.header, content)
+
+        if ad.description:
+            content.append(
+                DescriptionModel(variant="alert_dialog", content=ad.description)
+            )
+
+        return HeaderModel(variant="alert_dialog", content=content)
+
+    as_child = True if isinstance(ad.trigger, Button) else False
+
+    main_content = []
+
+    if ad.header or ad.title or ad.description:
+        main_content.append(header_content())
+
+    output = [
+        TriggerModel(variant="alert_dialog", content=ad.trigger, child=as_child),
     ]
+
+    if ad.footer or ad.cancel_btn or ad.action_btn:
+        main_content.append(footer_content())
+
+    output.append(ContentModel(variant="alert_dialog", content=main_content))
+    return output
 
 
 def avatar_content(avatar: Avatar) -> list[str]:

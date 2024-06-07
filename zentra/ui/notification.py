@@ -1,8 +1,8 @@
-from typing import Optional
+from typing import Optional, Union
 
+from zentra.base import ZentraModel
 from zentra.core import Component
 from zentra.core.enums.ui import AlertVariant
-from zentra.core.html import Div, HTMLContent
 from zentra.core.react import LucideIcon, LucideIconWithText
 from zentra.core.validation import check_kebab_case
 
@@ -10,6 +10,9 @@ from zentra.ui import ShadcnUi
 from zentra.ui.control import Button
 
 from pydantic import Field, PrivateAttr, field_validator
+
+
+Flexible = Union[list[ZentraModel], ZentraModel, str]
 
 
 class Alert(Component, ShadcnUi):
@@ -37,90 +40,32 @@ class Alert(Component, ShadcnUi):
         return check_kebab_case(icon)
 
 
-class TextAlertDialog(Component, ShadcnUi):
-    """
-    A Zentra model for the [Shadcn/ui AlertDialog](https://ui.shadcn.com/docs/components/alert-dialog) component focusing on a text based implementation.
-
-    Looking for something more customizable? Try the `zentra.ui.notification.AlertDialog` model.
-
-    Parameters:
-    - `title` (`string`) - the text for the `AlertDialogTitle`
-    - `description` (`string`) - the text for the `AlertDialogDescription`
-    - `trigger_text` (`string`) - the text to display on the `AlertDialogTrigger` button
-    - `cancel_btn_text` (`string, optional`) - the text for the `AlertDialogCancel` button in the `AlertDialogFooter`. `Cancel` by default
-    - `cancel_btn_text` (`string, optional`) - the text for the `AlertDialogAction` button in the `AlertDialogFooter`. `Continue` by default
-
-    Example Usage:
-    1. A delete account dialog.
-    ```python
-    from zentra.ui.notification import TextAlertDialog
-
-    TextAlertDialog(
-        title="Are you absolutely sure?",
-        description="This action cannot be undone. This will permanently delete your account and remove your data from our servers.",
-        trigger_text="Delete Account",
-    )
-    ```
-    JSX equivalent ->
-    ```jsx
-    import { AlertDialog, AlertDialogPortal, AlertDialogOverlay, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from "@/components/ui/text-alert-dialog"
-
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button variant="outline">Delete Account</Button>
-      </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-          <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction>Continue</AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-    ```
-    """
-
-    title: str = Field(min_length=1)
-    description: str = Field(min_length=1)
-    trigger_text: str = Field(min_length=1)
-    cancel_btn_text: str = "Cancel"
-    action_btn_text: str = "Continue"
-
-    _container_name = PrivateAttr(default="AlertDialog")
-
-
 class AlertDialog(Component, ShadcnUi):
     """
-    A Zentra model for the [Shadcn/ui AlertDialog](https://ui.shadcn.com/docs/components/alert-dialog) component that allows more advanced functionality, such as including inner components.
-
-    Looking for something simple? Try the `zentra.ui.notification.TextAlertDialog` model.
+    A Zentra model for the [Shadcn/ui AlertDialog](https://ui.shadcn.com/docs/components/alert-dialog) component.
 
     Parameters:
-    - `content` (`list[zentra.core.Component | zentra.core.html.Div | zentra.core.html.HTMLContent]`) - content to add to the `AlertDialogDescription`. Can be a list of a single or combined set of the following:
-        1. Any Zentra `Component` model
-        2. Zentra `Div` models
-        3. Zentra `HTMLContent` models
-    - `title` (`string, optional`) - the text for the `AlertDialogTitle`. `None` by default
-    - `trigger` (`zentra.ui.control.Button | string, optional`) - the text or `Button` model to display in the `AlertDialogTrigger`. `None` by default
-    - `footer` (`list[zentra.core.Component | zentra.core.html.Div | zentra.core.html.HTMLContent]`) - the content to add to the `AlertDialogFooter`. Acts the same as the `content` attribute, but in a different wrapper. `None` by default
+    - `trigger` (`zentra.ui.control.Button | string`) - the text or `Button` model to display in the `AlertDialogTrigger`
+    - `header` (`list[ZentraModel] | ZentraModel | string, optional`) - content to add to the `AlertDialogHeader`. Can be a list of a single or combined set of the following `ZentraModels` or a string of text. Wrapped in a `AlertDialogContent` model automatically
+    - `title` (`list[ZentraModel] | ZentraModel | string, optional`) - the text for the `AlertDialogTitle`. Acts the same as the `content` attribute, but in a different wrapper. Added above the `header`. `None` by default
+    - `description` (`list[ZentraModel] | ZentraModel | string, optional`) - the text for the `AlertDialogDescription`. Acts the same as the `content` attribute, but in a different wrapper. Added under the `header`. `None` by default
+    - `footer` (`list[ZentraModel] | ZentraModel | string, optional`) - the content to add to the `AlertDialogFooter`. Acts the same as the `content` attribute, but in a different wrapper. Added below the `header`. `None` by default
+    - `cancel_btn` (`string, optional`) - the text to add inside the `AlertDialogCancel` added to the `AlertDialogFooter`. Usable with `footer`, appended after it, and `action_btn`, appended before it. `None` by default
+    - `action_btn` (`string, optional`) - the text to add inside the `AlertDialogAction` added to the `AlertDialogFooter`. Usable with `footer`, appended after it, and `cancel_btn`, appended after it. `None` by default
     """
 
-    # TODO: add as 'ParentComponent' and use 'demo/agency_details.py' as example
+    trigger: Union[Button, str]
+    header: Optional[Flexible] = None
+    title: Optional[Flexible] = None
+    description: Optional[Flexible] = None
+    footer: Optional[Flexible] = None
+    cancel_btn: Optional[str] = None
+    action_btn: Optional[str] = None
 
-    content: list[Component | Div | HTMLContent]
-    title: str = None
-    trigger: Button | str = None
-    footer: list[Component | Div | HTMLContent] = None
+    _content_attr = PrivateAttr(default="header")
 
-    @property
-    def child_names(self) -> list[str]:
-        return [
+    _child_names = PrivateAttr(
+        default=[
             "AlertDialogPortal",
             "AlertDialogOverlay",
             "AlertDialogTrigger",
@@ -132,6 +77,7 @@ class AlertDialog(Component, ShadcnUi):
             "AlertDialogAction",
             "AlertDialogCancel",
         ]
+    )
 
 
 class Sonner(Component, ShadcnUi):

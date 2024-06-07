@@ -5,9 +5,8 @@ from tests.mappings.ui_imports import VALID_IMPORTS
 from tests.mappings.ui_vals import VALID_VALS_MAP
 from tests.templates.helper import SimpleCompBuilder
 
-from zentra.core.react import LucideIcon, LucideIconWithText
 from zentra.ui.control import Button
-from zentra.ui.notification import Alert, TextAlertDialog, Tooltip
+from zentra.ui.notification import Alert, AlertDialog
 
 from pydantic import ValidationError
 
@@ -75,103 +74,121 @@ class TestAlert:
             Alert(title="test", description="test", icon="invalid icon")
 
 
-class TestTextAlertDialog:
+class TestAlertDialog:
     @pytest.fixture
-    def alert_dialog(self) -> TextAlertDialog:
-        return TextAlertDialog(
+    def alert_dialog_simple(self) -> AlertDialog:
+        return AlertDialog(
+            trigger=Button(variant="outline", content="Show Dialog"),
             title="Are you absolutely sure?",
             description="This action cannot be undone. This will permanently delete your account and remove your data from our servers.",
-            trigger_text="Delete Account",
+            cancel_btn="Cancel",
+            action_btn="Continue",
         )
 
     @pytest.fixture
-    def wrapper(self, alert_dialog: TextAlertDialog) -> SimpleCompBuilder:
-        return SimpleCompBuilder(alert_dialog)
-
-    @staticmethod
-    def test_content_str(wrapper: SimpleCompBuilder):
-        wrapper.run("content", VALID_VALS_MAP["alert_dialog"]["content"]["simple"])
-
-    @staticmethod
-    def test_import_str(wrapper: SimpleCompBuilder):
-        wrapper.run("imports", VALID_IMPORTS["alert_dialog"]["simple"])
-
-
-class TestTooltip:
-    @pytest.fixture
-    def tooltip_btn(self) -> Tooltip:
-        return Tooltip(
-            text="Add to Library",
-            trigger=Button(content="Hover", variant="outline"),
+    def alert_dialog_no_buttons(self) -> AlertDialog:
+        return AlertDialog(
+            trigger=Button(variant="outline", content="Show Dialog"),
+            title="Are you absolutely sure?",
+            description="This action cannot be undone. This will permanently delete your account and remove your data from our servers.",
         )
 
     @pytest.fixture
-    def tooltip_str(self) -> Tooltip:
-        return Tooltip(
-            text="A cheeky label",
-            trigger="Test tooltip",
+    def alert_dialog_trigger_text(self) -> AlertDialog:
+        return AlertDialog(trigger="Show Dialog", header="Are you absolutely sure?")
+
+    @pytest.fixture
+    def alert_dialog_text_content(self) -> AlertDialog:
+        return AlertDialog(
+            trigger=Button(variant="outline", content="Show Dialog"),
+            header="Are you absolutely sure?",
+            footer="This is a string footer.",
         )
 
     @pytest.fixture
-    def tooltip_icon(self) -> Tooltip:
-        return Tooltip(
-            text="Loading...",
-            trigger=LucideIcon(name="loader", size=30),
-        )
+    def wrapper_simple(self, alert_dialog_simple: AlertDialog) -> SimpleCompBuilder:
+        return SimpleCompBuilder(alert_dialog_simple)
 
     @pytest.fixture
-    def tooltip_icon_text(self) -> Tooltip:
-        return Tooltip(
-            text="Load me up!",
-            trigger=LucideIconWithText(name="loader", text="Loading"),
-        )
+    def wrapper_no_buttons(
+        self, alert_dialog_no_buttons: AlertDialog
+    ) -> SimpleCompBuilder:
+        return SimpleCompBuilder(alert_dialog_no_buttons)
 
     @pytest.fixture
-    def wrapper_btn(self, tooltip_btn: Tooltip) -> SimpleCompBuilder:
-        return SimpleCompBuilder(tooltip_btn)
+    def wrapper_trigger_text(
+        self, alert_dialog_trigger_text: AlertDialog
+    ) -> SimpleCompBuilder:
+        return SimpleCompBuilder(alert_dialog_trigger_text)
 
     @pytest.fixture
-    def wrapper_str(self, tooltip_str: Tooltip) -> SimpleCompBuilder:
-        return SimpleCompBuilder(tooltip_str)
-
-    @pytest.fixture
-    def wrapper_icon(self, tooltip_icon: Tooltip) -> SimpleCompBuilder:
-        return SimpleCompBuilder(tooltip_icon)
-
-    @pytest.fixture
-    def wrapper_icon_text(self, tooltip_icon_text: Tooltip) -> SimpleCompBuilder:
-        return SimpleCompBuilder(tooltip_icon_text)
+    def wrapper_text_content(
+        self, alert_dialog_text_content: AlertDialog
+    ) -> SimpleCompBuilder:
+        return SimpleCompBuilder(alert_dialog_text_content)
 
     @staticmethod
-    def test_content_str_btn(wrapper_btn: SimpleCompBuilder):
-        wrapper_btn.run("content", VALID_VALS_MAP["tooltip"]["content"]["button"])
-
-    @staticmethod
-    def test_content_str_with_str(wrapper_str: SimpleCompBuilder):
-        wrapper_str.run("content", VALID_VALS_MAP["tooltip"]["content"]["string"])
-
-    @staticmethod
-    def test_content_str_icon(wrapper_icon: SimpleCompBuilder):
-        wrapper_icon.run("content", VALID_VALS_MAP["tooltip"]["content"]["icon"])
-
-    @staticmethod
-    def test_content_str_icon_text(wrapper_icon_text: SimpleCompBuilder):
-        wrapper_icon_text.run(
-            "content", VALID_VALS_MAP["tooltip"]["content"]["icon_text"]
+    def test_content_str_simple(wrapper_simple: SimpleCompBuilder):
+        wrapper_simple.run(
+            "content", VALID_VALS_MAP["alert_dialog"]["content"]["simple"]
         )
 
     @staticmethod
-    def test_import_str_btn(wrapper_btn: SimpleCompBuilder):
-        wrapper_btn.run("imports", VALID_IMPORTS["tooltip"]["button"])
+    def test_content_str_no_buttons(wrapper_no_buttons: SimpleCompBuilder):
+        wrapper_no_buttons.run(
+            "content", VALID_VALS_MAP["alert_dialog"]["content"]["no_buttons"]
+        )
 
     @staticmethod
-    def test_import_str_with_str(wrapper_str: SimpleCompBuilder):
-        wrapper_str.run("imports", VALID_IMPORTS["tooltip"]["string"])
+    def test_content_str_trigger_text(wrapper_trigger_text: SimpleCompBuilder):
+        wrapper_trigger_text.run(
+            "content", VALID_VALS_MAP["alert_dialog"]["content"]["trigger_text"]
+        )
 
     @staticmethod
-    def test_import_str_icon(wrapper_icon: SimpleCompBuilder):
-        wrapper_icon.run("imports", VALID_IMPORTS["tooltip"]["icon"])
+    def test_content_str_text_content(wrapper_text_content: SimpleCompBuilder):
+        wrapper_text_content.run(
+            "content", VALID_VALS_MAP["alert_dialog"]["content"]["text_content"]
+        )
 
     @staticmethod
-    def test_import_str_icon_text(wrapper_icon_text: SimpleCompBuilder):
-        wrapper_icon_text.run("imports", VALID_IMPORTS["tooltip"]["icon"])
+    def test_logic_str_simple(wrapper_simple: SimpleCompBuilder):
+        wrapper_simple.run("logic", VALID_VALS_MAP["alert_dialog"]["logic"]["simple"])
+
+    @staticmethod
+    def test_logic_str_no_buttons(wrapper_no_buttons: SimpleCompBuilder):
+        wrapper_no_buttons.run(
+            "logic", VALID_VALS_MAP["alert_dialog"]["logic"]["no_buttons"]
+        )
+
+    @staticmethod
+    def test_logic_str_trigger_text(wrapper_trigger_text: SimpleCompBuilder):
+        wrapper_trigger_text.run(
+            "logic", VALID_VALS_MAP["alert_dialog"]["logic"]["trigger_text"]
+        )
+
+    @staticmethod
+    def test_logic_str_text_content(wrapper_text_content: SimpleCompBuilder):
+        wrapper_text_content.run(
+            "logic", VALID_VALS_MAP["alert_dialog"]["logic"]["text_content"]
+        )
+
+    @staticmethod
+    def test_import_str_simple(wrapper_simple: SimpleCompBuilder):
+        wrapper_simple.run("imports", VALID_IMPORTS["alert_dialog"]["simple"])
+
+    @staticmethod
+    def test_import_str_no_buttons(wrapper_no_buttons: SimpleCompBuilder):
+        wrapper_no_buttons.run("imports", VALID_IMPORTS["alert_dialog"]["no_buttons"])
+
+    @staticmethod
+    def test_import_str_trigger_text(wrapper_trigger_text: SimpleCompBuilder):
+        wrapper_trigger_text.run(
+            "imports", VALID_IMPORTS["alert_dialog"]["trigger_text"]
+        )
+
+    @staticmethod
+    def test_import_str_text_content(wrapper_text_content: SimpleCompBuilder):
+        wrapper_text_content.run(
+            "imports", VALID_IMPORTS["alert_dialog"]["text_content"]
+        )

@@ -759,6 +759,8 @@ class SelectGroup(Component, ShadcnUi):
     items: list[str]
     label: Optional[str] = None
 
+    _content_attr = PrivateAttr(default="items")
+
 
 class Select(Component, ShadcnUi):
     """
@@ -772,9 +774,7 @@ class Select(Component, ShadcnUi):
     display_text: str
     groups: SelectGroup | list[SelectGroup]
 
-    _parent = PrivateAttr(default=True)
     _content_attr = PrivateAttr(default="groups")
-
     _child_names = PrivateAttr(
         default=[
             "SelectContent",

@@ -796,10 +796,7 @@ class TestSelect:
             display_text="Select a fruit",
             groups=SelectGroup(
                 label="Fruits",
-                items=[
-                    ("apple", "Apple"),
-                    ("banana", "Banana"),
-                ],
+                items=["Apple", "Banana"],
             ),
         )
 
@@ -815,11 +812,7 @@ class TestSelect:
         comp = Select(
             display_text="Select a fruit",
             groups=SelectGroup(
-                label="Fruits",
-                items=[
-                    ("apple", "Apple"),
-                    ("banana", "Banana"),
-                ],
+                items=["Apple", "Banana"],
             ),
             show_label=False,
         )
@@ -833,17 +826,11 @@ class TestSelect:
             groups=[
                 SelectGroup(
                     label="Traditional",
-                    items=[
-                        ("apple", "Apple"),
-                        ("banana", "Banana"),
-                    ],
+                    items=["Apple", "Banana"],
                 ),
                 SelectGroup(
                     label="Fancy",
-                    items=[
-                        ("blueberry", "Blueberry"),
-                        ("pineapple", "Pineapple"),
-                    ],
+                    items=["Blueberry", "Pineapple"],
                 ),
             ],
         )
@@ -856,24 +843,16 @@ class TestSelect:
             display_text="Select a fruit",
             groups=[
                 SelectGroup(
-                    label="Traditional",
-                    items=[
-                        ("apple", "Apple"),
-                        ("banana", "Banana"),
-                    ],
+                    items=["Apple", "Banana"],
                 ),
                 SelectGroup(
-                    label="Fancy",
-                    items=[
-                        ("blueberry", "Blueberry"),
-                        ("pineapple", "Pineapple"),
-                    ],
+                    items=["Blueberry", "Pineapple"],
                 ),
             ],
             show_label=False,
         )
         self.wrapper(comp).run(
-            "content", VALID_VALS_MAP["select"]["content"]["multi_groups"]
+            "content", VALID_VALS_MAP["select"]["content"]["multi_groups_no_label"]
         )
 
     def test_import_str(self, simple_select: Select):

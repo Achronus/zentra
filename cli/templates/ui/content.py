@@ -344,15 +344,19 @@ def select_content(select: Select) -> list[ZentraModel]:
     if isinstance(select.groups, SelectGroup):
         select.groups = [select.groups]
 
+    groups = []
+    for group in select.groups:
+        groups.extend(select_group_content(group))
+
     return [
         TriggerModel(
             variant="select",
-            styles="w-[280px]",
+            styles="w-[180px]",
             content=ValueModel(variant="select", placeholder=select.display_text),
         ),
         ContentModel(
             variant="select",
-            content=select.groups,
+            content=groups,
         ),
     ]
 

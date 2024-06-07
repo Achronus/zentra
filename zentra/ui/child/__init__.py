@@ -6,9 +6,13 @@ from pydantic import Field, PrivateAttr, field_validator
 from zentra.base import ZentraModel
 from zentra.core import Component
 from zentra.core.enums.child import (
+    ActionVariant,
+    CancelVariant,
     ContentVariant,
     DescriptionVariant,
+    FooterVariant,
     GroupVariant,
+    HeaderVariant,
     ItemVariant,
     LabelVariant,
     SeparatorVariant,
@@ -21,6 +25,9 @@ from zentra.core.utils import name_to_pascal_case, str_to_list
 from zentra.ui import ShadcnUi
 from zentra.ui.control import Button
 from zentra.ui.child.utils import full_container, simple_container, str_attr
+
+
+Flexible = Union[list[ZentraModel], ZentraModel, str]
 
 
 class ChildModel(Component, ShadcnUi):
@@ -196,7 +203,7 @@ class ContentModel(ChildModel):
     A child model for `Content` components in the [Shadcn/ui](https://ui.shadcn.com/) component library, such as `DropdownMenuContent`.
 
     Parameters:
-    - `variant` (`string`) - defines the type of content to create. Valid options: `['dropdown_menu', 'collapsible', 'select']`. Each option applies a different name to the content which are converted to `PascalCase` and appended with `Content`
+    - `variant` (`string`) - defines the type of content to create. Valid options: `['dropdown_menu', 'collapsible', 'select', 'alert_dialog']`. Each option applies a different name to the content which are converted to `PascalCase` and appended with `Content`
     - `styles` (`string, optional`) - a set of custom CSS classes to apply to the content. Automatically adds them to `className`. `None` by default
     - `content` (`list[ZentraModel]`) - a list of `ZentraModels` to add as children
     """
@@ -225,13 +232,13 @@ class TitleModel(ChildModel):
     A child model for `Title` components in the [Shadcn/ui](https://ui.shadcn.com/) component library, such as `AlertTitle`.
 
     Parameters:
-    - `variant` (`string`) - defines the type of title to create. Valid options: `['alert']`. Each option applies a different name to the title which are converted to `PascalCase` and appended with `Content`
+    - `variant` (`string`) - defines the type of title to create. Valid options: `['alert', 'alert_dialog']`. Each option applies a different name to the title which are converted to `PascalCase` and appended with `Content`
     - `styles` (`string, optional`) - a set of custom CSS classes to apply to the title. Automatically adds them to `className`. `None` by default
-    - `content` (`string`) - the text to display inside the title
+    - `content` (`string | list[ZentraModel] | ZentraModel`) - The content to add inside the title
     """
 
     variant: TitleVariant
-    content: str
+    content: Flexible
 
     @property
     def container_name(self) -> str:
@@ -243,14 +250,86 @@ class DescriptionModel(ChildModel):
     A child model for `Description` components in the [Shadcn/ui](https://ui.shadcn.com/) component library, such as `AlertDescription`.
 
     Parameters:
-    - `variant` (`string`) - defines the type of description to create. Valid options: `['alert']`. Each option applies a different name to the description which are converted to `PascalCase` and appended with `Content`
+    - `variant` (`string`) - defines the type of description to create. Valid options: `['alert', 'alert_dialog']`. Each option applies a different name to the description which are converted to `PascalCase` and appended with `Content`
     - `styles` (`string, optional`) - a set of custom CSS classes to apply to the description. Automatically adds them to `className`. `None` by default
-    - `content` (`string`) - the text to display inside the description
+    - `content` (`string | list[ZentraModel] | ZentraModel`) - The content to add inside the description
     """
 
     variant: DescriptionVariant
-    content: str
+    content: Flexible
 
     @property
     def container_name(self) -> str:
         return f"{self.name_prefix}Description"
+
+
+class HeaderModel(ChildModel):
+    """
+    A child model for `Header` components in the [Shadcn/ui](https://ui.shadcn.com/) component library, such as `AlertDialogHeader`.
+
+    Parameters:
+    - `variant` (`string`) - defines the type of header to create. Valid options: `['alert_dialog']`. Each option applies a different name to the header which are converted to `PascalCase` and appended with `Content`
+    - `styles` (`string, optional`) - a set of custom CSS classes to apply to the header. Automatically adds them to `className`. `None` by default
+    - `content` (`list[ZentraModel]`) - The content to add inside the header
+    """
+
+    variant: HeaderVariant
+    content: Flexible | list[str]
+
+    @property
+    def container_name(self) -> str:
+        return f"{self.name_prefix}Header"
+
+
+class FooterModel(ChildModel):
+    """
+    A child model for `Footer` components in the [Shadcn/ui](https://ui.shadcn.com/) component library, such as `AlertDialogFooter`.
+
+    Parameters:
+    - `variant` (`string`) - defines the type of footer to create. Valid options: `['alert_dialog']`. Each option applies a different name to the footer which are converted to `PascalCase` and appended with `Content`
+    - `styles` (`string, optional`) - a set of custom CSS classes to apply to the footer. Automatically adds them to `className`. `None` by default
+    - `content` (`list[ZentraModel]`) - The content to add inside the footer
+    """
+
+    variant: FooterVariant
+    content: Flexible | list[str]
+
+    @property
+    def container_name(self) -> str:
+        return f"{self.name_prefix}Footer"
+
+
+class CancelModel(ChildModel):
+    """
+    A child model for `Cancel` components in the [Shadcn/ui](https://ui.shadcn.com/) component library, such as `AlertDialogCancel`.
+
+    Parameters:
+    - `variant` (`string`) - defines the type of cancel to create. Valid options: `['alert_dialog']`. Each option applies a different name to the cancel which are converted to `PascalCase` and appended with `Content`
+    - `styles` (`string, optional`) - a set of custom CSS classes to apply to the cancel. Automatically adds them to `className`. `None` by default
+    - `content` (`string | list[ZentraModel] | ZentraModel`) - The content to add inside the cancel
+    """
+
+    variant: CancelVariant
+    content: Flexible
+
+    @property
+    def container_name(self) -> str:
+        return f"{self.name_prefix}Cancel"
+
+
+class ActionModel(ChildModel):
+    """
+    A child model for `Action` components in the [Shadcn/ui](https://ui.shadcn.com/) component library, such as `AlertDialogAction`.
+
+    Parameters:
+    - `variant` (`string`) - defines the type of action to create. Valid options: `['alert_dialog']`. Each option applies a different name to the action which are converted to `PascalCase` and appended with `Content`
+    - `styles` (`string, optional`) - a set of custom CSS classes to apply to the action. Automatically adds them to `className`. `None` by default
+    - `content` (`string | list[ZentraModel] | ZentraModel`) - The content to add inside the action
+    """
+
+    variant: ActionVariant
+    content: Flexible
+
+    @property
+    def container_name(self) -> str:
+        return f"{self.name_prefix}Action"

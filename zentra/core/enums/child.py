@@ -42,11 +42,30 @@ class ContentVariant(str, Enum):
     DROPDOWN_MENU = "dropdown_menu"
     COLLAPSIBLE = "collapsible"
     SELECT = "select"
+    ALERT_DIALOG = "alert_dialog"
 
 
 class TitleVariant(str, Enum):
     ALERT = "alert"
+    ALERT_DIALOG = "alert_dialog"
 
 
 class DescriptionVariant(str, Enum):
     ALERT = "alert"
+    ALERT_DIALOG = "alert_dialog"
+
+
+class HeaderVariant(str, Enum):
+    ALERT_DIALOG = "alert_dialog"
+
+
+class FooterVariant(str, Enum):
+    ALERT_DIALOG = "alert_dialog"
+
+
+class CancelVariant(str, Enum):
+    ALERT_DIALOG = "alert_dialog"
+
+
+class ActionVariant(str, Enum):
+    ALERT_DIALOG = "alert_dialog"

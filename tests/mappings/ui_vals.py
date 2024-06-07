@@ -199,9 +199,9 @@ SEPARATOR_VALID_VALS = {
 
 AVATAR_VALID_VALS = {
     "content": {
-        "url": '<Avatar>\n<AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />\n<AvatarFallback>CN</AvatarFallback>\n</Avatar>',
-        "path": '<Avatar>\n<AvatarImage src="/profile.png" alt={`Awesome photo of {me}`} />\n<AvatarFallback>AA</AvatarFallback>\n</Avatar>',
-        "static_img": "<Avatar>\n<AvatarImage src={profilePic} alt={`Awesome photo of {me}`} />\n<AvatarFallback>AA</AvatarFallback>\n</Avatar>",
+        "url": '<Avatar>\n<AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />\n<AvatarFallback>\nCN\n</AvatarFallback>\n</Avatar>',
+        "path": '<Avatar>\n<AvatarImage src="/profile.png" alt={`Awesome photo of {me}`} />\n<AvatarFallback>\nAA\n</AvatarFallback>\n</Avatar>',
+        "static_img": "<Avatar>\n<AvatarImage src={profilePic} alt={`Awesome photo of {me}`} />\n<AvatarFallback>\nAA\n</AvatarFallback>\n</Avatar>",
     }
 }
 

@@ -1,15 +1,11 @@
 from cli.templates.builders import add_to_storage
 from cli.templates.builders.controller import BuildController
 from cli.templates.storage import JSXComponentExtras
-from cli.templates.ui.attributes import (
-    alt_attribute,
-    param_attr,
-    src_attribute,
-    str_attr,
-)
+from cli.templates.ui.attributes import param_attr, str_attr
 from cli.templates.utils import compress, str_to_list, text_content
 
 from zentra.base import ZentraModel
+from zentra.ui.child.avatar import AvatarFallback, AvatarImage
 from zentra.ui.control import Checkbox, RadioGroup
 from zentra.core import Component
 from zentra.base.html import HTMLTag
@@ -437,14 +433,11 @@ def alert_dialog_content(ad: AlertDialog) -> list[ZentraModel]:
     return output
 
 
-def avatar_content(avatar: Avatar) -> list[str]:
-    """Returns a list of strings for the `Avatar` content based on the components attributes."""
-    src = src_attribute(avatar.src)
-    alt = alt_attribute(avatar.alt)
-
+def avatar_content(avatar: Avatar) -> list[ZentraModel]:
+    """Returns a list of `ZentraModels` for the `Avatar` content based on the components attributes."""
     return [
-        f"<AvatarImage {src} {alt} />",
-        f"<AvatarFallback>{avatar.fallback_text}</AvatarFallback>",
+        AvatarImage(src=avatar.src, alt=avatar.alt),
+        AvatarFallback(content=avatar.fallback_text),
     ]
 
 

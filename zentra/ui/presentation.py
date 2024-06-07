@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import Field, ValidationInfo, field_validator
+from pydantic import Field, PrivateAttr, ValidationInfo, field_validator
 from pydantic_core import PydanticCustomError
 
 from zentra.core import Component
@@ -102,13 +102,8 @@ class Avatar(Component, ShadcnUi):
     alt: str
     fallback_text: str = Field(min_length=1, max_length=2)
 
-    @property
-    def inner_attributes(self) -> list[str]:
-        return ["src", "alt"]
-
-    @property
-    def child_names(self) -> list[str]:
-        return ["AvatarImage", "AvatarFallback"]
+    _custom_common_attrs = PrivateAttr(default=["src", "alt"])
+    _child_names = PrivateAttr(default=["AvatarImage", "AvatarFallback"])
 
     @field_validator("src")
     def validate_src(cls, src: str | StaticImage) -> str | StaticImage:

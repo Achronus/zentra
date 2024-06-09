@@ -6,6 +6,7 @@ from cli.templates.utils import compress, str_to_list, text_content
 
 from zentra.base import ZentraModel
 from zentra.ui.child.avatar import AvatarFallback, AvatarImage
+from zentra.ui.child.input import InputOTPSlot
 from zentra.ui.control import Checkbox, RadioGroup
 from zentra.core import Component
 from zentra.base.html import HTMLTag
@@ -441,24 +442,24 @@ def avatar_content(avatar: Avatar) -> list[ZentraModel]:
     ]
 
 
-def input_otp_content(otp: InputOTP) -> list[str]:
-    """Returns a list of strings for the `InputOTP` content based on the components attributes."""
+def input_otp_content(otp: InputOTP) -> list[ZentraModel]:
+    """Returns a list of `ZentraModels` for the `InputOTP` content based on the components attributes."""
     content = []
 
     slot_group_size = otp.num_inputs // otp.num_groups
     slot_idx = 0
 
-    group_tag = "InputOTPGroup>"
-
     for group_idx in range(otp.num_groups):
-        content.append(f"<{group_tag}")
+        slots = []
         for _ in range(slot_group_size):
-            content.append(f"<InputOTPSlot index={{{slot_idx}}} />")
+            slots.append(InputOTPSlot(index=slot_idx))
             slot_idx += 1
-        content.append(f"</{group_tag}")
+
+        group = GroupModel(variant="input_otp", content=slots)
+        content.append(group)
 
         if otp.num_groups > 1 and group_idx + 1 != otp.num_groups:
-            content.append("<InputOTPSeparator />")
+            content.append(SeparatorModel(variant="input_otp"))
 
     return content
 

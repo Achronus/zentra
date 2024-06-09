@@ -419,13 +419,10 @@ class InputOTP(Component, ShadcnUi):
     num_groups: int = Field(default=1, ge=1)
     pattern: Optional[InputOTPPatterns | str] = None
 
-    @property
-    def custom_common_attributes(self) -> list[str]:
-        return ["pattern"]
-
-    @property
-    def child_names(self) -> list[str]:
-        return ["InputOTPGroup", "InputOTPSlot", "InputOTPSeparator"]
+    _custom_common_attrs = PrivateAttr(default=["pattern"])
+    _child_names = PrivateAttr(
+        default=["InputOTPGroup", "InputOTPSlot", "InputOTPSeparator"]
+    )
 
     @field_validator("num_groups")
     def validate_num_groups(num_groups: int, info: ValidationInfo) -> int:

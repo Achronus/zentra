@@ -129,6 +129,7 @@ COMMON_ATTR_MAPPING = {
     "other": lambda value: other_attribute(value),
     "value": lambda value: str_attr("value", value),
     "child": lambda value: "asChild" if value else None,
+    "index": lambda value: param_attr("index", value),
 }
 
 

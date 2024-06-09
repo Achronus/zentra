@@ -7,6 +7,7 @@ class SeparatorVariant(str, Enum):
     MENUBAR = "menubar"
     COMMAND = "command"
     CONTEXT_MENU = "context_menu"
+    INPUT_OTP = "input_otp"
 
 
 class ValueVariant(str, Enum):
@@ -36,6 +37,7 @@ class ItemVariant(str, Enum):
 class GroupVariant(str, Enum):
     DROPDOWN_MENU = "dropdown_menu"
     SELECT = "select"
+    INPUT_OTP = "input_otp"
 
 
 class ContentVariant(str, Enum):

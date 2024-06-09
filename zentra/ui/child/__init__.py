@@ -54,7 +54,7 @@ class SeparatorModel(ChildModel):
     A child model for `Separator` components in the [Shadcn/ui](https://ui.shadcn.com/) component library, such as `BreadcrumbSeparator` or `DropdownMenuSeparator`.
 
     Parameters:
-    - `variant` (`string`) - defines the type of separator to create. Valid options: `['breadcrumb', 'dropdown_menu', 'menubar', 'command', 'context_menu']`. Each option applies a different name to the separator which are converted to `PascalCase` and appended with `Separator`
+    - `variant` (`string`) - defines the type of separator to create. Valid options: `['breadcrumb', 'dropdown_menu', 'menubar', 'command', 'context_menu', 'input_otp']`. Each option applies a different name to the separator which are converted to `PascalCase` and appended with `Separator`
     - `styles` (`string, optional`) - a set of custom CSS classes to apply to the separator. Automatically adds them to `className`. `None` by default
     """
 
@@ -62,6 +62,9 @@ class SeparatorModel(ChildModel):
 
     @property
     def container_name(self) -> str:
+        if self.variant == "input_otp":
+            return "InputOTPSeparator"
+
         return f"{self.name_prefix}Separator"
 
     def build(self, content: str | list[str] = None) -> list[str]:
@@ -181,7 +184,7 @@ class GroupModel(ChildModel):
     A child model for `Group` components in the [Shadcn/ui](https://ui.shadcn.com/) component library, such as `SelectGroup`.
 
     Parameters:
-    - `variant` (`string`) - defines the type of group to create. Valid options: `['dropdown_menu', 'select']`. Each option applies a different name to the group which are converted to `PascalCase` and appended with `Group`
+    - `variant` (`string`) - defines the type of group to create. Valid options: `['dropdown_menu', 'select', 'input_otp']`. Each option applies a different name to the group which are converted to `PascalCase` and appended with `Group`
     - `content` (`list[ZentraModel]`) - a list of `ZentraModels` to add as children
     - `styles` (`string, optional`) - a set of custom CSS classes to apply to the group. Automatically adds them to `className`. `None` by default
     """
@@ -191,6 +194,9 @@ class GroupModel(ChildModel):
 
     @property
     def container_name(self) -> str:
+        if self.variant == "input_otp":
+            return "InputOTPGroup"
+
         return f"{self.name_prefix}Group"
 
     def build(self, content: str | list[str]) -> list[str]:

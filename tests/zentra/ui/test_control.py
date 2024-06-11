@@ -10,7 +10,7 @@ from zentra.core import DataArray
 from zentra.core.html import Div, FigCaption, Figure, HTMLContent
 from zentra.core.js import Map
 
-from zentra.core.react import LucideIconWithText
+from zentra.core.react import LucideIcon
 from zentra.nextjs import Image
 from zentra.ui.control import (
     Calendar,
@@ -1016,7 +1016,7 @@ class TestToggle:
 
     @pytest.fixture
     def toggle_icon(self) -> Toggle:
-        return Toggle(content=LucideIconWithText(name="italic", text="icon $.text"))
+        return Toggle(content=LucideIcon(name="italic", text="icon $.text"))
 
     @pytest.fixture
     def wrapper(self, toggle: Toggle) -> SimpleCompBuilder:
@@ -1043,9 +1043,7 @@ class TestToggle:
     def wrapper_icon_full(self) -> SimpleCompBuilder:
         return SimpleCompBuilder(
             Toggle(
-                content=LucideIconWithText(
-                    name="italic", text="icon $.text", position="end"
-                ),
+                content=LucideIcon(name="italic", text="icon $.text"),
                 style="bold",
                 size="lg",
                 disabled=True,
@@ -1086,13 +1084,13 @@ class TestToggleGroup:
         return ToggleGroup(
             items=[
                 Toggle(
-                    content=LucideIconWithText(name="italic"),
+                    content=LucideIcon(name="italic"),
                 ),
                 Toggle(
-                    content=LucideIconWithText(name="bold"),
+                    content=LucideIcon(name="bold"),
                 ),
                 Toggle(
-                    content=LucideIconWithText(name="underline"),
+                    content=LucideIcon(name="underline"),
                 ),
             ]
         )
@@ -1102,19 +1100,15 @@ class TestToggleGroup:
         return ToggleGroup(
             items=[
                 Toggle(
-                    content=LucideIconWithText(name="italic", text="italic $.text"),
+                    content=LucideIcon(name="italic", text="italic $.text"),
                     pressed=True,
                 ),
                 Toggle(
-                    content=LucideIconWithText(
-                        name="bold", text="bold $.text", position="end"
-                    ),
+                    content=LucideIcon(name="bold", text="bold $.text"),
                     disabled=True,
                 ),
                 Toggle(
-                    content=LucideIconWithText(
-                        name="underline", text="undeline $.text"
-                    ),
+                    content=LucideIcon(name="underline", text="undeline $.text"),
                 ),
             ],
             type="single",

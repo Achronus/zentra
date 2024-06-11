@@ -27,8 +27,6 @@ from zentra.ui.control import (
     ScrollArea,
     Select,
     SelectGroup,
-    Toggle,
-    ToggleGroup,
 )
 from zentra.ui.child import (
     ActionModel,
@@ -460,24 +458,6 @@ def input_otp_content(otp: InputOTP) -> list[ZentraModel]:
 
         if otp.num_groups > 1 and group_idx + 1 != otp.num_groups:
             content.append(SeparatorModel(variant="input_otp"))
-
-    return content
-
-
-def toggle_group_content(tg: ToggleGroup) -> list[str]:
-    """Returns a list of strings for the `ToggleGroup` content based on the components attributes."""
-    content = []
-
-    for item in tg.items:
-        inner_content = build_component(item, full_shell=True)
-
-        # Update `<Toggle>` to `<ToggleGroupItem>`
-        inner_content = (
-            compress(inner_content)
-            .replace("<Toggle", "<ToggleGroupItem")
-            .replace("</Toggle", "</ToggleGroupItem")
-        )
-        content.append(inner_content)
 
     return content
 

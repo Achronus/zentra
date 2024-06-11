@@ -88,7 +88,7 @@ def button_imports(btn: Button) -> list[str]:
 
 def toggle_imports(toggle: Toggle) -> list[str]:
     """Returns a list of strings for the additional `Toggle` imports based on its attributes."""
-    if isinstance(toggle.content, LucideIconWithText):
+    if isinstance(toggle.content, LucideIcon):
         return [toggle.content.import_str]
 
     return []

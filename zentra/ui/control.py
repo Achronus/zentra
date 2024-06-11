@@ -921,6 +921,12 @@ class ToggleGroup(Component, ShadcnUi):
     variant: ToggleVariant = "default"
     orientation: Orientation = "horizontal"
 
-    @property
-    def child_names(self) -> list[str]:
-        return ["ToggleGroupItem"]
+    _child_names = PrivateAttr(default=["ToggleGroupItem"])
+    _content_attr = PrivateAttr(default="items")
+
+    @field_validator("items")
+    def validate_items(cls, items: list[Toggle]) -> list[Toggle]:
+        for item in items:
+            item._container_name = "ToggleGroupItem"
+
+        return items

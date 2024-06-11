@@ -464,11 +464,6 @@ def input_otp_content(otp: InputOTP) -> list[ZentraModel]:
     return content
 
 
-def toggle_content(toggle: Toggle) -> list[str]:
-    """Returns a list of strings for the `Toggle` content based on the components attributes."""
-    return string_icon_content(toggle.content)
-
-
 def toggle_group_content(tg: ToggleGroup) -> list[str]:
     """Returns a list of strings for the `ToggleGroup` content based on the components attributes."""
     content = []

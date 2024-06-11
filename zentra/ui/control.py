@@ -885,7 +885,7 @@ class Toggle(Component, ShadcnUi):
     A Zentra model for the [Shadcn/ui Toggle](https://ui.shadcn.com/docs/components/toggle) component.
 
     Parameters:
-    - `content` (`string | zentra.core.react.LucideIconWithText`) - the information displayed inside the toggle. Can be a string of text or a `LucideIconWithText` Zentra model. Can include parameter variables (indicated by starting the variable name with a `$.`)
+    - `content` (`string | zentra.core.react.LucideIcon`) - the information displayed inside the toggle. Can be a string of text or a `LucideIcon` Zentra model. Can include parameter variables (indicated by starting the variable name with a `$.`)
     - `style` (`string, optional`) - the style of the toggle text (`aria-label`). Valid options: `['default', 'bold', 'outline', 'italic', 'underline']`. `default` by default
     - `size` (`string, optional`) - the size of the toggle. Valid options: `['default', 'sm', 'lg']`. `default` by default
     - `variant` (`string, optional`) - the style of the toggle. Valid options: `['default', 'outline']`. `default` by default
@@ -893,7 +893,7 @@ class Toggle(Component, ShadcnUi):
     - `disabled` (`boolean, optional`) - adds the disabled property, preventing it from being selected. `False` by default
     """
 
-    content: str | LucideIconWithText
+    content: str | LucideIcon
     style: TextStyle = "default"
     size: ToggleSize = "default"
     variant: ToggleVariant = "default"

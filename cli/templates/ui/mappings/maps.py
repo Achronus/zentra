@@ -40,7 +40,6 @@ from cli.templates.ui.content import (
     table_content,
     alert_dialog_content,
     text_content,
-    toggle_content,
     toggle_group_content,
     tooltip_content,
 )
@@ -161,7 +160,6 @@ COMPONENT_CONTENT_MAPPING = {
     "AlertDialog": lambda ad: alert_dialog_content(ad),
     "Avatar": lambda avatar: avatar_content(avatar),
     "InputOTP": lambda otp: input_otp_content(otp),
-    "Toggle": lambda comp: toggle_content(comp),
     "ToggleGroup": lambda comp: toggle_group_content(comp),
     "Pagination": lambda comp: pagination_content(comp),
     "Accordion": lambda comp: accordion_content(comp),

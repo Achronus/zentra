@@ -127,7 +127,7 @@ TOGGLE_VALID_VALS = {
         "simple": '<Toggle pressed={false} aria-label="Toggle">\ntest {text}\n</Toggle>',
         "icon": '<Toggle pressed={false} aria-label="Toggle">\n<Italic className="mr-2 h-4 w-4" />\nicon {text}\n</Toggle>',
         "simple_full": '<Toggle size="sm" variant="outline" pressed={true} disabled aria-label="Toggle outline">\ntest {text}\n</Toggle>',
-        "icon_full": '<Toggle size="lg" pressed={true} disabled aria-label="Toggle bold">\nicon {text}\n<Italic className="mr-2 h-4 w-4" />\n</Toggle>',
+        "icon_full": '<Toggle size="lg" pressed={true} disabled aria-label="Toggle bold">\n<Italic className="mr-2 h-4 w-4" />\nicon {text}\n</Toggle>',
     },
 }
 

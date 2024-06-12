@@ -32,6 +32,7 @@ class LabelVariant(str, Enum):
 
 class ItemVariant(str, Enum):
     SELECT = "select"
+    PAGINATION = "pagination"
 
 
 class GroupVariant(str, Enum):
@@ -45,6 +46,7 @@ class ContentVariant(str, Enum):
     COLLAPSIBLE = "collapsible"
     SELECT = "select"
     ALERT_DIALOG = "alert_dialog"
+    PAGINATION = "pagination"
 
 
 class TitleVariant(str, Enum):

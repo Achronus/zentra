@@ -160,14 +160,14 @@ class ItemModel(ChildModel):
     A child model for `Item` components in the [Shadcn/ui](https://ui.shadcn.com/) component library, such as `SelectItem`.
 
     Parameters:
-    - `variant` (`string`) - defines the type of item to create. Valid options: `['select']`. Each option applies a different name to the item which are converted to `PascalCase` and appended with `Item`
-    - `content` (`string`) - the content to display inside the item
+    - `variant` (`string`) - defines the type of item to create. Valid options: `['select', 'pagination']`. Each option applies a different name to the item which are converted to `PascalCase` and appended with `Item`
+    - `content` (`string | ZentraModel`) - the content to display inside the item
     - `value` (`string, optional`) - the value to pass to the `value` prop. `None` by default
     - `styles` (`string, optional`) - a set of custom CSS classes to apply to the item. Automatically adds them to `className`. `None` by default
     """
 
     variant: ItemVariant
-    content: str
+    content: str | ZentraModel
     value: Optional[str] = None
 
     @property
@@ -209,7 +209,7 @@ class ContentModel(ChildModel):
     A child model for `Content` components in the [Shadcn/ui](https://ui.shadcn.com/) component library, such as `DropdownMenuContent`.
 
     Parameters:
-    - `variant` (`string`) - defines the type of content to create. Valid options: `['dropdown_menu', 'collapsible', 'select', 'alert_dialog']`. Each option applies a different name to the content which are converted to `PascalCase` and appended with `Content`
+    - `variant` (`string`) - defines the type of content to create. Valid options: `['dropdown_menu', 'collapsible', 'select', 'alert_dialog', 'pagination']`. Each option applies a different name to the content which are converted to `PascalCase` and appended with `Content`
     - `styles` (`string, optional`) - a set of custom CSS classes to apply to the content. Automatically adds them to `className`. `None` by default
     - `content` (`list[ZentraModel]`) - a list of `ZentraModels` to add as children
     """

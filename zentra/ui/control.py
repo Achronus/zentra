@@ -475,13 +475,9 @@ class Pagination(Component, ShadcnUi):
     name: str = "pag"
     ellipsis: bool = False
 
-    @property
-    def custom_common_attributes(self) -> list[str]:
-        return ["name"]
-
-    @property
-    def child_names(self) -> list[str]:
-        return [
+    _custom_common_attrs = PrivateAttr(default=["name"])
+    _child_names = PrivateAttr(
+        default=[
             "PaginationContent",
             "PaginationEllipsis",
             "PaginationItem",
@@ -489,6 +485,7 @@ class Pagination(Component, ShadcnUi):
             "PaginationNext",
             "PaginationPrevious",
         ]
+    )
 
     @property
     def start_idx_name(self) -> tuple[str, str]:

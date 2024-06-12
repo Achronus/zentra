@@ -7,6 +7,12 @@ from cli.templates.utils import compress, str_to_list, text_content
 from zentra.base import ZentraModel
 from zentra.ui.child.avatar import AvatarFallback, AvatarImage
 from zentra.ui.child.input import InputOTPSlot
+from zentra.ui.child.pagination import (
+    PaginationEllipsis,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+)
 from zentra.ui.control import Checkbox, RadioGroup
 from zentra.core import Component
 from zentra.base.html import HTMLTag
@@ -462,61 +468,49 @@ def input_otp_content(otp: InputOTP) -> list[ZentraModel]:
     return content
 
 
-def pagination_content(page: Pagination) -> list[str]:
-    """Returns a list of strings for the `Pagination` content based on the components attributes."""
-
-    def wrap_item(content: str | list[str]) -> list[str]:
-        if isinstance(content, str):
-            return ["<PaginationItem>", content, "</PaginationItem>"]
-        else:
-            return ["<PaginationItem>", *content, "</PaginationItem>"]
-
-    def set_on_clicks(symbol: str) -> list[str]:
-        return [
-            f"{page.start_idx_name[1]}({page.start_idx_name[0]} {symbol} itemsPerPage);",
-            f"{page.end_idx_name[1]}({page.end_idx_name[0]} {symbol} itemsPerPage);",
-        ]
-
-    def disable_btn_styles(name: str, idx: int | str) -> str:
-        return f'className={{{name} === {idx} ? "pointer-events-none opacity-50" : undefined}}'
-
+def pagination_content(page: Pagination) -> list[ZentraModel]:
+    """Returns a list of `ZentraModels` for the `Pagination` content based on the components attributes."""
     content = [
-        "<PaginationContent>",
-        *wrap_item(
-            [
-                "<PaginationPrevious ",
-                disable_btn_styles(page.start_idx_name[0], 0),
-                " onClick={() => {",
-                *set_on_clicks("-"),
-                "}} />",
-            ]
-        ),
+        ItemModel(
+            variant="pagination",
+            content=PaginationLink(
+                href=link,
+                content=str(idx),
+                is_active=False if idx > 1 else True,
+            ),
+        )
+        for idx, link in enumerate(page.links, start=1)
     ]
 
-    for idx, link in enumerate(page.links, start=1):
-        link_content = f'<PaginationLink href="{link}" isActive>{idx}</PaginationLink>'
-
-        if idx > 1:
-            link_content = link_content.replace(" isActive", "")
-
-        content.extend(wrap_item(link_content))
-
     if page.ellipsis:
-        content.extend(wrap_item("<PaginationEllipsis />"))
+        content.append(ItemModel(variant="pagination", content=PaginationEllipsis()))
 
-    content.extend(
-        wrap_item(
-            [
-                "<PaginationNext ",
-                disable_btn_styles(page.end_idx_name[0], "maxitems"),
-                " onClick={() => {",
-                *set_on_clicks("+"),
-                "}} />",
-            ]
+    content.insert(
+        0,
+        ItemModel(
+            variant="pagination",
+            content=PaginationPrevious(
+                start_name=page.start_idx_name[0],
+                set_start_name=page.start_idx_name[1],
+                end_name=page.end_idx_name[0],
+                set_end_name=page.end_idx_name[1],
+            ),
+        ),
+    )
+
+    content.append(
+        ItemModel(
+            variant="pagination",
+            content=PaginationNext(
+                start_name=page.start_idx_name[0],
+                set_start_name=page.start_idx_name[1],
+                end_name=page.end_idx_name[0],
+                set_end_name=page.end_idx_name[1],
+            ),
         )
     )
-    content.append("</PaginationContent>")
-    return content
+
+    return [ContentModel(variant="pagination", content=content)]
 
 
 def accordion_content(acc: Accordion) -> list[str]:

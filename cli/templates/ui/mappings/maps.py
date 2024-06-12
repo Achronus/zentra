@@ -128,6 +128,8 @@ COMMON_ATTR_MAPPING = {
     "value": lambda value: str_attr("value", value),
     "child": lambda value: "asChild" if value else None,
     "index": lambda value: param_attr("index", value),
+    "is_active": lambda value: "isActive" if value else None,
+    "on_click": lambda value: param_attr("onClick", value),
 }
 
 

@@ -75,7 +75,7 @@ def size_attribute(value: str | int, attr_name: str = "size") -> str:
 
 def style_attribute(value: str, attr_name: str = "className") -> str:
     """Returns a string for the `style` attribute based on its given value."""
-    if value.startswith("cn("):
+    if value.startswith("cn(") or value.startswith(PARAMETER_PREFIX):
         return param_attr(attr_name, value)
 
     return str_attr(attr_name, value)

@@ -1,26 +1,26 @@
-## THIS TOOL IS A WORK IN PROGRESS, PLEASE WAIT UNTIL A VERSION RELEASE.
+_Last updated 30/06/2024_
 
-_Last updated 28/05/2024_
+# Zentra
 
 ![Logo](/docs/assets/imgs/zentra-logo.jpg)
 
-An open-source Python tool that uses [Pydantic](https://docs.pydantic.dev/latest/) models to create [React](https://react.dev/) components. The perfect tool for accelerating [NextJS](https://nextjs.org/) frontends with a Python-based backend, such as [FastAPI](https://fastapi.tiangolo.com/). 
+An open-source Python tool that uses [Pydantic](https://docs.pydantic.dev/latest/) models to create [React](https://react.dev/) components. The perfect tool for accelerating [NextJS](https://nextjs.org/) frontends with a Python-based backend, such as [FastAPI](https://fastapi.tiangolo.com/).
 
 It comes packed with API documentation for building your Python models, and a CLI interface that dynamically creates the frontend files based on the models you've created.
 
+_Note: Zentra is still in development. We plan to release a simple version soon with minimal components._
+
 ## How It Works
 
-Zentra aims to be a flexible tool that covers a variety of component libraries, while centering around the [NextJS App Router](https://nextjs.org/docs) framework. 
-
-_Note: Some of these items may change during development._
+Zentra aims to be a flexible tool that covers a variety of component libraries, while centering around the [NextJS App Router](https://nextjs.org/docs) framework.
 
 ### Structural Elements
 
 It focuses on three structural components: `Pages`, `Blocks`, and `Components`. A page can have multiple blocks, and each block can have multiple components.
 
-When using Zentra, you'll use all three to create the frontend. We'll discuss these in more detail in the future.
+When using Zentra, you'll use all three to create the frontend. We'll discuss these in more detail in our documentation.
 
-### Components
+### Component Roadmap
 
 Core component libraries and custom models in development:
 
@@ -35,6 +35,7 @@ Core component libraries and custom models in development:
 - [X] [Lucide React Icons](https://lucide.dev/guide/packages/lucide-react) (1/1 - 1 component for all icons)
 
 Future component libraries:
+
 - [Clerk](https://clerk.com/)
 - [Tremor](https://www.tremor.so/)
 - [Stripe](https://docs.stripe.com/stripe-js/react?locale=en-GB)
@@ -100,20 +101,13 @@ export function ScrollAreaHorizontalDemo() {
 }
 ```
 
-We can divide this into four main parts:
-1. The import statements
-2. The data `Array[]` and its `TypeScript` props
-3. The function wrapper (`export function ScrollAreaHorizontalDemo() { return (...) }`)
-4. The component JSX
-
-
-With Zentra's current functionality, we can recreate `1` and `4` using the following `Python` code:
+Using Zentra, we can create this component with the following `Python` code:
 
 ```python
-from zentra.core.html import Figure, FigCaption, Div, HTMLContent
-from zentra.core.js import Map
-from zentra.nextjs import Image
-from zentra.ui.control import ScrollArea
+from zentra_models.core.html import Figure, FigCaption, Div, HTMLContent
+from zentra_models.core.js import Map
+from zentra_models.nextjs import Image
+from zentra_models.ui.control import ScrollArea
 
 artwork_map = Div(
     styles="flex w-max space-x-4 p-4",
@@ -153,18 +147,14 @@ sa = ScrollArea(
 )
 ```
 
-In the future, `blocks` will be used for `3` and a custom `Data` model for `2`.
+## Active Development
 
-## When Will Zentra Be Officially Released?
-
-We are working hard to release an official version (`v0.1.0`) by the end of `May/June 2024`. This will include the full core functionality listed in the [components](#components) section above, plus a working CLI, and detailed API documentation.
+Zentra is a tool that is continously being developed with components being added to it regularly. There's a lot still to do to make it a fully functioning tool, such as a working CLI, detailed API documentation, and components for various libraries.
 
 Our goal is to provide a quality open-source product that works 'out-of-the-box' that everyone can experiment with, and then gradually fix unexpected bugs and introduce more component libraries on the road to a `v1.0.0` release.
 
-### On Release
+## Support
 
-We'll need help from developers like you to make this tool a delight to use, and a product worthy of the `Python`, `NextJS`, `React` and `Software/Web Development` community. 
+We'll need help from developers like you to make this tool a delight to use, and a product worthy of the `Python`, `NextJS`, `React` and `Software/Web Development` community.
 
 Feedback and criticism will always be welcomed, and is encouraged to help make this tool worthwhile.
-
-There is still a lot left to do for us to feel comfortable opening Zentra to the world, so stay tuned for more updates if you are interested in using the tool in the future! 

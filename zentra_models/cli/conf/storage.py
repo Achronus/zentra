@@ -27,40 +27,6 @@ class ConfigExistStorage:
         )
 
 
-class SetupPathStorage(BaseModel):
-    """
-    A storage container for file and folder paths specific to `zentra init`.
-
-    Parameters:
-    - `config` (`string`) - the filepath to the Zentra models config file
-    - `models` (`string`) - the directory path to the Zentra models folder
-    - `demo` (`string`) - the directory path to the Zentra models demo folder
-    """
-
-    config: str
-    models: str
-    demo: str
-
-
-class GeneratePathStorage(BaseModel):
-    """
-    A storage container for file and folder paths specific to `zentra generate`.
-
-    Parameters:
-    - `config` (`string`) - the filepath to the Zentra models config file
-    - `models` (`string`) - the directory path to the Zentra models folder
-    - `components` (`string`) - the directory path to the Zentra generate component folder
-    - `templates` (`string`) - the directory path to the Zentra generate template folder
-    - `lib` (`string`) - the directory path to the Zentra generate lib folder
-    """
-
-    config: str
-    models: str
-    components: str
-    templates: str
-    lib: str
-
-
 class CountStorage(BaseModel):
     """A simple storage container for Zentra model counts."""
 

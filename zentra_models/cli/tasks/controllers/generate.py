@@ -1,8 +1,4 @@
-from zentra_models.cli.conf.storage import (
-    ModelFileStorage,
-    ModelStorage,
-    GeneratePathStorage,
-)
+from zentra_models.cli.conf.storage import ModelFileStorage, ModelStorage
 from zentra_models.cli.conf.types import LibraryNamePairs
 from zentra_models.cli.tasks.controllers.base import BaseController, status
 from zentra_models.cli.templates.builders.local import LocalBuilder
@@ -16,15 +12,10 @@ class GenerateController(BaseController):
     A controller for handling tasks that generate the Zentra components.
 
     Parameters:
-    - `url` (`string`) - a GitHub URL housing the component files
     - `zentra` (`zentra.core.Zentra`) - the Zentra application containing components to generate
-    - `paths` (`storage.GeneratePathStorage`) - a path storage container with paths specific to the controller
     """
 
-    def __init__(self, url: str, zentra: Zentra, paths: GeneratePathStorage) -> None:
-        self.url = url
-        self.paths = paths
-
+    def __init__(self, zentra: Zentra) -> None:
         self.storage: ModelStorage = ModelStorage()
         self.local_extractor = LocalExtractor(
             generate_path=paths.components, name_storage=zentra.name_storage

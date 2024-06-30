@@ -1,13 +1,13 @@
 [tool.poetry]
-name = "cli"
+name = "zentra_models"
 version = "0.1.0"
 description = "Use Pydantic models to create React components from popular libraries."
-authors = ["Ryan Partridge <rpartridge101@yahoo.co.uk>"]
+authors = ["Ryan Partridge <rpartridge101@gmail.com>"]
 license = "MIT License"
 readme = "README.md"
 
 [tool.poetry.scripts]
-zentra = "cli.main:app"
+zentra = "zentra_models.cli.main:app"
 
 [tool.poetry.dependencies]
 python = "^3.12"

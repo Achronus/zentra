@@ -1,4 +1,6 @@
 import os
+import importlib.resources as pkg_resources
+from pathlib import Path
 
 from zentra_models.cli.conf.types import LibraryNamePairs
 
@@ -54,3 +56,31 @@ def local_path(folder_path: str) -> str:
     head, tail = os.path.split(folder_path)
     root = os.path.basename(head)
     return "/".join([root, tail])
+
+
+def get_dirpaths(
+    package: str, resource_dir: str = ".", ignore: list[str] = None
+) -> dict[str, Path]:
+    """List all files in the resource directory of the package and store them in a dictionary. Removes files and custom directories based on `ignore` parameters.
+
+    Returns:
+        `dict[str, str] = {<dir_name>: <dir_path>}`
+    """
+    package_dict = {}
+    for item in pkg_resources.files(package).joinpath(resource_dir).iterdir():
+        package_dict[str(item).split("\\")[-1]] = item
+
+    if "__pycache__" in package_dict.keys():
+        package_dict.pop("__pycache__")
+
+    if ignore:
+        for key in ignore:
+            if key in package_dict.keys():
+                package_dict.pop(key)
+
+    dirnames = package_dict.copy()
+    for key, value in package_dict.items():
+        if not os.path.isdir(value):
+            dirnames.pop(key)
+
+    return dirnames

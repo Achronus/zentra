@@ -9,19 +9,18 @@ from zentra_models.cli.conf.checks import (
     check_folder_exists,
     check_zentra_exists,
 )
-from zentra_models.cli.conf.extract import get_file_content
-from zentra_models.cli.conf.storage import ConfigExistStorage, SetupPathStorage
+from zentra_models.cli.conf.extract import get_file_content, local_path
+from zentra_models.cli.conf.storage import ConfigExistStorage
 from zentra_models.cli.utils.printables import (
     setup_complete_panel,
     setup_first_run_panel,
 )
 from .controllers.setup import SetupController
 from zentra_models.cli.conf.constants import (
-    GITHUB_INIT_ASSETS_DIR,
     CommonErrorCodes,
     SetupErrorCodes,
     SetupSuccessCodes,
-    ZentaFilepaths,
+    ZentraLocalFilepaths,
 )
 
 from rich.console import Console
@@ -30,57 +29,67 @@ from rich.console import Console
 console = Console()
 
 
+def confirm_project_init() -> None:
+    """Handles the input for confirming project initialisation. Terminates if `N` provided."""
+    zentra_name = typer.style("Zentra", typer.colors.MAGENTA)
+    root, dir = local_path(os.getcwd()).split("/")
+
+    dir_name = typer.style(dir, typer.colors.MAGENTA)
+    root_name = typer.style(root, typer.colors.YELLOW)
+    full_path = typer.style(os.getcwd(), typer.colors.YELLOW)
+    result = typer.confirm(
+        f"Make {dir_name} directory in {root_name} ({full_path}) a {zentra_name} project?"
+    )
+
+    if not result:
+        raise typer.Abort()
+
+
 class Setup:
     """A class for handling the `zentra init` command."""
 
     def __init__(self) -> None:
-        self.paths = SetupPathStorage(
-            config=os.path.join(ZentaFilepaths.MODELS, ZentaFilepaths.SETUP_FILENAME),
-            models=ZentaFilepaths.MODELS,
-            demo=ZentaFilepaths.DEMO,
-        )
-
+        self.local_paths = ZentraLocalFilepaths()
         self.config_exists = ConfigExistStorage()
 
     def init_app(self) -> None:
         """Performs configuration to initialise application with Zentra."""
         self.check_config()
 
-        if self.config_exists.app_configured():
-            zentra = check_zentra_exists()
+        if not self.config_exists.app_configured():
+            confirm_project_init()
+
+        zentra = check_zentra_exists(self.local_paths.MODELS)
+
+        # Already exists
+        if zentra:
             if len(zentra.name_storage.components) == 0:
                 raise typer.Exit(code=SetupErrorCodes.NO_COMPONENTS)
 
-            console.print(setup_complete_panel())
+            console.print(setup_complete_panel(zentra))
             raise typer.Exit(code=SetupSuccessCodes.ALREADY_CONFIGURED)
 
-        # Create config files
+        # Otherwise, create config files
         console.print()
-        controller = SetupController(
-            url=GITHUB_INIT_ASSETS_DIR,
-            paths=self.paths,
-            config_exists=self.config_exists,
-        )
+        controller = SetupController(self.config_exists)
         controller.run()
 
-        zentra = check_zentra_exists()
-        if len(zentra.name_storage.components) == 0:
-            console.print(setup_first_run_panel())
-            raise typer.Exit(code=SetupSuccessCodes.COMPLETE)
+        console.print(setup_first_run_panel())
+        raise typer.Exit(code=SetupSuccessCodes.COMPLETE)
 
     def check_config(self) -> None:
         """Checks if the config files are already setup."""
-        # Check models file exists
-        if check_folder_exists(self.paths.models):
+        # Check models directory exists
+        if check_folder_exists(self.local_paths.MODELS):
             self.config_exists.models_folder_exists = True
 
         # Check config file exists
-        if check_file_exists(self.paths.config):
+        if check_file_exists(self.local_paths.CONF):
             self.config_exists.config_file_exists = True
 
             # Check config file content is valid
             check_config = CheckConfigFileValid()
-            file_content_tree = ast.parse(get_file_content(self.paths.config))
+            file_content_tree = ast.parse(get_file_content(self.local_paths.CONF))
             check_config.visit(file_content_tree)
 
             if check_config.is_valid():

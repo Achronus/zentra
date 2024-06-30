@@ -1,7 +1,7 @@
 import os
 from enum import Enum
 
-from zentra_models.cli.conf.extract import local_path
+from zentra_models.cli.conf.extract import get_dirpaths, local_path
 from rich.console import Console
 
 
@@ -61,35 +61,55 @@ MAGIC = ":sparkles:"
 # TODO: update URLS
 # Core folder names and URLS
 FOLDER_NAME = "zentra"
+SETUP_FILE = "__init__.py"
+DEMO_DIR = "_demo"
+
 GETTING_STARTED_URL = "#"
 ERROR_GUIDE_URL = "#"
 GITHUB_ISSUES_URL = "https://github.com/Astrum-AI/Zentra/issues"
 
 
-class ZentaFilepaths:
+class ZentraLocalFilepaths:
     """A storage container for the core filepaths in the `zentra` folder."""
 
-    ROOT = os.path.join(os.getcwd(), FOLDER_NAME)  # (cwd)/zentra
-    MODELS = os.path.join(ROOT, "models")  # (cwd)/zentra/models
-    GENERATED = os.path.join(ROOT, "generated")  # (cwd)/zentra/generated
+    def __init__(self) -> None:
+        # (cwd)/zentra
+        self.ROOT = os.path.join(os.getcwd(), FOLDER_NAME)
+        self.MODELS = os.path.join(self.ROOT, "models")
+        self.GENERATED = os.path.join(self.ROOT, "generated")
+        self.DEMO = os.path.join(self.MODELS, DEMO_DIR)
 
-    DEMO = os.path.join(MODELS, "_demo")  # (cwd)/zentra/models/_demo
-
-    SETUP_FILENAME = "__init__.py"
+        self.CONF = os.path.join(self.MODELS, SETUP_FILE)
 
 
 class ZentraGeneratedFilepaths:
     """A storage container for the core filepaths in the `zentra/generated` folder."""
 
-    # (cwd)/zentra/generated
-    ROOT = ZentaFilepaths.GENERATED
-    PAGES = os.path.join(ROOT, "pages")  # generated/pages
-    COMPONENTS = os.path.join(ROOT, "components")  # generated/components
-    LIB = os.path.join(ROOT, "lib")  # generated/lib
+    def __init__(self) -> None:
+        self.ROOT = ZentraLocalFilepaths().GENERATED
+        self.PAGES = os.path.join(self.ROOT, "pages")
+        self.COMPONENTS = os.path.join(self.ROOT, "components")
+        self.LIB = os.path.join(self.ROOT, "lib")
 
-    ZENTRA = os.path.join(COMPONENTS, "zentra")  # generated/components/zentra
+        self.ZENTRA = os.path.join(self.COMPONENTS, "zentra")
+
+
+class ZentraPackageFilepaths:
+    """A storage container for the filepaths in the `zentra_models` package."""
+
+    def __init__(self) -> None:
+        self.MODELS_DICT = get_dirpaths("zentra_models", ignore=["cli"])
+        self.CLI_DICT = get_dirpaths("zentra_models", "cli")
+
+        self.INIT_ASSETS = self.CLI_DICT["init_assets"]
+        self.COMPONENT_ASSETS = self.CLI_DICT["components"]
+
+        self.DEMO = os.path.join(self.INIT_ASSETS, DEMO_DIR)
+        self.CONF = os.path.join(self.INIT_ASSETS, SETUP_FILE)
 
 
 # Util filepaths
-MODELS_FILEPATH = f"[magenta]{local_path(ZentaFilepaths.MODELS)}[/magenta]"
-CONFIG_URL = os.path.join(ZentaFilepaths.MODELS, ZentaFilepaths.SETUP_FILENAME)
+local_paths = ZentraLocalFilepaths()
+
+MODELS_FILEPATH = f"[magenta][link={local_paths.MODELS}]{local_path(local_paths.MODELS)}[/link][/magenta]"
+CONFIG_URL = os.path.join(local_paths.MODELS, SETUP_FILE)

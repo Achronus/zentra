@@ -1,30 +1,33 @@
 import os
 import unittest
 
-from zentra_models.cli.conf.constants import ZentaFilepaths, ZentraGeneratedFilepaths
+from zentra_models.cli.conf.constants import (
+    ZentraLocalFilepaths,
+    ZentraGeneratedFilepaths,
+)
 
 
 class TestZentaFilepaths(unittest.TestCase):
     def test_root_path(self):
         self.assertEqual(
-            ZentaFilepaths.ROOT,
+            ZentraLocalFilepaths.ROOT,
             os.path.join(os.getcwd(), "zentra"),
         )
 
     def test_models_path(self):
         self.assertEqual(
-            ZentaFilepaths.MODELS,
+            ZentraLocalFilepaths.MODELS,
             os.path.join(os.getcwd(), "zentra", "models"),
         )
 
     def test_generated_path(self):
         self.assertEqual(
-            ZentaFilepaths.GENERATED,
+            ZentraLocalFilepaths.GENERATED,
             os.path.join(os.getcwd(), "zentra", "generated"),
         )
 
     def test_setup_filename(self):
-        self.assertEqual(ZentaFilepaths.SETUP_FILENAME, "__init__.py")
+        self.assertEqual(ZentraLocalFilepaths.SETUP_FILENAME, "__init__.py")
 
 
 class TestZentraGeneratedFilepaths(unittest.TestCase):

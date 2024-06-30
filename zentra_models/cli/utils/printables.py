@@ -3,7 +3,6 @@ from functools import partial
 import textwrap
 
 from zentra_models.cli.conf.constants import MAGIC
-from zentra_models.cli.conf.checks import check_zentra_exists
 from zentra_models.cli.conf.format import (
     list_to_str,
     set_colour,
@@ -16,6 +15,8 @@ from zentra_models.cli.conf.storage import ModelStorage
 
 from pydantic import BaseModel
 from rich.panel import Panel
+
+from zentra_models.core import Zentra
 
 
 class Action(Enum):
@@ -93,9 +94,8 @@ def setup_first_run_panel() -> Panel:
     )
 
 
-def setup_complete_panel() -> Panel:
+def setup_complete_panel(zentra: Zentra) -> Panel:
     """Creates a printable panel after successfully completing `zentra init`."""
-    zentra = check_zentra_exists()
     storage = zentra.name_storage
     add_formatter = SetupPanelFormatter(action=Action.ADD)
 

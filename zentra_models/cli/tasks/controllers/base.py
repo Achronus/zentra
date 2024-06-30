@@ -1,7 +1,13 @@
 from typing import TypeVar
 from functools import wraps
 
-from zentra_models.cli.conf.constants import PASS, FAIL
+from zentra_models.cli.conf.constants import (
+    PASS,
+    FAIL,
+    ZentraGeneratedFilepaths,
+    ZentraLocalFilepaths,
+    ZentraPackageFilepaths,
+)
 from zentra_models.cli.conf.logger import task_status_logger
 
 from rich.console import Console
@@ -43,6 +49,10 @@ class BaseController:
     def __init__(self, tasks: list[tuple[ControllerMethod, str]]) -> None:
         self.tasks = tasks
         self.called_tasks = []
+
+        self.local_paths = ZentraLocalFilepaths()
+        self.generate_paths = ZentraGeneratedFilepaths()
+        self.package_paths = ZentraPackageFilepaths()
 
     def run(self) -> None:
         """A handler for performing tasks in the controller."""

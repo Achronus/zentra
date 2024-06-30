@@ -3,7 +3,7 @@ import typer
 import warnings
 
 from zentra_models.cli.conf.constants import (
-    ZentaFilepaths,
+    ZentraLocalFilepaths,
     ZentraGeneratedFilepaths,
     console,
 )
@@ -17,7 +17,7 @@ warnings.filterwarnings("ignore", category=SyntaxWarning)
 
 
 app = typer.Typer(
-    help="Configure your project to work with Zentra using 'zentra init' or create your React components with 'zentra generate' based on your models in the zentra folder.",
+    help="Configure your project to work with Zentra using 'zentra init' or create your React components with 'zentra build' based on your models in the zentra folder.",
     pretty_exceptions_enable=True,
 )
 
@@ -36,13 +36,15 @@ def init_app() -> None:
         msg_handler.msg(e)
 
 
-@app.command("generate")
+@app.command("build")
 def generate_components() -> None:
     """Generates all React components based on the models stored in the 'zentra/models' folder."""
     try:
         paths = GeneratePathStorage(
-            config=os.path.join(ZentaFilepaths.MODELS, ZentaFilepaths.SETUP_FILENAME),
-            models=ZentaFilepaths.MODELS,
+            config=os.path.join(
+                ZentraLocalFilepaths.MODELS, ZentraLocalFilepaths.SETUP_FILENAME
+            ),
+            models=ZentraLocalFilepaths.MODELS,
             components=ZentraGeneratedFilepaths.COMPONENTS,
             templates=ZentraGeneratedFilepaths.ZENTRA,
             lib=ZentraGeneratedFilepaths.LIB,

@@ -9,11 +9,15 @@ from zentra_models.core import Zentra
 from zentra_models.cli.conf.logger import zentra_missing_logger
 
 
-def check_zentra_exists() -> Zentra:
+def check_zentra_exists(path: str) -> Zentra | None:
     """Checks if the `Zentra` app has been created by the user."""
+    if not os.path.exists(path):
+        return None
+
     try:
-        zentra_module = importlib.import_module("zentra.models.models")
-    except ModuleNotFoundError as e:
+        zentra_module = importlib.import_module("zentra.models")
+
+    except (AttributeError, ModuleNotFoundError) as e:
         zentra_missing_logger.error(e)
         raise typer.Exit(SetupErrorCodes.IMPORT_ERROR)
 
@@ -62,7 +66,7 @@ class CheckConfigFileValid(ast.NodeVisitor):
 
         self.assign_target = "zentra"
         self.register_method = "register"
-        self.module_name = "zentra.models.core"
+        self.module_name = "zentra_models.core"
         self.import_name = "Zentra"
 
     def visit_Assign(self, node: ast.Assign):

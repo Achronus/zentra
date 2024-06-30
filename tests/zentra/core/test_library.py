@@ -1,8 +1,8 @@
-from zentra.core.enums.ui import LibraryType
-from zentra.custom import CustomModel
-from zentra.nextjs import NextJs
-from zentra.ui import ShadcnUi
-from zentra.uploadthing import Uploadthing
+from zentra_models.core.enums.ui import LibraryType
+from zentra_models.custom import CustomModel
+from zentra_models.nextjs import NextJs
+from zentra_models.ui import ShadcnUi
+from zentra_models.uploadthing import Uploadthing
 
 
 class TestNextJs:

@@ -1,11 +1,11 @@
 import pytest
 
-from zentra.core import Zentra, Page, Component
-from zentra.ui import Form, FormField
-from zentra.ui.control import Input
-from zentra.ui.notification import AlertDialog
-from zentra.ui.presentation import Card
-from zentra.uploadthing import FileUpload
+from zentra_models.core import Zentra, Page, Component
+from zentra_models.ui import Form, FormField
+from zentra_models.ui.control import Input
+from zentra_models.ui.notification import AlertDialog
+from zentra_models.ui.presentation import Card
+from zentra_models.uploadthing import FileUpload
 
 
 class TestZentra:
@@ -71,7 +71,7 @@ class TestZentra:
     @pytest.fixture
     def zentra_registered(self, page: Page) -> Zentra:
         zentra = Zentra()
-        zentra.register([page])
+        zentra.models.register([page])
         return zentra
 
     def test_page_registration(self, zentra: Zentra):
@@ -88,19 +88,19 @@ class TestZentra:
             ],
         )
         page_map = [page1, page2]
-        zentra.register(page_map)
+        zentra.models.register(page_map)
 
-        assert zentra.pages == page_map
-        assert zentra.components == []
+        assert zentra.models.pages == page_map
+        assert zentra.models.components == []
 
     def test_register_components(self, zentra: Zentra):
         component1 = Component(name="Component1")
         component2 = Component(name="Component2")
         standalone_components = [component1, component2]
-        zentra.register(standalone_components)
+        zentra.models.register(standalone_components)
 
-        assert zentra.pages == []
-        assert zentra.components == standalone_components
+        assert zentra.models.pages == []
+        assert zentra.models.components == standalone_components
 
     def test_mixed_registration(self, zentra: Zentra):
         page = Page(
@@ -111,15 +111,15 @@ class TestZentra:
         )
         component = Input(id="test", type="text", placeholder="Component1")
         mixed_list = [page, component]
-        zentra.register(mixed_list)
+        zentra.models.register(mixed_list)
 
-        assert zentra.pages == [page]
-        assert zentra.components == [component]
+        assert zentra.models.pages == [page]
+        assert zentra.models.components == [component]
 
     def test_register_invalid_input(self, zentra: Zentra):
         invalid_input = "InvalidInput"
         with pytest.raises(ValueError):
-            zentra.register(invalid_input)
+            zentra.models.register(invalid_input)
 
     def test_storage_valid(self, zentra_registered: Zentra):
         storage = zentra_registered.name_storage

@@ -6,17 +6,17 @@ from unittest.mock import patch, MagicMock
 
 import typer
 
-from cli.conf.checks import (
+from zentra_models.cli.conf.checks import (
     CheckConfigFileValid,
     check_file_exists,
     check_folder_exists,
     check_models_registered,
     check_zentra_exists,
 )
-from cli.conf.constants import SetupErrorCodes
-from cli.conf.extract import get_file_content
-from zentra.core import Page, Zentra
-from zentra.ui.control import Input
+from zentra_models.cli.conf.constants import SetupErrorCodes
+from zentra_models.cli.conf.extract import get_file_content
+from zentra_models.core import Page, Zentra
+from zentra_models.ui.control import Input
 
 
 class TestCheckZentraExists:
@@ -71,7 +71,7 @@ class TestCheckModelsRegistered:
 
     def test_success(self):
         zentra = Zentra()
-        zentra.register(
+        zentra.models.register(
             [
                 Page(
                     name="TestPage",
@@ -87,7 +87,7 @@ class TestCheckConfigFileValid:
         filepath = os.path.join(tmp_path, "valid_code")
         with open(filepath, "w") as f:
             f.write(
-                "from zentra.core import Zentra\nzentra = Zentra()\nzentra.register()"
+                "from zentra.models.core import Zentra\nzentra = Zentra()\nzentra.register()"
             )
 
         checker = CheckConfigFileValid()
@@ -99,7 +99,7 @@ class TestCheckConfigFileValid:
     def test_fail(self, tmp_path):
         filepath = os.path.join(tmp_path, "invalid_code")
         with open(filepath, "w") as f:
-            f.write("from zentra.core import Zentra\nzentra = Zentra()")
+            f.write("from zentra.models.core import Zentra\nzentra = Zentra()")
 
         checker = CheckConfigFileValid()
         file_content = get_file_content(filepath)

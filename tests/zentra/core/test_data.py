@@ -1,7 +1,7 @@
 from pydantic import ValidationError
 import pytest
 
-from zentra.core import DataArray
+from zentra_models.core import DataArray
 
 
 class TestDataArray:

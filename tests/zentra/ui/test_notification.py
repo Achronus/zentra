@@ -5,8 +5,8 @@ from tests.mappings.ui_imports import VALID_IMPORTS
 from tests.mappings.ui_vals import VALID_VALS_MAP
 from tests.templates.helper import SimpleCompBuilder
 
-from zentra.ui.control import Button
-from zentra.ui.notification import Alert, AlertDialog
+from zentra_models.ui.control import Button
+from zentra_models.ui.notification import Alert, AlertDialog
 
 from pydantic import ValidationError
 

@@ -1,9 +1,9 @@
-from cli.templates.builders.component import ComponentBuilder
-from cli.templates.builders.structural import JSXPageBuilder
+from zentra_models.cli.templates.builders.component import ComponentBuilder
+from zentra_models.cli.templates.builders.structural import JSXPageBuilder
 
-from cli.templates.ui.mappings import COMPONENT_MAPPINGS, JSX_MAPPINGS
+from zentra_models.cli.templates.ui.mappings import COMPONENT_MAPPINGS, JSX_MAPPINGS
 
-from zentra.core import Component, Page
+from zentra_models.core import Component, Page
 
 
 def component_builder(component: Component) -> ComponentBuilder:

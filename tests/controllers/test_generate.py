@@ -3,23 +3,27 @@ import os
 from unittest.mock import MagicMock, patch
 import typer
 
-from cli.conf.constants import (
+from zentra_models.cli.conf.constants import (
     GITHUB_COMPONENTS_DIR,
     CommonErrorCodes,
     GenerateErrorCodes,
     GenerateSuccessCodes,
 )
-from cli.conf.format import name_from_camel_case
-from cli.conf.storage import CountStorage, GeneratePathStorage, ModelFileStorage
-from cli.tasks.controllers.generate import GenerateController
-from cli.tasks.generate import Generate
+from zentra_models.cli.conf.format import name_from_camel_case
+from zentra_models.cli.conf.storage import (
+    CountStorage,
+    GeneratePathStorage,
+    ModelFileStorage,
+)
+from zentra_models.cli.tasks.controllers.generate import GenerateController
+from zentra_models.cli.tasks.generate import Generate
 
-from zentra.core import Page, Zentra
-from zentra.ui import Form, FormField
-from zentra.ui.control import Button, Input
-from zentra.ui.notification import AlertDialog
-from zentra.ui.presentation import Card
-from zentra.uploadthing import FileUpload
+from zentra_models.core import Page, Zentra
+from zentra_models.ui import Form, FormField
+from zentra_models.ui.control import Button, Input
+from zentra_models.ui.notification import AlertDialog
+from zentra_models.ui.presentation import Card
+from zentra_models.uploadthing import FileUpload
 
 
 @pytest.fixture

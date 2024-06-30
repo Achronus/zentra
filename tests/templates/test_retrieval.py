@@ -1,12 +1,12 @@
 import pytest
 import typer
 
-from cli.conf.constants import (
+from zentra_models.cli.conf.constants import (
     GITHUB_COMPONENTS_DIR,
     GITHUB_INIT_ASSETS_DIR,
     CommonErrorCodes,
 )
-from cli.templates.retrieval import (
+from zentra_models.cli.templates.retrieval import (
     CodeRetriever,
     GithubContentRetriever,
     ZentraSetupRetriever,

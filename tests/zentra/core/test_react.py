@@ -3,8 +3,8 @@ import pytest
 from tests.mappings.ui_imports import REACT_VALID_IMPORTS
 from tests.mappings.ui_vals import LUCIDE_ICON_VALID_VALS
 from tests.templates.helper import SimpleCompBuilder
-from zentra.core.html import HTMLContent
-from zentra.core.react import LucideIcon
+from zentra_models.core.html import HTMLContent
+from zentra_models.core.react import LucideIcon
 
 from pydantic import ValidationError
 

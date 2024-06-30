@@ -1,6 +1,6 @@
 import os
 
-from cli.conf.create import make_directories
+from zentra_models.cli.conf.create import make_directories
 
 
 class TestMakePathDirs:

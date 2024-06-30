@@ -4,9 +4,9 @@ from tests.mappings.ui_imports import VALID_IMPORTS
 from tests.mappings.ui_vals import VALID_VALS_MAP
 from tests.templates.helper import SimpleCompBuilder
 
-from zentra.core.html import Div, HTMLContent
-from zentra.ui.control import Button, Input, Label
-from zentra.ui.modal import Popover
+from zentra_models.core.html import Div, HTMLContent
+from zentra_models.ui.control import Button, Input, Label
+from zentra_models.ui.modal import Popover
 
 
 class TestPopover:

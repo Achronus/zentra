@@ -4,7 +4,7 @@ from tests.mappings.ui_imports import NEXTJS_VALID_IMPORTS
 from tests.mappings.ui_vals import NEXTJS_VALID_VALS_MAP
 
 from tests.templates.helper import SimpleCompBuilder
-from zentra.nextjs import Image, Link, StaticImage, UrlQuery
+from zentra_models.nextjs import Image, Link, StaticImage, UrlQuery
 
 from pydantic import ValidationError
 

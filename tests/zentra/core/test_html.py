@@ -3,11 +3,11 @@ import pytest
 
 from tests.mappings.html import HTML_VALID_VALS_MAP
 from tests.templates.helper import SimpleCompBuilder
-from zentra.core.enums.html import HTMLContentTagType
-from zentra.core.html import Div, FigCaption, Figure, HTMLContent
-from zentra.core.js import Map
-from zentra.nextjs import Image, StaticImage
-from zentra.ui.control import Label
+from zentra_models.core.enums.html import HTMLContentTagType
+from zentra_models.core.html import Div, FigCaption, Figure, HTMLContent
+from zentra_models.core.js import Map
+from zentra_models.nextjs import Image, StaticImage
+from zentra_models.ui.control import Label
 
 
 class TestHTMLContent:

@@ -6,13 +6,13 @@ from tests.templates.helper import SimpleCompBuilder
 from tests.mappings.ui_imports import VALID_IMPORTS
 from tests.mappings.ui_vals import VALID_VALS_MAP
 
-from zentra.core import DataArray
-from zentra.core.html import Div, FigCaption, Figure, HTMLContent
-from zentra.core.js import Map
+from zentra_models.core import DataArray
+from zentra_models.core.html import Div, FigCaption, Figure, HTMLContent
+from zentra_models.core.js import Map
 
-from zentra.core.react import LucideIcon
-from zentra.nextjs import Image
-from zentra.ui.control import (
+from zentra_models.core.react import LucideIcon
+from zentra_models.nextjs import Image
+from zentra_models.ui.control import (
     Calendar,
     Checkbox,
     Collapsible,
@@ -33,7 +33,7 @@ from zentra.ui.control import (
     Toggle,
     ToggleGroup,
 )
-from zentra.ui.presentation import Separator
+from zentra_models.ui.presentation import Separator
 
 
 class TestCalendar:

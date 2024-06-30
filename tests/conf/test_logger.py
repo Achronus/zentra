@@ -2,7 +2,7 @@ import os
 import pytest
 import logging
 
-from cli.conf.logger import BaseLogger
+from zentra_models.cli.conf.logger import BaseLogger
 
 
 class TestBaseLogger:

@@ -2,7 +2,7 @@ import pytest
 
 from pydantic_core import PydanticCustomError
 
-from zentra.custom import CustomUrl
+from zentra_models.custom import CustomUrl
 
 
 class TestCustomUrl:

@@ -5,15 +5,15 @@ from itertools import product
 from operator import mul
 from typing import Any
 
-from cli.conf.logger import test_logger
+from zentra_models.cli.conf.logger import test_logger
 
 from tests.mappings.btn_content import BTN_VALID_VALS_MAP
 from tests.mappings.ui_imports import VALID_IMPORTS
 from tests.templates.helper import component_builder
 
-from zentra.ui.control import Button
-from zentra.core.react import LucideIconWithText
-from zentra.core.enums.ui import ButtonSize, ButtonVariant
+from zentra_models.ui.control import Button
+from zentra_models.core.react import LucideIconWithText
+from zentra_models.core.enums.ui import ButtonSize, ButtonVariant
 
 
 def calc_valid_total(*iterables) -> int:

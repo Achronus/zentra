@@ -2,18 +2,18 @@ import os
 import pytest
 import typer
 
-from cli.conf.constants import GITHUB_INIT_ASSETS_DIR
-from cli.conf.storage import ConfigExistStorage, SetupPathStorage
+from zentra_models.cli.conf.constants import GITHUB_INIT_ASSETS_DIR
+from zentra_models.cli.conf.storage import ConfigExistStorage, SetupPathStorage
 
-from cli.tasks.controllers.setup import SetupController
+from zentra_models.cli.tasks.controllers.setup import SetupController
 
 from tests.mappings.retrieval import ZENTRA_INIT_VALID
-from zentra.core import Page, Zentra
-from zentra.ui import Form, FormField
-from zentra.ui.control import Input
-from zentra.ui.notification import AlertDialog
-from zentra.ui.presentation import Card
-from zentra.uploadthing import FileUpload
+from zentra_models.core import Page, Zentra
+from zentra_models.ui import Form, FormField
+from zentra_models.ui.control import Input
+from zentra_models.ui.notification import AlertDialog
+from zentra_models.ui.presentation import Card
+from zentra_models.uploadthing import FileUpload
 
 
 @pytest.fixture

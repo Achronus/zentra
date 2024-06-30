@@ -1,9 +1,9 @@
 import pytest
 
-from cli.templates.builders.structural import JSXPageBuilder
+from zentra_models.cli.templates.builders.structural import JSXPageBuilder
 from tests.templates.helper import page_builder
-from zentra.core import Page
-from zentra.ui.control import (
+from zentra_models.core import Page
+from zentra_models.ui.control import (
     Button,
     Calendar,
     Checkbox,
@@ -12,7 +12,7 @@ from zentra.ui.control import (
     InputOTP,
     Label,
 )
-from zentra.uploadthing import FileUpload
+from zentra_models.uploadthing import FileUpload
 
 
 def page() -> Page:

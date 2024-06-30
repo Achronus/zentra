@@ -1,7 +1,7 @@
 import os
 import unittest
 
-from cli.conf.constants import ZentaFilepaths, ZentraGeneratedFilepaths
+from zentra_models.cli.conf.constants import ZentaFilepaths, ZentraGeneratedFilepaths
 
 
 class TestZentaFilepaths(unittest.TestCase):

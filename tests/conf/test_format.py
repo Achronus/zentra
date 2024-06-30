@@ -2,7 +2,7 @@ import re
 from hypothesis import given
 import hypothesis.strategies as st
 
-from cli.conf.format import (
+from zentra_models.cli.conf.format import (
     format_item_list,
     name_from_camel_case,
     name_to_camel_case,

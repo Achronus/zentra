@@ -1,9 +1,9 @@
 from pydantic import ValidationError
 import pytest
 
-from zentra.ui import Form, FormField
-from zentra.ui.control import Input
-from zentra.uploadthing import FileUpload
+from zentra_models.ui import Form, FormField
+from zentra_models.ui.control import Input
+from zentra_models.uploadthing import FileUpload
 
 
 class TestForm:

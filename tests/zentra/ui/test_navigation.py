@@ -7,10 +7,10 @@ from tests.templates.helper import SimpleCompBuilder
 
 from pydantic import ValidationError
 
-from zentra.core.react import LucideIcon
-from zentra.nextjs import Link
-from zentra.ui.control import Button
-from zentra.ui.navigation import (
+from zentra_models.core.react import LucideIcon
+from zentra_models.nextjs import Link
+from zentra_models.ui.control import Button
+from zentra_models.ui.navigation import (
     BCDropdownMenu,
     BCItem,
     BCTrigger,

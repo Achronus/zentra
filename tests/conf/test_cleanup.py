@@ -1,7 +1,7 @@
 import os
 import pytest
 
-from cli.conf.cleanup import remove_files
+from zentra_models.cli.conf.cleanup import remove_files
 
 
 class TestRemoveFiles:

@@ -6,8 +6,8 @@ from tests.mappings.ui_imports import VALID_IMPORTS
 from tests.mappings.ui_vals import VALID_VALS_MAP
 from tests.templates.helper import SimpleCompBuilder
 
-from zentra.nextjs import Image, StaticImage
-from zentra.ui.presentation import (
+from zentra_models.nextjs import Image, StaticImage
+from zentra_models.ui.presentation import (
     Accordion,
     AccordionItem,
     AspectRatio,

@@ -51,17 +51,17 @@ class Setup:
     def __init__(self) -> None:
         self.config_exists = ConfigExistStorage()
 
-    def init_app(self) -> None:
+    def init_app(self, force: bool, reset_config: bool) -> None:
         """Performs configuration to initialise application with Zentra."""
         self.check_config()
 
-        if not self.config_exists.app_configured():
+        if not force and not self.config_exists.app_configured():
             confirm_project_init()
 
         zentra = check_zentra_exists(LOCAL_PATHS.MODELS)
 
         # Already exists
-        if zentra and self.config_exists.app_configured():
+        if (zentra and self.config_exists.app_configured()) and not reset_config:
             if len(zentra.name_storage.components) == 0:
                 raise typer.Exit(code=SetupErrorCodes.NO_COMPONENTS)
 
@@ -70,7 +70,10 @@ class Setup:
 
         # Otherwise, create config files
         console.print()
-        controller = SetupController(self.config_exists)
+        controller = SetupController(
+            self.config_exists,
+            reset_config=reset_config,
+        )
         controller.run()
 
         console.print(setup_first_run_panel())

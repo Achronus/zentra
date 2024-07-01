@@ -23,11 +23,11 @@ msg_handler = MessageHandler(console, MSG_MAPPER)
 
 
 @app.command("init")
-def init_app() -> None:
+def init_app(reset_config: bool = False, force: bool = False) -> None:
     """Perform basic configuration to setup your app to work with Zentra."""
     try:
         setup = Setup()
-        setup.init_app()
+        setup.init_app(force, reset_config)
 
     except typer.Exit as e:
         msg_handler.msg(e)

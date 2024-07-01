@@ -14,19 +14,20 @@ class SetupController(BaseController):
     - `config_exists` (`storage.ConfigExistStorage`) - a boolean value storage container for config checks
     """
 
-    def __init__(self, config_exists: ConfigExistStorage) -> None:
+    def __init__(
+        self, config_exists: ConfigExistStorage, reset_config: bool = False
+    ) -> None:
         self.config_exists = config_exists
 
         tasks = [
-            (
-                self.create_missing_files,
-                "Creating [yellow]config[/yellow] files",
-            ),
-            (
-                self.create_demo_files,
-                "Creating demo files",
-            ),
+            (self.create_missing_files, "Creating [yellow]config[/yellow] files"),
+            (self.create_demo_files, "Creating demo files"),
         ]
+
+        if reset_config:
+            tasks = [
+                (self.reset_config, "Resetting [yellow]config[/yellow] file"),
+            ]
 
         super().__init__(tasks)
 
@@ -62,4 +63,12 @@ class SetupController(BaseController):
             PACKAGE_PATHS.DEMO,
             LOCAL_PATHS.DEMO,
             dirs_exist_ok=True,
+        )
+
+    @status
+    def reset_config(self) -> None:
+        """Forcefully recreates the config file."""
+        shutil.copy(
+            PACKAGE_PATHS.CONF,
+            LOCAL_PATHS.MODELS,
         )

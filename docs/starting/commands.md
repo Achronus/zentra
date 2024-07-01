@@ -21,7 +21,7 @@ We encourage you to check this out when the time is right!
 
 This section contains a list of flags that are applicable to every command.
 
-- `--help (-h)` - displays help information
+- `--help` - displays help information
 
 ## zentra init
 
@@ -32,19 +32,21 @@ This section contains a list of flags that are applicable to every command.
 
 This command initialises the current directory as a `Zentra` project, configuring it with specific files required for using `Zentra`.
 
-Normally, you would use it without any arguments like so:
-
 ```shell title=""
 zentra init
 ```
 
 This requires confirmation to initialise the application and is the recommended approach to running the command.
 
-It also comes with an optional `--force` flag to ignore the user input. This is useful when you want to use `Zentra` in other applications such as our [Create API App](#zentra-init) tool.
+### Init: Optional Flags
 
-```shell title=""
-zentra init --force
-```
+!!! warning
+    When using `--reset-config` all its content is reset back to the default template. You will lose your existing content inside of it.
+
+| Flag             | Description |
+|------------------|-------------|
+|`--force`         | removes confirmation requirement |
+| `--reset-config` | hard resets the `zentra/models/__init__.py` file |
 
 You can read more about the [`zentra init`](#zentra-init) command in our [Basic Usage Guide](basic_usage.md#creating-a-project).
 

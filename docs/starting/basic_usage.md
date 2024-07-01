@@ -5,6 +5,8 @@ This chapter focuses on getting started with `Zentra` and exploring simple examp
 ## Creating a Project
 
 
+## How Errors are Structured
+
 
 ## Generating Components
 

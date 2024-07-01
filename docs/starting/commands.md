@@ -41,12 +41,12 @@ This requires confirmation to initialise the application and is the recommended 
 ### Init: Optional Flags
 
 !!! warning
-    When using `--reset-config` all its content is reset back to the default template. You will lose your existing content inside of it.
+    When using `--reset-config` all its content is reset back to the default template. You __will lose__ the existing content inside of it.
 
 | Flag             | Description |
 |------------------|-------------|
-|`--force`         | removes confirmation requirement |
-| `--reset-config` | hard resets the `zentra/models/__init__.py` file |
+|`--force`         | removes confirmation requirement. Also, works with `--reset-config`. |
+| `--reset-config` | hard resets the `zentra/models/__init__.py` file. |
 
 You can read more about the [`zentra init`](#zentra-init) command in our [Basic Usage Guide](basic_usage.md#creating-a-project).
 

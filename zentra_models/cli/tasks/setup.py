@@ -37,8 +37,23 @@ def confirm_project_init() -> None:
     dir_name = typer.style(dir, typer.colors.MAGENTA)
     root_name = typer.style(root, typer.colors.YELLOW)
     full_path = typer.style(os.getcwd(), typer.colors.YELLOW)
+
     result = typer.confirm(
         f"Make {dir_name} directory in {root_name} ({full_path}) a {zentra_name} project?"
+    )
+
+    if not result:
+        raise typer.Abort()
+
+
+def confirm_reset_config() -> None:
+    """Handles the input for confirming config reset. Terminates if `N` provided."""
+    sure = typer.style("sure", typer.colors.YELLOW)
+    hard_reset = typer.style("hard reset", typer.colors.RED)
+    config = typer.style("config", typer.colors.YELLOW)
+
+    result = typer.confirm(
+        f"Are you {sure} you want to {hard_reset} the {config} file?"
     )
 
     if not result:
@@ -54,14 +69,23 @@ class Setup:
     def init_app(self, force: bool, reset_config: bool) -> None:
         """Performs configuration to initialise application with Zentra."""
         self.check_config()
+        project_configured = self.config_exists.app_configured()
 
-        if not force and not self.config_exists.app_configured():
-            confirm_project_init()
+        if not project_configured and reset_config:
+            console.print(
+                "Not a [magenta]Zentra[/magenta] project. Run [magenta]zentra init[/magenta] first."
+            )
+            raise typer.Abort()
+        elif not force:
+            if project_configured and reset_config:
+                confirm_reset_config()
+            elif not project_configured:
+                confirm_project_init()
 
         zentra = check_zentra_exists(LOCAL_PATHS.MODELS)
 
         # Already exists
-        if (zentra and self.config_exists.app_configured()) and not reset_config:
+        if (zentra and project_configured) and not reset_config:
             if len(zentra.name_storage.components) == 0:
                 raise typer.Exit(code=SetupErrorCodes.NO_COMPONENTS)
 

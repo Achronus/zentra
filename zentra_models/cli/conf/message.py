@@ -85,10 +85,9 @@ Then, check if:
 IMPORT_ERROR_CHECKS = (
     ACCESS_CONFIG_STR
     + """
-Then, check if:
-  1. You've [magenta]imported[/magenta] your created models
-  2. [magenta]from[/magenta] [green]zentra[/green].[green]core[/green] [magenta]import[/magenta] [green]Zentra[/green] - is present
-  3. [magenta]zentra[/magenta] = [yellow]Zentra[/yellow]() - is set
+Then:
+  1. Check if [magenta]zentra[/magenta] = [yellow]Zentra[/yellow]() - is set
+  2. Or, reset the config file with [red]zentra init --reset-config[/red]
 """
 )
 
@@ -183,7 +182,7 @@ MSG_MAPPER = {
 
 
 class MessageHandler:
-    """Handles all the messages of the zentra.models.cli."""
+    """Handles all the messages for the `zentra-cli`."""
 
     def __init__(self, console: Console, msg_mapper: dict[Enum, str]) -> None:
         self.console = console

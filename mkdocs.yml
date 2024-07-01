@@ -3,8 +3,8 @@ site_description: Turn Pydantic models into React components
 site_url: https://zentra-docs.astrumnexus.com/
 
 theme:
-  name: 'material'
-  custom_dir: 'docs/theme'
+  name: "material"
+  custom_dir: "docs/theme"
   language: en
   palette:
     scheme: slate
@@ -22,8 +22,8 @@ theme:
     - search.highlight
     - content.code.copy
     - content.code.annotate
-  logo: 'icon.png'
-  favicon: 'icon.png'
+  logo: "icon.png"
+  favicon: "icon.png"
   icon:
     repo: fontawesome/brands/github
 
@@ -32,37 +32,34 @@ repo_url: https://github.com/Astrum-AI/Zentra/
 edit_uri: edit/main/docs
 
 watch:
-- zentra
+  - zentra_models
 
 extra_css:
-  - 'extra/icons.css'
+  - "extra/icons.css"
 
 nav:
   - Zentra: index.md
   - Getting Started:
-    - Getting Started: starting/index.md
-    - Why use Zentra: starting/why.md
-    - Installation: starting/install.md
-    - Basic Usage: starting/basic_usage.md
-  - Commands:
-    - Commands: commands/index.md
-    - zentra init: commands/init.md
-    - zentra generate: commands/generate.md
-  - Components: 
-    - Components: components/index.md
-    - Core: components/core.md
-    - UI: 
-      - UI: components/ui/index.md
-      - Core: components/ui/core.md
-      - Control: components/ui/control.md
-      - Modal: components/ui/modal.md
-      - Navigation: components/ui/nav.md
-      - Notification: components/ui/notify.md
-      - Presentation: components/ui/present.md
+      - Getting Started: starting/index.md
+      - Why use Zentra: starting/why.md
+      - Installation: starting/install.md
+      - Basic Usage: starting/basic_usage.md
+      - Commands: starting/commands.md
+  - Components:
+      - Components: components/index.md
+      - Core: components/core.md
+      - UI:
+          - UI: components/ui/index.md
+          - Core: components/ui/core.md
+          - Control: components/ui/control.md
+          - Modal: components/ui/modal.md
+          - Navigation: components/ui/nav.md
+          - Notification: components/ui/notify.md
+          - Presentation: components/ui/present.md
   - Help:
-    - Help: help/index.md
-    - Encountering Errors: help/errors.md
-    - Reporting Issues: help/report.md
+      - Help: help/index.md
+      - Encountering Errors: help/errors.md
+      - Reporting Issues: help/report.md
   - Release Notes: release_notes.md
 
 extra:
@@ -102,4 +99,4 @@ plugins:
       handlers:
         python:
           paths: [.]
-          options: 
+          options:

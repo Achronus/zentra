@@ -10,8 +10,11 @@ from zentra_models.cli.tasks.generate import Generate
 warnings.filterwarnings("ignore", category=SyntaxWarning)
 
 
+init_command = typer.style("zentra init", typer.colors.YELLOW)
+generate_command = typer.style("zentra generate", typer.colors.YELLOW)
+
 app = typer.Typer(
-    help="Configure your project to work with Zentra using 'zentra init' or create your React components with 'zentra build' based on your models in the zentra folder.",
+    help=f"Configure your project to work with Zentra using {init_command} or create your React components with {generate_command}.",
     pretty_exceptions_enable=True,
 )
 
@@ -30,9 +33,9 @@ def init_app() -> None:
         msg_handler.msg(e)
 
 
-@app.command("build")
+@app.command("generate")
 def generate_components() -> None:
-    """Generates all React components based on the models stored in the 'zentra/models' folder."""
+    """Generates all React components based on the models stored in the `Zentra` app."""
     try:
         generate = Generate()
         generate.init_checks()

@@ -1,4 +1,5 @@
 from enum import Enum
+import os
 import textwrap
 import typer
 
@@ -7,19 +8,24 @@ from rich.panel import Panel
 
 
 from zentra_models.cli.conf.constants import (
-    CONFIG_URL,
     ERROR_GUIDE_URL,
     GETTING_STARTED_URL,
     GITHUB_ISSUES_URL,
+    LOCAL_PATHS,
     MAGIC,
     FAIL,
-    MODELS_FILEPATH,
+    SETUP_FILE,
     CommonErrorCodes,
     GenerateSuccessCodes,
     SetupErrorCodes,
     GenerateErrorCodes,
     SetupSuccessCodes,
 )
+from zentra_models.cli.conf.extract import local_path
+
+
+MODELS_FILEPATH = f"[magenta][link={LOCAL_PATHS.MODELS}]{local_path(LOCAL_PATHS.MODELS)}[/link][/magenta]"
+CONFIG_URL = os.path.join(LOCAL_PATHS.MODELS, SETUP_FILE)
 
 
 MORE_HELP_INFO = f"""

@@ -1,13 +1,7 @@
 from typing import TypeVar
 from functools import wraps
 
-from zentra_models.cli.conf.constants import (
-    PASS,
-    FAIL,
-    ZentraGeneratedFilepaths,
-    ZentraLocalFilepaths,
-    ZentraPackageFilepaths,
-)
+from zentra_models.cli.conf.constants import PASS, FAIL
 from zentra_models.cli.conf.logger import task_status_logger
 
 from rich.console import Console
@@ -37,7 +31,8 @@ ControllerMethod = TypeVar("ControllerMethod", bound="BaseController")
 class BaseController:
     """A base controller class for all CLI tasks.
 
-    :param tasks: (list[tuple[ControllerMethod, str]]) - a list of tuples in the format of (task, desc), where `task` is a class method and `desc` is a descriptive string highlighting what the task does. For example:
+    Parameters:
+    - `tasks` (`list[tuple[ControllerMethod, str]]`) - a list of tuples in the format of (task, desc), where `task` is a class method and `desc` is a descriptive string highlighting what the task does. For example:
     ```python
     tasks = [
         (self.create, "Creating my awesome components"),
@@ -49,10 +44,6 @@ class BaseController:
     def __init__(self, tasks: list[tuple[ControllerMethod, str]]) -> None:
         self.tasks = tasks
         self.called_tasks = []
-
-        self.local_paths = ZentraLocalFilepaths()
-        self.generate_paths = ZentraGeneratedFilepaths()
-        self.package_paths = ZentraPackageFilepaths()
 
     def run(self) -> None:
         """A handler for performing tasks in the controller."""

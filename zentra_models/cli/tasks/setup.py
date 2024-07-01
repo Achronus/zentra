@@ -17,10 +17,10 @@ from zentra_models.cli.utils.printables import (
 )
 from .controllers.setup import SetupController
 from zentra_models.cli.conf.constants import (
+    LOCAL_PATHS,
     CommonErrorCodes,
     SetupErrorCodes,
     SetupSuccessCodes,
-    ZentraLocalFilepaths,
 )
 
 from rich.console import Console
@@ -49,7 +49,6 @@ class Setup:
     """A class for handling the `zentra init` command."""
 
     def __init__(self) -> None:
-        self.local_paths = ZentraLocalFilepaths()
         self.config_exists = ConfigExistStorage()
 
     def init_app(self) -> None:
@@ -59,10 +58,10 @@ class Setup:
         if not self.config_exists.app_configured():
             confirm_project_init()
 
-        zentra = check_zentra_exists(self.local_paths.MODELS)
+        zentra = check_zentra_exists(LOCAL_PATHS.MODELS)
 
         # Already exists
-        if zentra:
+        if zentra and self.config_exists.app_configured():
             if len(zentra.name_storage.components) == 0:
                 raise typer.Exit(code=SetupErrorCodes.NO_COMPONENTS)
 
@@ -80,19 +79,23 @@ class Setup:
     def check_config(self) -> None:
         """Checks if the config files are already setup."""
         # Check models directory exists
-        if check_folder_exists(self.local_paths.MODELS):
+        if check_folder_exists(LOCAL_PATHS.MODELS):
             self.config_exists.models_folder_exists = True
 
         # Check config file exists
-        if check_file_exists(self.local_paths.CONF):
+        if check_file_exists(LOCAL_PATHS.CONF):
             self.config_exists.config_file_exists = True
 
             # Check config file content is valid
             check_config = CheckConfigFileValid()
-            file_content_tree = ast.parse(get_file_content(self.local_paths.CONF))
+            file_content_tree = ast.parse(get_file_content(LOCAL_PATHS.CONF))
             check_config.visit(file_content_tree)
 
             if check_config.is_valid():
                 self.config_exists.config_file_valid = True
             else:
                 raise typer.Exit(code=CommonErrorCodes.INVALID_CONFIG)
+
+        # Check root file exists
+        if check_file_exists(LOCAL_PATHS.ZENTRA_ROOT):
+            self.config_exists.root_exists = True

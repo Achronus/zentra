@@ -15,14 +15,16 @@ class ConfigExistStorage:
         self.models_folder_exists = False
         self.config_file_exists = False
         self.config_file_valid = False
+        self.root_exists = False
 
     def app_configured(self) -> bool:
-        """Checks if Zentra has already been configured correctly."""
+        """Checks if all `zentra` files have been configured."""
         return all(
             [
                 self.models_folder_exists,
                 self.config_file_exists,
                 self.config_file_valid,
+                self.root_exists,
             ]
         )
 

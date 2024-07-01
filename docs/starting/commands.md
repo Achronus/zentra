@@ -25,6 +25,11 @@ This section contains a list of flags that are applicable to every command.
 
 ## zentra init
 
+??? info "Noteworthy Features"
+
+    - First use: configures the directory as a `Zentra` project
+    - Additional uses: adds missing configuration files to the `zentra` directory
+
 This command initialises the current directory as a `Zentra` project, configuring it with specific files required for using `Zentra`.
 
 Normally, you would use it without any arguments like so:
@@ -44,6 +49,11 @@ zentra init --force
 You can read more about the [`zentra init`](#zentra-init) command in our [Basic Usage Guide](basic_usage.md#creating-a-project).
 
 ## zentra generate
+
+??? info "Noteworthy Features"
+
+    - Manages all files in the `zentra/build` folder
+    - Builds, updates, and removes `React` components dynamically
 
 This is the main command you will run when using `Zentra`. It creates and updates your `React` components by reading the information in the `Zentra` app.
 

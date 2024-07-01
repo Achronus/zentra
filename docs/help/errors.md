@@ -14,7 +14,7 @@ We've designed our error messages to be as informative as possible so that you c
 
 Each error will come with a code that will help you navigate to a part of this page for details on why the error is happening and how you could potentially solve it.
 
-Simply use the find (`Ctrl + f` on Windows, Linux and ChromeOS, or `cmd + f` on Mac) function in your browser. Then, copy and paste the `error code: [number]` to find it on the page.
+Simply use the find (`Ctrl + f` on Windows, Linux and ChromeOS, or `cmd + f` on Mac) function in your browser. Then, copy and paste the `Error Code: [number]` to find it on the page.
 
 If you've encountered something extremely mind boggling (trust me, you'll know :wink:), please follow our [Reporting Issues Guide](report.md).
 
@@ -109,6 +109,29 @@ For these types of errors, please follow our [Reporting Issues Guide](report.md)
 
 ## Setup Errors
 
+### 12: No Components Found
+
+`Error Code: 12`
+
+You'll encounter this error when the `Zentra` app cannot find any `React` components to create.
+
+To fix it, open the config file at `zentra/models/__init__.py` and perform the following checks:
+
+1. `zentra = Zentra()` is initialised
+2. You've registered some `components` or `pages` using `zentra.register()`
+
+If you are still experiencing issues, please reset the config file with [`zentra init --reset-config`](../starting/commands.md#zentra-init).
+
+### 13: Import Error
+
+`Error Code: 13`
+
+You'll encounter this error when failing to find the `Zentra` app in `zentra/models/__init__.py`.
+
+To fix it, perform one of the following:
+
+1. If the file exists, initialise `zentra = Zentra()`
+2. Reset the config file with [`zentra init --reset-config`](../starting/commands.md#zentra-init)
 
 ## Generate Errors
 

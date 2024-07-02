@@ -20,23 +20,40 @@ from zentra_models.ui.control import Input
 
 
 class TestCheckZentraExists:
+    @pytest.fixture
+    def mock_zentra_module(self):
+        mock_module = MagicMock()
+        setattr(mock_module, "zentra", Zentra())
+        return mock_module
+
     @staticmethod
-    def test_success():
-        mock_zentra_module = MagicMock()
-        setattr(mock_zentra_module, "zentra", Zentra())
+    def test_success(tmp_path, mock_zentra_module):
+        # Create a dummy file to simulate the presence of the `zentra` app
+        dummy_file = tmp_path / "dummy_file"
+        dummy_file.touch()
 
         with patch("importlib.import_module", return_value=mock_zentra_module):
-            result = check_zentra_exists()
+            result = check_zentra_exists(str(dummy_file))
 
         assert isinstance(result, Zentra)
 
     @staticmethod
-    def test_fail_except():
+    def test_fail_except(tmp_path):
+        # Create a dummy file to simulate the presence of the `zentra` app
+        dummy_file = tmp_path / "dummy_file"
+        dummy_file.touch()
+
         with patch("importlib.import_module", side_effect=ModuleNotFoundError):
             with pytest.raises(typer.Exit) as exc_info:
-                check_zentra_exists()
+                check_zentra_exists(str(dummy_file))
 
         assert exc_info.value.exit_code == SetupErrorCodes.IMPORT_ERROR
+
+    @staticmethod
+    def test_path_does_not_exist(tmp_path):
+        non_existent_path = tmp_path / "non_existent_file"
+        result = check_zentra_exists(str(non_existent_path))
+        assert result is None
 
 
 class TestCheckFileExists:
@@ -71,7 +88,7 @@ class TestCheckModelsRegistered:
 
     def test_success(self):
         zentra = Zentra()
-        zentra.models.register(
+        zentra.register(
             [
                 Page(
                     name="TestPage",
@@ -87,7 +104,7 @@ class TestCheckConfigFileValid:
         filepath = os.path.join(tmp_path, "valid_code")
         with open(filepath, "w") as f:
             f.write(
-                "from zentra.models.core import Zentra\nzentra = Zentra()\nzentra.register()"
+                "from zentra_models.core import Zentra\nzentra = Zentra()\nzentra.register()"
             )
 
         checker = CheckConfigFileValid()

@@ -17,4 +17,5 @@ class TestConfigExistStorage:
         storage.models_folder_exists = True
         storage.config_file_exists = True
         storage.config_file_valid = True
+        storage.root_exists = True
         assert storage.app_configured()

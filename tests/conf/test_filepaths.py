@@ -1,5 +1,5 @@
 import os
-import unittest
+import pytest
 
 from zentra_models.cli.conf.constants import (
     ZentraLocalFilepaths,
@@ -7,56 +7,59 @@ from zentra_models.cli.conf.constants import (
 )
 
 
-class TestZentaFilepaths(unittest.TestCase):
-    def test_root_path(self):
-        self.assertEqual(
-            ZentraLocalFilepaths.ROOT,
-            os.path.join(os.getcwd(), "zentra"),
+@pytest.fixture
+def local_paths(tmp_path) -> ZentraLocalFilepaths:
+    return ZentraLocalFilepaths(tmp_path)
+
+
+@pytest.fixture
+def generate_paths(tmp_path) -> ZentraGeneratedFilepaths:
+    return ZentraGeneratedFilepaths(tmp_path)
+
+
+class TestZentraLocalFilepaths:
+    @staticmethod
+    def test_root_path(tmp_path, local_paths: ZentraLocalFilepaths):
+        assert local_paths.ROOT == os.path.join(tmp_path, "zentra")
+
+    @staticmethod
+    def test_models_path(tmp_path, local_paths: ZentraLocalFilepaths):
+        assert local_paths.MODELS == os.path.join(tmp_path, "zentra", "models")
+
+    @staticmethod
+    def test_generated_path(tmp_path, local_paths: ZentraLocalFilepaths):
+        assert local_paths.GENERATED == os.path.join(tmp_path, "zentra", "build")
+
+    @staticmethod
+    def test_setup_filename(tmp_path, local_paths: ZentraLocalFilepaths):
+        assert local_paths.CONF == os.path.join(
+            tmp_path, "zentra", "models", "__init__.py"
         )
 
-    def test_models_path(self):
-        self.assertEqual(
-            ZentraLocalFilepaths.MODELS,
-            os.path.join(os.getcwd(), "zentra", "models"),
+
+class TestZentraGeneratedFilepaths:
+    @staticmethod
+    def test_root_path(tmp_path, generate_paths: ZentraGeneratedFilepaths):
+        assert generate_paths.ROOT == os.path.join(tmp_path, "zentra", "build")
+
+    @staticmethod
+    def test_pages_path(tmp_path, generate_paths: ZentraGeneratedFilepaths):
+        assert generate_paths.PAGES == os.path.join(
+            tmp_path, "zentra", "build", "pages"
         )
 
-    def test_generated_path(self):
-        self.assertEqual(
-            ZentraLocalFilepaths.GENERATED,
-            os.path.join(os.getcwd(), "zentra", "generated"),
+    @staticmethod
+    def test_components_path(tmp_path, generate_paths: ZentraGeneratedFilepaths):
+        assert generate_paths.COMPONENTS == os.path.join(
+            tmp_path, "zentra", "build", "components"
         )
 
-    def test_setup_filename(self):
-        self.assertEqual(ZentraLocalFilepaths.SETUP_FILENAME, "__init__.py")
+    @staticmethod
+    def test_lib_path(tmp_path, generate_paths: ZentraGeneratedFilepaths):
+        assert generate_paths.LIB == os.path.join(tmp_path, "zentra", "build", "lib")
 
-
-class TestZentraGeneratedFilepaths(unittest.TestCase):
-    def test_root_path(self):
-        self.assertEqual(
-            ZentraGeneratedFilepaths.ROOT,
-            os.path.join(os.getcwd(), "zentra", "generated"),
-        )
-
-    def test_pages_path(self):
-        self.assertEqual(
-            ZentraGeneratedFilepaths.PAGES,
-            os.path.join(os.getcwd(), "zentra", "generated", "pages"),
-        )
-
-    def test_components_path(self):
-        self.assertEqual(
-            ZentraGeneratedFilepaths.COMPONENTS,
-            os.path.join(os.getcwd(), "zentra", "generated", "components"),
-        )
-
-    def test_lib_path(self):
-        self.assertEqual(
-            ZentraGeneratedFilepaths.LIB,
-            os.path.join(os.getcwd(), "zentra", "generated", "lib"),
-        )
-
-    def test_zentra_path(self):
-        self.assertEqual(
-            ZentraGeneratedFilepaths.ZENTRA,
-            os.path.join(os.getcwd(), "zentra", "generated", "components", "zentra"),
+    @staticmethod
+    def test_zentra_path(tmp_path, generate_paths: ZentraGeneratedFilepaths):
+        assert generate_paths.ZENTRA == os.path.join(
+            tmp_path, "zentra", "build", "components", "zentra"
         )

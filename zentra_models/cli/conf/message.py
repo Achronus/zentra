@@ -62,21 +62,6 @@ INVALID_CONFIG_CHECKS = (
     ACCESS_CONFIG_STR
     + """
 Then, check if:
-  1. [magenta]zentra[/magenta] = [yellow]Zentra[/yellow]() is initalised
-  2. [magenta]Zentra[/magenta] models are registered with [magenta]zentra[/magenta].[yellow]register[/yellow]() with   
-    a list of [magenta]Zentra[/magenta] [yellow]Pages[/yellow] or [yellow]Components[/yellow]
-
-For example:
-  [magenta]zentra[/magenta].[yellow]register[/yellow]([cyan][[/cyan][yellow]Page[/yellow](...), [yellow]Page[/yellow](...)[cyan]][/cyan])
-  [magenta]zentra[/magenta].[yellow]register[/yellow]([cyan][[/cyan][yellow]Accordion[/yellow](...), [yellow]Button[/yellow](...)[cyan]][/cyan])
-  [magenta]zentra[/magenta].[yellow]register[/yellow]([cyan][[/cyan][yellow]Page[/yellow](...), [yellow]Accordion[/yellow](...)[cyan]][/cyan])
-"""
-)
-
-VALID_CONFIG_NO_COMPONENTS = (
-    ACCESS_CONFIG_STR
-    + """
-Then, check if:
   1. You've [magenta]imported[/magenta] your created models
   2. You've [green]added[/green] them to [magenta]zentra[/magenta].[yellow]register[/yellow]()
 """
@@ -149,13 +134,13 @@ COMMON_ERROR_MAP = {
         f"{MODELS_FILEPATH} is missing!",
         checks=MISSING_FILES_CHECKS,
     ),
+    CommonErrorCodes.NO_COMPONENTS: error_msg_with_checks(
+        "[red]No components found[/red] in [yellow]config[/yellow] file!",
+        checks=INVALID_CONFIG_CHECKS,
+    ),
 }
 
 SETUP_ERROR_MAP = {
-    SetupErrorCodes.NO_COMPONENTS: error_msg_with_checks(
-        "Config [green]valid[/green] but [red]no components found[/red]!",
-        checks=VALID_CONFIG_NO_COMPONENTS,
-    ),
     SetupErrorCodes.IMPORT_ERROR: error_msg_with_checks(
         "[red]Cannot[/red] find or access the [magenta]Zentra[/magenta] app!",
         checks=IMPORT_ERROR_CHECKS,
@@ -163,10 +148,6 @@ SETUP_ERROR_MAP = {
 }
 
 GENERATE_ERROR_MAP = {
-    GenerateErrorCodes.NO_COMPONENTS: error_msg_with_checks(
-        "[red]No components found[/red] in [yellow]config[/yellow] file!",
-        checks=INVALID_CONFIG_CHECKS,
-    ),
     GenerateErrorCodes.GENERATE_DIR_MISSING: error_msg_with_checks(
         title="The [magenta]zentra/generated[/magenta] folder is [red]missing[/red]!",
         checks=BUG_MSG,

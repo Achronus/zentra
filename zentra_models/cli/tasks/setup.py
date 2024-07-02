@@ -19,7 +19,6 @@ from .controllers.setup import SetupController
 from zentra_models.cli.conf.constants import (
     LOCAL_PATHS,
     CommonErrorCodes,
-    SetupErrorCodes,
     SetupSuccessCodes,
 )
 
@@ -87,7 +86,7 @@ class Setup:
         # Already exists
         if (zentra and project_configured) and not reset_config:
             if len(zentra.name_storage.components) == 0:
-                raise typer.Exit(code=SetupErrorCodes.NO_COMPONENTS)
+                raise typer.Exit(code=CommonErrorCodes.NO_COMPONENTS)
 
             console.print(setup_complete_panel(zentra))
             raise typer.Exit(code=SetupSuccessCodes.ALREADY_CONFIGURED)

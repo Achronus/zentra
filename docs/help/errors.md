@@ -99,19 +99,9 @@ You'll encounter this error when the `zentra/models` directory is missing.
 
 To fix it, run the [`zentra init`](../starting/commands.md#zentra-init) command.
 
-### 1000: Unknown Error
+### 6: No Components Found
 
-`Error Code: 1000`
-
-You'll encounter this error when something happens that we haven't accounted for.
-
-For these types of errors, please follow our [Reporting Issues Guide](report.md).
-
-## Setup Errors
-
-### 12: No Components Found
-
-`Error Code: 12`
+`Error Code: 6`
 
 You'll encounter this error when the `Zentra` app cannot find any `React` components to create.
 
@@ -122,9 +112,19 @@ To fix it, open the config file at `zentra/models/__init__.py` and perform the f
 
 If you are still experiencing issues, please reset the config file with [`zentra init --reset-config`](../starting/commands.md#zentra-init).
 
-### 13: Import Error
+### 1000: Unknown Error
 
-`Error Code: 13`
+`Error Code: 1000`
+
+You'll encounter this error when something happens that we haven't accounted for.
+
+For these types of errors, please follow our [Reporting Issues Guide](report.md).
+
+## Setup Errors
+
+### 11: Import Error
+
+`Error Code: 11`
 
 You'll encounter this error when failing to find the `Zentra` app in `zentra/models/__init__.py`.
 

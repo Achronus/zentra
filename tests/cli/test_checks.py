@@ -1,4 +1,3 @@
-import ast
 import os
 import tempfile
 import pytest
@@ -7,14 +6,12 @@ from unittest.mock import patch, MagicMock
 import typer
 
 from zentra_models.cli.conf.checks import (
-    CheckConfigFileValid,
     check_file_exists,
     check_folder_exists,
     check_models_registered,
     check_zentra_exists,
 )
 from zentra_models.cli.constants import SetupErrorCodes
-from zentra_models.cli.local.files import get_file_content
 from zentra_models.core import Page, Zentra
 from zentra_models.ui.control import Input
 
@@ -28,9 +25,10 @@ class TestCheckZentraExists:
 
     @staticmethod
     def test_success(tmp_path, mock_zentra_module):
-        # Create a dummy file to simulate the presence of the `zentra` app
         dummy_file = tmp_path / "dummy_file"
-        dummy_file.touch()
+
+        with open(dummy_file, "w") as f:
+            f.write("from zentra_models.core import Zentra\nzentra = Zentra()")
 
         with patch("importlib.import_module", return_value=mock_zentra_module):
             result = check_zentra_exists(str(dummy_file))
@@ -39,7 +37,6 @@ class TestCheckZentraExists:
 
     @staticmethod
     def test_fail_except(tmp_path):
-        # Create a dummy file to simulate the presence of the `zentra` app
         dummy_file = tmp_path / "dummy_file"
         dummy_file.touch()
 
@@ -97,29 +94,3 @@ class TestCheckModelsRegistered:
             ]
         )
         assert check_models_registered(zentra)
-
-
-class TestCheckConfigFileValid:
-    def test_success(self, tmp_path):
-        filepath = os.path.join(tmp_path, "valid_code")
-        with open(filepath, "w") as f:
-            f.write(
-                "from zentra_models.core import Zentra\nzentra = Zentra()\nzentra.register()"
-            )
-
-        checker = CheckConfigFileValid()
-        file_content = get_file_content(filepath)
-        tree = ast.parse(file_content, filename=filepath)
-        checker.visit(tree)
-        assert checker.is_valid()
-
-    def test_fail(self, tmp_path):
-        filepath = os.path.join(tmp_path, "invalid_code")
-        with open(filepath, "w") as f:
-            f.write("from zentra.models.core import Zentra\nzentra = Zentra()")
-
-        checker = CheckConfigFileValid()
-        file_content = get_file_content(filepath)
-        tree = ast.parse(file_content, filename=filepath)
-        checker.visit(tree)
-        assert not checker.is_valid()

@@ -1,4 +1,3 @@
-import ast
 import importlib
 import os
 
@@ -50,51 +49,3 @@ def check_models_registered(zentra: Zentra) -> bool:
         return True
 
     return False
-
-
-class CheckConfigFileValid(ast.NodeVisitor):
-    """
-    A utility class for handling the checks to identify if the `zentra/models` config file is valid.
-
-    Checks for the following conditions:
-    1. Zentra is imported correctly
-    2. Zentra app is initalised
-    3. `zentra.models.register()` exists
-    """
-
-    def __init__(self) -> None:
-        self.zentra_init_exists = False
-        self.zentra_register_exists = False
-        self.zentra_imported = False
-
-        self.assign_target = "zentra"
-        self.register_method = "register"
-        self.module_name = "zentra_models.core"
-        self.import_name = "Zentra"
-
-    def visit_Assign(self, node: ast.Assign):
-        """Visits all `ast.Assign` nodes and checks if `zentra = Zentra()` is present."""
-        for target in node.targets:
-            if isinstance(target, ast.Name) and target.id == self.assign_target:
-                self.zentra_init_exists = True
-
-    def visit_Call(self, node: ast.Call):
-        """Visits all `ast.Call` nodes and validates `zentra.models.register()`."""
-        if hasattr(node.func, "attr") and node.func.attr == self.register_method:
-            self.zentra_register_exists = True
-
-    def visit_ImportFrom(self, node: ast.ImportFrom):
-        """Checks if `from zentra.models.core import Zentra` is present."""
-        if node.module == self.module_name:
-            for alias in node.names:
-                if alias.name == self.import_name:
-                    self.zentra_imported = True
-
-    def is_valid(self) -> bool:
-        """Accesses the stored checks attributes and checks they are all True. Returns True is valid, else False."""
-        checks = [
-            self.zentra_init_exists,
-            self.zentra_register_exists,
-            self.zentra_imported,
-        ]
-        return all(checks)

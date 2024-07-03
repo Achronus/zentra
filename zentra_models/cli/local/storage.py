@@ -8,13 +8,12 @@ class ConfigExistStorage:
     A storage container for boolean values for the following config checks:
     1. `zentra/models` folder exists
     2. `zentra/models` setup file exists
-    3. `zentra/models` setup file is valid with required elements
+    3. `zentra.root` exists
     """
 
     def __init__(self) -> None:
         self.models_folder_exists = False
         self.config_file_exists = False
-        self.config_file_valid = False
         self.root_exists = False
 
     def app_configured(self) -> bool:
@@ -23,7 +22,6 @@ class ConfigExistStorage:
             [
                 self.models_folder_exists,
                 self.config_file_exists,
-                self.config_file_valid,
                 self.root_exists,
             ]
         )

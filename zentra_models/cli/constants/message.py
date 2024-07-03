@@ -118,10 +118,6 @@ COMMON_ERROR_MAP = {
         f"{MODELS_FILEPATH} [yellow]config[/yellow] file [red]missing[/red]!",
         checks=MISSING_FILES_CHECKS,
     ),
-    CommonErrorCodes.INVALID_CONFIG: error_msg_with_checks(
-        "[red]Invalid[/red] [yellow]config[/yellow] file [green]detected[/green]!",
-        checks=INVALID_CONFIG_CHECKS,
-    ),
     CommonErrorCodes.CONFIG_EMPTY: error_msg_with_checks(
         "[yellow]Config[/yellow] file is [red]empty[/red]!",
         checks="\nRun [green]zentra init[/green] to get started!\n",

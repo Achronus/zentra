@@ -1,17 +1,15 @@
-import ast
 import os
 
 import typer
 
 from zentra_models.cli.conf.checks import (
-    CheckConfigFileValid,
     check_file_exists,
     check_folder_exists,
     check_zentra_exists,
 )
 from zentra_models.cli.constants.filepaths import LOCAL_PATHS
 from zentra_models.cli.constants import CommonErrorCodes, SetupSuccessCodes
-from zentra_models.cli.local.files import get_file_content, local_path
+from zentra_models.cli.local.files import local_path
 from zentra_models.cli.local.storage import ConfigExistStorage
 from zentra_models.cli.display.printables import (
     setup_complete_panel,
@@ -64,7 +62,7 @@ class Setup:
 
     def init_app(self, force: bool, reset_config: bool) -> None:
         """Performs configuration to initialise application with Zentra."""
-        self.check_config()
+        self.check_config_files()
         project_configured = self.config_exists.app_configured()
 
         if not project_configured and reset_config:
@@ -99,7 +97,7 @@ class Setup:
         console.print(setup_first_run_panel())
         raise typer.Exit(code=SetupSuccessCodes.COMPLETE)
 
-    def check_config(self) -> None:
+    def check_config_files(self) -> None:
         """Checks if the config files are already setup."""
         # Check models directory exists
         if check_folder_exists(LOCAL_PATHS.MODELS):
@@ -108,16 +106,6 @@ class Setup:
         # Check config file exists
         if check_file_exists(LOCAL_PATHS.CONF):
             self.config_exists.config_file_exists = True
-
-            # Check config file content is valid
-            check_config = CheckConfigFileValid()
-            file_content_tree = ast.parse(get_file_content(LOCAL_PATHS.CONF))
-            check_config.visit(file_content_tree)
-
-            if check_config.is_valid():
-                self.config_exists.config_file_valid = True
-            else:
-                raise typer.Exit(code=CommonErrorCodes.INVALID_CONFIG)
 
         # Check root file exists
         if check_file_exists(LOCAL_PATHS.ZENTRA_ROOT):

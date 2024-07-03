@@ -36,72 +36,33 @@ You'll encounter this error when the `__init__.py` file is missing from the `zen
 
 To fix it, run the [`zentra init`](../starting/commands.md#zentra-init) command to create a new `config` file.
 
-### 2: Invalid Config File
+### 2: Config File Empty
 
 `Error Code: 2`
-
-You'll encounter this error when the `__init__.py` file in the `zentra/models` directory is configured incorrectly.
-
-To fix it, make sure the `config` file contains the following:
-
-1. `zentra = Zentra()` to initalise the `Zentra` app
-2. Zentra models are registered using `zentra.register()`
-
-Here's a working example:
-
-```python title="zentra/models/__init__.py" hl_lines="14 17-18"
-from zentra_models.core import Component, Page, Zentra
-
-# Web pages that contain multiple React components
-page_map: list[Page] = [
-    # Custom pages here...
-]
-
-# Single components that are not in pages
-standalone_components: list[Component] = [
-    # Custom components here...
-]
-
-# Setup the application
-zentra = Zentra() # (1)!
-
-# Register the pages and components to generate
-zentra.register(page_map) # (2)!
-zentra.register(standalone_components)
-```
-
-1. Initalise the application
-2. Register `pages` or `components` to the app
-
-Alternatively, reset your `config` file using the [`zentra init --reset-config`](../starting/commands.md#zentra-init) command.
-
-### 3: Config File Empty
-
-`Error Code: 3`
 
 You'll encounter this error when the `__init__.py` file in the `zentra/models` directory is empty.
 
 To fix it, run [`zentra init --reset-config`](../starting/commands.md#zentra-init) to create a new one.
 
-### 4: Zentra Directory Missing
+### 3: Zentra Directory Missing
 
-`Error Code: 4`
+`Error Code: 3`
 
 You'll encounter this error when you have the `Zentra` package installed but haven't initialised the project yet.
 
 To fix it, run the [`zentra init`](../starting/commands.md#zentra-init) command.
 
-### 5: Models Directory Missing
+### 4: Models Directory Missing
 
-`Error Code: 5`
+`Error Code: 4`
 
 You'll encounter this error when the `zentra/models` directory is missing.
 
 To fix it, run the [`zentra init`](../starting/commands.md#zentra-init) command.
 
-### 6: No Components Found
+### 5: No Components Found
 
-`Error Code: 6`
+`Error Code: 5`
 
 You'll encounter this error when the `Zentra` app cannot find any `React` components to create.
 

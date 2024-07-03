@@ -1,11 +1,9 @@
-import ast
 import typer
 
 import aiohttp
 import asyncio
 
 from zentra_models.cli.conf.checks import (
-    CheckConfigFileValid,
     check_file_exists,
     check_folder_exists,
     check_zentra_exists,
@@ -17,10 +15,7 @@ from zentra_models.cli.constants import (
     GenerateSuccessCodes,
 )
 from zentra_models.cli.constants.filepaths import LOCAL_PATHS
-from zentra_models.cli.local.files import (
-    get_file_content,
-    get_file_content_lines,
-)
+from zentra_models.cli.local.files import get_file_content_lines
 from zentra_models.cli.local.storage import Dependency, DependencyStorage
 from zentra_models.cli.commands.generate.generate import GenerateController
 from zentra_models.cli.display.printables import generate_complete_panel
@@ -39,6 +34,8 @@ class Generate:
 
     def init_checks(self) -> None:
         """Performs various checks to immediately provide feedback to the user regarding missing files."""
+        zentra = check_zentra_exists(self.config)
+
         if not check_folder_exists(self.local_paths.MODELS):
             raise typer.Exit(code=CommonErrorCodes.MODELS_DIR_MISSING)
 
@@ -48,21 +45,13 @@ class Generate:
         if len(get_file_content_lines(self.config)) == 0:
             raise typer.Exit(code=CommonErrorCodes.CONFIG_EMPTY)
 
-    def check_config_valid(self) -> None:
-        """Checks if the config file is valid. Raises an error if False."""
-        check_config = CheckConfigFileValid()
-        file_content_tree = ast.parse(get_file_content(self.config))
-        check_config.visit(file_content_tree)
-
-        valid_content = check_config.is_valid()
-
-        if not valid_content:
-            raise typer.Exit(code=CommonErrorCodes.INVALID_CONFIG)
+        if not zentra:
+            raise typer.Exit(code=CommonErrorCodes.ZENTRA_MISSING)
 
     def create_components(self) -> None:
         """Generates the react components based on the `zentra/models` folder."""
-        self.check_config_valid()
-        zentra = check_zentra_exists(self.local_paths.MODELS)
+        zentra = check_zentra_exists(self.config)
+
 
         if not zentra:
             raise typer.Exit(CommonErrorCodes.MODELS_DIR_MISSING)

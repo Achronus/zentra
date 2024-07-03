@@ -155,27 +155,13 @@ class Page(BaseModel):
         return formatted_schema
 
 
-class Zentra(BaseModel):
+class Zentra:
     """An application class for registering the components to create."""
 
-    _pages = PrivateAttr(default=[])
-    _components = PrivateAttr(default=[])
-    _name_storage = PrivateAttr(default=BasicNameStorage())
-
-    @property
-    def pages(self) -> list[Page]:
-        """Stores a list of user created Pages found in the Zentra models folder."""
-        return self._pages
-
-    @property
-    def components(self) -> list[Component]:
-        """Stores a list of Zentra Components populated by the user in the Zentra models folder."""
-        return self._components
-
-    @property
-    def name_storage(self) -> BasicNameStorage:
-        """A storage container for the user defined Zentra pages and Component names."""
-        return self._name_storage
+    def __init__(self) -> None:
+        self.pages = []
+        self.components = []
+        self.name_storage = BasicNameStorage()
 
     def __set_type(
         self, component: BaseModel, valid_types: tuple[BaseModel, ...]
@@ -187,21 +173,21 @@ class Zentra(BaseModel):
     def register(self, components: list[Page | Component]) -> None:
         """Register a list of Zentra models to generate."""
         type_mapping: dict[BaseModel, list] = {
-            Page: self._pages,
-            Component: self._components,
+            Page: self.pages,
+            Component: self.components,
         }
         valid_types = tuple(type_mapping.keys())
 
         for component in components:
             if not isinstance(component, valid_types):
                 raise ValueError(
-                    f"Invalid component type: {type(component)}.\nMust be (or inherit from) a list of either: {valid_types}.\n\nValid examples:\n  zentra.models.register([Page(...), Page(...)])\n  zentra.models.register([Accordion(...), Button(...)])\n  zentra.models.register([Page(...), Accordion(...)])\n"
+                    f"Invalid component type: {type(component)}.\nMust be (or inherit from) a list of either: {valid_types}."
                 )
 
             comp_type = self.__set_type(component, valid_types)
             type_mapping[comp_type].append(component)
 
-        self.fill_storage(pages=self._pages)
+        self.fill_storage(pages=self.pages)
 
     def fill_storage(self, pages: list[Page]) -> None:
         """Populates page and component names into name storage."""
@@ -210,9 +196,9 @@ class Zentra(BaseModel):
         )
         component_names = [name for _, name in component_pairs]
 
-        self._name_storage.components = component_names
-        self._name_storage.pages = [page.name for page in pages]
-        self._name_storage.filenames = [
+        self.name_storage.components = component_names
+        self.name_storage.pages = [page.name for page in pages]
+        self.name_storage.filenames = [
             (folder, f"{name_from_pascal_case(name)}.tsx")
             for folder, name in component_pairs
         ]
@@ -223,7 +209,6 @@ class Zentra(BaseModel):
     ) -> LibraryNamePairs:
         """
         A helper function for retrieving the component names and their associated library name.
-
 
         Returns:
         `[(libray_name, component_name), ...]`

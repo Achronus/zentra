@@ -5,6 +5,7 @@ import os
 import typer
 from zentra_models.cli.constants import SetupErrorCodes
 
+from zentra_models.cli.local.extractor import ZentraExtractor
 from zentra_models.core import Zentra
 from zentra_models.cli.conf.logger import zentra_missing_logger
 
@@ -15,14 +16,16 @@ def check_zentra_exists(path: str) -> Zentra | None:
         return None
 
     try:
-        zentra_module = importlib.import_module("zentra.models")
+        extractor = ZentraExtractor(path)
+        name = extractor.zentra.targets[0].id
+
+        module = importlib.import_module("zentra.models")
+        zentra: Zentra = getattr(module, name)
+        return zentra
 
     except (AttributeError, ModuleNotFoundError) as e:
         zentra_missing_logger.error(e)
         raise typer.Exit(SetupErrorCodes.IMPORT_ERROR)
-
-    if hasattr(zentra_module, "zentra"):
-        return zentra_module.zentra
 
 
 def check_file_exists(filepath: str) -> bool:

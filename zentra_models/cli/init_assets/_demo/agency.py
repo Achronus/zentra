@@ -64,8 +64,8 @@ agency_details = Page(
     name="AgencyDetails",
     components=[
         AlertDialog(
-            name="agencyAlertDialog",
-            content=[
+            trigger="agency info",
+            description=[
                 Card(
                     name="agencyInfo",
                     title="Agency Information",

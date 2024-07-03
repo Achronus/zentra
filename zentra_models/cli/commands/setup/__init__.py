@@ -78,7 +78,7 @@ class Setup:
             elif not project_configured:
                 confirm_project_init()
 
-        zentra = check_zentra_exists(LOCAL_PATHS.MODELS)
+        zentra = check_zentra_exists(LOCAL_PATHS.CONF)
 
         # Already exists
         if (zentra and project_configured) and not reset_config:

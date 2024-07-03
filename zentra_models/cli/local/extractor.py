@@ -1,8 +1,9 @@
+import ast
 import typer
 
 from zentra_models.cli.constants import GenerateSuccessCodes
 from zentra_models.cli.constants.filepaths import GENERATE_PATHS
-from zentra_models.cli.local.files import get_filename_dir_pairs
+from zentra_models.cli.local.files import get_file_content, get_filename_dir_pairs
 from zentra_models.cli.local.storage import BasicNameStorage, CountStorage
 from zentra_models.cli.constants.types import LibraryNamePairs
 
@@ -60,3 +61,30 @@ class LocalExtractor:
         """Raises an error if there are no new components to create."""
         if user_models == existing:
             raise typer.Exit(code=GenerateSuccessCodes.NO_NEW_COMPONENTS)
+
+
+class ZentraExtractor(ast.NodeVisitor):
+    """Extracts the `Zentra` object from the `zentra/models` config file."""
+
+    def __init__(self, filepath: str) -> None:
+        self.filepath = filepath
+        self.zentra = None
+
+        self.extract()
+
+    def visit_Assign(self, node: ast.Assign) -> None:
+        """Visits the `Assign` nodes in the `ast` tree and stores the `Zentra` object in `self.zentra`"""
+        if (
+            isinstance(node.value, ast.Call)
+            and isinstance(node.value.func, ast.Name)
+            and node.value.func.id == "Zentra"
+        ):
+            self.zentra = node
+
+        self.generic_visit(node)
+
+    def extract(self) -> None:
+        """Extracts the `Zentra` object from the filepath and stores it to the `self.zentra` object."""
+        file_content = get_file_content(self.filepath)
+        tree = ast.parse(file_content, filename=self.filepath)
+        self.visit(tree)

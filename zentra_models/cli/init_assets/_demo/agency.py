@@ -33,7 +33,7 @@ form_fields = [
         name="whiteLabel",
         label="White Label Mode",
         description="Turning on White label mode will show your agency logo to all sub accounts by default. You can override this behaviour through sub account settings.",
-        content=Switch(),
+        content=Switch(id="whiteLabel"),
         message=False,
     ),
     FormField(

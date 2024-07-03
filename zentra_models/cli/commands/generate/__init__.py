@@ -52,7 +52,6 @@ class Generate:
         """Generates the react components based on the `zentra/models` folder."""
         zentra = check_zentra_exists(self.config)
 
-
         if not zentra:
             raise typer.Exit(CommonErrorCodes.MODELS_DIR_MISSING)
 

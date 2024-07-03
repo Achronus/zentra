@@ -6,8 +6,9 @@ Replace this file with `zentra/models/__init__.py`
 
 from zentra_models.core import Component, Page, Zentra
 
-from .agency import agency_details
-from .user_button import user_btn
+from zentra.models._demo.agency import agency_details
+from zentra.models._demo.user_button import user_btn
+
 
 # Web pages that contain multiple React components
 page_map: list[Page] = [

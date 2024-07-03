@@ -21,6 +21,9 @@ class LocalExtractor:
 
         self.model_counts = CountStorage()
 
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(name_storage="{self.name_storage}", model_counts="{self.model_counts}")'
+
     def find_difference(
         self, pair_one: LibraryNamePairs, pair_two: LibraryNamePairs
     ) -> LibraryNamePairs:

@@ -1,6 +1,6 @@
-from zentra_models.core import Page
+from zentra_models.core import Block, Page
 from zentra_models.ui import Form, FormField
-from zentra_models.ui.control import Input, Switch
+from zentra_models.ui.control import Button, Input, Switch
 from zentra_models.ui.notification import AlertDialog
 from zentra_models.ui.presentation import Card
 from zentra_models.uploadthing import FileUpload
@@ -62,23 +62,29 @@ form_fields = [
 
 agency_details = Page(
     name="AgencyDetails",
-    components=[
-        AlertDialog(
-            trigger="agency info",
-            description=[
-                Card(
-                    name="agencyInfo",
-                    title="Agency Information",
-                    description="Let's create an agency for your business. You can edit agency settings later from the agency settings tab.",
-                    content=[
-                        Form(
-                            name="agencyForm",
-                            fields=form_fields,
-                            btn_text="Save Agency Information",
+    blocks=[
+        Block(
+            name="AgencyForm",
+            components=[
+                AlertDialog(
+                    trigger="agency info",
+                    description=[
+                        Card(
+                            name="agencyInfo",
+                            title="Agency Information",
+                            description="Let's create an agency for your business. You can edit agency settings later from the agency settings tab.",
+                            content=[
+                                Form(
+                                    name="agencyForm",
+                                    fields=form_fields,
+                                    btn_text="Save Agency Information",
+                                ),
+                            ],
                         ),
                     ],
                 ),
+                Button(content="test"),
             ],
-        ),
+        )
     ],
 )

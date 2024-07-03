@@ -62,7 +62,14 @@ class AlertDialog(Component, ShadcnUi):
     cancel_btn: Optional[str] = None
     action_btn: Optional[str] = None
 
-    _content_attr = PrivateAttr(default="header")
+    _content_attrs = PrivateAttr(
+        default=[
+            "header",
+            "title",
+            "description",
+            "footer",
+        ]
+    )
 
     _child_names = PrivateAttr(
         default=[

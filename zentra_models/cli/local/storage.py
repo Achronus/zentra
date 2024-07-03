@@ -62,6 +62,7 @@ class BasicNameStorage(BaseModel):
     """A simple storage container for Zentra page and component names."""
 
     pages: list[str] = []
+    blocks: list[str] = []
     components: list[str] = []
     filenames: LibraryNamePairs = []
 

@@ -1,7 +1,9 @@
-from typing import Any
+from itertools import chain
+from typing import Any, Union
 
 from pydantic import BaseModel, Field, PrivateAttr, field_validator
 
+from zentra_models.cli.local.nodes import ComponentNode
 from zentra_models.cli.local.storage import BasicNameStorage
 from zentra_models.cli.constants.types import LibraryNamePairs
 from zentra_models.base import ZentraModel
@@ -18,7 +20,7 @@ from zentra_models.core.validation.component import data_array_validation
 
 class Component(ZentraModel):
     """
-    A Zentra model for all React components.
+    A parent `Zentra` model for all React components.
     """
 
     _parent = PrivateAttr(default=False)
@@ -104,17 +106,26 @@ class DataArray(BaseModel):
         )
 
 
+class Block(BaseModel):
+    """
+    A `Zentra` model for a single React component function.
+    """
+
+    name: str = Field(min_length=1)
+    components: list[Component]
+
+
 class Page(BaseModel):
     """
     A Zentra model for a single webpage of React components.
 
     Parameters:
     - `name` (`string`) - the name of the page
-    - `components` (`list[Component]`) - a list of page components
+    - `blocks` (`list[Block]`) - a list of block models
     """
 
     name: str = Field(min_length=1)
-    components: list[Component]
+    blocks: list[Block]
 
     @field_validator("name")
     def validate_id(cls, name: str) -> str:
@@ -155,85 +166,156 @@ class Page(BaseModel):
         return formatted_schema
 
 
+class LocalFilesGraphBuilder:
+    """Converts a model into a node graph. Useful for retrieving the `library_name` and `classname` from a `Component` model tree."""
+
+    def __init__(self, model: Component) -> None:
+        self.model = model
+
+    def build(self) -> ComponentNode:
+        """Builds a graph of nodes."""
+        name = self.model.classname
+        library = self.model.library
+        children = self.get_children(self.model)
+
+        return self.set_node(
+            self.model,
+            args={
+                "name": name,
+                "library": library,
+                "children": children,
+            },
+        )
+
+    def __get_children(self, model: Component) -> list[Component]:
+        """A helper method for retrieving the models children based on its content attributes."""
+        children = []
+        if model.content_attributes:
+            for attr_name in model.content_attributes:
+                items = getattr(model, attr_name)
+
+                if items and not isinstance(items, str):
+                    if isinstance(items, list):
+                        children.extend(items)
+                    else:
+                        children.append(items)
+
+        return children
+
+    def get_children(self, model: Component) -> list[ComponentNode]:
+        """Retrieves the models children and converts it into nodes."""
+        children = self.__get_children(model)
+
+        if len(children) == 1:
+            return [self.set_node(children[0])]
+
+        return [self.set_node(model) for model in children]
+
+    def set_node(self, model: Component, args: dict = None) -> ComponentNode:
+        """Create a component node model."""
+        children = self.get_children(model)
+
+        if args is None:
+            args = {
+                "name": model.classname,
+                "library": model.library,
+                "children": children,
+            }
+
+        return ComponentNode(**args)
+
+
 class Zentra:
     """An application class for registering the components to create."""
 
     def __init__(self) -> None:
         self.pages = []
-        self.components = []
+        self.blocks = []
+
         self.name_storage = BasicNameStorage()
 
-    def __set_type(
-        self, component: BaseModel, valid_types: tuple[BaseModel, ...]
-    ) -> type:
-        """Checks a components type and assigns it accordingly."""
-        base_type = component.__class__.__base__
-        return base_type if base_type in valid_types else type(component)
+    def valid_type_checks(
+        self, models: list, valid_types: tuple[BaseModel, ...]
+    ) -> None:
+        """A helper function for raising errors for invalid types to the `register()` method."""
 
-    def register(self, components: list[Page | Component]) -> None:
+        types_str = "  " + "\n  ".join(
+            [f"{idx}. {item}" for idx, item in enumerate(valid_types, start=1)]
+        )
+        error_msg_list = (
+            f"\nMust be (or inherit from) a list of either:\n{types_str}\n."
+        )
+
+        if not isinstance(models, list):
+            raise ValueError(
+                f"Invalid component type: {type(models)}.\n{error_msg_list}"
+            )
+
+        for idx, model in enumerate(models):
+            if not isinstance(model, valid_types):
+                raise ValueError(
+                    f"Invalid component type (idx: {idx}): {type(models)}.\n{error_msg_list}"
+                )
+
+    def register(self, models: list[Union[Page, Block]]) -> None:
         """Register a list of Zentra models to generate."""
         type_mapping: dict[BaseModel, list] = {
             Page: self.pages,
-            Component: self.components,
+            Block: self.blocks,
         }
-        valid_types = tuple(type_mapping.keys())
 
-        for component in components:
-            if not isinstance(component, valid_types):
-                raise ValueError(
-                    f"Invalid component type: {type(component)}.\nMust be (or inherit from) a list of either: {valid_types}."
-                )
+        self.valid_type_checks(models, tuple(type_mapping.keys()))
 
-            comp_type = self.__set_type(component, valid_types)
-            type_mapping[comp_type].append(component)
+        for model in models:
+            for model_type in type_mapping.keys():
+                if isinstance(model, model_type):
+                    type_mapping[model_type].append(model)
 
-        self.fill_storage(pages=self.pages)
+        self.fill_storage(self.pages)
 
     def fill_storage(self, pages: list[Page]) -> None:
         """Populates page and component names into name storage."""
-        component_pairs = self.__extract_component_names(
-            pages=pages, filter_list=COMPONENT_FILTER_LIST
+        self.name_storage.pages = [page.name for page in pages]
+        self.name_storage.blocks = [
+            block.name for page in pages for block in page.blocks
+        ]
+
+        component_pairs = self.extract_pairs(
+            self.pages, filter_list=COMPONENT_FILTER_LIST
         )
         component_names = [name for _, name in component_pairs]
 
         self.name_storage.components = component_names
-        self.name_storage.pages = [page.name for page in pages]
-        self.name_storage.filenames = [
-            (folder, f"{name_from_pascal_case(name)}.tsx")
-            for folder, name in component_pairs
+        self.name_storage.filenames = component_pairs
+
+    def extract_pairs(
+        self, pages: list[Page], filter_list: list[str]
+    ) -> LibraryNamePairs:
+        """Extracts the `(folder, filename)` pairs for each components `base` file from a list of pages."""
+        components = list(
+            chain.from_iterable(
+                [block.components for page in pages for block in page.blocks]
+            )
+        )
+
+        component_pairs = []
+        for component in components:
+            graph = LocalFilesGraphBuilder(component)
+            pairs = self.extract_name_pairs(graph.build())
+            pairs = [(lib, name) for lib, name in pairs if name not in filter_list]
+            component_pairs.extend(pairs)
+
+        component_pairs = list(set(component_pairs))
+        return [
+            (lib, f"{name_from_pascal_case(name)}.tsx") for lib, name in component_pairs
         ]
 
-    @staticmethod
-    def __extract_component_names(
-        pages: list[Page], filter_list: list[str] = []
-    ) -> LibraryNamePairs:
-        """
-        A helper function for retrieving the component names and their associated library name.
+    def extract_name_pairs(self, node: ComponentNode) -> LibraryNamePairs:
+        """Creates a list of `(library, name)` pairs from a tree node."""
+        pairs = [node.pair()]
 
-        Returns:
-        `[(libray_name, component_name), ...]`
-        """
-        component_names = set()
+        for child in node.children:
+            if isinstance(child, ComponentNode):
+                pairs.extend(self.extract_name_pairs(child))
 
-        def recursive_extract(component: Component):
-            if isinstance(component, list):
-                for item in component:
-                    recursive_extract(item)
-            else:
-                name = component.__class__.__name__
-                if name not in filter_list:
-                    library_name = component.library
-                    component_names.add((library_name, name))
-
-            for attr in ["content", "fields"]:
-                if hasattr(component, attr):
-                    next_node = getattr(component, attr)
-                    recursive_extract(next_node)
-
-        for page in pages:
-            for component in page.components:
-                recursive_extract(component)
-
-        component_names = list(component_names)
-        component_names.sort()
-        return component_names
+        return pairs

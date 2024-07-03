@@ -3,20 +3,20 @@ import os
 from unittest.mock import MagicMock, patch
 import typer
 
-from zentra_models.cli.conf.constants import (
+from zentra_models.cli.constants import (
     GITHUB_COMPONENTS_DIR,
     CommonErrorCodes,
     GenerateErrorCodes,
     GenerateSuccessCodes,
 )
-from zentra_models.cli.conf.format import name_from_camel_case
-from zentra_models.cli.conf.storage import (
+from zentra_models.cli.utils.format import name_from_camel_case
+from zentra_models.cli.local.storage import (
     CountStorage,
     GeneratePathStorage,
     ModelFileStorage,
 )
-from zentra_models.cli.tasks.controllers.generate import GenerateController
-from zentra_models.cli.tasks.generate import Generate
+from zentra_models.cli.commands.generate.generate import GenerateController
+from zentra_models.cli.commands.generate import Generate
 
 from zentra_models.core import Page, Zentra
 from zentra_models.ui import Form, FormField

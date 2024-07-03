@@ -2,10 +2,10 @@ import os
 import pytest
 import typer
 
-from zentra_models.cli.conf.constants import GITHUB_INIT_ASSETS_DIR
-from zentra_models.cli.conf.storage import ConfigExistStorage, SetupPathStorage
+from zentra_models.cli.constants import GITHUB_INIT_ASSETS_DIR
+from zentra_models.cli.local.storage import ConfigExistStorage, SetupPathStorage
 
-from zentra_models.cli.tasks.controllers.setup import SetupController
+from zentra_models.cli.commands.setup import SetupController
 
 from tests.mappings.retrieval import ZENTRA_INIT_VALID
 from zentra_models.core import Page, Zentra

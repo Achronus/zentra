@@ -1,6 +1,6 @@
 import pytest
 
-from zentra_models.cli.tasks.controllers.base import status, BaseController
+from zentra_models.cli.commands.base.controller import status, BaseController
 
 
 class TestStatus:

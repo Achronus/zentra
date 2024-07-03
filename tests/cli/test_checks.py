@@ -13,8 +13,8 @@ from zentra_models.cli.conf.checks import (
     check_models_registered,
     check_zentra_exists,
 )
-from zentra_models.cli.conf.constants import SetupErrorCodes
-from zentra_models.cli.conf.extract import get_file_content
+from zentra_models.cli.constants import SetupErrorCodes
+from zentra_models.cli.local.files import get_file_content
 from zentra_models.core import Page, Zentra
 from zentra_models.ui.control import Input
 

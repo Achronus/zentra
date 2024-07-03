@@ -1,6 +1,6 @@
 import pytest
 
-from zentra_models.cli.conf.storage import ConfigExistStorage
+from zentra_models.cli.local.storage import ConfigExistStorage
 
 
 class TestConfigExistStorage:

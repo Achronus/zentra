@@ -7,11 +7,10 @@ from rich.console import Console
 from rich.panel import Panel
 
 
-from zentra_models.cli.conf.constants import (
+from zentra_models.cli.constants import (
     ERROR_GUIDE_URL,
     GETTING_STARTED_URL,
     GITHUB_ISSUES_URL,
-    LOCAL_PATHS,
     MAGIC,
     FAIL,
     SETUP_FILE,
@@ -21,7 +20,8 @@ from zentra_models.cli.conf.constants import (
     GenerateErrorCodes,
     SetupSuccessCodes,
 )
-from zentra_models.cli.conf.extract import local_path
+from zentra_models.cli.constants.filepaths import LOCAL_PATHS
+from zentra_models.cli.local.files import local_path
 
 
 MODELS_FILEPATH = f"[magenta][link={LOCAL_PATHS.MODELS}]{local_path(LOCAL_PATHS.MODELS)}[/link][/magenta]"

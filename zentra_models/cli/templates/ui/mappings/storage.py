@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from zentra_models.cli.conf.types import MappingDict
+from zentra_models.cli.constants.types import MappingDict
 
 
 class JSXMappings(BaseModel):

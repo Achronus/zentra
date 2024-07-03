@@ -2,8 +2,8 @@ from typing import Any
 
 from pydantic import BaseModel, Field, PrivateAttr, field_validator
 
-from zentra_models.cli.conf.storage import BasicNameStorage
-from zentra_models.cli.conf.types import LibraryNamePairs
+from zentra_models.cli.local.storage import BasicNameStorage
+from zentra_models.cli.constants.types import LibraryNamePairs
 from zentra_models.base import ZentraModel
 from zentra_models.core.constants import (
     LOWER_CAMELCASE_SINGLE_WORD,

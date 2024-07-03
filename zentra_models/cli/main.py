@@ -1,10 +1,11 @@
 import typer
 import warnings
 
-from zentra_models.cli.conf.constants import console
-from zentra_models.cli.conf.message import MSG_MAPPER, MessageHandler
-from zentra_models.cli.tasks.setup import Setup
-from zentra_models.cli.tasks.generate import Generate
+from zentra_models.cli.constants import console
+from zentra_models.cli.constants.message import MSG_MAPPER, MessageHandler
+
+from zentra_models.cli.commands.setup import Setup
+from zentra_models.cli.commands.generate import Generate
 
 
 warnings.filterwarnings("ignore", category=SyntaxWarning)

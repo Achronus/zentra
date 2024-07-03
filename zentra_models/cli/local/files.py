@@ -1,8 +1,6 @@
 import os
-import importlib.resources as pkg_resources
-from pathlib import Path
 
-from zentra_models.cli.conf.types import LibraryNamePairs
+from zentra_models.cli.constants.types import LibraryNamePairs
 
 
 def get_filename_dir_pairs(parent_dir: str, sub_dir: str = "") -> LibraryNamePairs:
@@ -58,29 +56,28 @@ def local_path(folder_path: str) -> str:
     return "/".join([root, tail])
 
 
-def get_dirpaths(
-    package: str, resource_dir: str = ".", ignore: list[str] = None
-) -> dict[str, Path]:
-    """List all files in the resource directory of the package and store them in a dictionary. Removes files and custom directories based on `ignore` parameters.
+def make_directories(dirpath: str) -> None:
+    """Creates a set of directories, if they don't exist yet."""
+    if not os.path.exists(dirpath):
+        os.makedirs(dirpath)
 
-    Returns:
-        `dict[str, str] = {<dir_name>: <dir_path>}`
-    """
-    package_dict = {}
-    for item in pkg_resources.files(package).joinpath(resource_dir).iterdir():
-        package_dict[str(item).split("\\")[-1]] = item
 
-    if "__pycache__" in package_dict.keys():
-        package_dict.pop("__pycache__")
+def make_file(filepath: str, content: str) -> None:
+    """Creates a new file in a given filepath with the given content."""
+    with open(filepath, "w") as f:
+        f.write(content)
 
-    if ignore:
-        for key in ignore:
-            if key in package_dict.keys():
-                package_dict.pop(key)
 
-    dirnames = package_dict.copy()
-    for key, value in package_dict.items():
-        if not os.path.isdir(value):
-            dirnames.pop(key)
+def remove_files(
+    pairs: LibraryNamePairs, dirpath: str, ignore_pair_folder: bool = False
+) -> None:
+    """Removes a set of `(library_name, filename)` pairs from a directory."""
+    for folder, filename in pairs:
+        if not ignore_pair_folder:
+            dirpath = os.path.join(dirpath, folder)
 
-    return dirnames
+        filepath = os.path.join(dirpath, filename)
+        os.remove(filepath)
+
+        if len(os.listdir(dirpath)) == 0:
+            os.removedirs(dirpath)

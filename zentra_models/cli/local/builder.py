@@ -1,16 +1,11 @@
 import os
 
-from zentra_models.cli.conf.cleanup import remove_files
-from zentra_models.cli.conf.create import (
-    make_code_file_from_content,
-    make_code_file_from_url,
-    make_directories,
-)
-from zentra_models.cli.conf.format import name_to_camel_case
-from zentra_models.cli.conf.storage import GeneratePathStorage, ModelFileStorage
-from zentra_models.cli.conf.types import LibraryNamePairs
+from zentra_models.cli.constants.filepaths import GENERATE_PATHS
+from zentra_models.cli.local.files import make_directories, remove_files
+from zentra_models.cli.utils.format import name_to_camel_case
+from zentra_models.cli.local.storage import ModelFileStorage
+from zentra_models.cli.constants.types import LibraryNamePairs
 from zentra_models.cli.templates import ComponentFileType
-from zentra_models.cli.templates.retrieval import CodeRetriever
 
 from zentra_models.core.enums.ui import LibraryType
 from zentra_models.uploadthing import Uploadthing
@@ -19,22 +14,12 @@ from zentra_models.uploadthing import Uploadthing
 class LocalBuilder:
     """
     Handles functionality for creating files and directories in the Zentra generate folder.
-
-    Parameters:
-    - `url` (`string`) - a GitHub URL housing the component files
-    - `paths` (`storage.GeneratePathStorage`) - a path storage container with paths specific to the controller
-    - `components` (`ModelFileStorage`) - a container filled with the Zentra model pairs to `generate` and `remove`
     """
 
-    def __init__(
-        self, url: str, paths: GeneratePathStorage, components: ModelFileStorage
-    ) -> None:
-        self.url = url
-        self.paths = paths
-        self.components = components
+    def __init__(self) -> None:
+        self.components = ModelFileStorage()
 
-        self.retriever = CodeRetriever(url=url)
-        self.ut = Uploadthing(core_folder=os.path.basename(self.paths.lib))
+        self.ut = Uploadthing(core_folder=os.path.basename(GENERATE_PATHS.LIB))
 
     def folders(self, pairs: LibraryNamePairs) -> list[str]:
         """Returns a list of `library_name` folders from a list of `LibraryNamePairs`."""
@@ -43,7 +28,7 @@ class LocalBuilder:
     def make_dirs(self) -> None:
         """Creates the needed directories inside the generate folder."""
         for dir in self.folders(self.components.generate):
-            make_directories(os.path.join(self.paths.components, dir))
+            make_directories(os.path.join(GENERATE_PATHS.COMPONENTS, dir))
 
     def create_base_files(self, file_type: ComponentFileType) -> None:
         """
@@ -52,36 +37,16 @@ class LocalBuilder:
         Parameter:
         - `file_type` (`string`) - the type of file to extract. Options: ['base', 'templates', 'lib']
         """
-        for folder, filename in self.components.generate:
-            url = f"{self.url}/{folder}/{file_type}/{filename}"
-            code_lines = self.retriever.code(url=url)
-
-            make_code_file_from_content(
-                content="\n".join(code_lines),
-                filename=filename,
-                dest_path=os.path.join(self.paths.components, folder),
-            )
-
-            if folder == LibraryType.UPLOADTHING.value:
-                dest_path = self.paths.lib
-                os.makedirs(dest_path, exist_ok=True)
-
-                core_path, core_filenames = self.ut.core_file_urls()
-                for core_filename in core_filenames:
-                    make_code_file_from_url(
-                        url=core_path,
-                        filename=core_filename,
-                        dest_path=dest_path,
-                    )
+        pass
 
     def remove_models(self) -> None:
         """Removes a list of Zentra models from the generate folder."""
-        remove_files(pairs=self.components.remove, dirpath=self.paths.components)
+        remove_files(pairs=self.components.remove, dirpath=GENERATE_PATHS.COMPONENTS)
 
         if LibraryType.UPLOADTHING.value in self.folders(self.components.remove):
             core_pairs = self.ut.core_file_pairs()
             remove_files(
-                pairs=core_pairs, dirpath=self.paths.lib, ignore_pair_folder=True
+                pairs=core_pairs, dirpath=GENERATE_PATHS.lib, ignore_pair_folder=True
             )
 
     def extract_child_components(self, lines: list[str], filename: str) -> list[str]:

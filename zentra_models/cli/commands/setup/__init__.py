@@ -9,18 +9,15 @@ from zentra_models.cli.conf.checks import (
     check_folder_exists,
     check_zentra_exists,
 )
-from zentra_models.cli.conf.extract import get_file_content, local_path
-from zentra_models.cli.conf.storage import ConfigExistStorage
-from zentra_models.cli.utils.printables import (
+from zentra_models.cli.constants.filepaths import LOCAL_PATHS
+from zentra_models.cli.constants import CommonErrorCodes, SetupSuccessCodes
+from zentra_models.cli.local.files import get_file_content, local_path
+from zentra_models.cli.local.storage import ConfigExistStorage
+from zentra_models.cli.display.printables import (
     setup_complete_panel,
     setup_first_run_panel,
 )
-from .controllers.setup import SetupController
-from zentra_models.cli.conf.constants import (
-    LOCAL_PATHS,
-    CommonErrorCodes,
-    SetupSuccessCodes,
-)
+from zentra_models.cli.commands.setup.controller import SetupController
 
 from rich.console import Console
 

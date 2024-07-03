@@ -3,7 +3,7 @@ import importlib
 import os
 
 import typer
-from zentra_models.cli.conf.constants import SetupErrorCodes
+from zentra_models.cli.constants import SetupErrorCodes
 
 from zentra_models.core import Zentra
 from zentra_models.cli.conf.logger import zentra_missing_logger

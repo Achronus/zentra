@@ -1,9 +1,12 @@
 import shutil
 
-from zentra_models.cli.conf.constants import LOCAL_PATHS, PACKAGE_PATHS
-from zentra_models.cli.conf.storage import ConfigExistStorage
-from zentra_models.cli.tasks.controllers.base import BaseController, status
-from zentra_models.cli.conf.create import make_directories
+from zentra_models.cli.constants.filepaths import LOCAL_PATHS, PACKAGE_PATHS
+
+from zentra_models.cli.commands.base import status
+from zentra_models.cli.commands.base.controller import BaseController
+
+from zentra_models.cli.local.storage import ConfigExistStorage
+from zentra_models.cli.local.files import make_directories
 
 
 class SetupController(BaseController):

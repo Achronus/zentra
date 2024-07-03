@@ -1,8 +1,10 @@
 import typer
-from zentra_models.cli.conf.constants import GenerateSuccessCodes
-from zentra_models.cli.conf.extract import get_filename_dir_pairs
-from zentra_models.cli.conf.storage import BasicNameStorage, CountStorage
-from zentra_models.cli.conf.types import LibraryNamePairs
+
+from zentra_models.cli.constants import GenerateSuccessCodes
+from zentra_models.cli.constants.filepaths import GENERATE_PATHS
+from zentra_models.cli.local.files import get_filename_dir_pairs
+from zentra_models.cli.local.storage import BasicNameStorage, CountStorage
+from zentra_models.cli.constants.types import LibraryNamePairs
 
 
 class LocalExtractor:
@@ -10,12 +12,10 @@ class LocalExtractor:
     Handles the functionality for extracting information from `zentra/models`.
 
     Parameters:
-    - `generate_path` (`string`) - the path to the Zentra generate folder
     - `name_storage` (`storage.BasicNameStorage`) - the Zentra application name storage containing the user model filenames
     """
 
-    def __init__(self, generate_path: str, name_storage: BasicNameStorage) -> None:
-        self.generate_path = generate_path
+    def __init__(self, name_storage: BasicNameStorage) -> None:
         self.name_storage = name_storage
 
         self.model_counts = CountStorage()
@@ -33,7 +33,7 @@ class LocalExtractor:
 
     def existing_models(self) -> LibraryNamePairs:
         """Retrieves the existing Zentra model filenames from the Zentra generate folder."""
-        return get_filename_dir_pairs(parent_dir=self.generate_path)
+        return get_filename_dir_pairs(GENERATE_PATHS.ROOT)
 
     def model_changes(
         self, existing: LibraryNamePairs, user_models: LibraryNamePairs

@@ -1,13 +1,13 @@
 import json
 import requests
 
-from zentra_models.cli.conf.constants import CommonErrorCodes, console
+from zentra_models.cli.constants import CommonErrorCodes, console
 
 import typer
 from bs4 import BeautifulSoup
 from pydantic import BaseModel
 
-from zentra_models.cli.utils.err_panels import request_failed_panel
+from zentra_models.cli.display.err_panels import request_failed_panel
 
 
 class FilenameStorage(BaseModel):

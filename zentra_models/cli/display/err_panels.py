@@ -1,5 +1,5 @@
-from zentra_models.cli.conf.constants import FAIL, CommonErrorCodes
-from zentra_models.cli.conf.message import BUG_MSG
+from zentra_models.cli.constants import FAIL, CommonErrorCodes
+from zentra_models.cli.constants.message import BUG_MSG
 
 from rich.panel import Panel
 

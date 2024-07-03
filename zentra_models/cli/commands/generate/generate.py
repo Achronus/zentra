@@ -1,8 +1,11 @@
-from zentra_models.cli.conf.storage import ModelFileStorage, ModelStorage
-from zentra_models.cli.conf.types import LibraryNamePairs
-from zentra_models.cli.tasks.controllers.base import BaseController, status
-from zentra_models.cli.templates.builders.local import LocalBuilder
-from zentra_models.cli.templates.extract import LocalExtractor
+from zentra_models.cli.commands.base import status
+from zentra_models.cli.commands.base.controller import BaseController
+
+from zentra_models.cli.local.storage import ModelFileStorage, ModelStorage
+from zentra_models.cli.constants.types import LibraryNamePairs
+
+from zentra_models.cli.local.builder import LocalBuilder
+from zentra_models.cli.local.extractor import LocalExtractor
 
 from zentra_models.core import Zentra
 
@@ -16,16 +19,10 @@ class GenerateController(BaseController):
     """
 
     def __init__(self, zentra: Zentra) -> None:
-        self.storage: ModelStorage = ModelStorage()
-        self.local_extractor = LocalExtractor(
-            generate_path=paths.components, name_storage=zentra.name_storage
-        )
+        self.local_extractor = LocalExtractor(zentra.name_storage)
 
-        self.local_builder = LocalBuilder(
-            url=url,
-            paths=paths,
-            components=ModelFileStorage(),
-        )
+        self.storage = ModelStorage()
+        self.local_builder = LocalBuilder()
 
         react_str = "[cyan]React[/cyan]"
         zentra_str = "[magenta]Zentra[/magenta]"

@@ -1,7 +1,7 @@
 from enum import Enum
 import re
 
-from zentra_models.cli.conf.types import LibraryNamePairs
+from zentra_models.cli.constants.types import LibraryNamePairs
 
 
 def name_from_camel_case(name: str) -> str:

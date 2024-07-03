@@ -1,6 +1,6 @@
 from typing import Union
-from zentra_models.cli.conf.format import name_from_camel_case
-from zentra_models.cli.conf.types import MappingDict
+from zentra_models.cli.utils.format import name_from_camel_case
+from zentra_models.cli.constants.types import MappingDict
 
 from zentra_models.cli.templates.builders.nodes import (
     ComponentNode,

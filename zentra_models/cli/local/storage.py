@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from zentra_models.cli.conf.types import LibraryNamePairs
+from zentra_models.cli.constants.types import LibraryNamePairs
 
 
 class ConfigExistStorage:

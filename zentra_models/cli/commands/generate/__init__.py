@@ -11,16 +11,19 @@ from zentra_models.cli.conf.checks import (
     check_zentra_exists,
 )
 
-from zentra_models.cli.conf.constants import (
+from zentra_models.cli.constants import (
     DEPENDENCY_EXCLUSIONS,
     CommonErrorCodes,
     GenerateSuccessCodes,
-    ZentraLocalFilepaths,
 )
-from zentra_models.cli.conf.extract import get_file_content, get_file_content_lines
-from zentra_models.cli.conf.storage import Dependency, DependencyStorage
-from zentra_models.cli.tasks.controllers.generate import GenerateController
-from zentra_models.cli.utils.printables import generate_complete_panel
+from zentra_models.cli.constants.filepaths import LOCAL_PATHS
+from zentra_models.cli.local.files import (
+    get_file_content,
+    get_file_content_lines,
+)
+from zentra_models.cli.local.storage import Dependency, DependencyStorage
+from zentra_models.cli.commands.generate.generate import GenerateController
+from zentra_models.cli.display.printables import generate_complete_panel
 
 from rich.console import Console
 
@@ -31,8 +34,7 @@ class Generate:
     """A class for handling the logic for the `zentra generate` command."""
 
     def __init__(self) -> None:
-        self.local_paths = ZentraLocalFilepaths()
-
+        self.local_paths = LOCAL_PATHS
         self.config = self.local_paths.CONF
 
     def init_checks(self) -> None:

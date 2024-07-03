@@ -2,21 +2,24 @@ from enum import Enum
 from functools import partial
 import textwrap
 
-from zentra_models.cli.conf.constants import MAGIC
-from zentra_models.cli.conf.format import (
+from zentra_models.cli.constants import MAGIC
+from zentra_models.cli.utils.format import (
     list_to_str,
     set_colour,
     name_to_plural,
     to_cc_from_pairs,
 )
-from zentra_models.cli.conf.message import SETUP_COMPLETE_MSG
-from zentra_models.cli.conf.types import GenerateDataTuple
-from zentra_models.cli.conf.storage import ModelStorage
+from zentra_models.cli.constants.message import SETUP_COMPLETE_MSG
+from zentra_models.cli.local.storage import ModelStorage
 
 from pydantic import BaseModel
 from rich.panel import Panel
 
 from zentra_models.core import Zentra
+
+
+# (list[items_to_add], list[items_to_remove])
+GenerateDataTuple = tuple[list[str], list[str]]
 
 
 class Action(Enum):

@@ -1,6 +1,6 @@
-from zentra_models.cli.templates.builders.jsx import AttributeBuilder
-from zentra_models.cli.templates.ui.mappings.storage import AttributeMappings
-from zentra_models.cli.templates.utils import compress, text_content
+from zentra_models.templates.builders.jsx import AttributeBuilder
+from zentra_models.templates.ui.mappings.storage import AttributeMappings
+from zentra_models.templates.utils import compress, text_content
 
 from zentra_models.core.react import LucideIcon, LucideIconWithText
 

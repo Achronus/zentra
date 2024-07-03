@@ -1,5 +1,5 @@
-from zentra_models.cli.templates.builders.jsx import AttributeBuilder, ContentBuilder
-from zentra_models.cli.templates.ui.mappings.storage import HTMLShellMappings
+from zentra_models.templates.builders.jsx import AttributeBuilder, ContentBuilder
+from zentra_models.templates.ui.mappings.storage import HTMLShellMappings
 
 from zentra_models.base.html import HTMLTag
 from zentra_models.core.html import Div

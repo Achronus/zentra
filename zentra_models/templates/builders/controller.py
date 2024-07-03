@@ -1,9 +1,9 @@
-from zentra_models.cli.templates.storage import (
+from zentra_models.templates.storage import (
     JSXComponentContentStorage,
     JSXComponentExtras,
 )
-from zentra_models.cli.templates.ui.mappings.storage import ControllerMappings
-from zentra_models.cli.templates.utils import str_to_list
+from zentra_models.templates.ui.mappings.storage import ControllerMappings
+from zentra_models.templates.utils import str_to_list
 
 from zentra_models.base.html import HTMLTag
 from zentra_models.base.js import JSIterable
@@ -21,7 +21,7 @@ class BuildController:
         self, component: Component, full_shell: bool = False
     ) -> tuple[list[str], JSXComponentContentStorage]:
         """Creates the JSX for a `Component` model and returns its details as a tuple in the form of `(content, comp_storage)`."""
-        from zentra_models.cli.templates.builders.component import ComponentBuilder
+        from zentra_models.templates.builders.component import ComponentBuilder
 
         builder = ComponentBuilder(component=component, mappings=self.maps.component)
         builder.build(full_shell=full_shell)
@@ -31,7 +31,7 @@ class BuildController:
         self, component: Component
     ) -> tuple[list[str], JSXComponentContentStorage]:
         """Creates the JSX for a `NextJS` model and returns its details as a tuple in the form of `(content, comp_storage)`."""
-        from zentra_models.cli.templates.builders.nextjs import NextJSComponentBuilder
+        from zentra_models.templates.builders.nextjs import NextJSComponentBuilder
 
         nextjs = NextJSComponentBuilder(
             component=component, mappings=self.maps.component
@@ -43,7 +43,7 @@ class BuildController:
         self, model: JSIterable
     ) -> tuple[list[str], JSXComponentExtras]:
         """Creates the JSX for a `JSIterable` model and returns its details as a tuple in the form of `(content, multi_comp_storage)`."""
-        from zentra_models.cli.templates.builders.js import JSIterableBuilder
+        from zentra_models.templates.builders.js import JSIterableBuilder
 
         builder = JSIterableBuilder(model=model, mappings=self.maps.js_iterable)
         content = builder.build()
@@ -51,7 +51,7 @@ class BuildController:
 
     def build_html_tag(self, model: HTMLTag) -> tuple[list[str], JSXComponentExtras]:
         """Creates the JSX for a `HTMLTag` model and returns its details as a tuple in the form of `(content, multi_comp_storage)`."""
-        from zentra_models.cli.templates.builders.html import HTMLBuildController
+        from zentra_models.templates.builders.html import HTMLBuildController
 
         builder = HTMLBuildController(model=model, mappings=self.maps.html)
         content, storage = builder.build()
@@ -59,7 +59,7 @@ class BuildController:
 
     def build_icon(self, model: LucideIcon) -> tuple[list[str], str]:
         """Creates the JSX for a `LucideIcon` model and returns its details as a tuple in the form of: `(content, import_str)`."""
-        from zentra_models.cli.templates.builders.icon import IconBuilder
+        from zentra_models.templates.builders.icon import IconBuilder
 
         builder = IconBuilder(model=model, mappings=self.maps.component.attribute)
         content, import_str = builder.build()

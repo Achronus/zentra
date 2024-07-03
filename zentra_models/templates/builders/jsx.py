@@ -2,15 +2,15 @@ from typing import Union
 from zentra_models.cli.utils.format import name_from_camel_case
 from zentra_models.cli.constants.types import MappingDict
 
-from zentra_models.cli.templates.builders.nodes import (
+from zentra_models.templates.builders.nodes import (
     ComponentNode,
     HTMLNode,
     IconNode,
     JSNode,
     StringNode,
 )
-from zentra_models.cli.templates.ui.mappings.storage import AttributeMappings
-from zentra_models.cli.templates.utils import remove_none, text_content
+from zentra_models.templates.ui.mappings.storage import AttributeMappings
+from zentra_models.templates.utils import remove_none, text_content
 
 from zentra_models.base import ZentraModel
 from zentra_models.base.html import HTMLTag

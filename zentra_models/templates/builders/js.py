@@ -1,11 +1,11 @@
-from zentra_models.cli.templates.builders import add_to_storage
-from zentra_models.cli.templates.storage import (
+from zentra_models.templates.builders import add_to_storage
+from zentra_models.templates.storage import (
     JSXComponentContentStorage,
     JSXComponentExtras,
 )
 
-from zentra_models.cli.templates.ui.mappings.storage import JSIterableMappings
-from zentra_models.cli.templates.utils import str_to_list
+from zentra_models.templates.ui.mappings.storage import JSIterableMappings
+from zentra_models.templates.utils import str_to_list
 
 from zentra_models.core import Component
 from zentra_models.base.html import HTMLTag
@@ -26,7 +26,7 @@ class JSIterableBuilder:
         self, component: Component, full_shell: bool = False
     ) -> tuple[list[str], JSXComponentContentStorage]:
         """Creates the JSX for a `Component` model and returns its details as a tuple in the form of `(content, comp_storage)`."""
-        from zentra_models.cli.templates.builders.component import ComponentBuilder
+        from zentra_models.templates.builders.component import ComponentBuilder
 
         builder = ComponentBuilder(component=component, mappings=self.maps.component)
         builder.build(full_shell=full_shell)
@@ -36,7 +36,7 @@ class JSIterableBuilder:
         self, component: Component
     ) -> tuple[list[str], JSXComponentContentStorage]:
         """Creates the JSX for a `NextJS` model and returns its details as a tuple in the form of `(content, comp_storage)`."""
-        from zentra_models.cli.templates.builders.nextjs import NextJSComponentBuilder
+        from zentra_models.templates.builders.nextjs import NextJSComponentBuilder
 
         nextjs = NextJSComponentBuilder(
             component=component,
@@ -47,7 +47,7 @@ class JSIterableBuilder:
 
     def build_html_tag(self, model: HTMLTag) -> tuple[list[str], JSXComponentExtras]:
         """Creates the JSX for a `HTMLTag` model and returns its details as a tuple in the form of `(content, multi_comp_storage)`."""
-        from zentra_models.cli.templates.builders.html import HTMLBuildController
+        from zentra_models.templates.builders.html import HTMLBuildController
 
         builder = HTMLBuildController(model=model, mappings=self.maps.html)
         content, storage = builder.build()

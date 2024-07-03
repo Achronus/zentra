@@ -1,16 +1,16 @@
-from zentra_models.cli.templates.builders.jsx import (
+from zentra_models.templates.builders.jsx import (
     AttributeBuilder,
     GraphBuilder,
     ImportBuilder,
     LogicBuilder,
 )
-from zentra_models.cli.templates.builders.nodes import ComponentNode
-from zentra_models.cli.templates.storage import (
+from zentra_models.templates.builders.nodes import ComponentNode
+from zentra_models.templates.storage import (
     JSXComponentContentStorage,
     JSXComponentExtras,
 )
-from zentra_models.cli.templates.ui.mappings.storage import ComponentMappings
-from zentra_models.cli.templates.utils import compress, compress_imports, str_to_list
+from zentra_models.templates.ui.mappings.storage import ComponentMappings
+from zentra_models.templates.utils import compress, compress_imports, str_to_list
 
 from zentra_models.base import ZentraModel
 from zentra_models.core import Component

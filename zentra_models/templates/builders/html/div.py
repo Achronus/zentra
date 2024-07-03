@@ -1,16 +1,16 @@
-from zentra_models.cli.templates.builders import add_to_storage
-from zentra_models.cli.templates.builders.html.content import HTMLContentBuilder
-from zentra_models.cli.templates.builders.html.figure import FigureBuilder
-from zentra_models.cli.templates.builders.html.utils import get_html_content
+from zentra_models.templates.builders import add_to_storage
+from zentra_models.templates.builders.html.content import HTMLContentBuilder
+from zentra_models.templates.builders.html.figure import FigureBuilder
+from zentra_models.templates.builders.html.utils import get_html_content
 
-from zentra_models.cli.templates.storage import (
+from zentra_models.templates.storage import (
     JSXComponentContentStorage,
     JSXComponentExtras,
 )
-from zentra_models.cli.templates.ui.content import text_content
+from zentra_models.templates.ui.content import text_content
 
-from zentra_models.cli.templates.ui.mappings.storage import DivMappings
-from zentra_models.cli.templates.utils import str_to_list
+from zentra_models.templates.ui.mappings.storage import DivMappings
+from zentra_models.templates.utils import str_to_list
 
 from zentra_models.core import Component
 from zentra_models.base.html import HTMLTag
@@ -43,8 +43,8 @@ class DivBuilder:
         self, model: JSIterable
     ) -> tuple[list[str], JSXComponentExtras]:
         """Creates the JSX for a `JSIterable` model and returns its details as a tuple in the form of `(content, multi_comp_storage)`."""
-        from zentra_models.cli.templates.builders.js import JSIterableBuilder
-        from zentra_models.cli.templates.ui.mappings.storage import JSIterableMappings
+        from zentra_models.templates.builders.js import JSIterableBuilder
+        from zentra_models.templates.ui.mappings.storage import JSIterableMappings
 
         builder = JSIterableBuilder(
             model=model,
@@ -60,7 +60,7 @@ class DivBuilder:
         self, component: Component, full_shell: bool = False
     ) -> tuple[list[str], JSXComponentContentStorage]:
         """Creates the JSX for a `Component` model and returns its details as a tuple in the form of `(content, comp_storage)`."""
-        from zentra_models.cli.templates.builders.component import ComponentBuilder
+        from zentra_models.templates.builders.component import ComponentBuilder
 
         builder = ComponentBuilder(component=component, mappings=self.maps.component)
         builder.build(full_shell=full_shell)

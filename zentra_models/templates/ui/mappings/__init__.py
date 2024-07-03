@@ -1,4 +1,4 @@
-from zentra_models.cli.templates.ui.mappings.maps import (
+from zentra_models.templates.ui.mappings.maps import (
     ATTR_DICT,
     COMPONENTS_TO_WRAP,
     CONTENT_DICT,
@@ -7,7 +7,7 @@ from zentra_models.cli.templates.ui.mappings.maps import (
     MAPPING_DICT,
     USE_CLIENT_COMPONENTS,
 )
-from zentra_models.cli.templates.ui.mappings.storage import (
+from zentra_models.templates.ui.mappings.storage import (
     AttributeMappings,
     ComponentMappings,
     ContentMappings,

@@ -1,4 +1,4 @@
-from zentra_models.cli.templates.utils import compress_imports
+from zentra_models.templates.utils import compress_imports
 
 from zentra_models.core.enums.ui import CalendarMode, InputOTPPatterns
 from zentra_models.core.react import LucideIcon, LucideIconWithText

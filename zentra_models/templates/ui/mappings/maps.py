@@ -1,6 +1,6 @@
 from pydantic_core import Url
 
-from zentra_models.cli.templates.ui.attributes import (
+from zentra_models.templates.ui.attributes import (
     accordion_attributes,
     alt_attribute,
     other_attribute,
@@ -16,7 +16,7 @@ from zentra_models.cli.templates.ui.attributes import (
     style_attribute,
     toggle_attributes,
 )
-from zentra_models.cli.templates.ui.content import (
+from zentra_models.templates.ui.content import (
     accordion_content,
     alert_content,
     aspect_ratio_content,
@@ -42,7 +42,7 @@ from zentra_models.cli.templates.ui.content import (
     text_content,
     tooltip_content,
 )
-from zentra_models.cli.templates.ui.imports import (
+from zentra_models.templates.ui.imports import (
     alert_imports,
     button_imports,
     calendar_imports,
@@ -56,7 +56,7 @@ from zentra_models.cli.templates.ui.imports import (
     toggle_group_imports,
     toggle_imports,
 )
-from zentra_models.cli.templates.ui.logic import (
+from zentra_models.templates.ui.logic import (
     calendar_logic,
     collapsible_logic,
     combobox_logic,

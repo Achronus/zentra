@@ -1,8 +1,8 @@
-from zentra_models.cli.templates.builders import add_to_storage
-from zentra_models.cli.templates.builders.controller import BuildController
-from zentra_models.cli.templates.storage import JSXComponentExtras
-from zentra_models.cli.templates.ui.attributes import param_attr, str_attr
-from zentra_models.cli.templates.utils import compress, str_to_list, text_content
+from zentra_models.templates.builders import add_to_storage
+from zentra_models.templates.builders.controller import BuildController
+from zentra_models.templates.storage import JSXComponentExtras
+from zentra_models.templates.ui.attributes import param_attr, str_attr
+from zentra_models.templates.utils import compress, str_to_list, text_content
 
 from zentra_models.base import ZentraModel
 from zentra_models.ui.child.avatar import AvatarFallback, AvatarImage
@@ -82,7 +82,7 @@ from zentra_models.ui.presentation import (
 
 def controller() -> BuildController:
     """A helper function to create a `BuildController`."""
-    from zentra_models.cli.templates.ui.mappings import CONTROLLER_MAPPINGS
+    from zentra_models.templates.ui.mappings import CONTROLLER_MAPPINGS
 
     return BuildController(mappings=CONTROLLER_MAPPINGS)
 
@@ -228,8 +228,8 @@ def string_icon_content(content: str | LucideIconWithText) -> list[str]:
     if isinstance(content, str):
         text = text_content(content)
     else:
-        from zentra_models.cli.templates.builders.icon import IconBuilder
-        from zentra_models.cli.templates.ui.mappings import ATTRIBUTE_MAPPINGS
+        from zentra_models.templates.builders.icon import IconBuilder
+        from zentra_models.templates.ui.mappings import ATTRIBUTE_MAPPINGS
 
         text, _ = IconBuilder(model=content, mappings=ATTRIBUTE_MAPPINGS).build()
 

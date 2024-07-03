@@ -1,18 +1,18 @@
-from zentra_models.cli.templates.builders import add_to_storage
-from zentra_models.cli.templates.builders.html.utils import get_html_content
+from zentra_models.templates.builders import add_to_storage
+from zentra_models.templates.builders.html.utils import get_html_content
 
-from zentra_models.cli.templates.builders.nextjs import NextJSComponentBuilder
-from zentra_models.cli.templates.storage import (
+from zentra_models.templates.builders.nextjs import NextJSComponentBuilder
+from zentra_models.templates.storage import (
     JSXComponentContentStorage,
     JSXComponentExtras,
 )
-from zentra_models.cli.templates.ui.content import text_content
+from zentra_models.templates.ui.content import text_content
 
-from zentra_models.cli.templates.ui.mappings.storage import (
+from zentra_models.templates.ui.mappings.storage import (
     FigureMappings,
     HTMLShellMappings,
 )
-from zentra_models.cli.templates.utils import str_to_list
+from zentra_models.templates.utils import str_to_list
 
 from zentra_models.base.html import HTMLTag
 from zentra_models.core.html import FigCaption, Figure

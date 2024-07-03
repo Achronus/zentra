@@ -1,7 +1,7 @@
-from zentra_models.cli.templates.builders import FORM_SCHEMA_BASE, JSX_BASE
-from zentra_models.cli.templates.builders.component import ComponentBuilder
-from zentra_models.cli.templates.ui.mappings.storage import JSXMappings
-from zentra_models.cli.templates.storage import (
+from zentra_models.templates.builders import FORM_SCHEMA_BASE, JSX_BASE
+from zentra_models.templates.builders.component import ComponentBuilder
+from zentra_models.templates.ui.mappings.storage import JSXMappings
+from zentra_models.templates.storage import (
     JSXComponentContentStorage,
     JSXPageContentStorage,
 )
@@ -24,7 +24,7 @@ class JSXPageBuilder:
     def build(self) -> None:
         """Builds the JSX for the page."""
 
-        for component in self.page.components:
+        for component in self.page.blocks:
             self.check_for_use_client(component=component)
             builder = ComponentBuilder(component=component, mappings=self.mappings)
             builder.build()

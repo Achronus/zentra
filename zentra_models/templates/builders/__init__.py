@@ -1,8 +1,8 @@
-from zentra_models.cli.templates.storage import (
+from zentra_models.templates.storage import (
     JSXComponentContentStorage,
     JSXComponentExtras,
 )
-from zentra_models.cli.templates.utils import dedupe
+from zentra_models.templates.utils import dedupe
 
 
 FORM_SCHEMA_BASE = """

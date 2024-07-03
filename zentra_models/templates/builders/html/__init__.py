@@ -1,11 +1,11 @@
-from zentra_models.cli.templates.builders import add_to_storage
-from zentra_models.cli.templates.builders.html.content import HTMLContentBuilder
-from zentra_models.cli.templates.builders.html.div import DivBuilder
-from zentra_models.cli.templates.builders.html.figure import FigureBuilder
+from zentra_models.templates.builders import add_to_storage
+from zentra_models.templates.builders.html.content import HTMLContentBuilder
+from zentra_models.templates.builders.html.div import DivBuilder
+from zentra_models.templates.builders.html.figure import FigureBuilder
 
-from zentra_models.cli.templates.storage import JSXComponentExtras
+from zentra_models.templates.storage import JSXComponentExtras
 
-from zentra_models.cli.templates.ui.mappings.storage import DivMappings
+from zentra_models.templates.ui.mappings.storage import DivMappings
 
 from zentra_models.base.html import HTMLTag
 from zentra_models.core.html import Div, Figure, HTMLContent

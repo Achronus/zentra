@@ -63,3 +63,8 @@ class ZentraModel(BaseModel):
     def custom_common_content(self) -> list[str]:
         """Returns a list of the content that use the same name as a common content, but act differently with this specific component."""
         return []
+
+    def __init__(self, *args, **kwargs):
+        if args:
+            raise TypeError(f"Keyword arguments for '{self.classname}' model required!")
+        super().__init__(**kwargs)

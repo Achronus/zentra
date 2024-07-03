@@ -7,6 +7,11 @@ from rich.console import Console
 
 console = Console()
 
+# Dependency exclusions
+DEPENDENCY_EXCLUSIONS = [
+    "react",
+]
+
 # Library versions
 NEXTJS_VERSION = "14.1.4"
 SHADCN_UI_VERSION = "0.8.0"
@@ -27,6 +32,7 @@ class CommonErrorCodes(Enum):
     CONFIG_EMPTY = 3
     ZENTRA_MISSING = 4
     MODELS_DIR_MISSING = 5
+    NO_COMPONENTS = 6
     REQUEST_FAILED = 900
     UNKNOWN_ERROR = 1000
 
@@ -37,8 +43,7 @@ class SetupSuccessCodes(Enum):
 
 
 class SetupErrorCodes(Enum):
-    NO_COMPONENTS = 12
-    IMPORT_ERROR = 13
+    IMPORT_ERROR = 11
 
 
 class GenerateSuccessCodes(Enum):
@@ -47,8 +52,7 @@ class GenerateSuccessCodes(Enum):
 
 
 class GenerateErrorCodes(Enum):
-    NO_COMPONENTS = 22
-    GENERATE_DIR_MISSING = 23
+    GENERATE_DIR_MISSING = 22
 
 
 # Custom print emoji's
@@ -119,7 +123,7 @@ class ZentraGeneratedFilepaths:
     """A storage container for the core filepaths in the `zentra/generated` folder."""
 
     def __init__(self, root_path: str) -> None:
-        self.ROOT = os.path.join(root_path, GENERATE_DIR)
+        self.ROOT = os.path.join(root_path, FOLDER_NAME, GENERATE_DIR)
         self.PAGES = os.path.join(self.ROOT, "pages")
         self.COMPONENTS = os.path.join(self.ROOT, "components")
         self.LIB = os.path.join(self.ROOT, "lib")

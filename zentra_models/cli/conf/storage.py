@@ -29,11 +29,25 @@ class ConfigExistStorage:
         )
 
 
+class Dependency(BaseModel):
+    """A storage container for a single dependency."""
+
+    name: str
+    version: str
+
+
 class CountStorage(BaseModel):
     """A simple storage container for Zentra model counts."""
 
     generate: int = 0
     remove: int = 0
+
+
+class DependencyStorage(BaseModel):
+    """A storage container for model dependencies."""
+
+    external: list[Dependency] = []
+    local: list[str] = []
 
 
 class ModelFileStorage(BaseModel):

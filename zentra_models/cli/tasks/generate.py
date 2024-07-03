@@ -1,6 +1,9 @@
 import ast
 import typer
 
+import aiohttp
+import asyncio
+
 from zentra_models.cli.conf.checks import (
     CheckConfigFileValid,
     check_file_exists,
@@ -9,12 +12,13 @@ from zentra_models.cli.conf.checks import (
 )
 
 from zentra_models.cli.conf.constants import (
+    DEPENDENCY_EXCLUSIONS,
     CommonErrorCodes,
-    GenerateErrorCodes,
     GenerateSuccessCodes,
     ZentraLocalFilepaths,
 )
 from zentra_models.cli.conf.extract import get_file_content, get_file_content_lines
+from zentra_models.cli.conf.storage import Dependency, DependencyStorage
 from zentra_models.cli.tasks.controllers.generate import GenerateController
 from zentra_models.cli.utils.printables import generate_complete_panel
 
@@ -62,7 +66,7 @@ class Generate:
             raise typer.Exit(CommonErrorCodes.MODELS_DIR_MISSING)
 
         if len(zentra.name_storage.components) == 0:
-            raise typer.Exit(code=GenerateErrorCodes.NO_COMPONENTS)
+            raise typer.Exit(code=CommonErrorCodes.NO_COMPONENTS)
 
         console.print()
         controller = GenerateController(zentra)

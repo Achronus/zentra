@@ -59,25 +59,31 @@ class TestZentraGeneratedFilepaths:
         assert generate_paths.ROOT == os.path.join(tmp_path, "zentra", "build")
 
     @staticmethod
+    def test_src_path(tmp_path, generate_paths: ZentraGeneratedFilepaths):
+        assert generate_paths.SRC == os.path.join(tmp_path, "zentra", "build", "src")
+
+    @staticmethod
     def test_pages_path(tmp_path, generate_paths: ZentraGeneratedFilepaths):
         assert generate_paths.PAGES == os.path.join(
-            tmp_path, "zentra", "build", "pages"
+            tmp_path, "zentra", "build", "src", "pages"
         )
 
     @staticmethod
     def test_components_path(tmp_path, generate_paths: ZentraGeneratedFilepaths):
         assert generate_paths.COMPONENTS == os.path.join(
-            tmp_path, "zentra", "build", "components"
+            tmp_path, "zentra", "build", "src", "components"
         )
 
     @staticmethod
     def test_lib_path(tmp_path, generate_paths: ZentraGeneratedFilepaths):
-        assert generate_paths.LIB == os.path.join(tmp_path, "zentra", "build", "lib")
+        assert generate_paths.LIB == os.path.join(
+            tmp_path, "zentra", "build", "src", "lib"
+        )
 
     @staticmethod
     def test_zentra_path(tmp_path, generate_paths: ZentraGeneratedFilepaths):
-        assert generate_paths.ZENTRA == os.path.join(
-            tmp_path, "zentra", "build", "components", "zentra"
+        assert generate_paths.LAYOUTS == os.path.join(
+            tmp_path, "zentra", "build", "src", "layouts"
         )
 
 

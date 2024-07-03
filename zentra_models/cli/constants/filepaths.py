@@ -58,11 +58,11 @@ class ZentraGeneratedFilepaths:
 
     def __init__(self, root_path: str) -> None:
         self.ROOT = os.path.join(root_path, FOLDER_NAME, GENERATE_DIR)
-        self.PAGES = os.path.join(self.ROOT, "pages")
-        self.COMPONENTS = os.path.join(self.ROOT, "components")
-        self.LIB = os.path.join(self.ROOT, "lib")
-
-        self.ZENTRA = os.path.join(self.COMPONENTS, "zentra")
+        self.SRC = os.path.join(self.ROOT, "src")
+        self.COMPONENTS = os.path.join(self.SRC, "components")
+        self.PAGES = os.path.join(self.SRC, "pages")
+        self.LAYOUTS = os.path.join(self.SRC, "layouts")
+        self.LIB = os.path.join(self.SRC, "lib")
 
 
 class ZentraPackageFilepaths:

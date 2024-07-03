@@ -2,7 +2,7 @@ from enum import Enum
 from functools import partial
 import textwrap
 
-from zentra_models.cli.constants import MAGIC
+from zentra_models.cli.constants import GENERATE_DIR, MAGIC
 from zentra_models.cli.utils.format import (
     list_to_str,
     set_colour,
@@ -160,7 +160,7 @@ def generate_complete_panel(storage: ModelStorage) -> Panel:
         textwrap.dedent(f"""
     {MAGIC} [magenta]Zentra[/magenta] → [bright_cyan]React[/bright_cyan] conversion successful! {MAGIC}
     
-    Access them in [magenta]zentra/generated[/magenta].
+    Access them in [magenta]zentra/{GENERATE_DIR}[/magenta].
     
     [bright_cyan]Model Updates[/bright_cyan]
     """)

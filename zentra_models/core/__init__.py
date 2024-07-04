@@ -1,12 +1,16 @@
-from itertools import chain
-from typing import Any, Union
+import asyncio
+import os
+from pathlib import Path
+from typing import Any
 
-from pydantic import BaseModel, Field, PrivateAttr, field_validator
+from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, field_validator
 
-from zentra_models.cli.local.nodes import ComponentNode
-from zentra_models.cli.local.storage import BasicNameStorage
-from zentra_models.cli.constants.types import LibraryNamePairs
 from zentra_models.base import ZentraModel
+from zentra_models.cli.constants.filepaths import PACKAGE_PATHS
+from zentra_models.cli.local.dependencies import DependencyManager
+from zentra_models.cli.local.enums import FileType
+from zentra_models.cli.local.nodes import ComponentNode
+from zentra_models.cli.local.storage import AppStorage, ComponentDetails
 from zentra_models.core.constants import (
     LOWER_CAMELCASE_SINGLE_WORD,
     PASCALCASE_SINGLE_WORD,
@@ -109,23 +113,14 @@ class DataArray(BaseModel):
 class Block(BaseModel):
     """
     A `Zentra` model for a single React component function.
+
+    Parameters:
+    - `name` (`string`) - the name of the function in PascalCase
+    - `components` (`list[zentra_models.core.Component]`) - a list of `Component` models
     """
 
     name: str = Field(min_length=1)
     components: list[Component]
-
-
-class Page(BaseModel):
-    """
-    A Zentra model for a single webpage of React components.
-
-    Parameters:
-    - `name` (`string`) - the name of the page
-    - `blocks` (`list[Block]`) - a list of block models
-    """
-
-    name: str = Field(min_length=1)
-    blocks: list[Block]
 
     @field_validator("name")
     def validate_id(cls, name: str) -> str:
@@ -133,37 +128,129 @@ class Page(BaseModel):
             PASCALCASE_WITH_DIGITS, name, err_msg="must be PascalCase"
         )
 
-    def get_schema(self, node: BaseModel = None) -> dict:
-        """Returns a JSON tree of the `Page` components as nodes with a type (the component name) and its attributes (attrs)."""
-        if node is None:
-            node = self
+    def nodes(self) -> list[ComponentNode]:
+        """Converts each component into component nodes and returns them as a list."""
+        nodes = []
+        for component in self.components:
+            graph = LocalFilesGraphBuilder(component)
+            nodes.append(graph.build())
 
-        if isinstance(node, list):
-            return [self.get_schema(item) for item in node]
+        return nodes
 
-        formatted_schema = {
-            "type": node.__class__.__name__,
-            "attrs": node.model_dump(),
-        }
 
-        valid_attrs = ["content", "components", "fields"]
-        components_attr = next(
-            (attr for attr in valid_attrs if hasattr(node, attr)), None
+class File(BaseModel):
+    """
+    A Zentra model for a single React file.
+
+    Parameters:
+    - `name` (`string`) - the name of the file in PascalCase
+    - `block` (`zentra_models.core.Block`) - the main block to export from the file
+    - `file_type` (`string, optional`) - the type of file. Determines what folder the file is stores. Options: `['component', 'layout', 'page']`. `component` by default
+    - `extra_blocks` (`list[zentra_models.core.Block], optional`) - an optional list of block models associated to the main block. `None` by default
+    """
+
+    name: str = Field(min_length=1)
+    block: Block
+    file_type: FileType = "component"
+    extra_blocks: list[Block] = None
+
+    model_config = ConfigDict(use_enum_values=True)
+
+    @field_validator("name")
+    def validate_id(cls, name: str) -> str:
+        return check_pattern_match(
+            PASCALCASE_WITH_DIGITS, name, err_msg="must be PascalCase"
         )
 
-        if components_attr is not None:
-            children = getattr(node, components_attr)
+    def get_blocks(self) -> list[Block]:
+        """Extracts the blocks from the file and returns them as a list."""
+        blocks = [self.block]
 
-            # Handle leaf nodes
-            if not isinstance(children, list):
-                children = [children]
+        if self.extra_blocks:
+            blocks.extend(self.extra_blocks)
 
-            if children:
-                formatted_schema["children"] = [
-                    self.get_schema(child) for child in children
-                ]
+        return blocks
 
-        return formatted_schema
+    def block_names(self) -> list[str]:
+        """Returns the files block names as a list."""
+        blocks = self.get_blocks()
+        return [block.name for block in blocks]
+
+    def component_nodes(self) -> list[ComponentNode]:
+        """Extracts the components from each block as nodes and returns them as a list."""
+        blocks = self.get_blocks()
+
+        nodes = []
+        for block in blocks:
+            nodes.extend(block.nodes())
+
+        return nodes
+
+
+class FileManager(BaseModel):
+    """A Zentra model for managing multiple files."""
+
+    items: list[File] = []
+
+    def add(self, files: File | list[File]) -> None:
+        """Adds files to the container."""
+        if isinstance(files, File):
+            self.items.append(files)
+        else:
+            self.items.extend(files)
+
+    def names(self) -> list[str]:
+        """Returns the file names as a list."""
+        return [file.name for file in self.items]
+
+    def block_names(self) -> list[str]:
+        """Returns the block names as a list."""
+        names = []
+        for file in self.items:
+            names.extend(file.block_names())
+
+        return names
+
+    def component_nodes(self) -> list[ComponentNode]:
+        """Returns the components in each file as a nodes list."""
+        nodes = []
+        for file in self.items:
+            nodes.extend(file.component_nodes())
+        return nodes
+
+    def component_names(self) -> list[str]:
+        """Returns the names of each component in each file as a list."""
+        names = []
+        for node in self.component_nodes():
+            names.extend(self.node_names(node))
+
+        names = list(set(names))
+        names.sort()
+        return names
+
+    def component_pairs(self) -> list[tuple[str, str]]:
+        """Returns the component `(library, name)` pairs from each files component nodes and returns them as a list."""
+        pairs = []
+        for node in self.component_nodes():
+            pairs.extend(self.node_pairs(node))
+
+        return pairs
+
+    def node_names(self, node: ComponentNode) -> list[str]:
+        """Extracts the component names from a component node and returns them as a list."""
+        names = [node.name]
+        for child in node.children:
+            names.extend(self.node_names(child))
+
+        return names
+
+    def node_pairs(self, node: ComponentNode) -> list[tuple[str, str]]:
+        """Extracts the `(library, name)` pairs from a component node and returns them as a list."""
+        pairs = [node.pair()]
+        for child in node.children:
+            pairs.extend(self.node_pairs(child))
+
+        return pairs
 
 
 class LocalFilesGraphBuilder:

@@ -11,3 +11,9 @@ class FileType(StrEnum):
     COMPONENT = "component"
     LAYOUT = "layout"
     PAGE = "page"
+
+
+class ZentraCoreOptions(StrEnum):
+    FILES = "files"
+    BLOCKS = "blocks"
+    COMPONENTS = "components"

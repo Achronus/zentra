@@ -80,7 +80,7 @@ class Setup:
 
         # Already exists
         if (zentra and project_configured) and not reset_config:
-            if len(zentra.name_storage.components) == 0:
+            if zentra.storage.count("components") == 0:
                 raise typer.Exit(code=CommonErrorCodes.NO_COMPONENTS)
 
             console.print(setup_complete_panel(zentra))

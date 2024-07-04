@@ -1,4 +1,4 @@
-from zentra_models.core import Block, Page
+from zentra_models.core import Block, File
 from zentra_models.ui import Form, FormField
 from zentra_models.ui.control import Button, Input, Switch
 from zentra_models.ui.notification import AlertDialog
@@ -60,31 +60,30 @@ form_fields = [
     ],
 ]
 
-agency_details = Page(
+agency_details = File(
     name="AgencyDetails",
-    blocks=[
-        Block(
-            name="AgencyForm",
-            components=[
-                AlertDialog(
-                    trigger="agency info",
-                    description=[
-                        Card(
-                            name="agencyInfo",
-                            title="Agency Information",
-                            description="Let's create an agency for your business. You can edit agency settings later from the agency settings tab.",
-                            content=[
-                                Form(
-                                    name="agencyForm",
-                                    fields=form_fields,
-                                    btn_text="Save Agency Information",
-                                ),
-                            ],
-                        ),
-                    ],
-                ),
-                Button(content="test"),
-            ],
-        )
-    ],
+    file_type="page",
+    block=Block(
+        name="AgencyForm",
+        components=[
+            AlertDialog(
+                trigger="agency info",
+                description=[
+                    Card(
+                        name="agencyInfo",
+                        title="Agency Information",
+                        description="Let's create an agency for your business. You can edit agency settings later from the agency settings tab.",
+                        content=[
+                            Form(
+                                name="agencyForm",
+                                fields=form_fields,
+                                btn_text="Save Agency Information",
+                            ),
+                        ],
+                    ),
+                ],
+            ),
+            Button(content="test"),
+        ],
+    ),
 )

@@ -143,19 +143,6 @@ class NameStorage(BaseModel):
     components: list[str] = []
     libraries: list[str] = []
 
-    model_config = ConfigDict(use_enum_values=True)
-
-    def count(self, option: ZentraNameOptions) -> int:
-        """Returns the name count of the desired option."""
-        option_map = {
-            ZentraNameOptions.FILES.value: len(self.files),
-            ZentraNameOptions.BLOCKS.value: len(self.blocks),
-            ZentraNameOptions.COMPONENTS.value: len(self.components),
-            ZentraNameOptions.LIBRARIES.value: len(self.libraries),
-        }
-
-        return option_map[option]
-
 
 class ModelStorage(BaseModel):
     """A storage container for Zentra model filenames."""
@@ -170,6 +157,8 @@ class AppStorage(BaseModel):
     names: NameStorage = NameStorage()
     components: ComponentStorage = ComponentStorage()
     packages: list[Dependency] = []
+
+    model_config = ConfigDict(use_enum_values=True)
 
     def add_path(self, path: Filepath) -> None:
         """Adds a path to storage."""
@@ -215,6 +204,10 @@ class AppStorage(BaseModel):
         """Returns a tuple of lists for each set of names in the form: `(files, blocks, components)`."""
         return self.names.files, self.names.blocks, self.names.components
 
+    def get_name_option(self, option: ZentraNameOptions) -> list[str]:
+        """Returns the stored names for a given option."""
+        return getattr(self.names, option)
+
     def count(self, option: ZentraNameOptions) -> int:
         """Returns the stored count for a given option."""
-        return self.names.count(option)
+        return len(self.get_name_option(option))

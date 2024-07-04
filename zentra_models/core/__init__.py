@@ -352,6 +352,9 @@ class Zentra:
         self.storage.add_names("blocks", self.files.block_names())
         self.storage.add_names("components", self.files.component_names())
 
+        libraries = set(lib for lib, _ in self.files.component_pairs())
+        self.storage.add_names("libraries", list(libraries))
+
         self.store_file_components()
         self.store_packages()
 

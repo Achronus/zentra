@@ -2,7 +2,7 @@ from pathlib import Path
 from pydantic import BaseModel, ConfigDict
 
 from zentra_models.cli.constants.types import LibraryNamePairs
-from zentra_models.cli.local.enums import ZentraCoreOptions
+from zentra_models.cli.local.enums import ZentraNameOptions
 
 
 class ConfigExistStorage:
@@ -135,20 +135,23 @@ class NameStorage(BaseModel):
     - `files` (`list[string]`) - Zentra `File` model names
     - `blocks` (`list[string]`) - Zentra `Block` model names
     - `components` (`list[string]`) - Zentra `Component` model classnames
+    - `libraries` (`list[string]`) - component library names
     """
 
     files: list[str] = []
     blocks: list[str] = []
     components: list[str] = []
+    libraries: list[str] = []
 
     model_config = ConfigDict(use_enum_values=True)
 
-    def count(self, option: ZentraCoreOptions) -> int:
+    def count(self, option: ZentraNameOptions) -> int:
         """Returns the name count of the desired option."""
         option_map = {
-            ZentraCoreOptions.FILES.value: len(self.files),
-            ZentraCoreOptions.BLOCKS.value: len(self.blocks),
-            ZentraCoreOptions.COMPONENTS.value: len(self.components),
+            ZentraNameOptions.FILES.value: len(self.files),
+            ZentraNameOptions.BLOCKS.value: len(self.blocks),
+            ZentraNameOptions.COMPONENTS.value: len(self.components),
+            ZentraNameOptions.LIBRARIES.value: len(self.libraries),
         }
 
         return option_map[option]
@@ -212,6 +215,6 @@ class AppStorage(BaseModel):
         """Returns a tuple of lists for each set of names in the form: `(files, blocks, components)`."""
         return self.names.files, self.names.blocks, self.names.components
 
-    def count(self, option: ZentraCoreOptions) -> int:
+    def count(self, option: ZentraNameOptions) -> int:
         """Returns the stored count for a given option."""
         return self.names.count(option)

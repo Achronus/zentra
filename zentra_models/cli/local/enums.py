@@ -13,7 +13,8 @@ class FileType(StrEnum):
     PAGE = "page"
 
 
-class ZentraCoreOptions(StrEnum):
+class ZentraNameOptions(StrEnum):
     FILES = "files"
     BLOCKS = "blocks"
     COMPONENTS = "components"
+    LIBRARIES = "libraries"

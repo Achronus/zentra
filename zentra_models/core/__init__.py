@@ -316,22 +316,14 @@ class Zentra:
     """An application class for registering the components to create."""
 
     def __init__(self) -> None:
-        self.pages = []
-        self.blocks = []
+        self.files = FileManager()
+        self.storage = AppStorage()
 
-        self.name_storage = BasicNameStorage()
-
-    def valid_type_checks(
-        self, models: list, valid_types: tuple[BaseModel, ...]
-    ) -> None:
+    def valid_type_checks(self, models: list) -> None:
         """A helper function for raising errors for invalid types to the `register()` method."""
+        file_type = "<class 'zentra_models.core.File'>"
 
-        types_str = "  " + "\n  ".join(
-            [f"{idx}. {item}" for idx, item in enumerate(valid_types, start=1)]
-        )
-        error_msg_list = (
-            f"\nMust be (or inherit from) a list of either:\n{types_str}\n."
-        )
+        error_msg_list = f"\nMust be (or inherit from) a list of {file_type}."
 
         if not isinstance(models, list):
             raise ValueError(
@@ -339,70 +331,59 @@ class Zentra:
             )
 
         for idx, model in enumerate(models):
-            if not isinstance(model, valid_types):
+            if not isinstance(model, File):
                 raise ValueError(
                     f"Invalid component type (idx: {idx}): {type(models)}.\n{error_msg_list}"
                 )
 
-    def register(self, models: list[Union[Page, Block]]) -> None:
-        """Register a list of Zentra models to generate."""
-        type_mapping: dict[BaseModel, list] = {
-            Page: self.pages,
-            Block: self.blocks,
-        }
+    def register(self, files: File | list[File]) -> None:
+        """Register a list of Zentra `File` models to generate."""
+        if isinstance(files, File):
+            files = [files]
 
-        self.valid_type_checks(models, tuple(type_mapping.keys()))
+        self.valid_type_checks(files)
+        self.files.add(files)
 
-        for model in models:
-            for model_type in type_mapping.keys():
-                if isinstance(model, model_type):
-                    type_mapping[model_type].append(model)
+        self.fill_storage()
 
-        self.fill_storage(self.pages)
+    def fill_storage(self) -> None:
+        """Populates the `AppStorage` based on the registered files."""
+        self.storage.add_names("files", self.files.names())
+        self.storage.add_names("blocks", self.files.block_names())
+        self.storage.add_names("components", self.files.component_names())
 
-    def fill_storage(self, pages: list[Page]) -> None:
-        """Populates page and component names into name storage."""
-        self.name_storage.pages = [page.name for page in pages]
-        self.name_storage.blocks = [
-            block.name for page in pages for block in page.blocks
-        ]
+        filepaths = []
+        for lib, name in self.files.component_pairs():
+            filepaths.append(
+                self.zentra_path(
+                    name,
+                    lib,
+                    PACKAGE_PATHS.COMPONENT_ASSETS,
+                )
+            )
+
+        manager = DependencyManager(filepaths)
+        asyncio.run(manager.extraction())
+        print(manager.storage)
+
+        # print(self.storage)
+        exit()
 
         component_pairs = self.extract_pairs(
-            self.pages, filter_list=COMPONENT_FILTER_LIST
+            self.files, filter_list=COMPONENT_FILTER_LIST
         )
-        component_names = [name for _, name in component_pairs]
+        component_names = [name for _, _, name in component_pairs]
+        packages = list(set(lib for lib, _, _ in component_pairs))
 
         self.name_storage.components = component_names
         self.name_storage.filenames = component_pairs
+        self.name_storage.packages = packages
 
-    def extract_pairs(
-        self, pages: list[Page], filter_list: list[str]
-    ) -> LibraryNamePairs:
-        """Extracts the `(folder, filename)` pairs for each components `base` file from a list of pages."""
-        components = list(
-            chain.from_iterable(
-                [block.components for page in pages for block in page.blocks]
-            )
+    @staticmethod
+    def zentra_path(name: str, library: str, root_path: str) -> Path:
+        """Returns the `Zentra` package path of the component."""
+        filename = f"{name_from_pascal_case(name)}.tsx"
+        return os.path.join(
+            root_path,
+            Path(library, "base", filename),
         )
-
-        component_pairs = []
-        for component in components:
-            graph = LocalFilesGraphBuilder(component)
-            pairs = self.extract_name_pairs(graph.build())
-            pairs = [(lib, name) for lib, name in pairs if name not in filter_list]
-            component_pairs.extend(pairs)
-
-        component_pairs = list(set(component_pairs))
-        return [
-            (lib, f"{name_from_pascal_case(name)}.tsx") for lib, name in component_pairs
-        ]
-
-    def extract_name_pairs(self, node: ComponentNode) -> LibraryNamePairs:
-        """Creates a list of `(library, name)` pairs from a tree node."""
-        pairs = [node.pair()]
-
-        for child in node.children:
-            if isinstance(child, ComponentNode):
-                pairs.extend(self.extract_name_pairs(child))
-
-        return pairs

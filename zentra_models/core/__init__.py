@@ -6,16 +6,15 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, field_validator
 
 from zentra_models.base import ZentraModel
-from zentra_models.cli.constants.filepaths import PACKAGE_PATHS
-from zentra_models.cli.local.dependencies import DependencyManager
+from zentra_models.cli.constants.filepaths import GENERATE_PATHS, PACKAGE_PATHS
 from zentra_models.cli.local.enums import FileType
+from zentra_models.cli.local.extractor import PackageExtractor
 from zentra_models.cli.local.nodes import ComponentNode
-from zentra_models.cli.local.storage import AppStorage, ComponentDetails
+from zentra_models.cli.local.storage import AppStorage, ComponentDetails, Filepath
 from zentra_models.core.constants import (
     LOWER_CAMELCASE_SINGLE_WORD,
     PASCALCASE_SINGLE_WORD,
     PASCALCASE_WITH_DIGITS,
-    COMPONENT_FILTER_LIST,
 )
 from zentra_models.core.utils import name_from_pascal_case
 from zentra_models.core.validation import check_pattern_match
@@ -318,6 +317,7 @@ class Zentra:
     def __init__(self) -> None:
         self.files = FileManager()
         self.storage = AppStorage()
+        self.extractor = PackageExtractor()
 
     def valid_type_checks(self, models: list) -> None:
         """A helper function for raising errors for invalid types to the `register()` method."""
@@ -352,38 +352,79 @@ class Zentra:
         self.storage.add_names("blocks", self.files.block_names())
         self.storage.add_names("components", self.files.component_names())
 
-        filepaths = []
+        self.store_file_components()
+        self.store_packages()
+
+    def store_packages(self) -> None:
+        """Iterates through the files, extracts the components packages, and adds them to storage."""
+        packages = []
         for lib, name in self.files.component_pairs():
-            filepaths.append(
-                self.zentra_path(
-                    name,
-                    lib,
-                    PACKAGE_PATHS.COMPONENT_ASSETS,
+            _, _, package_path = self.get_paths(lib, name)
+            _, external = self.extractor.get_packages(package_path)
+            packages.extend(external)
+
+        packages = list(set(packages))
+
+        deps = asyncio.run(self.extractor.get_versions(packages))
+        self.storage.add_packages(deps)
+
+    def store_file_components(self) -> None:
+        """Iterates through the files and adds their components to storage."""
+        for lib, name in self.files.component_pairs():
+            filename, local_path, package_path = self.get_paths(lib, name)
+            local, _ = self.extractor.get_packages(package_path)
+            children = self.get_child_filepaths(local)
+
+            self.storage.add_component(
+                ComponentDetails(
+                    name=name,
+                    library=lib,
+                    children=children,
+                    path=Filepath(
+                        filename=filename,
+                        local=local_path,
+                        package=package_path,
+                    ),
                 )
             )
 
-        manager = DependencyManager(filepaths)
-        asyncio.run(manager.extraction())
-        print(manager.storage)
+    def get_child_filepaths(self, local_imports: list[str]) -> list[Filepath]:
+        """Converts a list of local imports into a list of Filepath models."""
+        paths = []
+        for child in local_imports:
+            if child.startswith("@/components/"):
+                lib, name = child.split("/")[-2:]
 
-        # print(self.storage)
-        exit()
+                filename, local_path, package_path = self.get_paths(lib, name)
+                paths.append(
+                    Filepath(
+                        filename=filename,
+                        local=local_path,
+                        package=package_path,
+                    )
+                )
 
-        component_pairs = self.extract_pairs(
-            self.files, filter_list=COMPONENT_FILTER_LIST
+        return paths
+
+    def get_paths(self, lib: str, name: str) -> tuple[str, Path, Path]:
+        """Uses helper functions to return the `(filename, local_path, package_path)` of a component pair."""
+        filename, package_path = self.zentra_path(
+            name, lib, PACKAGE_PATHS.COMPONENT_ASSETS
         )
-        component_names = [name for _, _, name in component_pairs]
-        packages = list(set(lib for lib, _, _ in component_pairs))
-
-        self.name_storage.components = component_names
-        self.name_storage.filenames = component_pairs
-        self.name_storage.packages = packages
+        local_path = self.local_path(name, lib, GENERATE_PATHS.COMPONENTS)
+        return filename, local_path, package_path
 
     @staticmethod
-    def zentra_path(name: str, library: str, root_path: str) -> Path:
-        """Returns the `Zentra` package path of the component."""
+    def zentra_path(name: str, library: str, root_path: str) -> tuple[str, Path]:
+        """Returns the `(filename, package_path)` for a component."""
         filename = f"{name_from_pascal_case(name)}.tsx"
-        return os.path.join(
+        return filename, os.path.join(
             root_path,
             Path(library, "base", filename),
         )
+
+    @staticmethod
+    def local_path(name: str, library: str, root_path: str) -> Path:
+        """Returns the `Zentra` local path for a component."""
+        filename = f"{name_from_pascal_case(name)}.tsx"
+        return os.path.join(root_path, Path(library, filename))

@@ -42,22 +42,6 @@ class Dependency(BaseModel):
     version: str
 
 
-class DependencyStorage(BaseModel):
-    """A storage container for model dependencies."""
-
-    external: list[Dependency] = []
-    local: list[str] = []
-
-    def as_dict(self) -> dict[str, dict[str, str]]:
-        """Returns `external` as a dependency dictionary."""
-        new_dict = {}
-
-        for item in self.external:
-            new_dict[item.name] = item.version
-
-        return {"dependencies": new_dict}
-
-
 class ModelFileStorage(BaseModel):
     """A storage container for storing Zentra model `(library, filename)` pairs."""
 
@@ -90,17 +74,31 @@ class ComponentDetails(BaseModel):
     Parameters:
     - `name` (`string`) - the classname of the component
     - `library` (`string`) - the name of the library the component belongs to
-    - `packages` (`list[Dependency]`) - the NPM packages associated to the component
-    - `children` (`list[str]`) - the names of the sub-components used in the component
-    - `local_path` (`Path`) - the base file location in the `zentra` directory
-    - `package_path` (`Path`) - the base file location in the `zentra_models` packages
+    - `path` (`Filepath`) - a `Filepath` model
+    - `children` (`list[Filepath]`) - a list of `Filepath` models for the components sub-components
     """
 
     name: str
     library: str
-    packages: list[Dependency]
-    children: list[str]
     path: Filepath
+    children: list[Filepath]
+
+    def __extract_paths(self, attr: str) -> list[Path]:
+        """A helper method for extracting path values."""
+        paths = [getattr(self.path, attr)]
+
+        for child in self.children:
+            paths.append(getattr(child, attr))
+
+        return list(set(paths))
+
+    def local_paths(self) -> list[Path]:
+        """Returns the local paths as a list."""
+        return self.__extract_paths("local")
+
+    def package_paths(self) -> list[Path]:
+        """Returns the package paths as a list."""
+        return self.__extract_paths("package")
 
 
 class ComponentStorage(BaseModel):
@@ -108,13 +106,24 @@ class ComponentStorage(BaseModel):
 
     items: list[ComponentDetails] = []
 
-    def package_paths(self) -> list[str]:
-        """Retrieves the packages paths for each item."""
-        return [item.path.package for item in self.items]
+    def __extract_paths(self, type: str) -> list[Path]:
+        """A helper method for extracting paths."""
+        paths = []
+        for item in self.items:
+            if type == "local":
+                paths.extend(item.local_paths())
+            elif type == "package":
+                paths.extend(item.package_paths())
 
-    def local_paths(self) -> list[str]:
+        return list(set(paths))
+
+    def local_paths(self) -> list[Path]:
         """Retrieves the local paths for each item."""
-        return [item.path.local for item in self.items]
+        return self.__extract_paths("local")
+
+    def package_paths(self) -> list[Path]:
+        """Retrieves the packages paths for each item."""
+        return self.__extract_paths("package")
 
 
 class NameStorage(BaseModel):
@@ -144,6 +153,7 @@ class AppStorage(BaseModel):
 
     names: NameStorage = NameStorage()
     components: ComponentStorage = ComponentStorage()
+    packages: list[Dependency] = []
 
     def add_path(self, path: Filepath) -> None:
         """Adds a path to storage."""
@@ -159,3 +169,28 @@ class AppStorage(BaseModel):
     def add_component(self, component: ComponentDetails) -> None:
         """Adds a component to storage."""
         self.components.items.append(component)
+
+    def add_packages(self, packages: list[Dependency]) -> None:
+        """Adds a package to storage."""
+        self.packages.extend(packages)
+
+    def package_dict(self) -> dict[str, dict[str, str]]:
+        """Returns the package dependencies as a dictionary."""
+        new_dict = {}
+
+        for package in self.packages:
+            new_dict[package.name] = package.version
+
+        return {"dependencies": new_dict}
+
+    def get_local_paths(self) -> list[Path]:
+        """Returns the component local paths as a sorted list."""
+        paths = self.components.local_paths()
+        paths.sort()
+        return paths
+
+    def get_package_paths(self) -> list[Path]:
+        """Returns the component package paths as a sorted list."""
+        paths = self.components.package_paths()
+        paths.sort()
+        return paths

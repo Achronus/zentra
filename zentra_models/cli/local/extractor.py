@@ -1,10 +1,28 @@
 import ast
+import asyncio
+import aiohttp
+
+import os
+from pathlib import Path
 import typer
 
-from zentra_models.cli.constants import GenerateSuccessCodes
-from zentra_models.cli.constants.filepaths import GENERATE_PATHS
-from zentra_models.cli.local.files import get_file_content, get_filename_dir_pairs
-from zentra_models.cli.local.storage import BasicNameStorage, CountStorage
+from zentra_models.cli.constants import (
+    DEPENDENCY_EXCLUSIONS,
+    UI_CORE_FILES,
+    GenerateSuccessCodes,
+)
+from zentra_models.cli.constants.filepaths import GENERATE_PATHS, PACKAGE_PATHS
+from zentra_models.cli.local.files import (
+    get_file_content,
+    get_filename_dir_pairs,
+    get_filepaths_list,
+)
+from zentra_models.cli.local.storage import (
+    Dependency,
+    NameStorage,
+    CountStorage,
+    Filepath,
+)
 from zentra_models.cli.constants.types import LibraryNamePairs
 
 
@@ -91,3 +109,70 @@ class ZentraExtractor(ast.NodeVisitor):
         file_content = get_file_content(self.filepath)
         tree = ast.parse(file_content, filename=self.filepath)
         self.visit(tree)
+
+
+class PackageExtractor:
+    """A helper class for extracting package dependencies for each component."""
+
+    def __init__(self) -> None:
+        self.exclude = DEPENDENCY_EXCLUSIONS
+
+    def get_packages(self, filepath: Path) -> tuple[list[str], list[str]]:
+        """A helper function to extract the `(local, external)` dependencies for a package."""
+        external_packages = set()
+        local_packages = set()
+
+        for package in self.extract_dependencies(filepath):
+            if package.startswith("@/"):
+                local_packages.add(package)
+            else:
+                external_packages.add(package)
+
+        return list(local_packages), list(external_packages)
+
+    async def get_versions(self, packages: list[str]) -> list[Dependency]:
+        """Retrieves a set of package versions and returns them as a list of `Dependency` models."""
+        results = await self.get_package_versions(packages)
+
+        deps = []
+        for name, version in results:
+            deps.append(Dependency(name=name, version=version))
+        return deps
+
+    def extract_dependencies(self, filepath: str, line_depth: int = 15) -> list[str]:
+        """Extracts the `from` names from the import statements from a file."""
+        with open(filepath, "r") as f:
+            content = f.readlines()
+
+        packages = [
+            line.split("from")[-1].strip().strip(';"')
+            for line in content[:line_depth]
+            if "from" in line
+        ]
+
+        return [package for package in packages if package not in self.exclude]
+
+    async def fetch_package_version(
+        self, session: aiohttp.ClientSession, package_name: str
+    ) -> tuple[str, str | None]:
+        """Fetch the latest version of an NPM package from the `npm` registry."""
+        url = f"https://registry.npmjs.org/{package_name}/latest"
+        try:
+            async with session.get(url) as response:
+                response.raise_for_status()
+                package_info = await response.json()
+                return package_name, package_info.get("version")
+        except aiohttp.ClientError as e:
+            print(f"Error fetching package info for {package_name}: {e}")
+            return package_name, None
+
+    async def get_package_versions(
+        self, package_names: list[str]
+    ) -> list[tuple[str, str | None]]:
+        """Fetch the latest versions of multiple `NPM` packages concurrently."""
+        async with aiohttp.ClientSession() as session:
+            tasks = [
+                self.fetch_package_version(session, package_name)
+                for package_name in package_names
+            ]
+            return await asyncio.gather(*tasks)

@@ -27,6 +27,13 @@ class Action(Enum):
     REMOVE = ("-", "red")
 
 
+class Details(BaseModel):
+    """A model for storing panel details."""
+
+    title: str
+    desc: str
+
+
 class SetupPanelFormatter(BaseModel):
     """Handles the logic for creating completion panels for `zentra init`.
 
@@ -99,16 +106,21 @@ def setup_first_run_panel() -> Panel:
 
 def setup_complete_panel(zentra: Zentra) -> Panel:
     """Creates a printable panel after successfully completing `zentra init`."""
-    storage = zentra.name_storage
+    file_names, block_names, component_names = zentra.storage.get_names()
     add_formatter = SetupPanelFormatter(action=Action.ADD)
 
-    component_str = list_to_str(storage.components, action=Action.ADD)
-    page_str = list_to_str(storage.pages, action=Action.ADD)
-
-    component_title = add_formatter.title_str(
-        "component", "yellow", len(storage.components)
+    component = Details(
+        title=add_formatter.title_str("component", "yellow", len(component_names)),
+        desc=list_to_str(component_names, action=Action.ADD),
     )
-    page_title = add_formatter.title_str("page", "dark_goldenrod", len(storage.pages))
+    block = Details(
+        title=add_formatter.title_str("block", "red", len(block_names)),
+        desc=list_to_str(block_names, action=Action.ADD),
+    )
+    file = Details(
+        title=add_formatter.title_str("file", "dark_goldenrod", len(file_names)),
+        desc=list_to_str(file_names, action=Action.ADD),
+    )
 
     return Panel.fit(
         textwrap.dedent(f"""
@@ -118,8 +130,9 @@ def setup_complete_panel(zentra: Zentra) -> Panel:
 
     [bright_cyan]Models To Generate[/bright_cyan]
     """)
-        + f"{component_title}\n{component_str}\n\n"
-        + f"{page_title}\n{page_str}",
+        + f"{component.title}\n{component.desc}\n\n"
+        + f"{block.title}\n{block.desc}\n\n"
+        + f"{file.title}\n{file.desc}",
         border_style="bright_green",
     )
 

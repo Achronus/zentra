@@ -1,15 +1,21 @@
+from enum import Enum
 import re
 from hypothesis import given
 import hypothesis.strategies as st
 
 from zentra_models.cli.utils.format import (
     format_item_list,
+    list_to_str,
     name_from_camel_case,
     name_to_camel_case,
     name_to_plural,
     set_colour,
     to_cc_from_pairs,
 )
+
+
+class Action(Enum):
+    ADD = ("+", "green")
 
 
 # Hypothesis strategy for valid text and colour inputs
@@ -95,3 +101,12 @@ def test_to_cc_from_pairs():
     ]
 
     assert all(checks)
+
+
+def test_list_to_str():
+    items = ["button", "alert", "avatar"]
+    action = Action.ADD
+
+    result = list_to_str(items, action)
+    target = "  [green]+[/green] alert, avatar, button"
+    assert result == target

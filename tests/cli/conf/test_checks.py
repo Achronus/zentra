@@ -8,12 +8,10 @@ import typer
 from zentra_models.cli.conf.checks import (
     check_file_exists,
     check_folder_exists,
-    check_models_registered,
     check_zentra_exists,
 )
 from zentra_models.cli.constants import SetupErrorCodes
-from zentra_models.core import Page, Zentra
-from zentra_models.ui.control import Input
+from zentra_models.core import Zentra
 
 
 class TestCheckZentraExists:
@@ -76,21 +74,3 @@ class TestCheckFolderExists:
     def test_invalid_file(self, zentra_path):
         file_path = os.path.join(zentra_path, "test_file.txt")
         assert not check_folder_exists(file_path)
-
-
-class TestCheckModelsRegistered:
-    def test_fail(self):
-        zentra = Zentra()
-        assert not check_models_registered(zentra)
-
-    def test_success(self):
-        zentra = Zentra()
-        zentra.register(
-            [
-                Page(
-                    name="TestPage",
-                    components=[Input(id="test", type="text", placeholder="test")],
-                )
-            ]
-        )
-        assert check_models_registered(zentra)

@@ -63,15 +63,21 @@ class TestZentraGeneratedFilepaths:
         assert generate_paths.SRC == os.path.join(tmp_path, "zentra", "build", "src")
 
     @staticmethod
+    def test_components_path(tmp_path, generate_paths: ZentraGeneratedFilepaths):
+        assert generate_paths.COMPONENTS == os.path.join(
+            tmp_path, "zentra", "build", "src", "components"
+        )
+
+    @staticmethod
     def test_pages_path(tmp_path, generate_paths: ZentraGeneratedFilepaths):
         assert generate_paths.PAGES == os.path.join(
             tmp_path, "zentra", "build", "src", "pages"
         )
 
     @staticmethod
-    def test_components_path(tmp_path, generate_paths: ZentraGeneratedFilepaths):
-        assert generate_paths.COMPONENTS == os.path.join(
-            tmp_path, "zentra", "build", "src", "components"
+    def test_layouts_path(tmp_path, generate_paths: ZentraGeneratedFilepaths):
+        assert generate_paths.LAYOUTS == os.path.join(
+            tmp_path, "zentra", "build", "src", "layouts"
         )
 
     @staticmethod
@@ -80,17 +86,44 @@ class TestZentraGeneratedFilepaths:
             tmp_path, "zentra", "build", "src", "lib"
         )
 
-    @staticmethod
-    def test_zentra_path(tmp_path, generate_paths: ZentraGeneratedFilepaths):
-        assert generate_paths.LAYOUTS == os.path.join(
-            tmp_path, "zentra", "build", "src", "layouts"
-        )
-
 
 class TestZentraPackageFilepaths:
     @pytest.fixture
     def cli_dict(self) -> dict[str, Path]:
         return get_dirpaths("zentra_models", "cli")
+
+    @pytest.fixture
+    def models_dict(self) -> dict[str, Path]:
+        return get_dirpaths("zentra_models", ignore=["cli"])
+
+    @staticmethod
+    def test_models_dict(models_dict: dict[str, Path]):
+        target_keys = [
+            "base",
+            "core",
+            "custom",
+            "nextjs",
+            "templates",
+            "ui",
+            "uploadthing",
+        ]
+        active_keys = list(models_dict.keys())
+        assert target_keys == active_keys
+
+    @staticmethod
+    def test_cli_dict(cli_dict: dict[str, Path]):
+        target_keys = [
+            "commands",
+            "components",
+            "conf",
+            "constants",
+            "display",
+            "init_assets",
+            "local",
+            "utils",
+        ]
+        active_keys = list(cli_dict.keys())
+        assert target_keys == active_keys
 
     @staticmethod
     def test_init_assets(

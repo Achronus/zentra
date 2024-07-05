@@ -1,13 +1,15 @@
 import os
+from pathlib import Path
 
 
-def find_zentra_root() -> str:
+def find_zentra_root(current_dir: Path = None) -> str:
     """
     Searches for the `zentra.root` file by traversing up the directory tree from the current directory.
 
     Returns the path found or an empty string.
     """
-    current_dir = os.getcwd()
+    if not current_dir:
+        current_dir = os.getcwd()
 
     while True:
         potential_root = os.path.join(current_dir, "zentra.root")

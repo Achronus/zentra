@@ -1,6 +1,6 @@
 import pytest
 
-from zentra_models.core import File, Block, Zentra
+from zentra_models.core import ReactFile, Block, Zentra
 from zentra_models.ui.control import Input
 
 
@@ -10,8 +10,8 @@ class TestZentra:
         return Zentra()
 
     @pytest.fixture
-    def test_file(self) -> File:
-        return File(
+    def test_file(self) -> ReactFile:
+        return ReactFile(
             name="Test",
             block=Block(
                 name="Test",
@@ -30,9 +30,9 @@ class TestZentra:
             zentra.register(["test"])
 
     @staticmethod
-    def test_register_valid(zentra: Zentra, test_file: File):
+    def test_register_valid(zentra: Zentra, test_file: ReactFile):
         zentra.register(test_file)
 
     @staticmethod
-    def test_register_valid_single(zentra: Zentra, test_file: File):
+    def test_register_valid_single(zentra: Zentra, test_file: ReactFile):
         zentra.register([test_file])

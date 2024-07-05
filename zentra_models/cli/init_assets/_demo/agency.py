@@ -1,4 +1,4 @@
-from zentra_models.core import Block, File
+from zentra_models.core import Block, ReactFile
 from zentra_models.ui import Form, FormField
 from zentra_models.ui.control import Button, Input, Switch
 from zentra_models.ui.notification import AlertDialog
@@ -60,10 +60,10 @@ form_fields = [
     ],
 ]
 
-agency_details = File(
+agency_details = ReactFile(
     name="AgencyDetails",
     file_type="page",
-    block=Block(
+    blocks=Block(
         name="AgencyForm",
         components=[
             AlertDialog(

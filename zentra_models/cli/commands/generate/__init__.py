@@ -48,7 +48,7 @@ class Generate:
         if not zentra:
             raise typer.Exit(CommonErrorCodes.MODELS_DIR_MISSING)
 
-        if len(zentra.name_storage.components) == 0:
+        if zentra.storage.count("components") == 0:
             raise typer.Exit(code=CommonErrorCodes.NO_COMPONENTS)
 
         console.print()

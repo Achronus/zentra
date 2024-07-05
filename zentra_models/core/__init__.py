@@ -1,7 +1,7 @@
 import asyncio
 import os
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, field_validator
 
@@ -137,21 +137,19 @@ class Block(BaseModel):
         return nodes
 
 
-class File(BaseModel):
+class ReactFile(BaseModel):
     """
     A Zentra model for a single React file.
 
     Parameters:
     - `name` (`string`) - the name of the file in PascalCase
-    - `block` (`zentra_models.core.Block`) - the main block to export from the file
+    - `block` (`zentra_models.core.Block | list[zentra_models.core.Block]`) - a single or list of `Block` model
     - `file_type` (`string, optional`) - the type of file. Determines what folder the file is stores. Options: `['component', 'layout', 'page']`. `component` by default
-    - `extra_blocks` (`list[zentra_models.core.Block], optional`) - an optional list of block models associated to the main block. `None` by default
     """
 
     name: str = Field(min_length=1)
-    block: Block
+    blocks: Block | list[Block]
     file_type: FileType = "component"
-    extra_blocks: list[Block] = None
 
     model_config = ConfigDict(use_enum_values=True)
 
@@ -161,26 +159,20 @@ class File(BaseModel):
             PASCALCASE_WITH_DIGITS, name, err_msg="must be PascalCase"
         )
 
-    def get_blocks(self) -> list[Block]:
-        """Extracts the blocks from the file and returns them as a list."""
-        blocks = [self.block]
-
-        if self.extra_blocks:
-            blocks.extend(self.extra_blocks)
-
+    @field_validator("blocks")
+    def validate_blocks(cls, blocks: Block | list[Block]) -> list[Block]:
+        if isinstance(blocks, Block):
+            blocks = [blocks]
         return blocks
 
     def block_names(self) -> list[str]:
         """Returns the files block names as a list."""
-        blocks = self.get_blocks()
-        return [block.name for block in blocks]
+        return [block.name for block in self.blocks]
 
     def component_nodes(self) -> list[ComponentNode]:
         """Extracts the components from each block as nodes and returns them as a list."""
-        blocks = self.get_blocks()
-
         nodes = []
-        for block in blocks:
+        for block in self.blocks:
             nodes.extend(block.nodes())
 
         return nodes
@@ -189,11 +181,11 @@ class File(BaseModel):
 class FileManager(BaseModel):
     """A Zentra model for managing multiple files."""
 
-    items: list[File] = []
+    items: list[ReactFile] = []
 
-    def add(self, files: File | list[File]) -> None:
+    def add(self, files: ReactFile | list[ReactFile]) -> None:
         """Adds files to the container."""
-        if isinstance(files, File):
+        if isinstance(files, ReactFile):
             self.items.append(files)
         else:
             self.items.extend(files)
@@ -331,14 +323,14 @@ class Zentra:
             )
 
         for idx, model in enumerate(models):
-            if not isinstance(model, File):
+            if not isinstance(model, ReactFile):
                 raise ValueError(
                     f"Invalid component type (idx: {idx}): {type(models)}.\n{error_msg_list}"
                 )
 
-    def register(self, files: File | list[File]) -> None:
+    def register(self, files: ReactFile | list[ReactFile]) -> None:
         """Register a list of Zentra `File` models to generate."""
-        if isinstance(files, File):
+        if isinstance(files, ReactFile):
             files = [files]
 
         self.valid_type_checks(files)

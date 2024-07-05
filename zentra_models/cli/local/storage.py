@@ -126,13 +126,18 @@ class ComponentStorage(BaseModel):
         """Retrieves the packages paths for each item."""
         return self.__extract_paths("package")
 
+    def add(self, comp: ComponentDetails) -> None:
+        """Adds a component to storage."""
+        if comp not in self.items:
+            self.items.append(comp)
+
 
 class NameStorage(BaseModel):
     """
     A storage container for storing name values.
 
     Parameters:
-    - `files` (`list[string]`) - Zentra `File` model names
+    - `files` (`list[string]`) - Zentra `ReactFile` model names
     - `blocks` (`list[string]`) - Zentra `Block` model names
     - `components` (`list[string]`) - Zentra `Component` model classnames
     - `libraries` (`list[string]`) - component library names
@@ -160,10 +165,6 @@ class AppStorage(BaseModel):
 
     model_config = ConfigDict(use_enum_values=True)
 
-    def add_path(self, path: Filepath) -> None:
-        """Adds a path to storage."""
-        self.paths.items.append(path)
-
     def add_names(self, attr: str, names: list) -> None:
         """Add a list of names to an attribute in the names storage."""
         items: list = getattr(self.names, attr)
@@ -173,7 +174,7 @@ class AppStorage(BaseModel):
 
     def add_component(self, component: ComponentDetails) -> None:
         """Adds a component to storage."""
-        self.components.items.append(component)
+        self.components.add(component)
 
     def add_packages(self, packages: list[Dependency]) -> None:
         """Adds a package to storage."""

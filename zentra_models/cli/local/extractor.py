@@ -84,6 +84,36 @@ class LocalExtractor:
             raise typer.Exit(code=GenerateSuccessCodes.NO_NEW_COMPONENTS)
 
 
+class FileExtractor:
+    """A helper class for extracting files from a package directory dynamically and converting them to local paths."""
+
+    def __init__(self, root: Path, local: Path, ignore: list[str] = None) -> None:
+        self.root = root
+        self.local = local
+        self.ignore = ignore if ignore else []
+
+    def get_files(self) -> list[Path]:
+        """Returns a list of all the paths in the root directory excluding the `ignore` list."""
+        paths = []
+        for path in self.root.rglob("*"):
+            if path.is_file() and not any(
+                ignored in path.parts for ignored in self.ignore
+            ):
+                paths.append(path)
+        return paths
+
+    def get_local_paths(self, depth: int = 2) -> list[Path]:
+        """Extracts the last values of the root paths based on depth and updates them to the local path."""
+        paths = self.get_files()
+
+        new_paths = []
+        for file in paths:
+            parts = [part.replace("root", "") for part in file.parts[-depth:]]
+            new_paths.append(Path(self.local, *parts))
+
+        return new_paths
+
+
 class ZentraExtractor(ast.NodeVisitor):
     """Extracts the `Zentra` object from the `zentra/models` config file."""
 

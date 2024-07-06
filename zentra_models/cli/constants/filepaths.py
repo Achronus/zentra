@@ -43,26 +43,26 @@ class ZentraLocalFilepaths:
     """A storage container for the core filepaths in the `zentra` folder."""
 
     def __init__(self, root_path: str) -> None:
-        self.ROOT = os.path.join(root_path, FOLDER_NAME)
-        self.MODELS = os.path.join(self.ROOT, "models")
-        self.GENERATED = os.path.join(self.ROOT, GENERATE_DIR)
-        self.DEMO = os.path.join(self.MODELS, DEMO_DIR)
+        self.ROOT = Path(root_path, FOLDER_NAME)
+        self.MODELS = Path(self.ROOT, "models")
+        self.GENERATED = Path(self.ROOT, GENERATE_DIR)
+        self.DEMO = Path(self.MODELS, DEMO_DIR)
 
-        self.CONF = os.path.join(self.MODELS, SETUP_FILE)
+        self.CONF = Path(self.MODELS, SETUP_FILE)
 
-        self.ZENTRA_ROOT = os.path.join(root_path, "zentra.root")
+        self.ZENTRA_ROOT = Path(root_path, "zentra.root")
 
 
 class ZentraGeneratedFilepaths:
     """A storage container for the core filepaths in the `zentra/generated` folder."""
 
     def __init__(self, root_path: str) -> None:
-        self.ROOT = os.path.join(root_path, FOLDER_NAME, GENERATE_DIR)
-        self.SRC = os.path.join(self.ROOT, "src")
-        self.COMPONENTS = os.path.join(self.SRC, "components")
-        self.PAGES = os.path.join(self.SRC, "pages")
-        self.LAYOUTS = os.path.join(self.SRC, "layouts")
-        self.LIB = os.path.join(self.SRC, "lib")
+        self.ROOT = Path(root_path, FOLDER_NAME, GENERATE_DIR)
+        self.SRC = Path(self.ROOT, "src")
+        self.COMPONENTS = Path(self.SRC, "components")
+        self.PAGES = Path(self.SRC, "pages")
+        self.LAYOUTS = Path(self.SRC, "layouts")
+        self.LIB = Path(self.SRC, "lib")
 
 
 class ZentraPackageFilepaths:
@@ -75,8 +75,8 @@ class ZentraPackageFilepaths:
         self.INIT_ASSETS = self.CLI_DICT["init_assets"]
         self.COMPONENT_ASSETS = self.CLI_DICT["components"]
 
-        self.DEMO = os.path.join(self.INIT_ASSETS, DEMO_DIR)
-        self.CONF = os.path.join(self.INIT_ASSETS, SETUP_FILE)
+        self.DEMO = Path(self.INIT_ASSETS, DEMO_DIR)
+        self.CONF = Path(self.INIT_ASSETS, SETUP_FILE)
 
 
 # Init filepaths

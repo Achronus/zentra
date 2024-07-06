@@ -92,19 +92,25 @@ class FileExtractor:
         self.local = local
         self.ignore = ignore if ignore else []
 
-    def get_files(self) -> list[Path]:
-        """Returns a list of all the paths in the root directory excluding the `ignore` list."""
+    def __get_paths(self, dirpath: Path, ignore: list[str]) -> list[Path]:
+        """Returns a list of paths in a directory excluding the `ignore` list."""
         paths = []
-        for path in self.root.rglob("*"):
-            if path.is_file() and not any(
-                ignored in path.parts for ignored in self.ignore
-            ):
+        for path in dirpath.rglob("*"):
+            if path.is_file() and not any(ignored in path.parts for ignored in ignore):
                 paths.append(path)
         return paths
 
-    def get_local_paths(self, depth: int = 2) -> list[Path]:
+    def get_root_paths(self) -> list[Path]:
+        """Returns a list of all the paths in the local directory."""
+        return self.__get_paths(self.root, self.ignore)
+
+    def get_local_paths(self) -> list[Path]:
+        """Returns a list of all the paths in the root directory."""
+        return self.__get_paths(self.local, ignore=[])
+
+    def create_local_paths(self, depth: int = 2) -> list[Path]:
         """Extracts the last values of the root paths based on depth and updates them to the local path."""
-        paths = self.get_files()
+        paths = self.get_paths()
 
         new_paths = []
         for file in paths:

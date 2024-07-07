@@ -3,14 +3,9 @@ from functools import partial
 import textwrap
 
 from zentra_models.cli.constants import GENERATE_DIR, MAGIC
-from zentra_models.cli.utils.format import (
-    list_to_str,
-    set_colour,
-    name_to_plural,
-    to_cc_from_pairs,
-)
+from zentra_models.cli.local.storage import CountStorage
+from zentra_models.cli.utils.format import list_to_str, set_colour, name_to_plural
 from zentra_models.cli.constants.message import SETUP_COMPLETE_MSG
-from zentra_models.cli.local.storage import ModelStorage
 
 from pydantic import BaseModel
 from rich.panel import Panel
@@ -137,37 +132,24 @@ def setup_complete_panel(zentra: Zentra) -> Panel:
     )
 
 
-def generate_complete_panel(storage: ModelStorage) -> Panel:
+def generate_complete_panel(counts: CountStorage) -> Panel:
     """Creates a printable panel after successfully completing `zentra generate`."""
     components = (
-        to_cc_from_pairs(storage.components.generate),
-        to_cc_from_pairs(storage.components.remove),
-    )
-    pages = (
-        to_cc_from_pairs(storage.pages.generate),
-        to_cc_from_pairs(storage.pages.remove),
+        counts.generate.items,
+        counts.remove.items,
     )
 
     formatter = partial(GeneratePanelFormatter, actions=Action)
     comp_formatter = formatter(name="component", data=components)
-    page_formatter = formatter(name="page", data=pages)
 
     comp_totals = (
-        storage.components.counts.generate,
-        storage.components.counts.remove,
-    )
-    page_totals = (
-        storage.pages.counts.generate,
-        storage.pages.counts.remove,
+        counts.get_count("generate"),
+        counts.get_count("remove"),
     )
 
     comp_str = comp_formatter.data_str()
-    page_str = page_formatter.data_str()
 
     component_title = comp_formatter.title_str(comp_totals, "yellow")
-    page_title = page_formatter.title_str(page_totals, "dark_goldenrod")
-
-    page_str = f"\n{page_title}\n{page_str}" if page_str.strip() != "" else ""
 
     return Panel.fit(
         textwrap.dedent(f"""
@@ -177,7 +159,6 @@ def generate_complete_panel(storage: ModelStorage) -> Panel:
     
     [bright_cyan]Model Updates[/bright_cyan]
     """)
-        + f"{component_title}\n{comp_str}"
-        + page_str,
+        + f"{component_title}\n{comp_str}",
         border_style="bright_green",
     )

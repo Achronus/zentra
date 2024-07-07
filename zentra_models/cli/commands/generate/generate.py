@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+import shutil
 import typer
 
 from zentra_models.cli.commands.base import status
@@ -30,21 +31,12 @@ class GenerateController(BaseController):
 
         tasks = [
             (self.detect_models, f"Detecting {zentra_str} models"),
-            (
-                self.retrieve_assets,
-                "Retrieving core [yellow]component[/yellow] assets from [yellow]GitHub[/yellow]",
-            ),
-            (self.build_pages, f"Building {react_str} pages"),
+            (self.retrieve_assets, "Adding core [yellow]component[/yellow] assets"),
             # (self.remove_models, f"Removing unused {zentra_str} models"),
-            # (self.update_template_files, f"Configuring {react_str} components"),
+            # (self.add_zentra_files, f"Creating {react_str} files"),
         ]
 
         BaseController.__init__(self, tasks)
-
-    @status
-    def build_pages(self) -> None:
-        """Creates the `frontend` pages based on the `Zentra Page` models."""
-        pass
 
     def get_names(self, comps: ComponentStorage, paths: list[Path]) -> list[str]:
         """A helper method to return a list of names given a list of paths."""
@@ -84,11 +76,6 @@ class GenerateController(BaseController):
         target_paths = target_comps.local_paths()
         existing_paths = LOCAL_FILES.get_paths()
 
-        # TODO: add 'ui' core files
-        # if "ui" in self.zentra.storage.get_name_option("libraries"):
-        #     target_paths.extend(UI_FILES.get_root_paths())
-        #     target_paths.extend(UI_FILES.create_local_paths())
-
         existing, generate, remove = self.find_differences(target_paths, existing_paths)
 
         self.counts.fill(
@@ -102,20 +89,38 @@ class GenerateController(BaseController):
 
     @status
     def retrieve_assets(self) -> None:
-        """Retrieves the core component assets from GitHub and stores them in the Zentra generate folder."""
-        if self.storage.components.counts.generate > 0:
-            self.local_builder.make_dirs()
-            self.local_builder.create_base_files()
+        """Retrieves the core component assets from the Zentra package and stores them in the Zentra generate folder."""
+        if self.counts.get_count("generate") > 0:
+            names = self.counts.get_items("generate")
+            comps = self.zentra.storage.get_components(names)
+
+            package_paths = comps.package_paths()
+            local_paths = comps.local_paths()
+
+            if "ui" in self.zentra.storage.get_name_option("libraries"):
+                local_extras = UI_FILES.create_local_paths(ignore=["base"])
+                package_extras = UI_FILES.get_root_paths(ignore=["base"])
+                local_paths.extend(local_extras)
+                package_paths.extend(package_extras)
+
+            # Make directories
+            dirpaths = list({path.parent for path in local_paths})
+            for path in dirpaths:
+                os.makedirs(path, exist_ok=True)
+
+            # Make files
+            for src, dest in zip(package_paths, local_paths):
+                if not os.path.exists(dest):
+                    shutil.copyfile(src, dest)
 
     @status
     def remove_models(self) -> None:
-        """Removes the React component files that are no longer used from the Zentra generate folder."""
-        if self.storage.components.counts.remove > 0:
-            self.local_builder.remove_models()
+        """Removes files from the Zentra generate folder that are no longer needed."""
+        if self.counts.get_count("remove") > 0:
+            pass
+            # Delete files from 'build' folder
 
     @status
-    def update_template_files(self) -> None:
-        """Updates the React components based on the Zentra model attributes."""
+    def add_zentra_files(self) -> None:
+        """Builds the React files based on the information in the Zentra app."""
         pass
-        # TODO: add logic for 'extract_component_details' or remove function if not needed
-        # Likely better to find alternative. Function is long and slow

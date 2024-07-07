@@ -1,16 +1,16 @@
-from zentra_models.cli.templates.builders.component import ComponentBuilder
-from zentra_models.cli.templates.builders.structural import JSXPageBuilder
+from zentra_models.templates.builders.component import ComponentBuilder
+from zentra_models.templates.builders.structural import JSXPageBuilder
 
-from zentra_models.cli.templates.ui.mappings import COMPONENT_MAPPINGS, JSX_MAPPINGS
+from zentra_models.templates.ui.mappings import COMPONENT_MAPPINGS, JSX_MAPPINGS
 
-from zentra_models.core import Component, Page
+from zentra_models.core import Component, ReactFile
 
 
 def component_builder(component: Component) -> ComponentBuilder:
     return ComponentBuilder(component, mappings=COMPONENT_MAPPINGS)
 
 
-def page_builder(page: Page) -> JSXPageBuilder:
+def page_builder(page: ReactFile) -> JSXPageBuilder:
     return JSXPageBuilder(page=page, mappings=JSX_MAPPINGS)
 
 

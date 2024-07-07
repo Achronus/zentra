@@ -6,13 +6,13 @@ from zentra_models.templates.storage import (
     JSXPageContentStorage,
 )
 
-from zentra_models.core import Component, Page
+from zentra_models.core import Component, ReactFile
 
 
 class JSXPageBuilder:
     """A builder for creating Zentra `Page` models as JSX."""
 
-    def __init__(self, page: Page, mappings: JSXMappings) -> None:
+    def __init__(self, page: ReactFile, mappings: JSXMappings) -> None:
         self.page = page
         self.mappings = mappings
 

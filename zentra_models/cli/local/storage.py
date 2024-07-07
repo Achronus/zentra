@@ -185,17 +185,11 @@ class AppStorage(BaseModel):
             ]
         )
 
-    def get_local_paths(self, names: list[str]) -> list[Path]:
-        """Returns the component local paths as a sorted list."""
-        paths = self.components.local_paths(names)
-        paths.sort()
-        return paths
-
-    def get_package_paths(self, names: list[str]) -> list[Path]:
-        """Returns the component package paths as a sorted list."""
-        paths = self.components.package_paths(names)
-        paths.sort()
-        return paths
+    def get_components(self, names: list[str]) -> ComponentStorage:
+        """Returns a new `ComponentStorage` object with the components found that match a list of names."""
+        return ComponentStorage(
+            items=[comp for comp in self.components.items if comp.name in names],
+        )
 
     def get_names(self) -> tuple[list[str], list[str], list[str]]:
         """Returns a tuple of lists for each set of names in the form: `(files, blocks, components)`."""
@@ -246,6 +240,10 @@ class CountStorage:
     def get_count(self, attr: str) -> None:
         """Returns the item total for a given attribute."""
         return getattr(self, attr).total
+
+    def get_items(self, attr: str) -> list[str]:
+        """Returns the items stored in the given attribute."""
+        return getattr(self, attr).items
 
     def fill(self, **kwargs) -> None:
         """Adds items to count storage based on `(key_name, values)` and updates its totals."""

@@ -55,5 +55,5 @@ class Generate:
         controller = GenerateController(zentra)
         controller.run()
 
-        console.print(generate_complete_panel(controller.storage))
+        console.print(generate_complete_panel(controller.counts))
         raise typer.Exit(GenerateSuccessCodes.COMPLETE)

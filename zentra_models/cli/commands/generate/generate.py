@@ -1,12 +1,14 @@
+import os
+from pathlib import Path
+import typer
+
 from zentra_models.cli.commands.base import status
 from zentra_models.cli.commands.base.controller import BaseController
 
-from zentra_models.cli.local.storage import ModelFileStorage, ModelStorage
-from zentra_models.cli.constants.types import LibraryNamePairs
+from zentra_models.cli.constants import GenerateSuccessCodes
+from zentra_models.cli.constants.filepaths import UI_FILES, LOCAL_FILES
 
-from zentra_models.cli.local.builder import LocalBuilder
-from zentra_models.cli.local.extractor import LocalExtractor
-
+from zentra_models.cli.local.storage import ComponentStorage, CountStorage
 from zentra_models.core import Zentra
 
 
@@ -19,10 +21,9 @@ class GenerateController(BaseController):
     """
 
     def __init__(self, zentra: Zentra) -> None:
-        self.local_extractor = LocalExtractor(zentra.name_storage)
+        self.zentra = zentra
 
-        self.storage = ModelStorage()
-        self.local_builder = LocalBuilder()
+        self.counts = CountStorage()
 
         react_str = "[cyan]React[/cyan]"
         zentra_str = "[magenta]Zentra[/magenta]"
@@ -33,54 +34,78 @@ class GenerateController(BaseController):
                 self.retrieve_assets,
                 "Retrieving core [yellow]component[/yellow] assets from [yellow]GitHub[/yellow]",
             ),
-            (self.remove_models, f"Removing unused {zentra_str} models"),
-            (self.update_template_files, f"Configuring {react_str} components"),
+            (self.build_pages, f"Building {react_str} pages"),
+            # (self.remove_models, f"Removing unused {zentra_str} models"),
+            # (self.update_template_files, f"Configuring {react_str} components"),
         ]
 
         BaseController.__init__(self, tasks)
 
-    def store_models(
-        self,
-        existing: LibraryNamePairs,
-        add: LibraryNamePairs,
-        remove: LibraryNamePairs,
-    ) -> None:
-        """Stores Zentra model changes in `ModelStorage`."""
-        changes = {
-            "existing": existing,
-            "generate": add,
-            "remove": remove,
-            "counts": self.local_extractor.model_counts,
-        }
+    @status
+    def build_pages(self) -> None:
+        """Creates the `frontend` pages based on the `Zentra Page` models."""
+        pass
 
-        self.storage.components = ModelFileStorage(**changes)
-        self.local_builder.components = self.storage.components
+    def get_names(self, comps: ComponentStorage, paths: list[Path]) -> list[str]:
+        """A helper method to return a list of names given a list of paths."""
+        names = []
+        for path in paths:
+            filename = os.path.basename(path)
+            comp = comps.get_comp_by_filename(filename)
+
+            if comp:
+                names.append(comp.name)
+
+        names.sort()
+        return names
+
+    def find_differences(
+        self, target_paths: list[Path], existing_paths: list[Path]
+    ) -> tuple[list[str], list[str], list[str]]:
+        """A helper method to find the differences between two sets of paths. Returns the names of as a tuple of lists in the form: `(existing, generate, remove)`."""
+        target_paths = set(target_paths)
+        existing_paths = set(existing_paths)
+
+        to_generate = list(target_paths - existing_paths)
+        to_remove = list(existing_paths - target_paths)
+        already_exist = list(target_paths & existing_paths)
+
+        # Get names of components based on path
+        all_comps = self.zentra.storage.components
+        existing = self.get_names(all_comps, already_exist)
+        generate = self.get_names(all_comps, to_generate)
+        remove = self.get_names(all_comps, to_remove)
+        return existing, generate, remove
 
     @status
     def detect_models(self) -> None:
         """Detects the user defined Zentra models and prepares them for file generation."""
-        user_models = self.local_extractor.user_models()
-        existing_models = self.local_extractor.existing_models()
+        target_comps = self.zentra.storage.get_target_components()
+        target_paths = target_comps.local_paths()
+        existing_paths = LOCAL_FILES.get_paths()
 
-        self.local_extractor.no_new_components_check(user_models, existing_models)
+        # TODO: add 'ui' core files
+        # if "ui" in self.zentra.storage.get_name_option("libraries"):
+        #     target_paths.extend(UI_FILES.get_root_paths())
+        #     target_paths.extend(UI_FILES.create_local_paths())
 
-        to_add, to_remove = self.local_extractor.model_changes(
-            existing_models,
-            user_models,
+        existing, generate, remove = self.find_differences(target_paths, existing_paths)
+
+        self.counts.fill(
+            existing=existing,
+            generate=generate,
+            remove=remove,
         )
 
-        self.store_models(
-            existing=existing_models,
-            add=to_add,
-            remove=to_remove,
-        )
+        if self.counts.get_count("generate") == 0:
+            raise typer.Exit(code=GenerateSuccessCodes.NO_NEW_COMPONENTS)
 
     @status
     def retrieve_assets(self) -> None:
         """Retrieves the core component assets from GitHub and stores them in the Zentra generate folder."""
         if self.storage.components.counts.generate > 0:
             self.local_builder.make_dirs()
-            self.local_builder.create_base_files(file_type="base")
+            self.local_builder.create_base_files()
 
     @status
     def remove_models(self) -> None:

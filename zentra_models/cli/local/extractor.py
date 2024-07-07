@@ -2,95 +2,38 @@ import ast
 import asyncio
 import aiohttp
 
-import os
 from pathlib import Path
-import typer
 
-from zentra_models.cli.constants import (
-    DEPENDENCY_EXCLUSIONS,
-    UI_CORE_FILES,
-    GenerateSuccessCodes,
-)
-from zentra_models.cli.constants.filepaths import GENERATE_PATHS, PACKAGE_PATHS
-from zentra_models.cli.local.files import (
-    get_file_content,
-    get_filename_dir_pairs,
-    get_filepaths_list,
-)
-from zentra_models.cli.local.storage import (
-    Dependency,
-    NameStorage,
-    CountStorage,
-    Filepath,
-)
-from zentra_models.cli.constants.types import LibraryNamePairs
+from zentra_models.cli.constants import DEPENDENCY_EXCLUSIONS
+
+from zentra_models.cli.local.files import get_file_content
+from zentra_models.cli.local.storage import Dependency
 
 
-class LocalExtractor:
-    """
-    Handles the functionality for extracting information from `zentra/models`.
+class LocalFileExtractor:
+    """A helper class for extracting files from a local directory."""
 
-    Parameters:
-    - `name_storage` (`storage.BasicNameStorage`) - the Zentra application name storage containing the user model filenames
-    """
+    def __init__(self, root: Path, ignore: list[str] = None) -> None:
+        self.root = root
+        self.ignore = ignore if ignore else []
 
-    def __init__(self, name_storage: BasicNameStorage) -> None:
-        self.name_storage = name_storage
-
-        self.model_counts = CountStorage()
-
-    def __repr__(self) -> str:
-        return f'{self.__class__.__name__}(name_storage="{self.name_storage}", model_counts="{self.model_counts}")'
-
-    def find_difference(
-        self, pair_one: LibraryNamePairs, pair_two: LibraryNamePairs
-    ) -> LibraryNamePairs:
-        """Identifies the differences between two lists of pairs of Zentra models."""
-        same = list(set(pair_one) & set(pair_two))
-        return list(set(pair_one + pair_two) - set(same))
-
-    def user_models(self) -> LibraryNamePairs:
-        """Retrieves the Zentra model filenames from `zentra/models`."""
-        return self.name_storage.filenames
-
-    def existing_models(self) -> LibraryNamePairs:
-        """Retrieves the existing Zentra model filenames from the Zentra generate folder."""
-        return get_filename_dir_pairs(GENERATE_PATHS.ROOT)
-
-    def model_changes(
-        self, existing: LibraryNamePairs, user_models: LibraryNamePairs
-    ) -> tuple[LibraryNamePairs, LibraryNamePairs]:
-        """Provides two lists of `FolderFilePair` changes. In the form of: `(to_add, to_remove)`."""
-        to_remove, to_add = [], []
-        existing_models_set = set(existing)
-
-        model_updates = self.find_difference(existing, user_models)
-        for model in model_updates:
-            if model in existing_models_set:
-                to_remove.append(model)
-                self.model_counts.remove += 1
-            else:
-                to_add.append(model)
-                self.model_counts.generate += 1
-
-        return to_add, to_remove
-
-    @staticmethod
-    def no_new_components_check(
-        user_models: LibraryNamePairs, existing: LibraryNamePairs
-    ) -> None:
-        """Raises an error if there are no new components to create."""
-        if user_models == existing:
-            raise typer.Exit(code=GenerateSuccessCodes.NO_NEW_COMPONENTS)
+    def get_paths(self) -> list[Path]:
+        """Returns a list of paths in a directory excluding the `ignore` list."""
+        paths = []
+        for path in self.root.rglob("*"):
+            if path.is_file() and not any(
+                ignored in path.parts for ignored in self.ignore
+            ):
+                paths.append(path)
+        return paths
 
 
-class FileExtractor:
+class PackageFileExtractor:
     """A helper class for extracting files from a package directory dynamically and converting them to local paths."""
 
-    def __init__(self, root: Path, local: Path, ignore: list[str] = None) -> None:
+    def __init__(self, root: Path, local: Path) -> None:
         self.root = root
         self.local = local
-        self.ignore = ignore if ignore else []
 
     def __get_paths(self, dirpath: Path, ignore: list[str]) -> list[Path]:
         """Returns a list of paths in a directory excluding the `ignore` list."""
@@ -100,17 +43,17 @@ class FileExtractor:
                 paths.append(path)
         return paths
 
-    def get_root_paths(self) -> list[Path]:
+    def get_root_paths(self, ignore: list[str] = []) -> list[Path]:
         """Returns a list of all the paths in the local directory."""
-        return self.__get_paths(self.root, self.ignore)
+        return self.__get_paths(self.root, ignore)
 
     def get_local_paths(self) -> list[Path]:
         """Returns a list of all the paths in the root directory."""
         return self.__get_paths(self.local, ignore=[])
 
-    def create_local_paths(self, depth: int = 2) -> list[Path]:
+    def create_local_paths(self, ignore: list[str], depth: int = 2) -> list[Path]:
         """Extracts the last values of the root paths based on depth and updates them to the local path."""
-        paths = self.get_paths()
+        paths = self.__get_paths(self.root, ignore)
 
         new_paths = []
         for file in paths:

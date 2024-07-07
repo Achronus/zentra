@@ -9,6 +9,7 @@ from zentra_models.cli.constants import (
     SETUP_FILE,
 )
 from zentra_models.cli.conf.env import find_zentra_root, set_zentra_root
+from zentra_models.cli.local.extractor import PackageFileExtractor, LocalFileExtractor
 
 
 def get_dirpaths(
@@ -90,3 +91,12 @@ set_zentra_root(root_path)
 LOCAL_PATHS = ZentraLocalFilepaths(root_path)
 GENERATE_PATHS = ZentraGeneratedFilepaths(root_path)
 PACKAGE_PATHS = ZentraPackageFilepaths()
+
+
+# Core library files
+LOCAL_FILES = LocalFileExtractor(Path(GENERATE_PATHS.SRC))
+
+UI_FILES = PackageFileExtractor(
+    root=Path(PACKAGE_PATHS.COMPONENT_ASSETS, "ui"),
+    local=Path(GENERATE_PATHS.SRC),
+)

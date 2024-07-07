@@ -1,7 +1,6 @@
 from pathlib import Path
 from pydantic import BaseModel, ConfigDict
 
-from zentra_models.cli.constants.types import LibraryNamePairs
 from zentra_models.cli.local.enums import ZentraNameOptions
 
 
@@ -29,28 +28,11 @@ class ConfigExistStorage:
         )
 
 
-class CountStorage(BaseModel):
-    """A simple storage container for Zentra model counts."""
-
-    generate: int = 0
-    remove: int = 0
-
-
 class Dependency(BaseModel):
     """A storage container for a single dependency."""
 
     name: str
     version: str
-
-
-class ModelFileStorage(BaseModel):
-    """A storage container for storing Zentra model `(library, filename)` pairs."""
-
-    generate: LibraryNamePairs = []
-    remove: LibraryNamePairs = []
-    existing: LibraryNamePairs = []
-
-    counts: CountStorage = CountStorage()
 
 
 class Filepath(BaseModel):
@@ -107,6 +89,11 @@ class ComponentStorage(BaseModel):
 
     items: list[ComponentDetails] = []
 
+    @property
+    def names(self) -> list[str]:
+        """Returns the names of the components."""
+        return [comp.name for comp in self.items]
+
     def __extract_paths(self, type: str) -> list[Path]:
         """A helper method for extracting paths."""
         paths = []
@@ -131,6 +118,12 @@ class ComponentStorage(BaseModel):
         if comp not in self.items:
             self.items.append(comp)
 
+    def get_comp_by_filename(self, name: str) -> ComponentDetails:
+        """Returns a component based on its filename."""
+        for comp in self.items:
+            if name == comp.path.filename:
+                return comp
+
 
 class NameStorage(BaseModel):
     """
@@ -147,13 +140,6 @@ class NameStorage(BaseModel):
     blocks: list[str] = []
     components: list[str] = []
     libraries: list[str] = []
-
-
-class ModelStorage(BaseModel):
-    """A storage container for Zentra model filenames."""
-
-    pages: ModelFileStorage = ModelFileStorage()
-    components: ModelFileStorage = ModelFileStorage()
 
 
 class AppStorage(BaseModel):
@@ -189,15 +175,25 @@ class AppStorage(BaseModel):
 
         return {"dependencies": new_dict}
 
-    def get_local_paths(self) -> list[Path]:
+    def get_target_components(self) -> ComponentStorage:
+        """Returns a new `ComponentStorage` object with the components found in `NameStorage`."""
+        return ComponentStorage(
+            items=[
+                comp
+                for comp in self.components.items
+                if comp.name in self.names.components
+            ]
+        )
+
+    def get_local_paths(self, names: list[str]) -> list[Path]:
         """Returns the component local paths as a sorted list."""
-        paths = self.components.local_paths()
+        paths = self.components.local_paths(names)
         paths.sort()
         return paths
 
-    def get_package_paths(self) -> list[Path]:
+    def get_package_paths(self, names: list[str]) -> list[Path]:
         """Returns the component package paths as a sorted list."""
-        paths = self.components.package_paths()
+        paths = self.components.package_paths(names)
         paths.sort()
         return paths
 
@@ -212,3 +208,48 @@ class AppStorage(BaseModel):
     def count(self, option: ZentraNameOptions) -> int:
         """Returns the stored count for a given option."""
         return len(self.get_name_option(option))
+
+
+class ItemCounts(BaseModel):
+    """A storage container for a single item that contains a list of strings and its size."""
+
+    items: list[str] = []
+    total: int = 0
+
+    def update(self) -> None:
+        """Updates the total automatically based on the number of items in the items list."""
+        self.total = len(self.items)
+
+
+class CountStorage:
+    """A storage container for file counts."""
+
+    def __init__(self) -> None:
+        self.existing = ItemCounts()
+        self.generate = ItemCounts()
+        self.remove = ItemCounts()
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}(existing={repr(self.existing)}, generate={repr(self.generate)}, remove={repr(self.remove)})"
+
+    def add(self, attr: str, items: list[str]) -> None:
+        """Adds a list of items to an attribute."""
+        item_counts: ItemCounts = getattr(self, attr)
+        item_counts.items.extend(items)
+
+    def update(self) -> None:
+        """Updates the totals in storage."""
+        self.existing.update()
+        self.generate.update()
+        self.remove.update()
+
+    def get_count(self, attr: str) -> None:
+        """Returns the item total for a given attribute."""
+        return getattr(self, attr).total
+
+    def fill(self, **kwargs) -> None:
+        """Adds items to count storage based on `(key_name, values)` and updates its totals."""
+        for key, value in kwargs.items():
+            self.add(key, value)
+
+        self.update()

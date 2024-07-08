@@ -96,7 +96,22 @@ PACKAGE_PATHS = ZentraPackageFilepaths()
 # Core library files
 LOCAL_FILES = LocalFileExtractor(Path(GENERATE_PATHS.SRC))
 
+COMPONENT_FILES = PackageFileExtractor(
+    root=Path(PACKAGE_PATHS.COMPONENT_ASSETS),
+    local=Path(GENERATE_PATHS.SRC),
+)
+
 UI_FILES = PackageFileExtractor(
     root=Path(PACKAGE_PATHS.COMPONENT_ASSETS, "ui"),
     local=Path(GENERATE_PATHS.SRC),
 )
+
+UPLOADTHING_FILES = PackageFileExtractor(
+    root=Path(PACKAGE_PATHS.COMPONENT_ASSETS, "uploadthing"),
+    local=Path(GENERATE_PATHS.SRC),
+)
+
+LIBRARY_FILE_MAPPING = {
+    "ui": UI_FILES,
+    "uploadthing": UPLOADTHING_FILES,
+}

@@ -4,7 +4,11 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, field_validator
 
 from zentra_models.base import ZentraModel
-from zentra_models.cli.constants.filepaths import GENERATE_PATHS, PACKAGE_PATHS
+from zentra_models.cli.constants.filepaths import (
+    COMPONENT_FILES,
+    GENERATE_PATHS,
+    PACKAGE_PATHS,
+)
 from zentra_models.cli.local.builder import FilepathBuilder
 from zentra_models.cli.local.enums import FileType
 from zentra_models.cli.local.extractor import PackageExtractor
@@ -15,6 +19,7 @@ from zentra_models.core.constants import (
     PASCALCASE_SINGLE_WORD,
     PASCALCASE_WITH_DIGITS,
 )
+from zentra_models.core.utils import name_to_pascal_case
 from zentra_models.core.validation import check_pattern_match
 from zentra_models.core.validation.component import data_array_validation
 
@@ -346,6 +351,7 @@ class Zentra:
         self.storage.add_names("libraries", list(libraries))
 
         self.store_component_details()
+        self.store_all_component_details()
 
     def store_component_details(self) -> None:
         """Iterates through the files, extracts the components packages and their details and adds them to their separate storage containers."""
@@ -369,6 +375,30 @@ class Zentra:
 
         deps = asyncio.run(self.extractor.get_versions(packages))
         self.storage.add_packages(deps)
+
+    def store_all_component_details(self) -> None:
+        """Iterates through the package files, extracts the components details from the `base` directory and adds them to their separate storage containers."""
+        package_paths = COMPONENT_FILES.get_root_paths(ignore=[])
+        path_parts = [path.parts[-3:] for path in package_paths]
+
+        ignore_files = ["use-toast"]
+        for lib, sub_dir, name in path_parts:
+            name = name.split(".")[0]
+            if sub_dir == "base" and name not in ignore_files:
+                pascal_name = name_to_pascal_case(name)
+                path = self.get_base_paths(lib, pascal_name)
+                local, _ = self.extractor.get_packages(path.package)
+                children = self.get_child_filepaths(local)
+
+                self.storage.add_component(
+                    ComponentDetails(
+                        name=pascal_name,
+                        library=lib,
+                        children=children,
+                        path=path,
+                    ),
+                    "all_components",
+                )
 
     def get_child_filepaths(self, local_imports: list[str]) -> list[Filepath]:
         """Converts a list of local imports into a list of Filepath models."""

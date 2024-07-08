@@ -47,9 +47,9 @@ class PackageFileExtractor:
         """Returns a list of all the paths in the local directory."""
         return self.__get_paths(self.root, ignore)
 
-    def get_local_paths(self) -> list[Path]:
+    def get_local_paths(self, ignore: list[str] = []) -> list[Path]:
         """Returns a list of all the paths in the root directory."""
-        return self.__get_paths(self.local, ignore=[])
+        return self.__get_paths(self.local, ignore=ignore)
 
     def create_local_paths(self, ignore: list[str], depth: int = 2) -> list[Path]:
         """Extracts the last values of the root paths based on depth and updates them to the local path."""
@@ -61,6 +61,20 @@ class PackageFileExtractor:
             new_paths.append(Path(self.local, *parts))
 
         return new_paths
+
+    def add_core_paths(
+        self, local: list[Path], package: list[Path]
+    ) -> tuple[list[Path], list[Path]]:
+        """
+        Updates the `local` and `package` paths lists with the paths to the core files for the package.
+
+        Returns the updated lists as a tuple in the form of : `(local_paths, package_paths)`.
+        """
+        core_local = self.create_local_paths(ignore=["base"])
+        core_package = self.get_root_paths(ignore=["base"])
+        local.extend(core_local)
+        package.extend(core_package)
+        return local, package
 
 
 class ZentraExtractor(ast.NodeVisitor):
@@ -102,10 +116,11 @@ class PackageExtractor:
         local_packages = set()
 
         for package in self.extract_dependencies(filepath):
-            if package.startswith("@/"):
-                local_packages.add(package)
-            else:
-                external_packages.add(package)
+            if not package.startswith("next/"):
+                if package.startswith("@/"):
+                    local_packages.add(package)
+                else:
+                    external_packages.add(package)
 
         return list(local_packages), list(external_packages)
 

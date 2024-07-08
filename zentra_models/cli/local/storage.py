@@ -120,9 +120,13 @@ class ComponentStorage(BaseModel):
 
     def get_comp_by_filename(self, name: str) -> ComponentDetails:
         """Returns a component based on its filename."""
+        result = None
         for comp in self.items:
             if name == comp.path.filename:
-                return comp
+                result = comp
+                break
+
+        return result
 
 
 class NameStorage(BaseModel):
@@ -147,6 +151,7 @@ class AppStorage(BaseModel):
 
     names: NameStorage = NameStorage()
     components: ComponentStorage = ComponentStorage()
+    all_components: ComponentStorage = ComponentStorage()
     packages: list[Dependency] = []
 
     model_config = ConfigDict(use_enum_values=True)
@@ -158,9 +163,11 @@ class AppStorage(BaseModel):
 
         setattr(self.names, attr, items)
 
-    def add_component(self, component: ComponentDetails) -> None:
+    def add_component(
+        self, component: ComponentDetails, attr: str = "components"
+    ) -> None:
         """Adds a component to storage."""
-        self.components.add(component)
+        getattr(self, attr).add(component)
 
     def add_packages(self, packages: list[Dependency]) -> None:
         """Adds a package to storage."""
@@ -185,10 +192,12 @@ class AppStorage(BaseModel):
             ]
         )
 
-    def get_components(self, names: list[str]) -> ComponentStorage:
+    def get_components(
+        self, names: list[str], attr: str = "components"
+    ) -> ComponentStorage:
         """Returns a new `ComponentStorage` object with the components found that match a list of names."""
         return ComponentStorage(
-            items=[comp for comp in self.components.items if comp.name in names],
+            items=[comp for comp in getattr(self, attr).items if comp.name in names],
         )
 
     def get_names(self) -> tuple[list[str], list[str], list[str]]:

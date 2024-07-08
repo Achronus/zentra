@@ -1,6 +1,6 @@
 import os
-
-from zentra_models.cli.constants.types import LibraryNamePairs
+from pathlib import Path
+import shutil
 
 
 def get_file_content(filepath: str) -> str:
@@ -34,16 +34,11 @@ def make_file(filepath: str, content: str) -> None:
         f.write(content)
 
 
-def remove_files(
-    pairs: LibraryNamePairs, dirpath: str, ignore_pair_folder: bool = False
-) -> None:
-    """Removes a set of `(library_name, filename)` pairs from a directory."""
-    for folder, filename in pairs:
-        if not ignore_pair_folder:
-            dirpath = os.path.join(dirpath, folder)
-
-        filepath = os.path.join(dirpath, filename)
-        os.remove(filepath)
-
-        if len(os.listdir(dirpath)) == 0:
-            os.removedirs(dirpath)
+def remove_files(paths: list[Path]) -> None:
+    """Removes a list of files based on a given list of paths."""
+    for path in paths:
+        if os.path.exists(path):
+            if os.path.isfile(path):
+                os.remove(path)
+            elif os.path.isdir(path):
+                shutil.rmtree(path)

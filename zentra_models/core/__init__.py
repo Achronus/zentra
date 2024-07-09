@@ -118,17 +118,23 @@ class Block(BaseModel):
 
     Parameters:
     - `name` (`string`) - the name of the function in PascalCase
-    - `components` (`list[zentra_models.core.Component]`) - a list of `Component` models
+    - `components` (`zentra_models.core.Component | list[zentra_models.core.Component]`) - a single or list of `Component` models
     """
 
     name: str = Field(min_length=1)
-    components: list[Component]
+    components: Component | list[Component]
 
     @field_validator("name")
     def validate_id(cls, name: str) -> str:
         return check_pattern_match(
             PASCALCASE_WITH_DIGITS, name, err_msg="must be PascalCase"
         )
+
+    @field_validator("components")
+    def validate_comp(cls, comps: Component | list[Component]) -> list[Component]:
+        if isinstance(comps, Component):
+            comps = [comps]
+        return comps
 
     def nodes(self) -> list[ComponentNode]:
         """Converts each component into component nodes and returns them as a list."""
@@ -146,7 +152,7 @@ class ReactFile(BaseModel):
 
     Parameters:
     - `name` (`string`) - the name of the file in PascalCase
-    - `block` (`zentra_models.core.Block | list[zentra_models.core.Block]`) - a single or list of `Block` model
+    - `block` (`zentra_models.core.Block | list[zentra_models.core.Block]`) - a single or list of `Block` models
     - `file_type` (`string, optional`) - the type of file. Determines what folder the file is stores. Options: `['component', 'layout', 'page']`. `component` by default
     """
 

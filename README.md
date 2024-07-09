@@ -1,4 +1,4 @@
-_Last updated 30/06/2024_
+_Last updated 09/07/2024_
 
 # Zentra
 
@@ -16,7 +16,7 @@ Zentra aims to be a flexible tool that covers a variety of component libraries, 
 
 ### Structural Elements
 
-It focuses on three structural components: `Pages`, `Blocks`, and `Components`. A page can have multiple blocks, and each block can have multiple components.
+It focuses on three structural components: `ReactFiles`, `Blocks`, and `Components`. A file can have multiple blocks, and each block can have multiple components.
 
 When using Zentra, you'll use all three to create the frontend. We'll discuss these in more detail in our documentation.
 
@@ -24,8 +24,8 @@ When using Zentra, you'll use all three to create the frontend. We'll discuss th
 
 Core component libraries and custom models in development:
 
-- [ ] Zentra Structural Models (1/3)
-- [ ] Custom Data Models (0/1)
+- [X] Zentra Structural Models (3/3)
+- [X] Custom Data Models (1/1)
 - [X] Custom HTML Models (4/4)
 - [ ] Custom JavaScript Models (1/4)
 - [ ] [Shadcn/ui Form](https://ui.shadcn.com/docs/components/form) Models (0/13)
@@ -51,9 +51,9 @@ import Image from "next/image"
 
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 
-export interface Artwork {
-  artist: string
-  art: string
+export type Artwork {
+  artist: string;
+  art: string;
 }
 
 export const works: Artwork[] = [
@@ -104,46 +104,77 @@ export function ScrollAreaHorizontalDemo() {
 Using Zentra, we can create this component with the following `Python` code:
 
 ```python
+from zentra_models.core import Block, DataArray, ReactFile
 from zentra_models.core.html import Figure, FigCaption, Div, HTMLContent
 from zentra_models.core.js import Map
 from zentra_models.nextjs import Image
 from zentra_models.ui.control import ScrollArea
 
+
+# Types inferred automatically
+artwork = DataArray(
+  name="works",
+  type_name="Artwork",
+  data=[
+    {
+      "artist": "Ornella Binni",
+      "art": "https://images.unsplash.com/photo-1465869185982-5a1a7522cbcb?auto=format&fit=crop&w=300&q=80",
+    },
+    {
+      "artist": "Tom Byrom",
+      "art": "https://images.unsplash.com/photo-1548516173-3cabfa4607e9?auto=format&fit=crop&w=300&q=80",
+    },
+    {
+      "artist": "Vladimir Malyavko",
+      "art": "https://images.unsplash.com/photo-1494337480532-3725c85fd2ab?auto=format&fit=crop&w=300&q=80",
+    },
+  ],
+)
+
 artwork_map = Div(
-    styles="flex w-max space-x-4 p-4",
-    items=Map(
-        obj_name="works",
-        param_name="artwork",
-        content=Figure(
-            key="$.artwork.artist",
-            styles="shrink-0",
-            img_container_styles="overflow-hidden rounded-md",
-            img=Image(
-                src="$.artwork.art",
-                alt="Photo by $.artwork.artist",
-                styles="aspect-[3/4] h-fit w-fit object-cover",
-                width=300,
-                height=400
-            ),
-            caption=FigCaption(
-                styles="pt-2 text-xs text-muted-foreground",
-                text=[
-                    'Photo by{" "}',
-                    HTMLContent(
-                        tag="span",
-                        styles="font-semibold text-foreground",
-                        text="$.artwork.artist"
-                    )
-                ]
-            ),
-        ),
-    )
+  styles="flex w-max space-x-4 p-4",
+  items=Map(
+    obj_name="works",
+    param_name="artwork",
+    content=Figure(
+      key="$.artwork.artist",
+      styles="shrink-0",
+      img_container_styles="overflow-hidden rounded-md",
+      img=Image(
+        src="$.artwork.art",
+        alt="Photo by $.artwork.artist",
+        styles="aspect-[3/4] h-fit w-fit object-cover",
+        width=300,
+        height=400,
+      ),
+      caption=FigCaption(
+        styles="pt-2 text-xs text-muted-foreground",
+        text=[
+          'Photo by{" "}',
+          HTMLContent(
+            tag="span",
+            styles="font-semibold text-foreground",
+            text="$.artwork.artist",
+          ),
+        ],
+      ),
+    ),
+  ),
 )
 
 sa = ScrollArea(
-    styles="w-96 whitespace-nowrap rounded-md border",
-    content=artwork_map,
-    orientation="horizontal",
+  styles="w-96 whitespace-nowrap rounded-md border",
+  content=artwork_map,
+  orientation="horizontal",
+)
+
+scroll_area_demo = ReactFile(
+  name="ScrollAreaDemo",  # Name of file with '.tsx' appended
+  file_type="component",  # Stores in 'src/components' directory
+  blocks=Block(
+    name="ScrollAreaHorizontalDemo",
+    components=sa,
+  ),
 )
 ```
 

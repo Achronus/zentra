@@ -116,11 +116,10 @@ class PackageExtractor:
         local_packages = set()
 
         for package in self.extract_dependencies(filepath):
-            if not package.startswith("next/"):
-                if package.startswith("@/"):
-                    local_packages.add(package)
-                else:
-                    external_packages.add(package)
+            if package.startswith("@/"):
+                local_packages.add(package)
+            else:
+                external_packages.add(package)
 
         return list(local_packages), list(external_packages)
 
@@ -130,7 +129,13 @@ class PackageExtractor:
 
         deps = []
         for name, version in results:
-            deps.append(Dependency(name=name, version=version))
+            if version:
+                deps.append(
+                    Dependency(
+                        name=name,
+                        version=version,
+                    )
+                )
         return deps
 
     def extract_dependencies(self, filepath: str, line_depth: int = 15) -> list[str]:

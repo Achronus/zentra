@@ -192,22 +192,18 @@ class TestAppStorage:
         assert target == result
 
     @staticmethod
-    def test_get_local_paths(app_storage: AppStorage):
-        result = app_storage.get_local_paths()
-        target = [
-            Path(os.getcwd(), "ui", "button.tsx"),
-            Path(os.getcwd(), "ui", "child.tsx"),
-        ]
+    def test_get_target_components(
+        comp_details: ComponentDetails, app_storage: AppStorage
+    ):
+        result = app_storage.get_target_components()
+        target = ComponentStorage(items=[comp_details])
 
         assert result == target
 
     @staticmethod
-    def test_get_package_paths(app_storage: AppStorage):
-        result = app_storage.get_package_paths()
-        target = [
-            Path(os.getcwd(), "other", "button.tsx"),
-            Path(os.getcwd(), "other", "child.tsx"),
-        ]
+    def test_get_components(comp_details: ComponentDetails, app_storage: AppStorage):
+        result = app_storage.get_components(names=["Button"])
+        target = ComponentStorage(items=[comp_details])
 
         assert result == target
 

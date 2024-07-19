@@ -13,8 +13,8 @@ from zentra_models.cli.constants.filepaths import (
     LOCAL_FILES,
 )
 
-from zentra_models.cli.local.files import remove_files
-from zentra_models.cli.local.storage import ComponentStorage, CountStorage
+from zentra_models.cli.local.files import make_file, remove_files
+from zentra_models.cli.local.storage import ComponentStorage, CountStorage, PackageJson
 from zentra_models.core import Zentra
 
 
@@ -127,6 +127,7 @@ class GenerateController(BaseController):
 
             package_paths = comps.package_paths()
             local_paths = comps.local_paths()
+
             local_paths, package_paths = self.add_library_core_files(
                 local_paths, package_paths
             )
@@ -140,6 +141,12 @@ class GenerateController(BaseController):
             for src, dest in zip(package_paths, local_paths):
                 if not os.path.exists(dest):
                     shutil.copyfile(src, dest)
+
+            # Make 'package.json'
+            deps = self.zentra.storage.dependency_dict()
+            pjs = PackageJson(dependencies=deps)
+            filepath = Path(GENERATE_PATHS.ROOT, "package.json")
+            make_file(filepath, pjs.model_dump_json(indent=2))
 
     @status
     def remove_models(self) -> None:

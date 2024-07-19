@@ -99,16 +99,19 @@ LOCAL_FILES = LocalFileExtractor(Path(GENERATE_PATHS.SRC))
 COMPONENT_FILES = PackageFileExtractor(
     root=Path(PACKAGE_PATHS.COMPONENT_ASSETS),
     local=Path(GENERATE_PATHS.SRC),
+    local_src=Path(GENERATE_PATHS.SRC),
 )
 
 UI_FILES = PackageFileExtractor(
     root=Path(PACKAGE_PATHS.COMPONENT_ASSETS, "ui"),
-    local=Path(GENERATE_PATHS.SRC),
+    local=Path(GENERATE_PATHS.ROOT),
+    local_src=Path(GENERATE_PATHS.SRC),
 )
 
 UPLOADTHING_FILES = PackageFileExtractor(
     root=Path(PACKAGE_PATHS.COMPONENT_ASSETS, "uploadthing"),
-    local=Path(GENERATE_PATHS.SRC),
+    local=Path(GENERATE_PATHS.ROOT),
+    local_src=Path(GENERATE_PATHS.SRC),
 )
 
 LIBRARY_FILE_MAPPING = {

@@ -31,9 +31,10 @@ class LocalFileExtractor:
 class PackageFileExtractor:
     """A helper class for extracting files from a package directory dynamically and converting them to local paths."""
 
-    def __init__(self, root: Path, local: Path) -> None:
+    def __init__(self, root: Path, local: Path, local_src: Path) -> None:
         self.root = root
         self.local = local
+        self.local_src = local_src
 
     def __get_paths(self, dirpath: Path, ignore: list[str]) -> list[Path]:
         """Returns a list of paths in a directory excluding the `ignore` list."""
@@ -58,7 +59,13 @@ class PackageFileExtractor:
         new_paths = []
         for file in paths:
             parts = [part.replace("root", "") for part in file.parts[-depth:]]
-            new_paths.append(Path(self.local, *parts))
+            local_path = Path(self.local_src)
+
+            # 'root' -> 'build', not 'build/src'
+            if "" in parts:
+                local_path = Path(self.local)
+
+            new_paths.append(Path(local_path, *parts))
 
         return new_paths
 

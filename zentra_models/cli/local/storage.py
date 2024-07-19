@@ -1,5 +1,5 @@
 from pathlib import Path
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from zentra_models.cli.local.enums import ZentraNameOptions
 
@@ -173,14 +173,14 @@ class AppStorage(BaseModel):
         """Adds a package to storage."""
         self.packages.extend(packages)
 
-    def package_dict(self) -> dict[str, dict[str, str]]:
+    def dependency_dict(self) -> dict[str, str]:
         """Returns the package dependencies as a dictionary."""
         new_dict = {}
 
         for package in self.packages:
             new_dict[package.name] = package.version
 
-        return {"dependencies": new_dict}
+        return new_dict
 
     def get_target_components(self) -> ComponentStorage:
         """Returns a new `ComponentStorage` object with the components found in `NameStorage`."""
@@ -260,3 +260,21 @@ class CountStorage:
             self.add(key, value)
 
         self.update()
+
+
+class PackageJson(BaseModel):
+    """A model for storing the data for `package.json` file."""
+
+    name: str = Field("frontend", frozen=True)
+    version: str = Field("0.1.0", frozen=True)
+    private: bool = Field(True, frozen=True)
+    scripts: dict[str, str] = Field(
+        default={
+            "dev": "next dev",
+            "build": "next build",
+            "start": "next start",
+            "lint": "next lint",
+        },
+        frozen=True,
+    )
+    dependencies: dict[str, str]

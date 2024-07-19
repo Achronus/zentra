@@ -180,7 +180,7 @@ class TestAppStorage:
 
     @staticmethod
     def test_package_dict(app_storage: AppStorage):
-        result = app_storage.package_dict()
+        result = app_storage.dependency_dict()
 
         target = {
             "dependencies": {

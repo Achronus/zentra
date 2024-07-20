@@ -77,3 +77,33 @@ def list_to_str(items: list[str], action: Enum, items_per_line: int = 4) -> str:
 
         return combined_string.rstrip(", ")
     return ""
+
+
+def jsx_formatter(code: str, indent_size: int = 2, use_tabs: bool = False):
+    "A simple JSX formatter for iterative over lines of code separated by new line (`\\n`) characters."
+    indent_char = "\t" if use_tabs else " " * indent_size
+    lines = code.split("\n")
+    formatted_lines = []
+    indent_level = 0
+
+    for line in lines:
+        stripped_line = line.strip()
+
+        if not stripped_line:
+            formatted_lines.append("")
+            continue
+
+        # Adjust indentation based on opening/closing tags
+        if stripped_line.startswith("</") or stripped_line.startswith("/>"):
+            indent_level -= 1
+
+        formatted_lines.append(f"{indent_char * indent_level}{stripped_line}")
+
+        if (
+            stripped_line.startswith("<")
+            and not stripped_line.startswith("</")
+            and not stripped_line.endswith("/>")
+        ):
+            indent_level += 1
+
+    return "\n".join(formatted_lines)

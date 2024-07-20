@@ -37,6 +37,7 @@ class FormFieldBuilder:
         self.variable_keys = [
             "control",
             "data",
+            "icon",
             "isLoading",
             "fileTypes",
             "maxMB",
@@ -54,7 +55,7 @@ class FormFieldBuilder:
             if key in self.unique_keys.keys():
                 prop_str = self.unique_keys[key](key, value)
             elif key in self.variable_keys:
-                prop_str = self.variable(key, str(value))
+                prop_str = self.variable(key, value)
             else:
                 prop_str = self.text(key, value)
 
@@ -84,8 +85,11 @@ class FormFieldBuilder:
         value = self.wrap_value(f"FormFieldType.{value.upper()}")
         return self.assign_str(key, value)
 
-    def variable(self, key: str, value: str) -> str:
+    def variable(self, key: str, value: str | bool | int) -> str:
         """Wraps a value in `{`parenthesis`}` before returning it as a string."""
+        if isinstance(value, (bool, int)):
+            value = str(value).lower()
+
         value = self.wrap_value(value)
         return self.assign_str(key, value)
 

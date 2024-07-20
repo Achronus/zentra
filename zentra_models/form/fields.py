@@ -39,7 +39,7 @@ class EmailField(GenericFormField):
     _field_type = PrivateAttr("input")
 
 
-class PhoneField(GenericFormField):
+class PhoneField(FormField):
     """
     A Zentra model for creating `phone number` form fields.
 
@@ -49,10 +49,10 @@ class PhoneField(GenericFormField):
     - `name` (`string`) - the name of the field. Must be `camelCase` and a maximum of 30 characters
     - `label` (`string`) - the field heading. E.g., `Contact Number`
     - `placeholder` (`string, optional`) - the text to display inside the field. `None` by default
-    - `icon` (`boolean, optional`) - a flag to display the fields unique icon. `False` by default
     - `country` (`zentra_models.form.enums.CountryCode`) - a two letter country code for the phone field (200+ supported)
     """
 
+    placeholder: str | None = None
     country: CountryCode
 
     _field_type = PrivateAttr("phone")

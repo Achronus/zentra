@@ -15,6 +15,7 @@ def to_dynamic(field: FormField) -> DynamicFormField:
         "file_type_names": "fileTypes",
         "max_file_size": "maxMB",
         "img_dim_name": "maxImgDim",
+        "country": "defaultCountry",
     }
 
     for key, value in attr_map.items():

@@ -17,47 +17,45 @@ personal_info = FormSection(
     desc=None,
     fields=[
         TextField(
-            id="name",
+            name="name",
             label="Full Name",
             placeholder="ex: Adam",
-            icon=False,
         ),
         [
             EmailField(
-                id="email",
+                name="email",
                 label="Email Address",
                 placeholder="ex: johndoe@youremail.com",
                 icon=True,
             ),
             PhoneField(
-                id="phone",
+                name="phone",
                 label="Phone Number",
-                placeholder=None,
                 country="GB",
             ),
         ],
         [
             DateField(
-                id="dob",
+                name="dob",
                 label="Date Of Birth",
                 placeholder="Select your birth date",
                 icon=True,
             ),
             RadioGroupField(
-                id="gender",
+                name="gender",
                 label="Gender",
                 options=["male", "female", "other"],
             ),
         ],
         [
             TextField(
-                id="address",
+                name="address",
                 label="Address",
                 placeholder="ex: 14 New Road, Cambridge, UK",
                 icon=False,
             ),
             TextField(
-                id="occupation",
+                name="occupation",
                 label="Occupation",
                 placeholder="ex: Software Engineer",
                 icon=False,
@@ -65,15 +63,14 @@ personal_info = FormSection(
         ],
         [
             TextField(
-                id="emergencyContactName",
+                name="emergencyContactName",
                 label="Emergency Contact Name",
                 placeholder="Guardian's name",
                 icon=False,
             ),
             PhoneField(
-                id="emergencyContactNumber",
+                name="emergencyContactNumber",
                 label="Emergency Contact Number",
-                placeholder=None,
                 country="GB",
             ),
         ],
@@ -85,52 +82,45 @@ medical_info = FormSection(
     desc=None,
     fields=[
         SelectField(
-            id="physician",
+            name="physician",
             label="Primary Physician",
             placeholder="Select a physician",
-            items=[],
-            icon=False,
+            api_url="api",
         ),
         [
             TextField(
-                id="insuranceProvider",
+                name="insuranceProvider",
                 label="Insurance Provider",
                 placeholder="ex: Axa",
-                icon=False,
             ),
             TextField(
-                id="insurancePolicyNumber",
+                name="insurancePolicyNumber",
                 label="Insurance Policy Number",
                 placeholder="ex: ABC123",
-                icon=False,
             ),
         ],
         [
             TextareaField(
-                id="allergies",
+                name="allergies",
                 label="Allergies (if any)",
                 placeholder="ex: Peanuts, Penicillin, Pollen",
-                icon=False,
             ),
             TextareaField(
-                id="medication",
+                name="medication",
                 label="Current Medications",
                 placeholder="ex: Ibuprofen 200mg, Levothyroxine 50mcg",
-                icon=False,
             ),
         ],
         [
             TextareaField(
-                id="familyMedicalHistory",
+                name="familyMedicalHistory",
                 label="Family Medical History (if relevant)",
                 placeholder="ex: Mother had breast cancer",
-                icon=False,
             ),
             TextareaField(
-                id="pastMedicalHistory",
+                name="pastMedicalHistory",
                 label="Past Medical History",
                 placeholder="ex: ASthma diagnosis in childhood",
-                icon=False,
             ),
         ],
     ],
@@ -141,25 +131,21 @@ id_section = FormSection(
     desc=None,
     fields=[
         SelectField(
-            id="idType",
+            name="idType",
             label="Identification Type",
             placeholder="Select an option",
             items=[],
             icon=False,
         ),
         TextField(
-            id="idNumber",
+            name="idNumber",
             label="Identification Number",
             placeholder="ex: 123456",
             icon=False,
         ),
         FileUploadField(
-            id="idDocuments",
+            name="idDocuments",
             label="Scanned Copy of Identification Document",
-            file_types=["SVG", "PNG", "JPG", "PDF"],
-            max_img_size="800x400",
-            max_file_size="20MB",
-            multiple=False,
         ),
     ],
 )
@@ -169,15 +155,15 @@ consent_section = FormSection(
     desc=None,
     fields=[
         CheckboxField(
-            id="treatmentConsent",
+            name="treatmentConsent",
             label="I consent to receive treatment for my health condition.",
         ),
         CheckboxField(
-            id="disclosureConsent",
+            name="disclosureConsent",
             label="I consent to the use and disclosure of my health information for treatment purposes.",
         ),
         CheckboxField(
-            id="privacyConsent",
+            name="privacyConsent",
             label="I acknowledge that I have reviewed and agree to the privacy policy.",
         ),
     ],

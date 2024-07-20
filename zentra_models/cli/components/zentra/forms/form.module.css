@@ -136,12 +136,28 @@
   @apply bg-dark-400 border-dark-500;
 }
 
+.selectItemImageContainer {
+  @apply flex cursor-pointer items-center gap-2;
+}
+
+.selectItemImage {
+  @apply rounded-full border border-dark-500;
+}
+
 .checkboxContainer {
   @apply "flex items-center gap-4";
 }
 
 .checkboxLabel {
   @apply cursor-pointer text-sm font-medium text-dark-700 leading-normal peer-disabled:cursor-not-allowed peer-disabled:opacity-70 md:leading-none;
+}
+
+.radioGroup {
+  @apply flex h-11 gap-6 xl:justify-between;
+}
+
+.radioItemContainer {
+  @apply flex h-full flex-1 items-center gap-2 rounded-md border border-dashed border-dark-500 bg-dark-400 p-3;
 }
 
 .formError {

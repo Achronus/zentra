@@ -23,10 +23,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  RadioGroup,
+  RadioGroupItem,
+} from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
+import { Loading } from "@/components/Loading";
 
 import styles from "./form.module.css";
-import { FormFieldType } from "./types";
+import FileUploader from "./FileUploader";
+import {
+  FormFieldType,
+  ImgDimensions,
+  SelectItemType,
+} from "./types";
+import {
+  SelectObjData,
+  SelectStrArrayData,
+} from "./select";
 
 import Image from "next/image";
 
@@ -44,6 +58,11 @@ type FormProps = {
   showTimeSelect?: boolean;
   children?: React.ReactNode;
   defaultCountry?: string;
+  data?: SelectItemType[] | string[];
+  isLoading?: boolean;
+  fileTypes?: string[];
+  maxMB?: number;
+  maxImgDim?: ImgDimensions;
   renderCustom?: (field: any) => React.ReactNode;
 };
 
@@ -80,15 +99,28 @@ type DatePickerProps = {
 
 type SelectFieldProps = {
   field: any;
+  data: SelectItemType[] | string[];
   placeholder?: string;
   value?: string;
-  children?: React.ReactNode;
+  isLoading?: boolean;
 };
 
 type CheckboxFieldProps = {
   field: any;
   name: string;
   label?: string;
+};
+
+type RadioFieldProps = {
+  field: any;
+  data: string[];
+};
+
+type FileUploadProps = {
+  field: any;
+  fileTypes?: string[];
+  maxMB?: number;
+  maxImgDim?: ImgDimensions;
 };
 
 const InputField = ({
@@ -121,7 +153,11 @@ const InputField = ({
   );
 };
 
-const TextareaField = ({ field, placeholder, disabled }: TextareaProps) => {
+const TextareaField = ({
+  field,
+  placeholder,
+  disabled,
+}: TextareaProps) => {
   return (
     <FormControl>
       <Textarea
@@ -194,8 +230,15 @@ const SelectField = ({
   field,
   value,
   placeholder,
-  children,
+  data,
+  isLoading,
 }: SelectFieldProps) => {
+  const isArrayOfStrings = (
+    data: any[]
+  ): data is string[] => {
+    return data.every((item) => typeof item === "string");
+  };
+
   return (
     <FormControl>
       <Select
@@ -208,14 +251,26 @@ const SelectField = ({
           </SelectTrigger>
         </FormControl>
         <SelectContent className={styles.selectContent}>
-          {children}
+          {isLoading && !data ? (
+            <SelectItem value="loading">
+              <Loading width={10} height={10} />
+            </SelectItem>
+          ) : data && isArrayOfStrings(data) ? (
+            <SelectStrArrayData data={data} />
+          ) : (
+            <SelectObjData data={data} />
+          )}
         </SelectContent>
       </Select>
     </FormControl>
   );
 };
 
-const CheckboxField = ({ field, name, label }: CheckboxFieldProps) => {
+const CheckboxField = ({
+  field,
+  name,
+  label,
+}: CheckboxFieldProps) => {
   return (
     <FormControl>
       <div className={styles.checkboxContainer}>
@@ -224,7 +279,10 @@ const CheckboxField = ({ field, name, label }: CheckboxFieldProps) => {
           checked={field.value}
           onCheckedChange={field.onChange}
         />
-        <Label htmlFor={name} className={styles.checkboxLabel}>
+        <Label
+          htmlFor={name}
+          className={styles.checkboxLabel}
+        >
           {label}
         </Label>
       </div>
@@ -232,7 +290,59 @@ const CheckboxField = ({ field, name, label }: CheckboxFieldProps) => {
   );
 };
 
-const RenderField = ({ field, props }: { field: any; props: FormProps }) => {
+const FileUploadField = ({
+  field,
+  fileTypes,
+  maxMB,
+  maxImgDim,
+}: FileUploadProps) => {
+  return (
+    <FormControl>
+      <FileUploader
+        files={field.value}
+        onChange={field.onChange}
+        fileTypes={fileTypes}
+        maxMB={maxMB}
+        maxImgDim={maxImgDim}
+      />
+    </FormControl>
+  );
+};
+
+const RadioField = ({ field, data }: RadioFieldProps) => {
+  return (
+    <FormControl>
+      <RadioGroup
+        className={styles.radioGroup}
+        onValueChange={field.onChange}
+        defaultValue={field.value}
+      >
+        {data.map((option) => (
+          <div
+            key={option}
+            className={styles.radioItemContainer}
+          >
+            <RadioGroupItem value={option} id={option} />
+            <Label
+              htmlFor={option}
+              className="cursor-pointer"
+            >
+              {option}
+            </Label>
+          </div>
+        ))}
+      </RadioGroup>
+    </FormControl>
+  );
+};
+
+const RenderField = ({
+  field,
+  props,
+}: {
+  field: any;
+  props: FormProps;
+}) => {
   const { fieldType, renderCustom } = props;
 
   switch (fieldType) {
@@ -240,14 +350,18 @@ const RenderField = ({ field, props }: { field: any; props: FormProps }) => {
       return <InputField {...props} />;
     case FormFieldType.TEXTAREA:
       return <TextareaField field={field} {...props} />;
-    case FormFieldType.PHONE_INPUT:
+    case FormFieldType.PHONE:
       return <PhoneField field={field} {...props} />;
-    case FormFieldType.DATE_PICKER:
+    case FormFieldType.DATE:
       return <DatePickerField field={field} {...props} />;
     case FormFieldType.SELECT:
       return <SelectField field={field} {...props} />;
     case FormFieldType.CHECKBOX:
       return <CheckboxField field={field} {...props} />;
+    case FormFieldType.FILEUPLOAD:
+      return <FileUploadField field={field} {...props} />;
+    case FormFieldType.RADIO:
+      return <RadioField field={field} {...props} />;
     case FormFieldType.CUSTOM:
       return renderCustom ? renderCustom(field) : null;
     default:
@@ -264,9 +378,8 @@ const DynamicFormField = (props: FormProps) => {
       name={name}
       render={({ field }) => (
         <FormItem className={styles.formItem}>
-          {fieldType !== FormFieldType.CHECKBOX && label && (
-            <FormLabel>{label}</FormLabel>
-          )}
+          {fieldType !== FormFieldType.CHECKBOX &&
+            label && <FormLabel>{label}</FormLabel>}
           <RenderField field={field} props={props} />
 
           <FormMessage className={styles.formError} />

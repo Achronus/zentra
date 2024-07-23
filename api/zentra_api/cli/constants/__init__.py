@@ -13,6 +13,7 @@ GITHUB_ISSUES_URL = f"{GITHUB_ROOT}/issues"
 GETTING_STARTED_URL = f"{DOCS_URL}/starting/api/"
 ERROR_GUIDE_URL = f"{DOCS_URL}/help/errors/"
 
+ROOT_COMMAND = "zentra-api"
 
 # Custom print emoji's
 PASS = "[green]\u2713[/green]"

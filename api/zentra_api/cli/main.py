@@ -1,6 +1,7 @@
 from typing import Annotated
 import typer
 
+from zentra_api.cli.commands.setup import Setup
 from zentra_api.cli.constants import console
 from zentra_api.cli.constants.enums import AddItem, DefaultFolderOptions
 from zentra_api.cli.constants.message import MSG_MAPPER, MessageHandler
@@ -30,7 +31,8 @@ def init(
 ) -> None:
     """Creates a new FastAPI project in a folder called <PROJECT_NAME>."""
     try:
-        pass
+        setup = Setup(project_name, console)
+        setup.build()
 
     except typer.Exit as e:
         msg_handler.msg(e)

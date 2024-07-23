@@ -1,5 +1,9 @@
 import importlib.util
+import os
+from pathlib import Path
 from types import ModuleType
+
+from pydantic import BaseModel
 
 
 def load_module(root: str, module_path: str) -> ModuleType:
@@ -23,3 +27,24 @@ def load_module(root: str, module_path: str) -> ModuleType:
 
     except (ModuleNotFoundError, AttributeError):
         raise ValueError(f"Module '{module_path}' does not exist!")
+
+
+class ProjectDetails(BaseModel):
+    """Stores useful information relevant to the project."""
+
+    project_name: str
+    author_name: str = "Placeholder Name"
+    author_email: str = "placeholder@email.com"
+    root: Path = Path(os.getcwd())
+
+    @property
+    def project_path(self) -> Path:
+        return Path(self.root, self.project_name)
+
+    @property
+    def project_dir(self) -> str:
+        return "/".join(self.project_path.parts[-2:])
+
+    @property
+    def author(self) -> str:
+        return f"{self.author_name} <{self.author_email}>"

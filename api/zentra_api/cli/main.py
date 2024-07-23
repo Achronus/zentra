@@ -31,7 +31,7 @@ def init(
 ) -> None:
     """Creates a new FastAPI project in a folder called <PROJECT_NAME>."""
     try:
-        setup = Setup(project_name, console)
+        setup = Setup(project_name)
         setup.build()
 
     except typer.Exit as e:

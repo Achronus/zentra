@@ -96,3 +96,10 @@ To fix it, perform one of the following:
 
 ## Generate Errors
 
+### 22: Build Directory Missing
+
+`Error Code: 22`
+
+You'll encounter this error when the `build` directory is missing.
+
+To fix it, ...

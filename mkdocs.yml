@@ -1,5 +1,5 @@
 site_name: Zentra
-site_description: Turn Pydantic models into React components
+site_description: A Python SDK for building Next.js and FastAPI apps faster
 site_url: https://zentra.achronus.dev/
 
 theme:

@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "zentra_api"
+version = "0.1.0"
+description = "A CLI tool for building FastAPI apps faster."
+authors = ["Ryan Partridge <rpartridge101@gmail.com>"]
+license = "MIT License"
+readme = "README.md"
+
+[tool.poetry.scripts]
+zentra-api = "zentra_api.cli.main:app"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+typer = "^0.12"
+fastapi = "^0.111"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.2"
+hypothesis = "^6.105"
+pytest-cov = "^4.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

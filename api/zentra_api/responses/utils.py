@@ -1,8 +1,7 @@
-import importlib.util
-from types import ModuleType
-
 from pydantic import validate_call
 from fastapi import status
+
+from zentra_api.cli.conf import load_module
 
 
 @validate_call
@@ -36,24 +35,6 @@ def get_code_status(code: int) -> str:
     for key, code_range in code_type_map.items():
         if code in code_range:
             return key
-
-
-@validate_call
-def load_module(root: str, module_path: str) -> ModuleType:
-    """Returns a module given a `root` and `module_path`, where the strings are similar to import statements separated by dots.
-
-    Useful for dynamically retrieving constant variables data.
-
-    Example usage:
-    ```python
-    module = load_module("api.responses", "error.client")
-    value = getattr(module, "HTTP_401_ERROR")
-    ```
-    """
-    spec = importlib.util.find_spec(f"{root}.{module_path}")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
 
 
 @validate_call

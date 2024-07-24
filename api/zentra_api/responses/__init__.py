@@ -36,20 +36,22 @@ class SuccessResponse(BaseSuccessResponse, Generic[T]):
 
 
 @validate_call
-def build_json_response_model(message: HTTPMessage, model: BaseResponse = None) -> dict:
+def build_json_response_model(
+    message: HTTPMessage, data_model: SuccessResponse | None = None
+) -> dict:
     """A utility function for building JSON response schemas."""
     response = build_response(message.code)
     status = get_code_status(message.code)
 
     unique_content = (
         {"message": message.message}
-        if model is None
-        else {"data": model.data.model_dump()}
+        if data_model is None
+        else {"data": data_model.data.model_dump()}
     )
 
     return {
         message.code: {
-            "model": type(model),
+            "model": type(data_model) if data_model else MessageResponse,
             "description": message.message,
             "content": {
                 "application/json": {

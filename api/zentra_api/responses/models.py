@@ -1,3 +1,5 @@
+from functools import partial
+
 from . import build_json_response_model
 from .messages import HTTP_MSG_MAPPING
 
@@ -6,16 +8,16 @@ HTTP_INFO_101 = build_json_response_model(HTTP_MSG_MAPPING[101])
 HTTP_INFO_102 = build_json_response_model(HTTP_MSG_MAPPING[102])
 HTTP_INFO_103 = build_json_response_model(HTTP_MSG_MAPPING[103])
 
-HTTP_SUCCESS_200 = build_json_response_model(HTTP_MSG_MAPPING[200])
-HTTP_SUCCESS_201 = build_json_response_model(HTTP_MSG_MAPPING[201])
-HTTP_SUCCESS_202 = build_json_response_model(HTTP_MSG_MAPPING[202])
-HTTP_SUCCESS_203 = build_json_response_model(HTTP_MSG_MAPPING[203])
-HTTP_SUCCESS_204 = build_json_response_model(HTTP_MSG_MAPPING[204])
-HTTP_SUCCESS_205 = build_json_response_model(HTTP_MSG_MAPPING[205])
-HTTP_SUCCESS_206 = build_json_response_model(HTTP_MSG_MAPPING[206])
-HTTP_SUCCESS_207 = build_json_response_model(HTTP_MSG_MAPPING[207])
-HTTP_SUCCESS_208 = build_json_response_model(HTTP_MSG_MAPPING[208])
-HTTP_SUCCESS_226 = build_json_response_model(HTTP_MSG_MAPPING[226])
+HTTP_SUCCESS_200 = partial(build_json_response_model, HTTP_MSG_MAPPING[200])
+HTTP_SUCCESS_201 = partial(build_json_response_model, HTTP_MSG_MAPPING[201])
+HTTP_SUCCESS_202 = partial(build_json_response_model, HTTP_MSG_MAPPING[202])
+HTTP_SUCCESS_203 = partial(build_json_response_model, HTTP_MSG_MAPPING[203])
+HTTP_SUCCESS_204 = partial(build_json_response_model, HTTP_MSG_MAPPING[204])
+HTTP_SUCCESS_205 = partial(build_json_response_model, HTTP_MSG_MAPPING[205])
+HTTP_SUCCESS_206 = partial(build_json_response_model, HTTP_MSG_MAPPING[206])
+HTTP_SUCCESS_207 = partial(build_json_response_model, HTTP_MSG_MAPPING[207])
+HTTP_SUCCESS_208 = partial(build_json_response_model, HTTP_MSG_MAPPING[208])
+HTTP_SUCCESS_226 = partial(build_json_response_model, HTTP_MSG_MAPPING[226])
 
 HTTP_REDIRECT_300 = build_json_response_model(HTTP_MSG_MAPPING[300])
 HTTP_REDIRECT_301 = build_json_response_model(HTTP_MSG_MAPPING[301])

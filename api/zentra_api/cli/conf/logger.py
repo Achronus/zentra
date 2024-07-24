@@ -88,3 +88,8 @@ task_error_logger = DebugLogger(
     "task_error.log",
     True,
 )
+task_test_logger = DebugLogger(
+    "TaskTestLogger",
+    "testing.log",
+    True,
+)

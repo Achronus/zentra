@@ -22,6 +22,26 @@ PARTY = ":party_popper:"
 MAGIC = ":sparkles:"
 
 
+def pypi_url(package: str) -> str:
+    return f"https://pypi.org/pypi/{package}/json"
+
+
+# Define packages
+PYTHON_VERSION = "3.12"
+
+CORE_PIP_PACKAGES = [
+    "fastapi",
+    "sqlalchemy",
+    "alembic",
+    "pydantic-settings",
+]
+
+DEV_PIP_PACKAGES = [
+    "pytest",
+    "hypothesis",
+]
+
+
 class SetupSuccessCodes(Enum):
     COMPLETE = 10
     ALREADY_CONFIGURED = 11

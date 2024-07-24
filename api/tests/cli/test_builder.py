@@ -1,113 +1,257 @@
 from pathlib import Path
-from unittest.mock import mock_open, patch
 import pytest
+import requests
+import responses
+import toml
 
 from zentra_api.cli.builder.poetry import (
-    PoetryDescription,
+    Description,
+    Script,
+    PipPackage,
+    PoetryFile,
     PoetryFileBuilder,
-    PoetryScript,
-    toml_str,
 )
+from zentra_api.cli.constants import PYTHON_VERSION, pypi_url
 
 
-class TestTomlStr:
+def test_description():
+    desc = Description(name="test_project")
+
+    target = {
+        "name": "test_project",
+        "version": "0.1.0",
+        "description": "A FastAPI backend for processing API data.",
+        "authors": ["Placeholder <placeholder@email.com>"],
+        "readme": "README.md",
+    }
+    assert desc.model_dump() == target
+
+
+def test_script():
+    script = Script(name="run-dev", command="app.run:development")
+    target = {"name": "run-dev", "command": "app.run:development"}
+    assert script.model_dump() == target
+
+
+class TestPipPackage:
     @staticmethod
-    def test_str_valid():
-        assert toml_str("key", "value") == 'key = "value"\n'
+    def test_no_trim_version():
+        package = PipPackage(name="pytest", version="2")
+        target = {
+            "name": "pytest",
+            "version": "2",
+        }
+        assert package.model_dump() == target
 
     @staticmethod
-    def test_list_valid():
-        assert toml_str("key", ["value1", "value2"]) == 'key = ["value1, value2"]\n'
+    def test_trim_version():
+        package = PipPackage(name="python", version=PYTHON_VERSION)
+        target = {
+            "name": "python",
+            "version": "3.12",
+        }
+        assert package.model_dump() == target
 
 
-def test_poetry_desc_as_str():
-    description = PoetryDescription(name="test_project", authors=["<Test author>"])
-    result = description.as_str()
-    expected = [
-        'name = "test_project"\n',
-        'version = "0.1.0"\n',
-        'description = "A FastAPI backend for processing API data."\n',
-        'authors = ["<Test author>"]\n',
-        'readme = "README.md"\n',
+def test_poetry_file():
+    core_deps = [PipPackage(name="fastapi", version="0.111.1")]
+    dev_deps = [PipPackage(name="pytest", version="2.0.0")]
+    description = Description(name="test_project")
+    scripts = [
+        Script(name="run-dev", command="app.run:development"),
+        Script(name="run-prod", command="app.run:production"),
     ]
-    assert result == expected
+
+    poetry_file = PoetryFile(
+        desc=description,
+        scripts=scripts,
+        core_deps=core_deps,
+        dev_deps=dev_deps,
+    )
+
+    target = {
+        "tool": {
+            "poetry": {
+                "name": "test_project",
+                "version": "0.1.0",
+                "description": "A FastAPI backend for processing API data.",
+                "authors": ["Placeholder <placeholder@email.com>"],
+                "readme": "README.md",
+            },
+            "scripts": {
+                "run-dev": "app.run:development",
+                "run-prod": "app.run:production",
+            },
+            "dependencies": {
+                "python": "3.12",
+                "fastapi": "0.111",
+            },
+            "group": {
+                "dev": {
+                    "dependencies": {
+                        "pytest": "2.0",
+                    },
+                }
+            },
+        },
+        "build-system": {
+            "requires": ["poetry-core"],
+            "build-backend": "poetry.core.masonry.api",
+        },
+    }
+
+    assert poetry_file.to_dict() == target
 
 
-def test_poetry_script_as_str():
-    script = PoetryScript(name="run-dev", command="app.run:development")
-    assert script.as_str() == 'run-dev = "app.run:development"\n'
-
-
-class TestPoetryFile:
+class TestPoetryFileBuilder:
     @pytest.fixture
-    def mock_content(self) -> str:
-        return (
-            "some previous content\n"
-            "[tool.poetry.dependencies]\n"
-            'other_content = "value"\n'
+    def builder(self) -> PoetryFileBuilder:
+        return PoetryFileBuilder(project_name="test_project", test_logging=True)
+
+    @pytest.fixture
+    def target_file(self) -> PoetryFile:
+        return PoetryFile(
+            desc=Description(name="test_project"),
+            scripts=[
+                Script(name="run-dev", command="app.run:development"),
+                Script(name="run-prod", command="app.run:production"),
+            ],
+            core_deps=[PipPackage(name="flask", version="1.2.3")],
+            dev_deps=[PipPackage(name="pytest", version="2.3.4")],
         )
 
     @pytest.fixture
-    def target_details(self) -> str:
-        return (
-            "[tool.poetry]\n"
-            'name = "test_project"\n'
-            'version = "0.1.0"\n'
-            'description = "A FastAPI backend for processing API data."\n'
-            'authors = ["<Test author>"]\n'
-            'readme = "README.md"\n'
-            "\n[tool.poetry.scripts]\n"
-            'run-dev = "app.run:development"\n'
-            'run-prod = "app.run:production"\n'
+    def target_json(self) -> dict:
+        return {
+            "tool": {
+                "poetry": {
+                    "name": "test_project",
+                    "version": "0.1.0",
+                    "description": "A FastAPI backend for processing API data.",
+                    "authors": ["Placeholder <placeholder@email.com>"],
+                    "readme": "README.md",
+                },
+                "scripts": {
+                    "run-dev": "app.run:development",
+                    "run-prod": "app.run:production",
+                },
+                "dependencies": {
+                    "python": "3.12",
+                    "flask": "1.2",
+                },
+                "group": {
+                    "dev": {
+                        "dependencies": {
+                            "pytest": "2.3",
+                        },
+                    }
+                },
+            },
+            "build-system": {
+                "requires": ["poetry-core"],
+                "build-backend": "poetry.core.masonry.api",
+            },
+        }
+
+    @responses.activate
+    def test_build(self, builder: PoetryFileBuilder, target_file: PoetryFile):
+        core_package = "flask"
+        dev_package = "pytest"
+
+        responses.add(
+            responses.GET,
+            pypi_url(core_package),
+            json={"info": {"version": "1.2.3"}},
+            status=200,
         )
 
-    @pytest.fixture
-    def other_target_content(self) -> str:
-        return '[tool.poetry.dependencies]\nother_content = "value"\n'
+        responses.add(
+            responses.GET,
+            pypi_url(dev_package),
+            json={"info": {"version": "2.3.4"}},
+            status=200,
+        )
 
-    @pytest.fixture
-    def file_obj(self) -> PoetryFileBuilder:
-        return PoetryFileBuilder("test_project", "<Test author>")
+        result = builder.build([core_package], [dev_package])
+        assert result == target_file
 
-    @staticmethod
-    def test_build_details(file_obj: PoetryFileBuilder, target_details: str):
-        result = file_obj.build_details()
-        assert result == target_details
-
-    @staticmethod
-    def test_get_other_content(
-        file_obj: PoetryFileBuilder, mock_content: str, other_target_content: str
-    ):
-        with patch("builtins.open", mock_open(read_data=mock_content)):
-            other_content = file_obj.get_other_content(Path("fake_path"))
-
-        assert other_content == other_target_content
-
-    @staticmethod
-    def test_build_new_content(
-        file_obj: PoetryFileBuilder,
-        mock_content: str,
-        target_details: str,
-        other_target_content: str,
-    ):
-        with patch("builtins.open", mock_open(read_data=mock_content)):
-            new_content = file_obj.build_new_content(Path("fake_path"))
-
-        assert new_content == f"{target_details}\n{other_target_content}"
-
-    @staticmethod
+    @responses.activate
     def test_update(
-        file_obj: PoetryFileBuilder,
-        tmp_path: Path,
-        mock_content: str,
-        target_details: str,
-        other_target_content: str,
+        self, tmp_path: Path, builder: PoetryFileBuilder, target_json: dict
     ):
-        filepath = tmp_path / "fake_path"
-        filepath.write_text(mock_content)
+        core_package = "flask"
+        dev_package = "pytest"
 
-        file_obj.update(filepath)
+        responses.add(
+            responses.GET,
+            pypi_url(core_package),
+            json={"info": {"version": "1.2.3"}},
+            status=200,
+        )
 
-        updated_content = filepath.read_text()
-        target = f"{target_details}\n{other_target_content}"
-        assert updated_content == target
+        responses.add(
+            responses.GET,
+            pypi_url(dev_package),
+            json={"info": {"version": "2.3.4"}},
+            status=200,
+        )
+
+        filepath = Path(tmp_path, "test.toml")
+        builder.update(filepath, [core_package], [dev_package])
+
+        with open(filepath, "r") as f:
+            result = toml.load(f)
+
+        assert result == target_json
+
+    class TestGetPackages:
+        @responses.activate
+        def test_success(self, builder: PoetryFileBuilder):
+            package1 = "flask"
+            package2 = "pytest"
+
+            responses.add(
+                responses.GET,
+                pypi_url(package1),
+                json={"info": {"version": "1.2.3"}},
+                status=200,
+            )
+
+            responses.add(
+                responses.GET,
+                pypi_url(package2),
+                json={"info": {"version": "2.3.4"}},
+                status=200,
+            )
+
+            result = builder.get_packages([package1, package2])
+
+            checks = [
+                len(result) == 2,
+                result[0].name == "flask",
+                result[0].version == "1.2",
+                result[1].name == "pytest",
+                result[1].version == "2.3",
+            ]
+            assert all(checks)
+
+        @responses.activate
+        def test_get_packages_http_error(self, builder: PoetryFileBuilder):
+            package = "nonexistent-package"
+            responses.add(responses.GET, pypi_url(package), status=404)
+
+            result = builder.get_packages([package])
+            assert len(result) == 0
+
+        @responses.activate
+        def test_get_packages_request_exception(self, builder: PoetryFileBuilder):
+            # Mock a request exception
+            package = "example-package"
+            responses.add(
+                responses.GET,
+                pypi_url(package),
+                body=requests.RequestException("Connection error"),
+            )
+
+            result = builder.get_packages([package])
+            assert len(result) == 0

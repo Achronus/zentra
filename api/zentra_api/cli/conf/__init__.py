@@ -1,7 +1,6 @@
 import importlib.util
 import os
 from pathlib import Path
-import platform
 from types import ModuleType
 
 from pydantic import BaseModel, Field, field_validator

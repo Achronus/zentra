@@ -1,40 +1,30 @@
+import requests
 from pathlib import Path
+
+import toml
+
+from zentra_api.cli.conf.logger import task_error_logger, task_test_logger
+
 from pydantic import BaseModel, field_validator
 
-
-def toml_str(key: str, value: str | list[str]) -> str:
-    """Converts a key-value pair into a string format suitable for `toml` files."""
-    if isinstance(value, list):
-        value_str = ", ".join([v for v in value])
-        return f'{key} = ["{value_str}"]\n'
-
-    return f'{key} = "{value}"\n'
+from zentra_api.cli.constants import PYTHON_VERSION, pypi_url
 
 
-class PoetryDescription(BaseModel):
+class Description(BaseModel):
     """A model for storing the poetry description."""
 
     name: str
     version: str = "0.1.0"
     description: str = "A FastAPI backend for processing API data."
-    authors: list[str]
+    authors: list[str] = ["Placeholder <placeholder@email.com>"]
     readme: str = "README.md"
 
-    def as_str(self) -> list[str]:
-        """Returns the description as a list of strings."""
-        attrs_dict = self.model_dump()
-        return [toml_str(key, value) for key, value in attrs_dict.items()]
 
-
-class PoetryScript(BaseModel):
+class Script(BaseModel):
     """A model for storing poetry scripts."""
 
     name: str
     command: str
-
-    def as_str(self) -> str:
-        """Returns the script as a string."""
-        return toml_str(self.name, self.command)
 
 
 class PipPackage(BaseModel):
@@ -52,75 +42,94 @@ class PipPackage(BaseModel):
 
         return version
 
-    def as_str(self) -> str:
-        """Returns the package as a string."""
-        return toml_str(self.name, f"^{self.version}")
 
+class PoetryFile(BaseModel):
+    """A model representation of a poetry file."""
 
-class Dependencies(BaseModel):
-    """Represents a list of pip packages."""
+    desc: Description
+    scripts: list[Script]
+    core_deps: list[PipPackage]
+    dev_deps: list[PipPackage]
 
-    packages: list[PipPackage]
-    group: str | None = None
+    @property
+    def build_system(self) -> dict:
+        return {
+            "requires": ["poetry-core"],
+            "build-backend": "poetry.core.masonry.api",
+        }
 
-    @field_validator("group")
-    def validate_group(cls, group: str | None) -> str:
-        if group:
-            return f"[tool.poetry.group.{group}.dependencies]\n"
+    @field_validator("core_deps")
+    def validate_core_deps(cls, core_deps: list[PipPackage]) -> list[PipPackage]:
+        python_dep = PipPackage(name="python", version=PYTHON_VERSION)
+        return [python_dep] + core_deps
 
-        return "[tool.poetry.dependencies]\n"
+    @staticmethod
+    def _deps_to_dict(deps: list[PipPackage]) -> dict:
+        return {package.name: package.version for package in deps}
 
-    def as_str(self) -> str:
-        """Returns the dependencies as a string."""
-        return "\n".join(
-            self.group,
-            *[package.as_str() for package in self.packages],
-        )
+    def _scripts_to_dict(self) -> dict:
+        return {script.name: script.command for script in self.scripts}
+
+    def to_dict(self) -> dict:
+        return {
+            "tool": {
+                "poetry": self.desc.model_dump(),
+                "scripts": self._scripts_to_dict(),
+                "dependencies": self._deps_to_dict(self.core_deps),
+                "group": {
+                    "dev": {
+                        "dependencies": self._deps_to_dict(self.dev_deps),
+                    }
+                },
+            },
+            "build-system": self.build_system,
+        }
 
 
 class PoetryFileBuilder:
     """A builder for creating the `pyproject.toml`."""
 
-    def __init__(self, project_name: str, author: str) -> None:
-        self.description = PoetryDescription(name=project_name, authors=[author])
+    def __init__(self, project_name: str, test_logging: bool = False) -> None:
+        self.logger = task_test_logger if test_logging else task_error_logger
+
+        self.description = Description(name=project_name)
         self.scripts = [
-            PoetryScript(name="run-dev", command="app.run:development"),
-            PoetryScript(name="run-prod", command="app.run:production"),
+            Script(name="run-dev", command="app.run:development"),
+            Script(name="run-prod", command="app.run:production"),
         ]
-        self.coverage = toml_str(
-            "addopts",
-            f"--cov-report term-missing --cov={project_name} tests/",
-        )
-        self.threshold = "[tool.poetry.dependencies]"
 
-    def build_details(self) -> str:
-        """A helper function to builds the details as a string."""
-        return "".join(
-            [
-                "[tool.poetry]\n",
-                *self.description.as_str(),
-                "\n[tool.poetry.scripts]\n",
-                *[script.as_str() for script in self.scripts],
-            ]
+    def build(self, core_deps: list[str], dev_deps: list[str]) -> PoetryFile:
+        """Builds the poetry file."""
+        return PoetryFile(
+            desc=self.description,
+            scripts=self.scripts,
+            core_deps=self.get_packages(core_deps),
+            dev_deps=self.get_packages(dev_deps),
         )
 
-    def get_other_content(self, filepath: Path) -> str:
-        """A helper function for getting the other content of the toml file."""
-        with open(filepath, "r") as f:
-            file_content = f.read()
+    def get_packages(self, packages: list[str]) -> list[PipPackage]:
+        """Gets the dependency package versions for the project."""
+        dependencies = []
 
-        other_idx = file_content.index(self.threshold)
-        return file_content[other_idx:]
+        for package in packages:
+            try:
+                response = requests.get(pypi_url(package))
+                response.raise_for_status()
+                data = response.json()
 
-    def build_new_content(self, filepath: Path) -> str:
-        """Creates the new content for the file."""
-        details = self.build_details()
-        other_content = self.get_other_content(filepath)
-        return f"{details}\n{other_content}"
+                version = data["info"]["version"]
+                dependencies.append(PipPackage(name=package, version=version))
 
-    def update(self, filepath: Path) -> None:
-        """Updates an existing toml file with a new description and scripts."""
-        new_content = self.build_new_content(filepath)
+            except (requests.HTTPError, requests.RequestException):
+                self.logger.error(f"{package} doesn't exist in 'pypi' directory.")
+                continue
+
+        return dependencies
+
+    def update(self, filepath: Path, core_deps: list[str], dev_deps: list[str]) -> None:
+        """Updates an existing toml file."""
+        file = self.build(core_deps, dev_deps)
+        new_content = file.to_dict()
 
         with open(filepath, "w") as f:
-            f.write(new_content)
+            toml.dump(new_content, f)

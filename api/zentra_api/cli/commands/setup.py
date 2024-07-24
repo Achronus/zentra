@@ -1,11 +1,12 @@
 import os
 from pathlib import Path
+import shutil
 import subprocess
 from typing import Callable
 import typer
 
 from zentra_api.cli.builder.poetry import PoetryFileBuilder
-from zentra_api.cli.conf import ProjectDetails
+from zentra_api.cli.conf import ProjectDetails, package_path
 from zentra_api.cli.constants import (
     CORE_PIP_PACKAGES,
     DEV_PIP_PACKAGES,
@@ -60,7 +61,12 @@ class SetupTasks:
 
         self.logger = set_loggers(test_logging)
 
-    def __run_command(self, command: list[str]) -> None:
+        self.file_builder = PoetryFileBuilder(
+            self.details.project_name,
+            self.details.author,
+        )
+
+    def _run_command(self, command: list[str]) -> None:
         """A helper method for running Python commands. Stores output to separate loggers."""
         response = subprocess.run(
             command,
@@ -73,17 +79,19 @@ class SetupTasks:
 
     def _create_virtual_env(self) -> None:
         """Creates a virtual environment in the project directory."""
-        self.__run_command(["python", "-m", "venv", "env"])
+        self._run_command(["python", "-m", "venv", "env"])
 
     def _make_toml(self) -> None:
-        """Updates the `pyproject.toml` file."""
+        """Creates the `pyproject.toml` file."""
         toml_path = Path(self.details.project_path, "pyproject.toml")
         open(toml_path, "x").close()
-        builder = PoetryFileBuilder(
-            self.details.project_name,
-            self.details.author,
-        )
-        builder.update(toml_path, CORE_PIP_PACKAGES, DEV_PIP_PACKAGES)
+
+        self.file_builder.update(toml_path, CORE_PIP_PACKAGES, DEV_PIP_PACKAGES)
+
+    def _move_assets(self) -> None:
+        """Moves the template assets into the project directory."""
+        template_dir = package_path("zentra_api", ["cli", "template"])
+        shutil.copytree(template_dir, self.details.project_path, dirs_exist_ok=True)
 
     def get_tasks(self) -> list[Callable]:
         """Gets the tasks to run as a list of methods."""
@@ -99,5 +107,6 @@ class SetupTasks:
 
         return [
             self._make_toml,
-            # self._create_virtual_env,
+            self._move_assets,
+            self._create_virtual_env,
         ]

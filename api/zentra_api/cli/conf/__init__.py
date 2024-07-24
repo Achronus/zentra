@@ -1,9 +1,22 @@
 import importlib.util
+import importlib.resources as pkg_resources
+
 import os
 from pathlib import Path
 from types import ModuleType
 
 from pydantic import BaseModel, Field, field_validator
+
+
+def package_path(package: str, resources: list[str]) -> Path:
+    """Checks if a package exists on the machine and then returns it if True."""
+    try:
+        path = pkg_resources.files(package).joinpath(*resources)
+        list(path.iterdir())  # Check if exists
+        return Path(path)
+
+    except FileNotFoundError:
+        raise FileNotFoundError(f"'{package}.{".".join(resources)}' does not exist!")
 
 
 def load_module(root: str, module_path: str) -> ModuleType:

@@ -5,25 +5,26 @@ from pydantic import validate_call
 
 
 @validate_call(validate_return=True)
-def zentra_root_exists() -> bool:
+def zentra_root_path() -> Path | None:
     """
     Searches for the `zentra.root` file by traversing up the directory tree from the current directory.
 
-    If found, returns `True`. Otherwise, `False`.
+    If found, returns its `Path`. Otherwise, `None`.
     """
     current_dir = Path(os.getcwd())
 
     while True:
         potential_root = Path(current_dir, "zentra.root")
         if potential_root.is_file():
-            return True
+            return potential_root
 
         # Traverse up parent directory
         parent_dir = Path(os.path.dirname(current_dir))
         if parent_dir == current_dir:
             # Reached root directory without finding
-            return False
+            return None
 
+        print(parent_dir)
         current_dir = parent_dir
 
 

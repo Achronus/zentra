@@ -1,9 +1,25 @@
 import os
+from pathlib import Path
 from types import ModuleType
 
 import pytest
-from zentra_api.cli.conf import load_module
-from zentra_api.cli.conf.checks import check_file_exists, check_folder_exists
+from zentra_api.cli.conf import load_module, package_path, ProjectDetails
+from zentra_api.cli.conf.checks import (
+    check_file_exists,
+    check_folder_exists,
+    zentra_root_path,
+)
+
+
+class TestPackagePath:
+    @staticmethod
+    def test_success():
+        assert package_path("zentra_api", ["cli"])
+
+    @staticmethod
+    def test_fail():
+        with pytest.raises(FileNotFoundError):
+            package_path("zentra_api", ["nonexistent"])
 
 
 class TestLoadModule:
@@ -52,3 +68,63 @@ class TestCheckFolderExists:
     def test_invalid_file(temp_dir):
         file_path = os.path.join(temp_dir, "test_file.txt")
         assert not check_folder_exists(file_path)
+
+
+class TestProjectDetails:
+    @pytest.fixture
+    def details(self, tmp_path: Path) -> ProjectDetails:
+        return ProjectDetails(project_name="Test Project", root=tmp_path)
+
+    @staticmethod
+    def test_project_name_validation(details: ProjectDetails):
+        assert details.project_name == "test_project"
+
+    @staticmethod
+    def test_project_path(details: ProjectDetails, tmp_path: Path):
+        assert details.project_path == Path(tmp_path, "test_project")
+
+    @staticmethod
+    def test_project_dir(details: ProjectDetails):
+        assert details.project_dir == "test_project_dir0/test_project"
+
+    @staticmethod
+    def test_author(details: ProjectDetails):
+        assert details.author == "Placeholder Name <placeholder@email.com>"
+
+    @staticmethod
+    def test_app_path(details: ProjectDetails, tmp_path: Path):
+        assert details.app_path == Path(tmp_path, "test_project", "app")
+
+
+class TestZentraRootPath:
+    @pytest.fixture(autouse=True)
+    def setup_and_teardown(self, tmp_path):
+        self.original_cwd = os.getcwd()
+        os.chdir(tmp_path)
+        yield
+        os.chdir(self.original_cwd)
+
+    def test_found_in_current_dir(self, tmp_path):
+        zentra_root = tmp_path / "zentra.root"
+        zentra_root.touch()
+        assert "zentra.root" in zentra_root_path().parts
+
+    def test_found_in_parent_dir(self, tmp_path):
+        project_dir = tmp_path / "project"
+        subdir = project_dir / "subdir"
+        subdir.mkdir(parents=True)
+
+        zentra_root = project_dir / "zentra.root"
+        zentra_root.touch()
+        os.chdir(subdir)
+
+        assert "zentra.root" in zentra_root_path().parts
+
+    def test_not_found(self, tmp_path):
+        project_dir = tmp_path / "project"
+        subdir = project_dir / "subdir"
+        subdir.mkdir(parents=True)
+
+        os.chdir(subdir)
+
+        assert zentra_root_path() is None

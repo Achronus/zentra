@@ -89,10 +89,15 @@ class PoetryFile(BaseModel):
 class PoetryFileBuilder:
     """A builder for creating the `pyproject.toml`."""
 
-    def __init__(self, project_name: str, test_logging: bool = False) -> None:
+    def __init__(
+        self,
+        project_name: str,
+        author: str = "Placeholder <placeholder@email.com>",
+        test_logging: bool = False,
+    ) -> None:
         self.logger = task_test_logger if test_logging else task_error_logger
 
-        self.description = Description(name=project_name)
+        self.description = Description(name=project_name, authors=[author])
         self.scripts = [
             Script(name="run-dev", command="app.run:development"),
             Script(name="run-prod", command="app.run:production"),

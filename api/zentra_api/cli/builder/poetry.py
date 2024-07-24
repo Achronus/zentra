@@ -1,5 +1,5 @@
 from pathlib import Path
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 
 def toml_str(key: str, value: str | list[str]) -> str:
@@ -37,8 +37,49 @@ class PoetryScript(BaseModel):
         return toml_str(self.name, self.command)
 
 
-class PoetryFile:
-    """A helper class for creating the `pyproject.toml`."""
+class PipPackage(BaseModel):
+    """Represents a single pip package."""
+
+    name: str
+    version: str
+
+    @field_validator("version")
+    def validate_version(cls, version: str) -> str:
+        parts = version.split(".")
+
+        if len(parts) >= 2:
+            return f"{parts[0]}.{parts[1]}"
+
+        return version
+
+    def as_str(self) -> str:
+        """Returns the package as a string."""
+        return toml_str(self.name, f"^{self.version}")
+
+
+class Dependencies(BaseModel):
+    """Represents a list of pip packages."""
+
+    packages: list[PipPackage]
+    group: str | None = None
+
+    @field_validator("group")
+    def validate_group(cls, group: str | None) -> str:
+        if group:
+            return f"[tool.poetry.group.{group}.dependencies]\n"
+
+        return "[tool.poetry.dependencies]\n"
+
+    def as_str(self) -> str:
+        """Returns the dependencies as a string."""
+        return "\n".join(
+            self.group,
+            *[package.as_str() for package in self.packages],
+        )
+
+
+class PoetryFileBuilder:
+    """A builder for creating the `pyproject.toml`."""
 
     def __init__(self, project_name: str, author: str) -> None:
         self.description = PoetryDescription(name=project_name, authors=[author])

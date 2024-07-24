@@ -4,7 +4,7 @@ import pytest
 
 from zentra_api.cli.builder.poetry import (
     PoetryDescription,
-    PoetryFile,
+    PoetryFileBuilder,
     PoetryScript,
     toml_str,
 )
@@ -66,17 +66,17 @@ class TestPoetryFile:
         return '[tool.poetry.dependencies]\nother_content = "value"\n'
 
     @pytest.fixture
-    def file_obj(self) -> PoetryFile:
-        return PoetryFile("test_project", "<Test author>")
+    def file_obj(self) -> PoetryFileBuilder:
+        return PoetryFileBuilder("test_project", "<Test author>")
 
     @staticmethod
-    def test_build_details(file_obj: PoetryFile, target_details: str):
+    def test_build_details(file_obj: PoetryFileBuilder, target_details: str):
         result = file_obj.build_details()
         assert result == target_details
 
     @staticmethod
     def test_get_other_content(
-        file_obj: PoetryFile, mock_content: str, other_target_content: str
+        file_obj: PoetryFileBuilder, mock_content: str, other_target_content: str
     ):
         with patch("builtins.open", mock_open(read_data=mock_content)):
             other_content = file_obj.get_other_content(Path("fake_path"))
@@ -85,7 +85,7 @@ class TestPoetryFile:
 
     @staticmethod
     def test_build_new_content(
-        file_obj: PoetryFile,
+        file_obj: PoetryFileBuilder,
         mock_content: str,
         target_details: str,
         other_target_content: str,
@@ -97,7 +97,7 @@ class TestPoetryFile:
 
     @staticmethod
     def test_update(
-        file_obj: PoetryFile,
+        file_obj: PoetryFileBuilder,
         tmp_path: Path,
         mock_content: str,
         target_details: str,

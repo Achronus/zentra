@@ -39,7 +39,7 @@ class TestPipPackage:
         package = PipPackage(name="pytest", version="2")
         target = {
             "name": "pytest",
-            "version": "2",
+            "version": "^2",
         }
         assert package.model_dump() == target
 
@@ -48,7 +48,7 @@ class TestPipPackage:
         package = PipPackage(name="python", version=PYTHON_VERSION)
         target = {
             "name": "python",
-            "version": "3.12",
+            "version": "^3.12",
         }
         assert package.model_dump() == target
 
@@ -83,13 +83,13 @@ def test_poetry_file():
                 "run-prod": "app.run:production",
             },
             "dependencies": {
-                "python": "3.12",
-                "fastapi": "0.111",
+                "python": "^3.12",
+                "fastapi": "^0.111",
             },
             "group": {
                 "dev": {
                     "dependencies": {
-                        "pytest": "2.0",
+                        "pytest": "^2.0",
                     },
                 }
             },
@@ -136,13 +136,13 @@ class TestPoetryFileBuilder:
                     "run-prod": "app.run:production",
                 },
                 "dependencies": {
-                    "python": "3.12",
-                    "flask": "1.2",
+                    "python": "^3.12",
+                    "flask": "^1.2",
                 },
                 "group": {
                     "dev": {
                         "dependencies": {
-                            "pytest": "2.3",
+                            "pytest": "^2.3",
                         },
                     }
                 },
@@ -229,9 +229,9 @@ class TestPoetryFileBuilder:
             checks = [
                 len(result) == 2,
                 result[0].name == "flask",
-                result[0].version == "1.2",
+                result[0].version == "^1.2",
                 result[1].name == "pytest",
-                result[1].version == "2.3",
+                result[1].version == "^2.3",
             ]
             assert all(checks)
 

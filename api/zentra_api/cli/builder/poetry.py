@@ -38,9 +38,9 @@ class PipPackage(BaseModel):
         parts = version.split(".")
 
         if len(parts) >= 2:
-            return f"{parts[0]}.{parts[1]}"
+            return f"^{parts[0]}.{parts[1]}"
 
-        return version
+        return f"^{version}"
 
 
 class PoetryFile(BaseModel):

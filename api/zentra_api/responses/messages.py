@@ -8,7 +8,9 @@ class HTTPMessage(BaseModel):
     code: int = Field(..., description="The HTTP response code.")
     message: str = Field(..., description="The reason the response occured.")
     headers: dict[str, str] | None = Field(
-        default=None, description="The headers to send with the response (optional)."
+        default=None,
+        description="The headers to send with the response (optional).",
+        validate_default=True,
     )
 
     @field_validator("headers")
@@ -19,271 +21,302 @@ class HTTPMessage(BaseModel):
         return headers
 
 
-class HTTPSuccess(BaseModel):
-    pass
-
-
 HTTP_100_MSG = HTTPMessage(
-    code=status.HTTP_100_CONTINUE,
-    message="The server has received the request headers and the client should proceed to send the request body.",
+    code=status.HTTP_100_CONTINUE, message="Continue sending the request body."
 )
 
 HTTP_101_MSG = HTTPMessage(
     code=status.HTTP_101_SWITCHING_PROTOCOLS,
-    message="The requester has asked the server to switch protocols and the server has agreed to do so.",
+    message="Switching protocols as requested.",
 )
 
 HTTP_102_MSG = HTTPMessage(
-    code=status.HTTP_102_PROCESSING,
-    message="The server has received and is processing the request, but no response is available yet.",
+    code=status.HTTP_102_PROCESSING, message="Processing request."
 )
 
 HTTP_103_MSG = HTTPMessage(
     code=status.HTTP_103_EARLY_HINTS,
-    message="The server is sending some hints before the final HTTP message.",
+    message="Sending early hints.",
+)
+
+HTTP_200_MSG = HTTPMessage(
+    code=status.HTTP_200_OK, message="Request successful, resource returned."
+)
+
+HTTP_201_MSG = HTTPMessage(
+    code=status.HTTP_201_CREATED, message="Request successful, new resource created."
+)
+
+HTTP_202_MSG = HTTPMessage(
+    code=status.HTTP_202_ACCEPTED, message="Request accepted, processing not complete."
+)
+
+HTTP_203_MSG = HTTPMessage(
+    code=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION,
+    message="Request successful, info may be from third-party.",
+)
+
+HTTP_204_MSG = HTTPMessage(
+    code=status.HTTP_204_NO_CONTENT,
+    message="Request successful, no content in response.",
+)
+
+HTTP_205_MSG = HTTPMessage(
+    code=status.HTTP_205_RESET_CONTENT,
+    message="Request successful, reset document view.",
+)
+
+HTTP_206_MSG = HTTPMessage(
+    code=status.HTTP_206_PARTIAL_CONTENT,
+    message="Partial resource delivered due to range header.",
+)
+
+HTTP_207_MSG = HTTPMessage(
+    code=status.HTTP_207_MULTI_STATUS,
+    message="Request successful, multiple statuses in response.",
+)
+
+HTTP_208_MSG = HTTPMessage(
+    code=status.HTTP_208_ALREADY_REPORTED,
+    message="DAV bindings already enumerated in previous response.",
+)
+
+HTTP_226_MSG = HTTPMessage(
+    code=status.HTTP_226_IM_USED,
+    message="GET request fulfilled, instance manipulations applied.",
 )
 
 HTTP_300_MSG = HTTPMessage(
     code=status.HTTP_300_MULTIPLE_CHOICES,
-    message="The request has more than one possible response. The user or agent should choose one of them.",
+    message="Multiple response choices available.",
 )
 
 HTTP_301_MSG = HTTPMessage(
     code=status.HTTP_301_MOVED_PERMANENTLY,
-    message="The requested resource has been permanently moved to a new URI. The new URI should be provided in the response.",
+    message="Resource moved permanently to a new URI.",
 )
 
 HTTP_302_MSG = HTTPMessage(
-    code=status.HTTP_302_FOUND,
-    message="The requested resource resides temporarily under a different URI. The client should continue to use the original URI for future requests.",
+    code=status.HTTP_302_FOUND, message="Resource found at a different URI temporarily."
 )
 
 HTTP_303_MSG = HTTPMessage(
-    code=status.HTTP_303_SEE_OTHER,
-    message="The response to the request can be found under a different URI using the GET method. The client should retrieve the resource from the new URI.",
+    code=status.HTTP_303_SEE_OTHER, message="Retrieve resource from a different URI."
 )
 
 HTTP_304_MSG = HTTPMessage(
     code=status.HTTP_304_NOT_MODIFIED,
-    message="The requested resource has not been modified since the last request. The client can use the cached version of the resource.",
+    message="Resource not modified, use cached version.",
 )
 
 HTTP_305_MSG = HTTPMessage(
-    code=status.HTTP_305_USE_PROXY,
-    message="The requested resource must be accessed through the proxy given by the `Location` header. The client should follow the proxy instructions.",
+    code=status.HTTP_305_USE_PROXY, message="Access resource through specified proxy."
 )
 
 HTTP_306_MSG = HTTPMessage(
-    code=status.HTTP_306_RESERVED,
-    message="This status code was used in a previous version of the HTTP specification. It is no longer used, and the code is reserved for future use.",
+    code=status.HTTP_306_RESERVED, message="Reserved for future use."
 )
 
 HTTP_307_MSG = HTTPMessage(
     code=status.HTTP_307_TEMPORARY_REDIRECT,
-    message="The requested resource resides temporarily under a different URI. The client should continue to use the original URI for future requests.",
+    message="Resource temporarily under a different URI.",
 )
 
 HTTP_308_MSG = HTTPMessage(
     code=status.HTTP_308_PERMANENT_REDIRECT,
-    message="The requested resource has been permanently moved to a new URI. The new URI should be provided in the response, and the client should use the new URI for future requests.",
+    message="Resource permanently moved to a new URI.",
 )
 
 HTTP_400_MSG = HTTPMessage(
-    code=status.HTTP_400_BAD_REQUEST,
-    message="The request could not be understood by the server due to malformed syntax. Please check your request and try again.",
+    code=status.HTTP_400_BAD_REQUEST, message="Bad request due to malformed syntax."
 )
 
 HTTP_401_MSG = HTTPMessage(
-    code=status.HTTP_401_UNAUTHORIZED,
-    message="Authentication is required and has failed or has not yet been provided. Please ensure your API key or login credentials are correct.",
+    code=status.HTTP_401_UNAUTHORIZED, message="Authentication required and failed."
 )
 
 HTTP_402_MSG = HTTPMessage(
-    code=status.HTTP_402_PAYMENT_REQUIRED,
-    message="Payment is required to access this resource. Please ensure your payment details are correct or update your subscription.",
+    code=status.HTTP_402_PAYMENT_REQUIRED, message="Payment required for this resource."
 )
 
 HTTP_403_MSG = HTTPMessage(
-    code=status.HTTP_403_FORBIDDEN,
-    message="You do not have permission to access this resource. Please check your credentials and access rights.",
+    code=status.HTTP_403_FORBIDDEN, message="Permission denied for this resource."
 )
 
 HTTP_404_MSG = HTTPMessage(
-    code=status.HTTP_404_NOT_FOUND,
-    message="The requested resource could not be found. Please check the endpoint URL and try again.",
+    code=status.HTTP_404_NOT_FOUND, message="Resource not found."
 )
 
 HTTP_405_MSG = HTTPMessage(
     code=status.HTTP_405_METHOD_NOT_ALLOWED,
-    message="The requested method is not allowed for the specified resource. Please check the API documentation for the correct method.",
+    message="Method not allowed for this resource.",
 )
 
 HTTP_406_MSG = HTTPMessage(
     code=status.HTTP_406_NOT_ACCEPTABLE,
-    message="The requested resource is not available in a format that would be acceptable to the client. Please check the request headers and acceptable formats.",
+    message="Resource not available in acceptable format.",
 )
 
 HTTP_407_MSG = HTTPMessage(
     code=status.HTTP_407_PROXY_AUTHENTICATION_REQUIRED,
-    message="Authentication with the proxy server is required. Please ensure your proxy credentials are correct.",
+    message="Proxy authentication required.",
 )
 
 HTTP_408_MSG = HTTPMessage(
-    code=status.HTTP_408_REQUEST_TIMEOUT,
-    message="The server timed out waiting for the request. Please try again later.",
+    code=status.HTTP_408_REQUEST_TIMEOUT, message="Request timeout, try again later."
 )
 
 HTTP_409_MSG = HTTPMessage(
-    code=status.HTTP_409_CONFLICT,
-    message="There is a conflict with the current state of the resource. Please review your request for any conflicts and try again.",
+    code=status.HTTP_409_CONFLICT, message="Conflict with current resource state."
 )
 
 HTTP_410_MSG = HTTPMessage(
-    code=status.HTTP_410_GONE,
-    message="The requested resource is no longer available and has been permanently removed. Please update your request to use a different resource.",
+    code=status.HTTP_410_GONE, message="Resource permanently removed."
 )
 
 HTTP_411_MSG = HTTPMessage(
-    code=status.HTTP_411_LENGTH_REQUIRED,
-    message="The server requires the Content-Length header field in the request. Please include this header and try again.",
+    code=status.HTTP_411_LENGTH_REQUIRED, message="Content-Length header required."
 )
 
 HTTP_412_MSG = HTTPMessage(
-    code=status.HTTP_412_PRECONDITION_FAILED,
-    message="One or more preconditions given in the request header fields evaluated to false. Please review your request headers and try again.",
+    code=status.HTTP_412_PRECONDITION_FAILED, message="Precondition failed."
 )
 
 HTTP_413_MSG = HTTPMessage(
-    code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
-    message="The request payload is too large for the server to process. Please reduce the size of your request and try again.",
+    code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, message="Payload too large."
 )
 
 HTTP_414_MSG = HTTPMessage(
-    code=status.HTTP_414_REQUEST_URI_TOO_LONG,
-    message="The URI provided was too long for the server to process. Please shorten the URI and try again.",
+    code=status.HTTP_414_REQUEST_URI_TOO_LONG, message="URI too long."
 )
 
 HTTP_415_MSG = HTTPMessage(
-    code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
-    message="The media type of the request is not supported by the server. Please check the API documentation for supported media types.",
+    code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, message="Unsupported media type."
 )
 
 HTTP_416_MSG = HTTPMessage(
     code=status.HTTP_416_REQUESTED_RANGE_NOT_SATISFIABLE,
-    message="The range specified in the request is not satisfiable. Please check the requested range and try again.",
+    message="Requested range not satisfiable.",
 )
 
 HTTP_417_MSG = HTTPMessage(
-    code=status.HTTP_417_EXPECTATION_FAILED,
-    message="The server could not meet the expectation given in the request header. Please review your request headers and try again.",
+    code=status.HTTP_417_EXPECTATION_FAILED, message="Expectation failed."
 )
 
 HTTP_418_MSG = HTTPMessage(
-    code=status.HTTP_418_IM_A_TEAPOT,
-    message="The server refuses the attempt to brew coffee with a teapot. Please check your request and try again.",
+    code=status.HTTP_418_IM_A_TEAPOT, message="I'm a teapot, can't brew coffee."
+)
+
+HTTP_421_MSG = HTTPMessage(
+    code=status.HTTP_421_MISDIRECTED_REQUEST,
+    message="Request misdirected to inappropriate server.",
 )
 
 HTTP_422_MSG = HTTPMessage(
     code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-    message="The request was well-formed but was unable to be followed due to semantic errors. Please check your request data and try again.",
+    message="Unprocessable entity due to semantic errors.",
 )
 
 HTTP_423_MSG = HTTPMessage(
     code=status.HTTP_423_LOCKED,
-    message="The resource that is being accessed is locked. Please check the status of the resource and try again later.",
+    message="Resource is locked.",
 )
 
 HTTP_424_MSG = HTTPMessage(
     code=status.HTTP_424_FAILED_DEPENDENCY,
-    message="The request failed due to failure of a previous request. Please ensure all dependencies are met and try again.",
+    message="Failed dependency in previous request.",
+)
+
+HTTP_425_MSG = HTTPMessage(
+    code=status.HTTP_425_TOO_EARLY, message="Request too early, try again later."
 )
 
 HTTP_426_MSG = HTTPMessage(
-    code=status.HTTP_426_UPGRADE_REQUIRED,
-    message="The client should switch to a different protocol. Please check the API documentation for the required protocol.",
+    code=status.HTTP_426_UPGRADE_REQUIRED, message="Upgrade required."
 )
 
 HTTP_428_MSG = HTTPMessage(
-    code=status.HTTP_428_PRECONDITION_REQUIRED,
-    message="The server requires the request to be conditional. Please include the necessary preconditions and try again.",
+    code=status.HTTP_428_PRECONDITION_REQUIRED, message="Precondition required."
 )
 
 HTTP_429_MSG = HTTPMessage(
     code=status.HTTP_429_TOO_MANY_REQUESTS,
-    message="You have sent too many requests in a given amount of time. Please try again later.",
+    message="Too many requests, try again later.",
 )
 
 HTTP_431_MSG = HTTPMessage(
     code=status.HTTP_431_REQUEST_HEADER_FIELDS_TOO_LARGE,
-    message="The server is unwilling to process the request because its header fields are too large. Please reduce the size of the request headers and try again.",
+    message="Request headers too large.",
 )
 
 HTTP_451_MSG = HTTPMessage(
     code=status.HTTP_451_UNAVAILABLE_FOR_LEGAL_REASONS,
-    message="The requested resource is unavailable due to legal reasons. Please check the legal constraints and try again.",
+    message="Resource unavailable due to legal reasons.",
 )
 
 HTTP_500_MSG = HTTPMessage(
     code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-    message="The server encountered an internal error and was unable to complete your request. Please try again later.",
+    message="Internal server error, try again later.",
 )
 
 HTTP_501_MSG = HTTPMessage(
-    code=status.HTTP_501_NOT_IMPLEMENTED,
-    message="The server does not support the functionality required to fulfill the request. Please check the API documentation for supported functionality.",
+    code=status.HTTP_501_NOT_IMPLEMENTED, message="Not implemented."
 )
 
 HTTP_502_MSG = HTTPMessage(
-    code=status.HTTP_502_BAD_GATEWAY,
-    message="The server received an invalid response from the upstream server while trying to fulfill the request. Please try again later.",
+    code=status.HTTP_502_BAD_GATEWAY, message="Bad gateway, try again later."
 )
 
 HTTP_503_MSG = HTTPMessage(
     code=status.HTTP_503_SERVICE_UNAVAILABLE,
-    message="The server is currently unable to handle the request due to a temporary overload or scheduled maintenance. Please try again later.",
+    message="Service unavailable, try again later.",
 )
 
 HTTP_504_MSG = HTTPMessage(
-    code=status.HTTP_504_GATEWAY_TIMEOUT,
-    message="The server, while acting as a gateway or proxy, did not receive a timely response from the upstream server. Please try again later.",
+    code=status.HTTP_504_GATEWAY_TIMEOUT, message="Gateway timeout, try again later."
 )
 
 HTTP_505_MSG = HTTPMessage(
     code=status.HTTP_505_HTTP_VERSION_NOT_SUPPORTED,
-    message="The server does not support the HTTP protocol version used in the request. Please check the API documentation for supported HTTP versions.",
+    message="HTTP version not supported.",
 )
 
 HTTP_506_MSG = HTTPMessage(
-    code=status.HTTP_506_VARIANT_ALSO_NEGOTIATES,
-    message="The server has an internal configuration error: transparent content negotiation for the request results in a circular reference. Please contact support.",
+    code=status.HTTP_506_VARIANT_ALSO_NEGOTIATES, message="Variant negotiation error."
 )
 
 HTTP_507_MSG = HTTPMessage(
-    code=status.HTTP_507_INSUFFICIENT_STORAGE,
-    message="The server is unable to store the representation needed to complete the request. Please try again later.",
+    code=status.HTTP_507_INSUFFICIENT_STORAGE, message="Insufficient storage."
 )
 
 HTTP_508_MSG = HTTPMessage(
-    code=status.HTTP_508_LOOP_DETECTED,
-    message="The server detected an infinite loop while processing the request. Please check your request for any recursive references.",
+    code=status.HTTP_508_LOOP_DETECTED, message="Infinite loop detected."
 )
 
 HTTP_510_MSG = HTTPMessage(
-    code=status.HTTP_510_NOT_EXTENDED,
-    message="Further extensions to the request are required for the server to fulfill it. Please check the API documentation for required extensions.",
+    code=status.HTTP_510_NOT_EXTENDED, message="Request requires further extensions."
 )
 
 HTTP_511_MSG = HTTPMessage(
     code=status.HTTP_511_NETWORK_AUTHENTICATION_REQUIRED,
-    message="The client needs to authenticate to gain network access. Please ensure your network credentials are correct and try again.",
+    message="Network authentication required.",
 )
-
 
 HTTP_MSG_MAPPING = {
     100: HTTP_100_MSG,
     101: HTTP_101_MSG,
     102: HTTP_102_MSG,
     103: HTTP_103_MSG,
+    200: HTTP_200_MSG,
+    201: HTTP_201_MSG,
+    202: HTTP_202_MSG,
+    203: HTTP_203_MSG,
+    204: HTTP_204_MSG,
+    205: HTTP_205_MSG,
+    206: HTTP_206_MSG,
+    207: HTTP_207_MSG,
+    208: HTTP_208_MSG,
+    226: HTTP_226_MSG,
     300: HTTP_300_MSG,
     301: HTTP_301_MSG,
     302: HTTP_302_MSG,
@@ -312,9 +345,11 @@ HTTP_MSG_MAPPING = {
     416: HTTP_416_MSG,
     417: HTTP_417_MSG,
     418: HTTP_418_MSG,
+    421: HTTP_421_MSG,
     422: HTTP_422_MSG,
     423: HTTP_423_MSG,
     424: HTTP_424_MSG,
+    425: HTTP_425_MSG,
     426: HTTP_426_MSG,
     428: HTTP_428_MSG,
     429: HTTP_429_MSG,

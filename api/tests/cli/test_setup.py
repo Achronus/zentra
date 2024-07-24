@@ -7,12 +7,13 @@ import toml
 import typer
 
 from zentra_api.cli.commands.setup import Setup, SetupTasks
-from zentra_api.cli.conf import ProjectDetails, package_path
+from zentra_api.cli.conf import ProjectDetails
 from zentra_api.cli.constants import (
     CORE_PIP_PACKAGES,
     DEV_PIP_PACKAGES,
     SetupSuccessCodes,
 )
+from zentra_api.utils.package import package_path
 
 
 class TestSetup:

@@ -1,47 +1,13 @@
 from typing import Generic, TypeVar
 
-from .messages import HTTPMessage, HTTPSuccess
+from .base import BaseResponse, BaseSuccessResponse
+from .messages import HTTPMessage
 from .utils import build_response, get_code_status
 
-from pydantic import BaseModel, Field, ValidationInfo, field_validator, validate_call
+from pydantic import BaseModel, Field, validate_call
 
 
 T = TypeVar("T", bound=BaseModel)
-
-
-class BaseResponse(BaseModel):
-    """A base request model for API responses. Intended for client responses."""
-
-    status: str = Field(
-        ...,
-        description="The status of the response.",
-    )
-    code: int = Field(..., description="The HTTP response code.")
-    response: str | None = Field(
-        default=None,
-        frozen=True,
-        validate_default=True,
-        description="The description for the type of HTTP response. Created dynamically. Cannot be assigned manually.",
-    )
-
-    @field_validator("response")
-    def validate_code(cls, _: str, info: ValidationInfo) -> str:
-        code: int = info.data.get("code")
-        return build_response(code)
-
-
-class BaseSuccessResponse(BaseResponse):
-    """A base request model for successful API responses. Intended for client responses."""
-
-    status: str = Field(
-        default="success",
-        frozen=True,
-        description="The status of the response. Cannot be changed.",
-    )
-    data: BaseModel = Field(..., description="The response data.")
-    headers: dict[str, str] | None = Field(
-        default=None, description="The headers to send with the response (optional)."
-    )
 
 
 class MessageResponse(BaseResponse):
@@ -70,46 +36,30 @@ class SuccessResponse(BaseSuccessResponse, Generic[T]):
 
 
 @validate_call
-def success_response_model(
-    model: SuccessResponse, code: int, data: BaseModel, headers: dict = {}
-) -> dict:
-    """A utility function for building success response schemas."""
-    response = build_response(code)
+def build_json_response_model(message: HTTPMessage, model: BaseResponse = None) -> dict:
+    """A utility function for building JSON response schemas."""
+    response = build_response(message.code)
+    status = get_code_status(message.code)
+
+    unique_content = (
+        {"message": message.message}
+        if model is None
+        else {"data": model.data.model_dump()}
+    )
 
     return {
-        "model": model,
-        "content": {
-            "application/json": {
-                "example": {
-                    "status": "success",
-                    "code": code,
-                    "response": response,
-                    "data": data.model_dump(),
-                    "headers": headers,
-                }
-            }
-        },
-    }
-
-
-@validate_call
-def msg_response_model(model: HTTPMessage) -> dict:
-    """A utility function for building message response schemas."""
-    response = build_response(model.code)
-    status = get_code_status(model.code)
-
-    return {
-        model.code: {
-            "model": MessageResponse,
+        message.code: {
+            "model": type(model),
+            "description": message.message,
             "content": {
                 "application/json": {
                     "example": {
                         "status": status,
-                        "code": model.code,
+                        "code": message.code,
                         "response": response,
-                        "message": model.message,
-                        "headers": model.headers,
-                    }
+                        **unique_content,
+                        "headers": message.headers,
+                    },
                 }
             },
         }

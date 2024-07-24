@@ -6,7 +6,7 @@ from typing import Callable
 import typer
 
 from zentra_api.cli.builder.poetry import PoetryFileBuilder
-from zentra_api.cli.conf import ProjectDetails, package_path
+from zentra_api.cli.conf import ProjectDetails
 from zentra_api.cli.constants import (
     CORE_PIP_PACKAGES,
     DEV_PIP_PACKAGES,
@@ -15,6 +15,7 @@ from zentra_api.cli.constants import (
 )
 from zentra_api.cli.constants.display import setup_complete_panel
 from zentra_api.cli.conf.logger import set_loggers
+from zentra_api.utils.package import package_path
 
 from rich.progress import track
 

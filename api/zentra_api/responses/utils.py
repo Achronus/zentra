@@ -1,7 +1,7 @@
 from pydantic import validate_call
 from fastapi import status
 
-from zentra_api.cli.conf import load_module
+from zentra_api.utils.package import load_module
 
 
 @validate_call
@@ -22,8 +22,7 @@ def build_response(code: int, no_strip: bool = False) -> str:
 @validate_call
 def get_code_status(code: int) -> str:
     """A utility function for retrieving the code status based on the code."""
-    # Validate code exists
-    _ = build_response(code)
+    _ = build_response(code)  # Validate code exists
 
     code_type_map = {
         "info": range(100, 200),
@@ -41,7 +40,7 @@ def get_code_status(code: int) -> str:
 def response_models(codes: int | list[int]) -> dict:
     """A utility function for getting response model schemas."""
 
-    ROOT_PATH = "app.api.responses"
+    ROOT_PATH = "zentra_api.responses"
 
     if isinstance(codes, int):
         codes = [codes]
@@ -55,7 +54,5 @@ def response_models(codes: int | list[int]) -> dict:
         module = load_module(ROOT_PATH, "models")
         models.append(getattr(module, const_name))
 
-    print(models)
-    exit()
     models_dict = {key: value for d in models for key, value in d.items()}
     return models_dict

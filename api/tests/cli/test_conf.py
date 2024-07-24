@@ -1,36 +1,13 @@
 import os
 from pathlib import Path
-from types import ModuleType
-
 import pytest
-from zentra_api.cli.conf import load_module, package_path, ProjectDetails
+
+from zentra_api.cli.conf import ProjectDetails
 from zentra_api.cli.conf.checks import (
     check_file_exists,
     check_folder_exists,
     zentra_root_path,
 )
-
-
-class TestPackagePath:
-    @staticmethod
-    def test_success():
-        assert package_path("zentra_api", ["cli"])
-
-    @staticmethod
-    def test_fail():
-        with pytest.raises(FileNotFoundError):
-            package_path("zentra_api", ["nonexistent"])
-
-
-class TestLoadModule:
-    @staticmethod
-    def test_valid():
-        assert isinstance(load_module("os", "path"), ModuleType)
-
-    @staticmethod
-    def test_invalid():
-        with pytest.raises(ValueError):
-            assert load_module("non", "existent")
 
 
 class TestCheckFileExists:

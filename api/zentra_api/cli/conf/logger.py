@@ -93,3 +93,19 @@ task_test_logger = DebugLogger(
     "testing.log",
     True,
 )
+
+
+class Loggers:
+    """A store container for loggers."""
+
+    def __init__(self, stdout: DebugLogger, stderr: DebugLogger) -> None:
+        self.stdout = stdout
+        self.stderr = stderr
+
+
+def set_loggers(testing: bool = False) -> Loggers:
+    """Returns a logger object containing debug loggers."""
+    if testing:
+        return Loggers(stdout=task_test_logger, stderr=task_test_logger)
+
+    return Loggers(stdout=task_output_logger, stderr=task_error_logger)

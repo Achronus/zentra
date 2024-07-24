@@ -15,6 +15,10 @@ from zentra_api.cli.constants import (
 )
 
 
+def creation_msg(project_name: str, project_path: str) -> str:
+    return f"\n{MAGIC} Creating new [green]FastAPI[/green] project called: [magenta]{project_name}[/magenta] -> [yellow]{project_path}[/yellow] {MAGIC}\n"
+
+
 MORE_HELP_INFO = f"""
 [dark_goldenrod]Need more help?[/dark_goldenrod] 
   Check our [bright_blue][link={ERROR_GUIDE_URL}]Error Message Guide[/link][/bright_blue].

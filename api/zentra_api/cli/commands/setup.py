@@ -4,13 +4,20 @@ import subprocess
 from typing import Callable
 import typer
 
-from zentra_api.cli.builder.poetry import PoetryFile
+from zentra_api.cli.builder.poetry import PoetryFileBuilder
 from zentra_api.cli.conf import ProjectDetails
-from zentra_api.cli.constants import MAGIC, SetupSuccessCodes, console
+from zentra_api.cli.constants import (
+    CORE_PIP_PACKAGES,
+    DEV_PIP_PACKAGES,
+    SetupSuccessCodes,
+    console,
+)
 from zentra_api.cli.constants.display import setup_complete_panel
-from zentra_api.cli.conf.logger import task_output_logger, task_error_logger
+from zentra_api.cli.conf.logger import set_loggers
 
 from rich.progress import track
+
+from zentra_api.cli.constants.message import creation_msg
 
 
 class Setup:
@@ -38,15 +45,8 @@ class Setup:
 
         tasks = self.setup_tasks.get_tasks()
 
-        os.makedirs(self.details.project_path, exist_ok=True)
-        os.chdir(self.details.project_path)
-        console.print(
-            f"\n{MAGIC} Creating new [green]FastAPI[/green] project called: [magenta]{self.project_name}[/magenta] -> [yellow]{self.details.project_path}[/yellow] {MAGIC}\n"
-        )
-
         for task in track(tasks, description="Building..."):
-            # task()
-            pass
+            task()
 
         console.print(setup_complete_panel(self.details))
         raise typer.Exit(code=SetupSuccessCodes.COMPLETE)
@@ -55,32 +55,49 @@ class Setup:
 class SetupTasks:
     """Contains the tasks for the `init` command."""
 
-    def __init__(self, details: ProjectDetails) -> None:
+    def __init__(self, details: ProjectDetails, test_logging: bool = False) -> None:
         self.details = details
 
-    def _create_virtual_env(self) -> None:
-        """Creates a virtual environment in the project directory."""
+        self.logger = set_loggers(test_logging)
+
+    def __run_command(self, command: list[str]) -> None:
+        """A helper method for running Python commands. Stores output to separate loggers."""
         response = subprocess.run(
-            ["python", "-m", "venv", "env"],
+            command,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
 
-        task_output_logger.debug(response.stderr)
-        task_error_logger.error(response.stdout)
+        self.logger.stdout.debug(response.stdout)
+        self.logger.stderr.error(response.stderr)
 
-    def _update_toml(self) -> None:
+    def _create_virtual_env(self) -> None:
+        """Creates a virtual environment in the project directory."""
+        self.__run_command(["python", "-m", "venv", "env"])
+
+    def _make_toml(self) -> None:
         """Updates the `pyproject.toml` file."""
         toml_path = Path(self.details.project_path, "pyproject.toml")
-        builder = PoetryFile(
+        open(toml_path, "x").close()
+        builder = PoetryFileBuilder(
             self.details.project_name,
             self.details.author,
         )
-        builder.update(toml_path)
+        builder.update(toml_path, CORE_PIP_PACKAGES, DEV_PIP_PACKAGES)
 
     def get_tasks(self) -> list[Callable]:
         """Gets the tasks to run as a list of methods."""
+        os.makedirs(self.details.project_path, exist_ok=True)
+        os.chdir(self.details.project_path)
+
+        console.print(
+            creation_msg(
+                self.details.project_name,
+                self.details.project_path,
+            )
+        )
+
         return [
-            self._create_virtual_env,
-            # self._update_toml
+            self._make_toml,
+            # self._create_virtual_env,
         ]

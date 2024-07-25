@@ -78,10 +78,6 @@ class SetupTasks:
         self.logger.stdout.debug(response.stdout)
         self.logger.stderr.error(response.stderr)
 
-    def _create_virtual_env(self) -> None:
-        """Creates a virtual environment in the project directory."""
-        self._run_command(["python", "-m", "venv", "env"])
-
     def _make_toml(self) -> None:
         """Creates the `pyproject.toml` file."""
         toml_path = Path(self.details.project_path, "pyproject.toml")
@@ -109,5 +105,4 @@ class SetupTasks:
         return [
             self._make_toml,
             self._move_assets,
-            self._create_virtual_env,
         ]

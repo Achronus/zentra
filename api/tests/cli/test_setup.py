@@ -91,15 +91,6 @@ class TestSetupTasks:
                 ["echo", "test"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
             )
 
-    def test_create_virtual_env(self, setup_tasks: SetupTasks):
-        with mock.patch("subprocess.run") as mock_subprocess:
-            setup_tasks._create_virtual_env()
-            mock_subprocess.assert_called_once_with(
-                ["python", "-m", "venv", "env"],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-            )
-
     def test_make_toml(self, setup_tasks: SetupTasks):
         toml_path = Path(setup_tasks.details.project_path, "pyproject.toml")
         toml_path.parent.mkdir(parents=True, exist_ok=True)
@@ -132,9 +123,8 @@ class TestSetupTasks:
     def test_get_tasks(self, setup_tasks: SetupTasks):
         tasks = setup_tasks.get_tasks()
 
-        assert len(tasks) == 3
+        assert len(tasks) == 2
         assert tasks == [
             setup_tasks._make_toml,
             setup_tasks._move_assets,
-            setup_tasks._create_virtual_env,
         ]

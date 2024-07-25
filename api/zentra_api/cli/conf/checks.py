@@ -24,7 +24,6 @@ def zentra_root_path() -> Path | None:
             # Reached root directory without finding
             return None
 
-        print(parent_dir)
         current_dir = parent_dir
 
 

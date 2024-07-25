@@ -40,24 +40,24 @@ def build_json_response_model(
     message: HTTPMessage, data_model: SuccessResponse | None = None
 ) -> dict:
     """A utility function for building JSON response schemas."""
-    response = build_response(message.code)
-    status = get_code_status(message.code)
+    response = build_response(message.status_code)
+    status = get_code_status(message.status_code)
 
     unique_content = (
-        {"message": message.message}
+        {"message": message.detail}
         if data_model is None
         else {"data": data_model.data.model_dump()}
     )
 
     return {
-        message.code: {
+        message.status_code: {
             "model": type(data_model) if data_model else MessageResponse,
-            "description": message.message,
+            "description": message.detail,
             "content": {
                 "application/json": {
                     "example": {
                         "status": status,
-                        "code": message.code,
+                        "code": message.status_code,
                         "response": response,
                         **unique_content,
                         "headers": message.headers,

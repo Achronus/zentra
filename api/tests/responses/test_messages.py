@@ -4,14 +4,14 @@ from zentra_api.responses.messages import HTTP_MSG_MAPPING, HTTPMessage
 class TestHTTPMessage:
     @staticmethod
     def test_headers_none():
-        msg = HTTPMessage(code=100, message="Continue sending the request body.")
+        msg = HTTPMessage(status_code=100, detail="Continue sending the request body.")
         assert msg.headers == {}
 
     @staticmethod
     def test_headers_dict():
         msg = HTTPMessage(
-            code=100,
-            message="Continue sending the request body.",
+            status_code=100,
+            detail="Continue sending the request body.",
             headers={"test": "value"},
         )
         assert msg.headers == {"test": "value"}

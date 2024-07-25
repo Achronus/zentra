@@ -34,5 +34,7 @@ app.add_middleware(
 
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException) -> JSONResponse:
-    details = ErrorResponse(code=exc.status_code, message=exc.detail).model_dump()
-    return JSONResponse(details, status_code=exc.status_code)
+    details = ErrorResponse(
+        code=exc.status_code, message=exc.detail, headers=exc.headers
+    ).model_dump()
+    return JSONResponse(details, status_code=exc.status_code, headers=exc.headers)

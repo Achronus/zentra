@@ -56,3 +56,9 @@ def response_models(codes: int | list[int]) -> dict:
 
     models_dict = {key: value for d in models for key, value in d.items()}
     return models_dict
+
+
+@validate_call
+def merge_dicts(*dicts: dict) -> dict:
+    """Merges multiple dicts into a single one and returns it."""
+    return {k: v for d in dicts for k, v in d.items()}

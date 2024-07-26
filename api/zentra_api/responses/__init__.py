@@ -1,4 +1,4 @@
-from typing import Generic, TypeVar
+from typing import Any, Generic, TypeVar
 
 from .base import BaseResponse, BaseSuccessResponse
 from .messages import HTTPMessage
@@ -38,10 +38,11 @@ class SuccessResponse(BaseSuccessResponse, Generic[T]):
 @validate_call
 def build_json_response_model(
     message: HTTPMessage, data_model: SuccessResponse | None = None
-) -> dict:
+) -> dict[int, dict[str, Any]]:
     """A utility function for building JSON response schemas."""
     response = build_response(message.status_code)
     status = get_code_status(message.status_code)
+    title = " ".join(response.split("_")[1:]).title()
 
     unique_content = (
         {"message": message.detail}
@@ -52,7 +53,7 @@ def build_json_response_model(
     return {
         message.status_code: {
             "model": type(data_model) if data_model else MessageResponse,
-            "description": message.detail,
+            "description": title,
             "content": {
                 "application/json": {
                     "example": {

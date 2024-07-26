@@ -1,7 +1,7 @@
 from typing import Any, Generic, TypeVar
 
 from .base import BaseResponse, BaseSuccessResponse
-from .messages import HTTPMessage
+from .messages import HTTP_MSG_MAPPING, HTTPMessage
 from .utils import build_response, get_code_status
 
 from pydantic import BaseModel, Field, validate_call
@@ -67,3 +67,25 @@ def build_json_response_model(
             },
         }
     }
+
+
+class HTTPDetails:
+    def __init__(
+        self,
+        code: int,
+        msg: str | None = None,
+        headers: dict[str, str] | None = None,
+    ) -> None:
+        """Generates additional information for the HTTP response and stores it as an attribute (`response`)."""
+        self.msg = HTTP_MSG_MAPPING[code]
+
+        self.status_code = self.msg.status_code
+        self.detail = msg if msg else self.msg.detail
+        self.headers = headers
+
+        self.response = MessageResponse(
+            status=self.msg.status,
+            code=self.msg.status_code,
+            message=self.detail,
+            headers=self.headers,
+        )

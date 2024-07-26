@@ -1,6 +1,8 @@
 from pydantic import BaseModel, Field, field_validator
 from fastapi import status
 
+from .utils import get_code_status
+
 
 class HTTPMessage(BaseModel):
     """A model for HTTP messages."""
@@ -12,6 +14,10 @@ class HTTPMessage(BaseModel):
         description="The headers to send with the response (optional).",
         validate_default=True,
     )
+
+    @property
+    def status(self) -> str:
+        return get_code_status(self.status_code)
 
     @field_validator("headers")
     def validate_headers(cls, headers: dict[str, str] | None) -> dict:

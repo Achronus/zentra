@@ -1,5 +1,8 @@
 from typing import Any, Generic, TypeVar
 
+from fastapi import HTTPException
+from fastapi.responses import JSONResponse
+
 from .base import BaseResponse, BaseSuccessResponse
 from .messages import HTTP_MSG_MAPPING, HTTPMessage
 from .utils import build_response, get_code_status
@@ -89,3 +92,14 @@ class HTTPDetails:
             message=self.detail,
             headers=self.headers,
         )
+
+
+@validate_call(validate_return=True)
+def zentra_json_response(exc: HTTPException) -> JSONResponse:
+    """Returns a detailed HTTP response using the `ZentraAPI` package."""
+    details = HTTPDetails(code=exc.status_code, msg=exc.detail, headers=exc.headers)
+    return JSONResponse(
+        details.response.model_dump(),
+        status_code=exc.status_code,
+        headers=exc.headers,
+    )

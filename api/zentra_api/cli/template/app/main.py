@@ -6,7 +6,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from zentra_api.responses import HTTPDetails
+from zentra_api.responses import zentra_json_response
 
 
 @asynccontextmanager
@@ -35,9 +35,4 @@ app.add_middleware(
 
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException) -> JSONResponse:
-    details = HTTPDetails(code=exc.status_code, msg=exc.detail, headers=exc.headers)
-    return JSONResponse(
-        details.response.model_dump(),
-        status_code=exc.status_code,
-        headers=exc.headers,
-    )
+    return zentra_json_response(exc)

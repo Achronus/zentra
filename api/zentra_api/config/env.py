@@ -2,6 +2,8 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 
+from zentra_api.validation import EnvFilename
+
 
 def finder(target: str) -> Path:
     """
@@ -27,5 +29,6 @@ def finder(target: str) -> Path:
 
 def load_dotenv_file(filename: str) -> None:
     """Loads a dotenv file."""
+    filename = EnvFilename(name=filename)
     path = finder(filename)
     load_dotenv(path)

@@ -1,10 +1,12 @@
+"""Contains all SQL database models and CRUD connections."""
+
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 
-from . import Base, engine
-from .crud import CRUD
+from .config import SETTINGS
+from zentra_api.crud import CRUD, UserCRUD
 
 
-class User(Base):
+class User(SETTINGS.SQL.Base):
     """A model of the user table."""
 
     __tablename__ = "users"
@@ -15,14 +17,14 @@ class User(Base):
     is_active = Column(Boolean, default=True)
 
 
-Base.metadata.create_all(bind=engine)
+SETTINGS.SQL.create_all()
 
 
 class DBConnections:
     """A place to store all table CRUD operations."""
 
     def __init__(self) -> None:
-        self.user = CRUD(model=User)
+        self.user = UserCRUD(model=User)
 
 
 CONNECT = DBConnections()

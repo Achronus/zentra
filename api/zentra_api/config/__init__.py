@@ -73,6 +73,10 @@ class SQLConfig(BaseModel):
         """The SQLAlchemy `declarative_base()` instance."""
         return self.sql_base if self.sql_base else declarative_base()
 
+    def create_all(self) -> None:
+        """Creates all the database tables in the `Base` instance."""
+        self.Base.metadata.create_all(bind=self.engine)
+
 
 class AuthConfig(BaseModel):
     """

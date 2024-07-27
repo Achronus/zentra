@@ -9,12 +9,10 @@ class CRUD(BaseModel):
     Handles create, read, update, and delete operations for a database table.
 
     Parameters:
-    - `model` (`db.Base`) - the database table to operate on. E.g., `db.models.User`
-    - `encrypt` (`boolean, optional`) - a flag for activating JWT token protection. `True` by default
+    - `model` (`db.Base`) - the database table to operate on. E.g., `db_models.Item`
     """
 
     model: Type
-    encrypt: bool = True
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
@@ -22,7 +20,7 @@ class CRUD(BaseModel):
         """Utility method for getting a single item."""
         return db.query(self.model).filter(self.model.id == id).first()
 
-    def create_one(self, db: Session, data: dict) -> Any:
+    def create(self, db: Session, data: dict) -> Any:
         """Adds an item to the table."""
         item = self.model(**data)
         db.add(item)
@@ -30,7 +28,7 @@ class CRUD(BaseModel):
         db.refresh(item)
         return item
 
-    def get_one(self, db: Session, id: int) -> Any | None:
+    def get(self, db: Session, id: int) -> Any | None:
         """Retrieves a single item from the table."""
         return self._get(db, id)
 
@@ -38,7 +36,7 @@ class CRUD(BaseModel):
         """Retrieves multiple items from a table."""
         return db.query(self.model).offset(skip).limit(limit).all()
 
-    def update_one(self, db: Session, id: int, data: BaseModel) -> Any | None:
+    def update(self, db: Session, id: int, data: BaseModel) -> Any | None:
         """Updates an item in the table."""
         result = self._get(db, id)
 
@@ -54,7 +52,7 @@ class CRUD(BaseModel):
         db.refresh(result)
         return result
 
-    def delete_one(self, db: Session, id: int) -> Any | None:
+    def delete(self, db: Session, id: int) -> Any | None:
         """Deletes an item from the table."""
         result = self._get(db, id)
 

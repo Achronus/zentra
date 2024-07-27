@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel
 
 
 class UserBase(BaseModel):
@@ -17,8 +17,3 @@ class GetUser(UserBase):
 
 class UserInDB(GetUser):
     password: str
-
-
-class Token(BaseModel):
-    access_token: str
-    token_type: str

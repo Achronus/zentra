@@ -2,7 +2,7 @@ from datetime import timedelta
 from typing import Annotated
 
 
-from app.auth.schema import CreateUser, GetUser, UserInDB
+from app.auth.schema import CreateUser, GetUser, Token, UserInDB
 from app.config import get_db, SETTINGS
 from app.models import CONNECT
 
@@ -13,8 +13,7 @@ from sqlalchemy.orm import Session
 
 from zentra_api.auth.security import SecurityUtils
 from zentra_api.responses.models import HTTP_ERROR_400, HTTP_ERROR_401, HTTP_ERROR_403
-from zentra_api.responses.utils import merge_dicts
-from zentra_api.responses.exception import CREDENTIALS_EXCEPTION
+from zentra_api.responses.exception import CREDENTIALS_EXCEPTION, USER_EXCEPTION
 
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
@@ -90,25 +89,22 @@ async def register_user(user: CreateUser, db: Annotated[Session, Depends(get_db)
     "/token",
     status_code=status.HTTP_202_ACCEPTED,
     responses=HTTP_ERROR_401,
+    response_model=Token,
 )
-async def login_with_access_token(
+async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     db: Annotated[Session, Depends(get_db)],
 ):
     user = authenticate_user(db, form_data.username, form_data.password)
 
     if not user:
-        raise HTTPException(
-            status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password.",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+        raise USER_EXCEPTION
 
     expire_mins = timedelta(minutes=SETTINGS.AUTH.ACCESS_TOKEN_EXPIRE_MINS)
     access_token = security.create_access_token(
         {"sub": user.username}, expires_delta=expire_mins
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return Token(access_token=access_token, token_type="bearer")
 
 
 @router.post(

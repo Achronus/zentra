@@ -6,3 +6,9 @@ CREDENTIALS_EXCEPTION = HTTPException(
     detail="Could not validate credentials",
     headers={"WWW-Authenticate": "Bearer"},
 )
+
+USER_EXCEPTION = HTTPException(
+    status.HTTP_401_UNAUTHORIZED,
+    detail="Incorrect username or password.",
+    headers={"WWW-Authenticate": "Bearer"},
+)

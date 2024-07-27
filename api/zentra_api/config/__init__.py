@@ -1,6 +1,6 @@
 from typing import Any
 
-from zentra_api.auth.enums import JWTAlgorithm
+from zentra_api.auth.enums import JWTAlgorithm, JWTSize
 from zentra_api.auth.utils import generate_secret_key
 
 from sqlalchemy import URL, Engine, create_engine, make_url
@@ -8,7 +8,7 @@ from sqlalchemy.orm import sessionmaker, declarative_base, Session
 
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordBearer
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, ConfigDict
 
 
 class SQLConfig(BaseModel):
@@ -97,13 +97,11 @@ class AuthConfig(BaseModel):
         description="The expire length for the access token in minutes.",
     )
 
-    @property
-    def OAUTH2_TOKEN(self) -> str:
-        return generate_secret_key(self.ALGORITHM)
+    model_config = ConfigDict(use_enum_values=True)
 
     @property
     def SECRET_KEY(self) -> str:
-        return generate_secret_key(self.ALGORITHM)
+        return generate_secret_key(JWTSize[self.ALGORITHM])
 
 
 class Settings(BaseModel):
@@ -121,9 +119,9 @@ class Settings(BaseModel):
     @property
     def pwd_context(self) -> CryptContext:
         """The authentication password context."""
-        return CryptContext(schemes=["bcrypt"])
+        return CryptContext(schemes=["bcrypt"], deprecated="auto")
 
     @property
     def oauth2_scheme(self) -> OAuth2PasswordBearer:
-        """The OAUTH2 dependency flow. Uses authentication using a bearer token obtained with a password."""
-        return OAuth2PasswordBearer(tokenUrl=self.AUTH.OAUTH2_TOKEN)
+        """The OAUTH2 dependency flow. Uses authentication using a bearer token obtained with a password with `tokenUrl="token"`."""
+        return OAuth2PasswordBearer(tokenUrl="token")

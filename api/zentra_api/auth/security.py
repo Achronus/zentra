@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 
-from zentra_api.config import Settings
+from zentra_api.config import AuthConfig
 from zentra_api.responses.exception import CREDENTIALS_EXCEPTION
 
 import jwt
@@ -12,18 +12,18 @@ class SecurityUtils(BaseModel):
     Contains utility methods for managing user authentication.
 
     Parameters:
-    - `settings` (`zentra_api.config.Settings`) - a ZentraAPI settings model
+    - `auth` (`zentra_api.config.AuthConfig`) - a ZentraAPI `AuthConfig` model
     """
 
-    settings: Settings
+    auth: AuthConfig
 
     def hash_password(self, password: str) -> str:
         """Uses the `pwd_context` to hash a password."""
-        return self.settings.pwd_context.hash(password)
+        return self.auth.pwd_context.hash(password)
 
     def verify_password(self, plain_password: str, hashed_password: str) -> str:
         """Uses the `pwd_context` to verify a password."""
-        return self.settings.pwd_context.verify(plain_password, hashed_password)
+        return self.auth.pwd_context.verify(plain_password, hashed_password)
 
     def expiration(self, expires_delta: timedelta | None = None) -> datetime:
         """Creates an expiration `datetime` given a `timedelta`. If `None`, applies the `settings.AUTH.ACCESS_TOKEN_EXPIRE_MINS` automatically."""
@@ -34,7 +34,7 @@ class SecurityUtils(BaseModel):
 
     def expire_mins(self) -> timedelta:
         """Returns the access token expire minutes as a timedelta."""
-        return timedelta(minutes=self.settings.AUTH.ACCESS_TOKEN_EXPIRE_MINS)
+        return timedelta(minutes=self.auth.ACCESS_TOKEN_EXPIRE_MINS)
 
     def encrypt(self, model: BaseModel, attributes: str | list[str]) -> BaseModel:
         """Encrypts a set of data in a model and returns it as a new model."""
@@ -47,8 +47,8 @@ class SecurityUtils(BaseModel):
                 hashed_value = self.hash_password(getattr(model, attr))
                 data[attr] = hashed_value
 
-            except KeyError:
-                raise KeyError(f"'{attr}' does not exist in '{type(model)}'!")
+            except AttributeError:
+                raise AttributeError(f"'{attr}' does not exist in '{type(model)}'!")
 
         return type(model)(**data)
 
@@ -62,8 +62,8 @@ class SecurityUtils(BaseModel):
         payload.update({"exp": expire})
         encoded_jwt = jwt.encode(
             payload,
-            key=self.settings.AUTH.SECRET_KEY,
-            algorithm=self.settings.AUTH.ALGORITHM,
+            key=self.auth.SECRET_KEY,
+            algorithm=self.auth.ALGORITHM,
         )
         return encoded_jwt
 
@@ -72,8 +72,8 @@ class SecurityUtils(BaseModel):
         try:
             payload: dict = jwt.decode(
                 token,
-                self.settings.AUTH.SECRET_KEY,
-                algorithms=[self.settings.AUTH.ALGORITHM],
+                key=self.auth.SECRET_KEY,
+                algorithms=[self.auth.ALGORITHM],
             )
             token_data: str | None = payload.get("sub")
 

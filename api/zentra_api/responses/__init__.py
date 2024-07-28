@@ -7,7 +7,7 @@ from .base import BaseResponse, BaseSuccessResponse
 from .messages import HTTP_MSG_MAPPING, HTTPMessage
 from .utils import build_response, get_code_status
 
-from pydantic import BaseModel, Field, validate_call
+from pydantic import BaseModel, ConfigDict, Field, validate_call
 
 
 T = TypeVar("T", bound=BaseModel)
@@ -94,7 +94,7 @@ class HTTPDetails:
         )
 
 
-@validate_call(validate_return=True)
+@validate_call(validate_return=True, config=ConfigDict(arbitrary_types_allowed=True))
 def zentra_json_response(exc: HTTPException) -> JSONResponse:
     """Returns a detailed HTTP response using the `ZentraAPI` package."""
     details = HTTPDetails(code=exc.status_code, msg=exc.detail, headers=exc.headers)

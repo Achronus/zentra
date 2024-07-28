@@ -37,15 +37,15 @@ SETTINGS = Settings(SQL=SQLConfig(db_url=env_vars.DB.URL))
 
 def get_db():
     """Dependency for retrieving a database session."""
-    db = SETTINGS.SQL.SessionLocal
+    db: Session = SETTINGS.SQL.SessionLocal()
     try:
         yield db
     finally:
         db.close()
 
 
-security = SecurityUtils(settings=SETTINGS)
+security = SecurityUtils(auth=SETTINGS.AUTH)
 
 db_dependency = Annotated[Session, Depends(get_db)]
-oauth2_dependency = Annotated[str, Depends(SETTINGS.oauth2_scheme)]
+oauth2_dependency = Annotated[str, Depends(SETTINGS.AUTH.oauth2_scheme)]
 oauth2_form_dependency = Annotated[OAuth2PasswordRequestForm, Depends()]

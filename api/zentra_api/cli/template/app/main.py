@@ -36,3 +36,8 @@ app.add_middleware(
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException) -> JSONResponse:
     return zentra_json_response(exc)
+
+
+@app.get("/")
+def health_check():
+    return "Heath check complete"

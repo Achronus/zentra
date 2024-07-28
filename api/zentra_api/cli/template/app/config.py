@@ -1,5 +1,12 @@
+from typing import Annotated
+
+from zentra_api.auth.security import SecurityUtils
 from zentra_api.config import SQLConfig, Settings
 from zentra_api.config.env import load_dotenv_file
+
+from fastapi import Depends
+from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy.orm import Session
 
 from pydantic import BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -24,8 +31,8 @@ class EnvVariables(BaseSettings):
     )
 
 
-env_attrs = EnvVariables()
-SETTINGS = Settings(SQL=SQLConfig(db_url=env_attrs.DB.URL))
+env_vars = EnvVariables()
+SETTINGS = Settings(SQL=SQLConfig(db_url=env_vars.DB.URL))
 
 
 def get_db():
@@ -35,3 +42,10 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+security = SecurityUtils(settings=SETTINGS)
+
+db_dependency = Annotated[Session, Depends(get_db)]
+oauth2_dependency = Annotated[str, Depends(SETTINGS.oauth2_scheme)]
+oauth2_form_dependency = Annotated[OAuth2PasswordRequestForm, Depends()]

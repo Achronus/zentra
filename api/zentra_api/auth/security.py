@@ -25,6 +25,17 @@ class SecurityUtils(BaseModel):
         """Uses the `pwd_context` to verify a password."""
         return self.settings.pwd_context.verify(plain_password, hashed_password)
 
+    def expiration(self, expires_delta: timedelta | None = None) -> datetime:
+        """Creates an expiration `datetime` given a `timedelta`. If `None`, applies the `settings.AUTH.ACCESS_TOKEN_EXPIRE_MINS` automatically."""
+        if expires_delta:
+            return datetime.now(timezone.utc) + expires_delta
+
+        return datetime.now(timezone.utc) + self.expire_mins()
+
+    def expire_mins(self) -> timedelta:
+        """Returns the access token expire minutes as a timedelta."""
+        return timedelta(minutes=self.settings.AUTH.ACCESS_TOKEN_EXPIRE_MINS)
+
     def encrypt(self, model: BaseModel, attributes: str | list[str]) -> BaseModel:
         """Encrypts a set of data in a model and returns it as a new model."""
         if isinstance(attributes, str):
@@ -46,13 +57,7 @@ class SecurityUtils(BaseModel):
     ) -> str:
         """Encodes a set of data as a JSON Web Token (JWT) and returns it."""
         payload = data.copy()
-
-        expire_date = datetime.now(timezone.utc)
-        expire = (
-            expire_date + expires_delta
-            if expires_delta
-            else expire_date + timedelta(minutes=15)
-        )
+        expire = self.expiration(expires_delta)
 
         payload.update({"exp": expire})
         encoded_jwt = jwt.encode(

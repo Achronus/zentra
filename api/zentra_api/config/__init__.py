@@ -123,5 +123,5 @@ class Settings(BaseModel):
 
     @property
     def oauth2_scheme(self) -> OAuth2PasswordBearer:
-        """The OAUTH2 dependency flow. Uses authentication using a bearer token obtained with a password with `tokenUrl="token"`."""
-        return OAuth2PasswordBearer(tokenUrl="token")
+        """The OAUTH2 dependency flow. Uses authentication using a bearer token obtained with a password with `tokenUrl="auth/token"`."""
+        return OAuth2PasswordBearer(tokenUrl="auth/token")

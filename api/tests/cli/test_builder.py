@@ -106,12 +106,12 @@ def test_poetry_file():
 class TestPoetryFileBuilder:
     @pytest.fixture
     def builder(self) -> PoetryFileBuilder:
-        return PoetryFileBuilder(project_name="test_project", test_logging=True)
+        return PoetryFileBuilder(test_logging=True)
 
     @pytest.fixture
     def target_file(self) -> PoetryFile:
         return PoetryFile(
-            desc=Description(name="test_project"),
+            desc=Description(),
             scripts=[
                 Script(name="run-dev", command="app.run:development"),
                 Script(name="run-prod", command="app.run:production"),
@@ -125,7 +125,7 @@ class TestPoetryFileBuilder:
         return {
             "tool": {
                 "poetry": {
-                    "name": "test_project",
+                    "name": "app",
                     "version": "0.1.0",
                     "description": "A FastAPI backend for processing API data.",
                     "authors": ["Placeholder <placeholder@email.com>"],

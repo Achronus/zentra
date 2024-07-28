@@ -62,10 +62,7 @@ class SetupTasks:
 
         self.logger = set_loggers(test_logging)
 
-        self.file_builder = PoetryFileBuilder(
-            self.details.project_name,
-            self.details.author,
-        )
+        self.file_builder = PoetryFileBuilder(self.details.author)
 
     def _run_command(self, command: list[str]) -> None:
         """A helper method for running Python commands. Stores output to separate loggers."""

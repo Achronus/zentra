@@ -13,7 +13,7 @@ from zentra_api.cli.constants import PYTHON_VERSION, pypi_url
 class Description(BaseModel):
     """A model for storing the poetry description."""
 
-    name: str
+    name: str = "app"
     version: str = "0.1.0"
     description: str = "A FastAPI backend for processing API data."
     authors: list[str] = ["Placeholder <placeholder@email.com>"]
@@ -91,13 +91,12 @@ class PoetryFileBuilder:
 
     def __init__(
         self,
-        project_name: str,
         author: str = "Placeholder <placeholder@email.com>",
         test_logging: bool = False,
     ) -> None:
         self.logger = task_test_logger if test_logging else task_error_logger
 
-        self.description = Description(name=project_name, authors=[author])
+        self.description = Description(authors=[author])
         self.scripts = [
             Script(name="run-dev", command="app.run:development"),
             Script(name="run-prod", command="app.run:production"),

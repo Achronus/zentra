@@ -34,11 +34,11 @@ CORE_PIP_PACKAGES = [
     "sqlalchemy",
     "alembic",
     "pydantic-settings",
+    # "zentra_api",
 ]
 
 DEV_PIP_PACKAGES = [
     "pytest",
-    "hypothesis",
 ]
 
 

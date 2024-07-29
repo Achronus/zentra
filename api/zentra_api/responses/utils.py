@@ -7,16 +7,23 @@ from zentra_api.utils.package import load_module
 @validate_call
 def build_response(code: int, no_strip: bool = False) -> str:
     """A utility function for building a string representation of a response code."""
+    valid_codes: dict[int, str] = {}
     for item in status.__all__:
-        if str(code) in item:
-            if no_strip:
-                return item
+        item_code = int(item.split("_")[1])
+        valid_codes[item_code] = item
 
-            return item.lstrip("HTTP_")
+    try:
+        item = valid_codes[code]
 
-    raise ValueError(
-        f"'{code}' isn't a valid HTTP response code! Try 'fastapi.status' for a list of valid response codes"
-    )
+        if no_strip:
+            return item
+
+        return item.lstrip("HTTP_")
+
+    except KeyError:
+        raise ValueError(
+            f"'{code}' isn't a valid HTTP response code! Try 'fastapi.status' for a list of valid response codes"
+        )
 
 
 @validate_call

@@ -7,7 +7,14 @@ from .base import BaseResponse, BaseSuccessResponse
 from .messages import HTTP_MSG_MAPPING, HTTPMessage
 from .utils import build_response, get_code_status
 
-from pydantic import BaseModel, ConfigDict, Field, validate_call
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    ValidationInfo,
+    field_validator,
+    validate_call,
+)
 
 
 T = TypeVar("T", bound=BaseModel)
@@ -39,23 +46,15 @@ class SuccessResponse(BaseSuccessResponse, Generic[T]):
 
 
 @validate_call
-def build_json_response_model(
-    message: HTTPMessage, data_model: SuccessResponse | None = None
-) -> dict[int, dict[str, Any]]:
+def build_json_response_model(message: HTTPMessage) -> dict[int, dict[str, Any]]:
     """A utility function for building JSON response schemas."""
     response = build_response(message.status_code)
     status = get_code_status(message.status_code)
     title = " ".join(response.split("_")[1:]).title()
 
-    unique_content = (
-        {"message": message.detail}
-        if data_model is None
-        else {"data": data_model.data.model_dump()}
-    )
-
     return {
         message.status_code: {
-            "model": type(data_model) if data_model else MessageResponse,
+            "model": MessageResponse,
             "description": title,
             "content": {
                 "application/json": {
@@ -63,7 +62,7 @@ def build_json_response_model(
                         "status": status,
                         "code": message.status_code,
                         "response": response,
-                        **unique_content,
+                        "message": message.detail,
                         "headers": message.headers,
                     },
                 }
@@ -72,24 +71,35 @@ def build_json_response_model(
     }
 
 
-class HTTPDetails:
-    def __init__(
-        self,
-        code: int,
-        msg: str | None = None,
-        headers: dict[str, str] | None = None,
-    ) -> None:
-        """Generates additional information for the HTTP response and stores it as an attribute (`response`)."""
-        self.msg = HTTP_MSG_MAPPING[code]
+class HTTPDetails(BaseModel):
+    """The details for HTTP responses."""
 
-        self.status_code = self.msg.status_code
-        self.detail = msg if msg else self.msg.detail
-        self.headers = headers
+    code: int
+    msg: str | None = Field(None, validate_default=True)
+    headers: dict[str, str] | None = None
 
-        self.response = MessageResponse(
-            status=self.msg.status,
-            code=self.msg.status_code,
-            message=self.detail,
+    @field_validator("msg", mode="before")
+    def validate_msg(cls, msg: str | None, info: ValidationInfo) -> str:
+        code = info.data.get("code")
+        custom_msg = HTTP_MSG_MAPPING[code]
+
+        response = build_response(code)
+        title = " ".join(response.split("_")[1:]).title()
+
+        if msg == title or msg is None:
+            return custom_msg.detail
+
+        return msg
+
+    @property
+    def response(self) -> MessageResponse:
+        """The message response model."""
+        msg = HTTP_MSG_MAPPING[self.code]
+
+        return MessageResponse(
+            status=msg.status,
+            code=msg.status_code,
+            message=self.msg,
             headers=self.headers,
         )
 

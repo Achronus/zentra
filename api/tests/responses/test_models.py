@@ -3,16 +3,6 @@ from zentra_api.responses.models import (
     HTTP_INFO_101,
     HTTP_INFO_102,
     HTTP_INFO_103,
-    HTTP_SUCCESS_200,
-    HTTP_SUCCESS_201,
-    HTTP_SUCCESS_202,
-    HTTP_SUCCESS_203,
-    HTTP_SUCCESS_204,
-    HTTP_SUCCESS_205,
-    HTTP_SUCCESS_206,
-    HTTP_SUCCESS_207,
-    HTTP_SUCCESS_208,
-    HTTP_SUCCESS_226,
     HTTP_REDIRECT_300,
     HTTP_REDIRECT_301,
     HTTP_REDIRECT_302,
@@ -81,46 +71,6 @@ class TestResponseModels:
     @staticmethod
     def test_HTTP_INFO_103_valid():
         assert isinstance(HTTP_INFO_103, dict)
-
-    @staticmethod
-    def test_HTTP_SUCCESS_200_valid():
-        assert isinstance(HTTP_SUCCESS_200, dict)
-
-    @staticmethod
-    def test_HTTP_SUCCESS_201_valid():
-        assert isinstance(HTTP_SUCCESS_201, dict)
-
-    @staticmethod
-    def test_HTTP_SUCCESS_202_valid():
-        assert isinstance(HTTP_SUCCESS_202, dict)
-
-    @staticmethod
-    def test_HTTP_SUCCESS_203_valid():
-        assert isinstance(HTTP_SUCCESS_203, dict)
-
-    @staticmethod
-    def test_HTTP_SUCCESS_204_valid():
-        assert isinstance(HTTP_SUCCESS_204, dict)
-
-    @staticmethod
-    def test_HTTP_SUCCESS_205_valid():
-        assert isinstance(HTTP_SUCCESS_205, dict)
-
-    @staticmethod
-    def test_HTTP_SUCCESS_206_valid():
-        assert isinstance(HTTP_SUCCESS_206, dict)
-
-    @staticmethod
-    def test_HTTP_SUCCESS_207_valid():
-        assert isinstance(HTTP_SUCCESS_207, dict)
-
-    @staticmethod
-    def test_HTTP_SUCCESS_208_valid():
-        assert isinstance(HTTP_SUCCESS_208, dict)
-
-    @staticmethod
-    def test_HTTP_SUCCESS_226_valid():
-        assert isinstance(HTTP_SUCCESS_226, dict)
 
     @staticmethod
     def test_HTTP_REDIRECT_300_valid():

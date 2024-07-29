@@ -29,6 +29,6 @@ def finder(target: str) -> Path:
 
 def load_dotenv_file(filename: str) -> None:
     """Loads a dotenv file."""
-    filename = EnvFilename(name=filename)
-    path = finder(filename)
+    fn = EnvFilename(name=filename)
+    path = finder(fn.name)
     load_dotenv(path)

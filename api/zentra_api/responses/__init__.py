@@ -5,7 +5,8 @@ from fastapi.responses import JSONResponse
 
 from .base import BaseResponse, BaseSuccessResponse
 from .messages import HTTP_MSG_MAPPING, HTTPMessage
-from .utils import build_response, get_code_status
+from .utils import build_response, get_code_status, merge_dicts_list
+from zentra_api.utils.package import load_module
 
 from pydantic import (
     BaseModel,
@@ -113,3 +114,24 @@ def zentra_json_response(exc: HTTPException) -> JSONResponse:
         status_code=exc.status_code,
         headers=exc.headers,
     )
+
+
+@validate_call
+def response_models(codes: int | list[int]) -> dict[int, dict[str, Any]]:
+    """Returns a dictionary of response model schemas given a set of HTTP codes."""
+
+    ROOT_PATH = "zentra_api.responses"
+
+    if isinstance(codes, int):
+        codes = [codes]
+
+    models = []
+    for code in codes:
+        response = build_response(code, no_strip=True).split("_")[:2]
+        code_type = get_code_status(code)
+        const_name = f"{response[0]}_{code_type}_{str(code)}".upper()
+
+        module = load_module(ROOT_PATH, "models")
+        models.append(getattr(module, const_name))
+
+    return merge_dicts_list(models)

@@ -1,8 +1,6 @@
 from pydantic import validate_call
 from fastapi import status
 
-from zentra_api.utils.package import load_module
-
 
 @validate_call
 def build_response(code: int, no_strip: bool = False) -> str:
@@ -44,28 +42,6 @@ def get_code_status(code: int) -> str:
 
 
 @validate_call
-def response_models(codes: int | list[int]) -> dict:
-    """A utility function for getting response model schemas."""
-
-    ROOT_PATH = "zentra_api.responses"
-
-    if isinstance(codes, int):
-        codes = [codes]
-
-    models = []
-    for code in codes:
-        response = build_response(code, no_strip=True).split("_")[:2]
-        code_type = get_code_status(code)
-        const_name = f"{response[0]}_{code_type}_{str(code)}".upper()
-
-        module = load_module(ROOT_PATH, "models")
-        models.append(getattr(module, const_name))
-
-    models_dict = {key: value for d in models for key, value in d.items()}
-    return models_dict
-
-
-@validate_call
-def merge_dicts(*dicts: dict) -> dict:
+def merge_dicts_list(dicts: list[dict]) -> dict:
     """Merges multiple dicts into a single one and returns it."""
     return {k: v for d in dicts for k, v in d.items()}

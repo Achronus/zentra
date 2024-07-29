@@ -7,7 +7,7 @@ from zentra_api.responses import (
     SuccessResponse,
     build_json_response_model,
     HTTPDetails,
-    response_models,
+    get_response_models,
     zentra_json_response,
 )
 
@@ -207,10 +207,10 @@ class TestZentraJsonResponse:
 class TestResponseModels:
     @staticmethod
     def test_single_code():
-        result = response_models(400)
+        result = get_response_models(400)
         assert list(result.keys()) == [400]
 
     @staticmethod
     def test_multiple_codes():
-        result = response_models([400, 404])
+        result = get_response_models([400, 404])
         assert list(result.keys()) == [400, 404]

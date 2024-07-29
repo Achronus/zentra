@@ -14,8 +14,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from sqlalchemy.orm import Session
 
-from zentra_api.responses.models import HTTP_ERROR_400, HTTP_ERROR_401, HTTP_ERROR_403
-from zentra_api.responses.exception import CREDENTIALS_EXCEPTION, USER_EXCEPTION
+from zentra_api.responses import get_response_models
+from zentra_api.responses.exc import CREDENTIALS_EXCEPTION, USER_EXCEPTION
 
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
@@ -57,7 +57,7 @@ async def get_current_active_user(
 @router.get(
     "/users/me",
     status_code=status.HTTP_200_OK,
-    responses=HTTP_ERROR_401,
+    responses=get_response_models(401),
 )
 async def get_user(current_user: Annotated[GetUser, Depends(get_current_active_user)]):
     return current_user
@@ -66,7 +66,7 @@ async def get_user(current_user: Annotated[GetUser, Depends(get_current_active_u
 @router.post(
     "/register",
     status_code=status.HTTP_201_CREATED,
-    responses=HTTP_ERROR_400,
+    responses=get_response_models(400),
 )
 async def register_user(user: CreateUser, db: db_dependency):
     exists = CONNECT.user.get_by_username(db, user.username)
@@ -85,7 +85,7 @@ async def register_user(user: CreateUser, db: db_dependency):
 @router.post(
     "/token",
     status_code=status.HTTP_202_ACCEPTED,
-    responses=HTTP_ERROR_401,
+    responses=get_response_models(401),
     response_model=Token,
 )
 async def login_for_access_token(form_data: oauth2_form_dependency, db: db_dependency):
@@ -101,7 +101,7 @@ async def login_for_access_token(form_data: oauth2_form_dependency, db: db_depen
 @router.post(
     "/verify-token/{token}",
     status_code=status.HTTP_200_OK,
-    responses=HTTP_ERROR_403,
+    responses=get_response_models(403),
 )
 async def verify_user_token(token: oauth2_dependency):
     security.verify_token(token)

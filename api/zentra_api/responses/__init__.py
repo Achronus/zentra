@@ -117,7 +117,7 @@ def zentra_json_response(exc: HTTPException) -> JSONResponse:
 
 
 @validate_call
-def response_models(codes: int | list[int]) -> dict[int, dict[str, Any]]:
+def get_response_models(codes: int | list[int]) -> dict[int, dict[str, Any]]:
     """Returns a dictionary of response model schemas given a set of HTTP codes."""
 
     ROOT_PATH = "zentra_api.responses"

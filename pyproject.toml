@@ -1,28 +1,36 @@
 [tool.poetry]
-name = "zentra_models"
+name = "zentra_sdk"
 version = "0.1.0"
-description = "Use Pydantic models to create React components from popular libraries."
+description = "An open-source Python SDK for building FastAPI and Next.js apps faster."
 authors = ["Ryan Partridge <rpartridge101@gmail.com>"]
 license = "MIT License"
 readme = "README.md"
+repository = "https://github.com/Achronus/zentra"
+packages = [{ include = "zentra", from = "zentra_sdk" }]
 
-[tool.poetry.scripts]
-zentra = "zentra_models.cli.main:app"
+[tool.poetry.extras]
+api = ["zentra.api"]
+models = ["zentra.models"]
+js = ["zentra.js"]
+all = ["zentra.api", "zentra.models", "zentra.js"]
 
 [tool.poetry.dependencies]
 python = "^3.12"
 typer = "^0.12.3"
 pydantic = "^2.8"
-beautifulsoup4 = "^4.12.3"
-aiohttp = "^3.9.5"
-
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.2.1"
+pytest-cov = "^4.1.0"
+hypothesis = "^6.105"
+responses = "^0.25.3"
+
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry.group.docs.dependencies]
 mkdocs = "^1.5.3"
 mkdocs-material = "^9.5.28"
-hypothesis = "^6.105"
-pytest-cov = "^4.1.0"
 mike = "^2.0.0"
 mkdocstrings = "^0.24.1"
 

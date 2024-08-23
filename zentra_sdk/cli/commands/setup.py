@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 import subprocess
+import shutil
 from typing import Callable
 
 from zentra_sdk.cli.builder.docker import DockerBuilder
@@ -31,17 +32,25 @@ class Setup:
         if not self.docker_installed():
             raise typer.Exit(code=CommonErrorCodes.DOCKER_NOT_INSTALLED)
 
-        self.setup_tasks = SetupTasks()
-        self.paths = ProjectPaths()
+        self.paths = ProjectPaths(root)
+        self.setup_tasks = SetupTasks(paths=self.paths)
 
     def project_exists(self) -> bool:
         """Checks if a project has already been created."""
-        if os.path.exists(self.paths.BACKEND_PATH) or os.path.exists(
-            self.paths.FRONTEND_PATH
-        ):
-            return True
 
-        return False
+        def dir_exists_not_empty(path: Path) -> bool:
+            if path.is_dir():
+                if not os.listdir(path):
+                    shutil.rmtree(path)
+                    return False
+
+                return True
+
+            return False
+
+        backend_exists = dir_exists_not_empty(self.paths.BACKEND_PATH)
+        frontend_exists = dir_exists_not_empty(self.paths.FRONTEND_PATH)
+        return backend_exists or frontend_exists
 
     def docker_installed(self) -> bool:
         """Checks if Docker is installed."""
@@ -70,29 +79,24 @@ class Setup:
 class SetupTasks:
     """Contains the tasks for the `init` command."""
 
-    def __init__(self, test_logging: bool = False) -> None:
+    def __init__(self, paths: ProjectPaths, test_logging: bool = False) -> None:
         self.logger = set_loggers(test_logging)
         self.docker_frontend = DockerBuilder(**DOCKER_FRONTEND_DETAILS)
-
-    def _run_command(self, command: list[str]) -> None:
-        """A helper method for running Python commands. Stores output to separate loggers."""
-        response = subprocess.run(
-            command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-
-        self.logger.stdout.debug(response.stdout)
-        self.logger.stderr.error(response.stderr)
+        self.paths = paths
 
     def _build_frontend(self) -> None:
         """Builds the frontend from a docker container."""
-        self.docker_frontend.use(path="/frontend")
+        self.docker_frontend.use(path=self.paths.FRONTEND_PATH)
+
+    def _build_backend(self) -> None:
+        """Builds the backend using the `API` package."""
+        subprocess.run(["zentra-api", "init", "backend"])
 
     def get_tasks(self) -> list[Callable]:
         """Gets the tasks to run as a list of methods."""
         console.print(creation_msg())
 
         return [
+            self._build_backend,
             self._build_frontend,
         ]

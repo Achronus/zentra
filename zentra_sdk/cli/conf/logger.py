@@ -67,11 +67,14 @@ class DebugLogger(BaseLogger):
     """A logger specific for debugging purposes."""
 
     def __init__(
-        self, logger_name: str, log_filename: str = "debug.log", active: bool = False
+        self,
+        logger_name: str,
+        log_filename: str = "debug.log",
+        log_folder: str = pkg_resources.files("zentra_sdk").joinpath("logs"),
+        active: bool = False,
     ):
         super().__init__(logger_name, level=logging.DEBUG)
 
-        log_folder = pkg_resources.files("zentra_api").joinpath("logs")
         log_filepath = Path(log_folder, log_filename)
 
         if not log_filepath.exists():

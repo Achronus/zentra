@@ -32,6 +32,7 @@ DOCKER_FRONTEND_DETAILS = {
 
 
 class SetupSuccessCodes(Enum):
+    TEST_SUCCESS = -2
     COMPLETE = 10
     ALREADY_CONFIGURED = 11
 
@@ -46,6 +47,7 @@ class CommonErrorCodes(Enum):
 class ProjectPaths:
     """Contains the local project filepaths."""
 
-    cwd = os.getcwd()
-    BACKEND_PATH = Path(cwd, "backend")
-    FRONTEND_PATH = Path(cwd, "frontend")
+    def __init__(self, root: Path = Path(os.getcwd())) -> None:
+        self.cwd = root
+        self.BACKEND_PATH = Path(self.cwd, "backend")
+        self.FRONTEND_PATH = Path(self.cwd, "frontend")

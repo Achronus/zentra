@@ -69,13 +69,14 @@ def success_msg_with_checks(title: str, desc: str, icon: str = MAGIC) -> str:
 
 
 SUCCESS_MSG_MAP = {
+    SetupSuccessCodes.TEST_SUCCESS: success_msg_with_checks("Test", desc=""),
     SetupSuccessCodes.COMPLETE: "",
     SetupSuccessCodes.ALREADY_CONFIGURED: "",
 }
 
 
 COMMON_ERROR_MAP = {
-    CommonErrorCodes.TEST_ERROR: "Test",
+    CommonErrorCodes.TEST_ERROR: error_msg_with_checks("Test", desc=""),
     CommonErrorCodes.DOCKER_NOT_INSTALLED: error_msg_with_checks(
         "Docker Engine not found!",
         desc=MISSING_DOCKER,

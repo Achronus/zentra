@@ -25,21 +25,23 @@ Each package works independently so you can maximise their benefits with ease.
 
 Perhaps you only want to build a FastAPI project, or simply want to build React components using Python - you choose what is right for you.
 
-## Getting Started
+## Getting Started 
 
-1. Install the package with [Poetry](https://python-poetry.org/) using:
+1. Firstly, install the [Docker Engine](https://docs.docker.com/engine/install/) to build the frontend files. 
+
+2. Next, install the `zentra_sdk` package with [Poetry](https://python-poetry.org/) through `PIP`:
 
 ```cmd
 pip install zentra_sdk poetry
 ```
 
-2. Run the `init` command to bootstrap a new project with a [FastAPI](https://fastapi.tiangolo.com/) backend and [Next.js](https://nextjs.org/) frontend in seconds!
+3. Run the `init` command to bootstrap a new project with a [FastAPI](https://fastapi.tiangolo.com/) backend and [Next.js](https://nextjs.org/) frontend in seconds!
 
 ```cmd
 zentra init
 ```
 
-3. Start programming! Read more about `Zentra` in our [documentation](#). _🔜 Coming soon! 🔜_
+4. Start programming! Read more about `Zentra` in our [documentation](#). _🔜 Coming soon! 🔜_
 
 
 ## Active Development

@@ -38,6 +38,8 @@ zentra = "zentra_sdk.cli.main:app"
 python = "^3.12"
 typer = "^0.12"
 pydantic = "^2.8"
+zentra-api = "^0.1"
+docker = "^7.1.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3"

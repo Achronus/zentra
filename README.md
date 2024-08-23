@@ -14,33 +14,33 @@ Introducing __Zentra__ — an open-source, free to use, SDK for rapidly creating
 
 Packed with an intuitive suite of CLI commands, documentation, and development kit, this tool simplifies your development process, allowing you to effortlessly build applications in weeks, not months.
 
-## How It Works
+## What's Included?
 
-Zentra is divided into three packages, allowing you to mix and match based on your requirements. These include:
+Zentra is divided into two packages. These include:
 
 - [API](https://github.com/Achronus/zentra-api) - a CLI tool for building [FastAPI](https://fastapi.tiangolo.com/) applications
-- `Models` - a Python based component library, turning [Pydantic](https://docs.pydantic.dev/latest/) models into React components
-- `JS` - a CLI tool for building [Next.js](https://nextjs.org/) applications
+- [Models](https://github.com/Achronus/zentra-models) - a Python based component library, turning [Pydantic](https://docs.pydantic.dev/latest/) models into React components
 
 Each package works independently so you can maximise their benefits with ease.
 
 Perhaps you only want to build a FastAPI project, or simply want to build React components using Python - you choose what is right for you.
 
-## Models
+## Getting Started
 
-_🔜 Coming soon! 🔜_
+1. Install the package with [Poetry](https://python-poetry.org/) using:
 
-Zentra Models allows you to build React components using Python.
+```cmd
+pip install zentra_sdk poetry
+```
 
-It uses [Pydantic](https://docs.pydantic.dev/latest/) models under-the-hood and focuses on utilising pre-built components to help you build your frontend structure faster.
+2. Run the `init` command to bootstrap a new project with a [FastAPI](https://fastapi.tiangolo.com/) backend and [Next.js](https://nextjs.org/) frontend in seconds!
 
-It aims to be a flexible package that covers a variety of component libraries, while centering around the [NextJS App Router](https://nextjs.org/docs) framework.
+```cmd
+zentra init
+```
 
-## JS
+3. Start programming! Read more about `Zentra` in our [documentation](#). _🔜 Coming soon! 🔜_
 
-_🔜 Coming soon! 🔜_
-
-Zentra JS allows you to setup [Next.js](https://nextjs.org/) applications quickly.
 
 ## Active Development
 
@@ -50,6 +50,6 @@ Our goal is to provide a quality open-source product that works 'out-of-the-box'
 
 ## Support
 
-We'll need help from developers like YOU to make this tool a delight to use, and a product worthy of the `Python`, `NextJS`, `React` and `Software/Web Development` community.
+We'll need help from developers like YOU :punch: to make this tool a delight to use, and a product worthy of the `Python`, `NextJS`, `React` and `Software/Web Development` community.
 
 Feedback and criticism will always be welcomed, and is encouraged to help make this tool worthwhile.

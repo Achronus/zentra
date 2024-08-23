@@ -6,34 +6,58 @@ authors = ["Ryan Partridge <rpartridge101@gmail.com>"]
 license = "MIT License"
 readme = "README.md"
 repository = "https://github.com/Achronus/zentra"
-packages = [{ include = "zentra", from = "zentra_sdk" }]
+# homepage = "https://zentra.achronus.dev/"
+# documentation = "https://zentra.achronus.dev/"
 
-[tool.poetry.extras]
-api = ["zentra.api"]
-models = ["zentra.models"]
-js = ["zentra.js"]
-all = ["zentra.api", "zentra.models", "zentra.js"]
+# https://pypi.org/classifiers/
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Framework :: FastAPI",
+    "Programming Language :: Python",
+    "Programming Language :: JavaScript",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Build Tools",
+    "Topic :: Software Development :: Code Generators",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
+]
+
+[tool.poetry.urls]
+issues = "https://github.com/Achronus/zentra/issues"
+
+[tool.poetry.scripts]
+zentra = "zentra_sdk.cli.main:app"
 
 [tool.poetry.dependencies]
 python = "^3.12"
-typer = "^0.12.3"
+typer = "^0.12"
 pydantic = "^2.8"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^8.2.1"
-pytest-cov = "^4.1.0"
-hypothesis = "^6.105"
-responses = "^0.25.3"
+pytest = "^8.3"
+pytest-cov = "^5.0"
 
 [tool.poetry.group.docs]
 optional = true
 
 [tool.poetry.group.docs.dependencies]
-mkdocs = "^1.5.3"
-mkdocs-material = "^9.5.28"
-mike = "^2.0.0"
-mkdocstrings = "^0.24.1"
+mkdocs = "^1.6"
+mkdocs-material = "^9.5"
+mike = "^2.1"
+mkdocstrings = "^0.25"
+
+[tool.poetry.group.ci.dependencies]
+git-cliff = "^2.4"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+addopts = "--cov-report term-missing --cov=zentra_sdk tests/"

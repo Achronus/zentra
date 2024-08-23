@@ -33,7 +33,7 @@ class Setup:
             raise typer.Exit(code=CommonErrorCodes.DOCKER_NOT_INSTALLED)
 
         self.paths = ProjectPaths(root)
-        self.setup_tasks = SetupTasks(paths=self.paths)
+        self.setup_tasks = SetupTasks()
 
     def project_exists(self) -> bool:
         """Checks if a project has already been created."""
@@ -79,18 +79,17 @@ class Setup:
 class SetupTasks:
     """Contains the tasks for the `init` command."""
 
-    def __init__(self, paths: ProjectPaths, test_logging: bool = False) -> None:
+    def __init__(self, test_logging: bool = False) -> None:
         self.logger = set_loggers(test_logging)
         self.docker_frontend = DockerBuilder(**DOCKER_FRONTEND_DETAILS)
-        self.paths = paths
 
     def _build_frontend(self) -> None:
         """Builds the frontend from a docker container."""
-        self.docker_frontend.use(path=self.paths.FRONTEND_PATH)
+        self.docker_frontend.use(path="/frontend")
 
     def _build_backend(self) -> None:
         """Builds the backend using the `API` package."""
-        subprocess.run(["zentra-api", "init", "backend"])
+        subprocess.run(["zentra-api", "init", "backend", "--hide-output"])
 
     def get_tasks(self) -> list[Callable]:
         """Gets the tasks to run as a list of methods."""

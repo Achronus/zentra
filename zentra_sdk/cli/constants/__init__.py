@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from enum import Enum
+import importlib.resources as pkg_resources
 
 from rich.console import Console
 
@@ -16,6 +17,9 @@ GETTING_STARTED_URL = f"{DOCS_URL}/starting/"
 ERROR_GUIDE_URL = f"{DOCS_URL}/help/errors/"
 
 DOCKER_URL = "https://docs.docker.com/engine/install/"
+
+PKG_DIR = pkg_resources.files("zentra_sdk")
+LOG_FOLDER = PKG_DIR.joinpath("logs")
 
 # Custom print emoji's
 PASS = "[green]\u2713[/green]"

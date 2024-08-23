@@ -618,13 +618,13 @@ socks = ["socksio (==1.*)"]
 
 [[package]]
 name = "idna"
-version = "3.7"
+version = "3.8"
 description = "Internationalized Domain Names in Applications (IDNA)"
 optional = false
-python-versions = ">=3.5"
+python-versions = ">=3.6"
 files = [
-    {file = "idna-3.7-py3-none-any.whl", hash = "sha256:82fee1fc78add43492d3a1898bfa6d8a904cc97d8427f683ed8e798d07761aa0"},
-    {file = "idna-3.7.tar.gz", hash = "sha256:028ff3aadf0609c1fd278d8ea3089299412a7a8b9bd005dd08b9f8285bcb5cfc"},
+    {file = "idna-3.8-py3-none-any.whl", hash = "sha256:050b4e5baadcd44d760cedbd2b8e639f2ff89bbc7a5730fcc662954303377aac"},
+    {file = "idna-3.8.tar.gz", hash = "sha256:d838c2c0ed6fced7693d5e8ab8e734d5f8fda53a039c0164afb0b82e771e3603"},
 ]
 
 [[package]]
@@ -2033,13 +2033,13 @@ files = [
 
 [[package]]
 name = "zentra-api"
-version = "0.1.10"
+version = "0.1.11"
 description = "A CLI tool for building FastAPI apps faster."
 optional = false
 python-versions = "<4.0,>=3.12"
 files = [
-    {file = "zentra_api-0.1.10-py3-none-any.whl", hash = "sha256:c6508dc2ad1d1ff0b68900251fa8eca04a48cec4b030d6c325b89ea89f0a2e81"},
-    {file = "zentra_api-0.1.10.tar.gz", hash = "sha256:aeefde24577c223be859a4574314ad84c30cb0a6b0e019a412f98cf0259abe11"},
+    {file = "zentra_api-0.1.11-py3-none-any.whl", hash = "sha256:44e802c978573cc58b5254fbd0af2bd729a3e3a81cfd44ac635fde6fd4a6af74"},
+    {file = "zentra_api-0.1.11.tar.gz", hash = "sha256:157686c70c9b5c33c3488a3926851daaeb453e131f3648ec9163b48005ba04c1"},
 ]
 
 [package.dependencies]

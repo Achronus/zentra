@@ -1,6 +1,7 @@
 import logging
-import importlib.resources as pkg_resources
 from pathlib import Path
+
+from zentra_sdk.cli.constants import LOG_FOLDER
 
 
 class BaseLogger:
@@ -70,7 +71,7 @@ class DebugLogger(BaseLogger):
         self,
         logger_name: str,
         log_filename: str = "debug.log",
-        log_folder: str = pkg_resources.files("zentra_sdk").joinpath("logs"),
+        log_folder: str = LOG_FOLDER,
         active: bool = False,
     ):
         super().__init__(logger_name, level=logging.DEBUG)

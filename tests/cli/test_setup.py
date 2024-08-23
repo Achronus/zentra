@@ -6,7 +6,7 @@ import typer
 from docker.errors import DockerException
 
 from zentra_sdk.cli.commands.setup import Setup, SetupTasks
-from zentra_sdk.cli.constants import SetupSuccessCodes, ProjectPaths
+from zentra_sdk.cli.constants import SetupSuccessCodes
 
 
 @pytest.fixture
@@ -91,8 +91,8 @@ class TestSetup:
 
 class TestSetupTasks:
     @pytest.fixture
-    def setup_tasks(self, tmp_path) -> SetupTasks:
-        return SetupTasks(paths=ProjectPaths(tmp_path), test_logging=True)
+    def setup_tasks(self) -> SetupTasks:
+        return SetupTasks(test_logging=True)
 
     @pytest.fixture
     def mock_subprocess(self):
@@ -102,7 +102,9 @@ class TestSetupTasks:
     @staticmethod
     def test_build_backend(setup_tasks: SetupTasks, mock_subprocess: MagicMock):
         setup_tasks._build_backend()
-        mock_subprocess.assert_called_once_with(["zentra-api", "init", "backend"])
+        mock_subprocess.assert_called_once_with(
+            ["zentra-api", "init", "backend", "--hide-output"]
+        )
 
     def test_get_tasks(self, setup_tasks: SetupTasks):
         tasks = setup_tasks.get_tasks()

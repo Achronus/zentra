@@ -23,7 +23,8 @@ def creation_msg() -> str:
 COMPLETE_MSG = """
 [yellow]Backend[/yellow] [cyan]Next Steps[/cyan]
     1. Access the [yellow]backend[/yellow] with [dark_goldenrod]cd backend[/dark_goldenrod]
-    2. Start programming!
+    2. Install the packages and scripts using [dark_goldenrod]poetry install[/dark_goldenrod]
+    3. Start programming!
 
 [green]Frontend[/green] [cyan]Next Steps[/cyan]
     1. Access the [green]frontend[/green] with [dark_goldenrod]cd frontend[/dark_goldenrod]

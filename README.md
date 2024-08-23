@@ -1,6 +1,10 @@
-_🚧 In development 🚧_
-
 ![Logo](/docs/assets/imgs/zentra-logo.jpg)
+
+[![codecov](https://codecov.io/github/Achronus/zentra/graph/badge.svg?token=Y2G1RM4WFO)](https://codecov.io/github/Achronus/zentra)
+![Python Version](https://img.shields.io/pypi/pyversions/zentra_sdk)
+![License](https://img.shields.io/github/license/Achronus/zentra)
+![Issues](https://img.shields.io/github/issues/Achronus/zentra)
+![Last Commit](https://img.shields.io/github/last-commit/Achronus/zentra)
 
 Zentra, your all in one Python SDK for building [FastAPI](https://fastapi.tiangolo.com/) and [Next.js](https://nextjs.org/) applications.
 

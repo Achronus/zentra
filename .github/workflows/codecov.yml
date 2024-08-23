@@ -24,7 +24,7 @@ jobs:
         run: poetry install --with dev
 
       - name: Run tests and collect coverage
-        run: poetry run pytest --cov=zentra_api --cov-report xml tests/
+        run: poetry run pytest --cov=zentra_sdk --cov-report xml tests/
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4

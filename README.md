@@ -8,6 +8,12 @@
 
 Zentra, your all in one Python SDK for building [FastAPI](https://fastapi.tiangolo.com/) and [Next.js](https://nextjs.org/) applications.
 
+
+Found on:
+
+- [PyPi](https://pypi.org/project/zentra_sdk)
+- [GitHub](https://github.com/Achronus/zentra)
+
 # Zentra
 
 Every new software project brings a familiar set of repetitive tasks: configuring API routes, setting up authentication, and crafting frontend components from scratch. These repetitive steps not only drain your time but also divert your focus from building the unique features that set your application apart.

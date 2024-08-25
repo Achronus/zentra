@@ -8,7 +8,9 @@ from zentra_sdk.cli.builder.docker import DockerBuilder
 from zentra_sdk.cli.conf.logger import set_loggers
 from zentra_sdk.cli.constants import (
     DOCKER_FRONTEND_DETAILS,
+    FRONTEND_FILES_TO_REMOVE,
     CommonErrorCodes,
+    PackagePaths,
     SetupSuccessCodes,
     ProjectPaths,
     console,
@@ -33,7 +35,7 @@ class Setup:
             raise typer.Exit(code=CommonErrorCodes.DOCKER_NOT_INSTALLED)
 
         self.paths = ProjectPaths(root)
-        self.setup_tasks = SetupTasks()
+        self.setup_tasks = SetupTasks(self.paths)
 
     def project_exists(self) -> bool:
         """Checks if a project has already been created."""
@@ -79,7 +81,10 @@ class Setup:
 class SetupTasks:
     """Contains the tasks for the `init` command."""
 
-    def __init__(self, test_logging: bool = False) -> None:
+    def __init__(self, paths: ProjectPaths, test_logging: bool = False) -> None:
+        self.paths = paths
+        self.package_paths = PackagePaths()
+
         self.logger = set_loggers(test_logging)
         self.docker_frontend = DockerBuilder(**DOCKER_FRONTEND_DETAILS)
 
@@ -91,6 +96,29 @@ class SetupTasks:
         """Builds the backend using the `API` package."""
         subprocess.run(["zentra-api", "init", "backend", "--hide-output"])
 
+    def _remove_files(self) -> None:
+        """Removes redundant files from the project."""
+        for file in FRONTEND_FILES_TO_REMOVE:
+            os.remove(self.paths.FRONTEND_PATH.joinpath(file))
+
+    def _move_files(self) -> None:
+        """Moves required files from the assets folder into the project."""
+        shutil.copytree(
+            self.package_paths.FRONTEND,
+            self.paths.FRONTEND_PATH,
+            dirs_exist_ok=True,
+        )
+        shutil.copytree(
+            self.package_paths.ROOT,
+            self.paths.ROOT,
+            dirs_exist_ok=True,
+        )
+
+        os.rename(
+            Path(self.paths.FRONTEND_PATH, ".env.local.template"),
+            self.paths.ENV_LOCAL,
+        )
+
     def get_tasks(self) -> list[Callable]:
         """Gets the tasks to run as a list of methods."""
         console.print(creation_msg())
@@ -98,4 +126,6 @@ class SetupTasks:
         return [
             self._build_backend,
             self._build_frontend,
+            self._remove_files,
+            self._move_files,
         ]

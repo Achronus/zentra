@@ -6,7 +6,11 @@ import typer
 from docker.errors import DockerException
 
 from zentra_sdk.cli.commands.setup import Setup, SetupTasks
-from zentra_sdk.cli.constants import SetupSuccessCodes
+from zentra_sdk.cli.constants import (
+    FRONTEND_FILES_TO_REMOVE,
+    ProjectPaths,
+    SetupSuccessCodes,
+)
 
 
 @pytest.fixture
@@ -91,13 +95,28 @@ class TestSetup:
 
 class TestSetupTasks:
     @pytest.fixture
-    def setup_tasks(self) -> SetupTasks:
-        return SetupTasks(test_logging=True)
+    def setup_tasks(self, tmp_path) -> SetupTasks:
+        return SetupTasks(paths=ProjectPaths(tmp_path), test_logging=True)
 
     @pytest.fixture
     def mock_subprocess(self):
         with patch("subprocess.run") as mock_run:
             yield mock_run
+
+    @pytest.fixture
+    def mock_os_remove(self):
+        with patch("os.remove") as mock_remove:
+            yield mock_remove
+
+    @pytest.fixture
+    def mock_shutil_copytree(self):
+        with patch("shutil.copytree") as mock_copytree:
+            yield mock_copytree
+
+    @pytest.fixture
+    def mock_os_rename(self):
+        with patch("os.rename") as mock_rename:
+            yield mock_rename
 
     @staticmethod
     def test_build_backend(setup_tasks: SetupTasks, mock_subprocess: MagicMock):
@@ -106,12 +125,58 @@ class TestSetupTasks:
             ["zentra-api", "init", "backend", "--hide-output"]
         )
 
-    def test_get_tasks(self, setup_tasks: SetupTasks):
+    @staticmethod
+    def test_remove_files(setup_tasks: SetupTasks, mock_os_remove: MagicMock):
+        files_to_remove = FRONTEND_FILES_TO_REMOVE
+        setup_tasks.paths.FRONTEND_PATH.mkdir(parents=True, exist_ok=True)
+        for file_name in files_to_remove:
+            (setup_tasks.paths.FRONTEND_PATH / file_name).touch()
+
+        setup_tasks._remove_files()
+
+        for file_name in files_to_remove:
+            mock_os_remove.assert_any_call(setup_tasks.paths.FRONTEND_PATH / file_name)
+
+        assert mock_os_remove.call_count == len(files_to_remove)
+
+    @staticmethod
+    def test_move_files(
+        setup_tasks: SetupTasks,
+        mock_shutil_copytree: MagicMock,
+        mock_os_rename: MagicMock,
+    ):
+        (setup_tasks.package_paths.FRONTEND).mkdir(parents=True, exist_ok=True)
+        (setup_tasks.package_paths.ROOT).mkdir(parents=True, exist_ok=True)
+
+        (setup_tasks.paths.FRONTEND_PATH).mkdir(parents=True, exist_ok=True)
+        (setup_tasks.paths.ROOT).mkdir(parents=True, exist_ok=True)
+
+        env_local_template = setup_tasks.paths.FRONTEND_PATH / ".env.local.template"
+        env_local_template.touch()
+
+        setup_tasks._move_files()
+
+        mock_shutil_copytree.assert_any_call(
+            setup_tasks.package_paths.FRONTEND,
+            setup_tasks.paths.FRONTEND_PATH,
+            dirs_exist_ok=True,
+        )
+        mock_shutil_copytree.assert_any_call(
+            setup_tasks.package_paths.ROOT, setup_tasks.paths.ROOT, dirs_exist_ok=True
+        )
+        mock_os_rename.assert_called_once_with(
+            env_local_template, setup_tasks.paths.ENV_LOCAL
+        )
+
+    @staticmethod
+    def test_get_tasks(setup_tasks: SetupTasks):
         tasks = setup_tasks.get_tasks()
 
         target = [
             setup_tasks._build_backend,
             setup_tasks._build_frontend,
+            setup_tasks._remove_files,
+            setup_tasks._move_files,
         ]
         assert tasks == target
         assert len(tasks) == len(target)

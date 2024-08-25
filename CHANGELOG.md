@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.1] - 2024-08-25
+
+### 🚀 Features
+
+- *(setup)* Added connection files to frontend on build.
+
+### 🐛 Bug Fixes
+
+- *(msg)* Updated docker error message for clarity.
+
+### ⚙️ Miscellaneous Tasks
+
+- *(changelog)* Added changelog script.
+
 ## [0.1.0] - 2024-08-23
 
 ### 🚀 Features

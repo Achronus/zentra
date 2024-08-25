@@ -45,7 +45,7 @@ Have you run [yellow]zentra init[/yellow]?
 """
 
 MISSING_DOCKER = f"""
-Have you installed the [link={DOCKER_URL}][cyan]Docker Engine[cyan][/link]?
+Have you installed the [link={DOCKER_URL}][cyan]Docker Engine[/link][/cyan] and turned it on?
 """
 
 UNKNOWN_ERROR = f"""

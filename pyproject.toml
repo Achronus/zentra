@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "zentra_sdk"
-version = "0.1.0"
+version = "0.1.1"
 description = "An open-source Python SDK for building FastAPI and Next.js apps faster."
 authors = ["Ryan Partridge <rpartridge101@gmail.com>"]
 license = "MIT License"

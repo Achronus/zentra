@@ -1,6 +1,6 @@
 # Zentra SDK: The Basics
 
-This chapter focuses on getting started with [`Zentra SDK`](#) and exploring simple examples.
+This chapter focuses on getting started with [`Zentra SDK`](#) with simple examples.
 
 !!! note
 

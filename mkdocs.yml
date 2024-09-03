@@ -47,7 +47,8 @@ nav:
       - Files: 
         - FastAPI: starting/files/fastapi.md
         - Next.js: starting/files/nextjs.md
-      - Commands:
+      - Commands: 
+        - Commands: starting/commands/index.md
         - SDK: starting/commands/sdk.md
         - API: starting/commands/api.md
         - Models: starting/commands/models.md

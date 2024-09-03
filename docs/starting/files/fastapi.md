@@ -1,6 +1,6 @@
 # FastAPI Files
 
-This chapter focuses on the backend files created when initialising a project with [Zentra API](http://localhost:8000/starting/commands/sdk/#init) or [Zentra SDK](http://localhost:8000/starting/commands/sdk/#init). 
+This chapter focuses on the [`backend`](#) files created when initialising a project with [Zentra API](/starting/commands/sdk/#init) or [Zentra SDK](/starting/commands/sdk/#init). 
 
 
 ## What's Included?

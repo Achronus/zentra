@@ -31,9 +31,6 @@ repo_name: Achronus/zentra
 repo_url: https://github.com/Achronus/zentra
 edit_uri: edit/main/docs
 
-watch:
-  - zentra_models
-
 extra_css:
   - "assets/css/icons.css"
 
@@ -41,10 +38,19 @@ nav:
   - Zentra: index.md
   - Getting Started:
       - Getting Started: starting/index.md
-      - Why use Zentra: starting/why.md
+      # - Why use Zentra: starting/why.md
       - Installation: starting/install.md
-      - Basic Usage: starting/basic_usage.md
-      - Commands: starting/commands.md
+      - Files: 
+        - FastAPI: starting/files/fastapi.md
+        - Next.js: starting/files/nextjs.md
+      - Usage Guides:
+        - SDK: starting/usage/sdk.md
+        - API: starting/usage/api.md
+        - Models: starting/usage/models.md
+      - Commands:
+        - SDK: starting/commands/sdk.md
+        - API: starting/commands/api.md
+        - Models: starting/commands/models.md
   - Components:
       - Components: components/index.md
       - Core: components/core.md
@@ -60,7 +66,7 @@ nav:
       - Help: help/index.md
       - Encountering Errors: help/errors.md
       - Reporting Issues: help/report.md
-  - Release Notes: release_notes.md
+  - Changelog: changelog.md
 
 extra:
   version:
@@ -77,6 +83,7 @@ markdown_extensions:
   - pymdownx.details
   - pymdownx.superfences
   - tables
+  - md_in_html
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg

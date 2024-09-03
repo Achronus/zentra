@@ -1,4 +1,4 @@
-# The Basics
+# Zentra SDK: The Basics
 
 This chapter focuses on getting started with `Zentra` and exploring simple examples.
 

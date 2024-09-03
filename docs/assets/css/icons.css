@@ -1,19 +1,43 @@
+:root {
+  --md-admonition-icon--api: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 7H5a2 2 0 0 0-2 2v8h2v-4h2v4h2V9a2 2 0 0 0-2-2m0 4H5V9h2m7-2h-4v10h2v-4h2a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2m0 4h-2V9h2m6 0v6h1v2h-4v-2h1V9h-1V7h4v2Z"/></svg>');
+  --md-admonition-icon--construction: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="%23FFD700" d="M256 32c-17.7 0-32 14.3-32 32l0 2.3 0 99.6c0 5.6-4.5 10.1-10.1 10.1c-3.6 0-7-1.9-8.8-5.1L157.1 87C83 123.5 32 199.8 32 288l0 64 512 0 0-66.4c-.9-87.2-51.7-162.4-125.1-198.6l-48 83.9c-1.8 3.2-5.2 5.1-8.8 5.1c-5.6 0-10.1-4.5-10.1-10.1l0-99.6 0-2.3c0-17.7-14.3-32-32-32l-64 0zM16.6 384C7.4 384 0 391.4 0 400.6c0 4.7 2 9.2 5.8 11.9C27.5 428.4 111.8 480 288 480s260.5-51.6 282.2-67.5c3.8-2.8 5.8-7.2 5.8-11.9c0-9.2-7.4-16.6-16.6-16.6L16.6 384z"/></svg>');
+}
+
 /* API documentation link admonition */
 /* Same as Pydantic -
     https://github.com/pydantic/pydantic/blob/main/docs/extra/tweaks.css#L98
 */
-:root {
-    --md-admonition-icon--api: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 7H5a2 2 0 0 0-2 2v8h2v-4h2v4h2V9a2 2 0 0 0-2-2m0 4H5V9h2m7-2h-4v10h2v-4h2a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2m0 4h-2V9h2m6 0v6h1v2h-4v-2h1V9h-1V7h4v2Z"/></svg>')
-  }
-  .md-typeset .admonition.api, .md-typeset details.api {
-    border-color: #448aff;
-  }
-  .md-typeset .api > .admonition-title, .md-typeset .api > summary {
-    background-color: #448aff1a;
-  }
-  .md-typeset .api > .admonition-title::before, .md-typeset .api > summary::before {
-    background-color: #448aff;
-    -webkit-mask-image: var(--md-admonition-icon--api);
-            mask-image: var(--md-admonition-icon--api);
-  }
-  
+.md-typeset .admonition.api,
+.md-typeset details.api {
+  border-color: #448aff;
+}
+
+.md-typeset .api > .admonition-title,
+.md-typeset .api > summary {
+  background-color: #448aff1a;
+}
+
+.md-typeset .api > .admonition-title::before,
+.md-typeset .api > summary::before {
+  background-color: #448aff;
+  -webkit-mask-image: var(--md-admonition-icon--api);
+  mask-image: var(--md-admonition-icon--api);
+}
+
+/* Under construction admonition */
+.md-typeset .admonition.construction,
+.md-typeset details.construction {
+  border-color: #ffd700;
+}
+
+.md-typeset .construction > .admonition-title,
+.md-typeset .construction > summary {
+  background-color: #ffd7001a;
+}
+
+.md-typeset .construction > .admonition-title::before,
+.md-typeset .construction > summary::before {
+  background-color: #ffd700;
+  -webkit-mask-image: var(--md-admonition-icon--construction);
+  mask-image: var(--md-admonition-icon--construction);
+}

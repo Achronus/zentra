@@ -40,13 +40,13 @@ nav:
       - Getting Started: starting/index.md
       # - Why use Zentra: starting/why.md
       - Installation: starting/install.md
-      - Files: 
-        - FastAPI: starting/files/fastapi.md
-        - Next.js: starting/files/nextjs.md
       - Usage Guides:
         - SDK: starting/usage/sdk.md
         - API: starting/usage/api.md
         - Models: starting/usage/models.md
+      - Files: 
+        - FastAPI: starting/files/fastapi.md
+        - Next.js: starting/files/nextjs.md
       - Commands:
         - SDK: starting/commands/sdk.md
         - API: starting/commands/api.md

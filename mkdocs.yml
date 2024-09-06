@@ -14,7 +14,6 @@ theme:
     - navigation.tabs
     - navigation.indexes
     - navigation.top
-    - navigation.sections
     - navigation.path
     - navigation.footer
     - toc.follow
@@ -43,15 +42,29 @@ nav:
       - Usage Guides:
         - SDK: starting/usage/sdk.md
         - API: starting/usage/api.md
-        - Models: starting/usage/models.md
-      - Files: 
-        - FastAPI: starting/files/fastapi.md
-        - Next.js: starting/files/nextjs.md
-      - Commands: 
-        - Commands: starting/commands/index.md
-        - SDK: starting/commands/sdk.md
-        - API: starting/commands/api.md
-        - Models: starting/commands/models.md
+  - SDK:
+    - Zentra SDK: sdk/index.md
+    - Tutorial - User Guide: 
+      - Tutorial - User Guide: sdk/tutorial/index.md
+      - Creating a Project: sdk/tutorial/create.md
+    - CLI Commands:
+      - CLI Commands: sdk/commands/index.md
+      - init: sdk/commands/init.md
+  - API:
+    - Zentra API: api/index.md
+    - Tutorial - User Guide: 
+      - Tutorial - User Guide: api/tutorial/index.md
+      - First Steps: api/tutorial/first-steps.md
+      - File Structure: api/tutorial/file-structure.md
+      - Route Responses: api/tutorial/responses.md
+    - CLI Commands:
+      - CLI Commands: api/commands/index.md
+      - init: api/commands/init.md
+      - add-route: api/commands/add-route.md
+      - new-key: api/commands/new-key.md
+      - build: api/commands/build.md
+  - Models:
+    - Models: models/index.md
   - Components:
       - Components: components/index.md
       - Core: components/core.md

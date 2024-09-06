@@ -1,3 +1,3 @@
-# Zentra Models: The Basics
+# Zentra Models
 
 !!! construction "Coming Soon"

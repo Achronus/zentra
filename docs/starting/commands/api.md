@@ -1,5 +1,0 @@
-# Zentra API: Commands
-
-
-
-## Init

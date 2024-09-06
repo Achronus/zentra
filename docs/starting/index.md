@@ -6,12 +6,12 @@ Zentra is a powerful tool that can help speed up your workflow and make developm
 
 Zentra SDK is divided into two packages:
 
-- [API](/starting/commands/api) - an SDK and CLI tool for building [FastAPI [:material-arrow-right-bottom:]](https://fastapi.tiangolo.com/) applications
-- [Models](/starting/commands/models) - a Python based component library, turning [Pydantic [:material-arrow-right-bottom:]](https://docs.pydantic.dev/latest/) models into React components
+- [API](/api) - an SDK and CLI tool for building [FastAPI [:material-arrow-right-bottom:]](https://fastapi.tiangolo.com/) applications
+- [Models](/models) - a Python based component library, turning [Pydantic [:material-arrow-right-bottom:]](https://docs.pydantic.dev/latest/) models into React components
 
 Each package works independently so you can maximise their benefits with ease.
 
-Perhaps you only want to build a FastAPI project, or simply want to build React components using Python - you choose what is right for you.
+Perhaps you only want to build a FastAPI project, or simply want to build React components using Python - the choice is yours!
 
 ## Complete The Basics
 
@@ -27,27 +27,6 @@ Perhaps you only want to build a FastAPI project, or simply want to build React 
 
 </div>
 
-<div class="grid cards" markdown>
-
--   :simple-fastapi:{ .lg .middle } __Backend Files__
-
-    ---
-
-    Read more about the backend files.
-
-    [:octicons-arrow-right-24: FastAPI files](/starting/files/fastapi)
-
--   :simple-nextdotjs:{ .lg .middle } __Frontend Files__
-
-    ---
-
-    Read more about the frontend files.
-
-    [:octicons-arrow-right-24: Next.js files](/starting/files/nextjs)
-
-
-</div>
-
 ## Start Using a Package
 
 <div class="grid cards" markdown>
@@ -58,7 +37,7 @@ Perhaps you only want to build a FastAPI project, or simply want to build React 
 
     Learn how to use the full-suite at once.
 
-    [:octicons-arrow-right-24: Start learning](/starting/usage/sdk)
+    [:octicons-arrow-right-24: Start learning](/sdk/tutorial)
 
 </div>
 
@@ -70,7 +49,7 @@ Perhaps you only want to build a FastAPI project, or simply want to build React 
 
     Learn how to build FastAPI's apps with ease.
 
-    [:octicons-arrow-right-24: Start learning](/starting/usage/api)
+    [:octicons-arrow-right-24: Start learning](/api/tutorial)
 
 -   :simple-react:{ .lg .middle } __Zentra Models__
 
@@ -78,6 +57,6 @@ Perhaps you only want to build a FastAPI project, or simply want to build React 
 
     Learn how to build React components faster using Pydantic models.
 
-    [:octicons-arrow-right-24: Start learning](/starting/usage/models)
+    [:octicons-arrow-right-24: Start learning](/models/tutorial)
 
 </div>

@@ -33,26 +33,36 @@ Depending on your use case, you can install packages separately or download the 
 
 All Zentra packages require [Python 3.12+ [:material-arrow-right-bottom:]](https://www.python.org/) and [Poetry [:material-arrow-right-bottom:]](https://python-poetry.org/) for package management. It is multi-platform and aims to be accessible across Linux, macOS and Windows.
 
-## Option 1: The Full Suite
+## Select a Package
 
-!!! info "Important"
+<div class="grid cards" markdown>
 
-    The Zentra SDK requires you to have the [Docker Engine](https://docs.docker.com/engine/install/) installed to create the frontend files. Please make sure you have Docker running first before using the package.
+-   :simple-dask:{ .lg .middle } __Zentra SDK__
 
-Install the [`zentra-sdk`](#) package with [Poetry [:material-arrow-right-bottom:]](https://python-poetry.org/) through [PIP [:material-arrow-right-bottom:]](https://pypi.org/project/zentra-sdk/):
+    ---
 
-```cmd title=""
-pip install zentra-sdk poetry
-```
+    Install the complete suite in a flash.
 
-## Option 2: API Only
+    [:octicons-arrow-right-24: Install the SDK](/sdk)
 
-Install the [`zentra-api`](#) package with [Poetry [:material-arrow-right-bottom:]](https://python-poetry.org/) through [PIP [:material-arrow-right-bottom:]](https://pypi.org/project/zentra-api/):
+</div>
 
-```cmd title=""
-pip install zentra-api poetry
-```
+<div class="grid cards" markdown>
 
-## Option 3: Models Only
+-   :material-api:{ .lg .middle } __Zentra API__
 
-!!! construction "Coming Soon"
+    ---
+
+    Only install the API package.
+
+    [:octicons-arrow-right-24: Install the API](/api)
+
+-   :simple-react:{ .lg .middle } __Zentra Models__
+
+    ---
+
+    Only install the Models package.
+
+    [:octicons-arrow-right-24: Install the Models](/models)
+
+</div>

@@ -1,9 +1,11 @@
 # Help
 
-This chapter focuses on steps you can take when encountering errors.
+This chapter focuses on steps you can take when encountering errors when using one of [`Zentra's`](#) command-line interfaces (CLIs) or SDKs.
 
-We've designed `Zentra's` error messages to provide you with steps to take for debugging and fixing most problems yourself, but we cannot account for everything.
+We've tried to design the error messages to provide you with useful feedback so you can debug and fix most problems yourself.
 
-As a first point of call, we recommend you refer to our [Error Handling Guide](errors.md).
+We know how frustrating errors can be and want to help you focus on programming your project with minimal interference. However, we cannot account for everything. 
+
+If you need additional information on an error message, we recommend you refer to our [Error Handling Guide](errors.md) first.
 
 If it's unable to help, we encourage you to follow our [Reporting Issues Guide](report.md).

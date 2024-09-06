@@ -6,8 +6,8 @@ Zentra is a powerful tool that can help speed up your workflow and make developm
 
 Zentra SDK is divided into two packages:
 
-- [API](/api) - a CLI tool for building [FastAPI [:material-arrow-right-bottom:]](https://fastapi.tiangolo.com/) applications
-- [Models](/models) - a Python based component library, turning [Pydantic [:material-arrow-right-bottom:]](https://docs.pydantic.dev/latest/) models into React components
+- [API](/starting/commands/api) - an SDK and CLI tool for building [FastAPI [:material-arrow-right-bottom:]](https://fastapi.tiangolo.com/) applications
+- [Models](/starting/commands/models) - a Python based component library, turning [Pydantic [:material-arrow-right-bottom:]](https://docs.pydantic.dev/latest/) models into React components
 
 Each package works independently so you can maximise their benefits with ease.
 
@@ -23,7 +23,7 @@ Perhaps you only want to build a FastAPI project, or simply want to build React 
 
     Choose the packages to install.
 
-    [:octicons-arrow-right-24: Start Installing](/starting/installation)
+    [:octicons-arrow-right-24: Start Installing](/starting/install)
 
 </div>
 
@@ -70,7 +70,7 @@ Perhaps you only want to build a FastAPI project, or simply want to build React 
 
     Learn how to build FastAPI's apps with ease.
 
-    [:octicons-arrow-right-24: Start learning](/starting/usage/fastapi)
+    [:octicons-arrow-right-24: Start learning](/starting/usage/api)
 
 -   :simple-react:{ .lg .middle } __Zentra Models__
 

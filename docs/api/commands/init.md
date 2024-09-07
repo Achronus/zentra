@@ -1,6 +1,6 @@
 # Init
 
-??? info "Noteworthy Features"
+???+ info "Noteworthy Features"
 
     - First use: configures the directory as a [`FastAPI`](#) project
     - Additional uses: adds missing files to the directory

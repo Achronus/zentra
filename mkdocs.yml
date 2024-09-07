@@ -38,6 +38,7 @@ nav:
   - Getting Started:
       - Getting Started: starting/index.md
       - Installation: starting/install.md
+      - License: starting/license.md
   - SDK:
     - Zentra SDK: sdk/index.md
     - Tutorial - User Guide: 

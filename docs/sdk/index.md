@@ -1,8 +1,8 @@
 # Zentra SDK
 
-The SDK is the easiest way to a complete full-stack app up and running in minutes. 
+The SDK is the easiest way to get a full-stack application up and running in minutes. 
 
-It includes the API and Models packages for the [FastAPI [:material-arrow-right-bottom:]](https://fastapi.tiangolo.com/) backend and builds the [Next.js [:material-arrow-right-bottom:]](https://nextjs.org/) frontend too.
+It includes the API and Models packages for the [FastAPI [:material-arrow-right-bottom:]](https://fastapi.tiangolo.com/) backend and builds the [Next.js [:material-arrow-right-bottom:]](https://nextjs.org/) frontend automatically too.
 
 !!! info "Important"
 

@@ -5,7 +5,7 @@
     - First use: configures the directory as a [`FastAPI`](#) project
     - Additional uses: adds missing files to the directory
 
-This command creates a [`FastAPI`](#) project in a directory given a [`<project_name>`](#).
+This command creates a [`FastAPI`](#) project in a specific directory based on a given [`<project_name>`](#).
 
 ```shell title=""
 zentra-api init <project_name>

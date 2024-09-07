@@ -25,7 +25,7 @@
 
 Depending on your use case, you can install packages separately or download the full-suite in one command. Here's a quick comparsion between the options:
 
-- __The Full Suite__ - includes the API and Models packages for the [FastAPI [:material-arrow-right-bottom:]](https://fastapi.tiangolo.com/) backend and builds the [Next.js [:material-arrow-right-bottom:]](https://nextjs.org/) frontend too. Read more about the [frontend files](/starting/files/nextjs) here.
+- __The Full Suite__ - includes the API and Models packages for the [FastAPI [:material-arrow-right-bottom:]](https://fastapi.tiangolo.com/) backend and builds the [Next.js [:material-arrow-right-bottom:]](https://nextjs.org/) frontend too.
 - __API Only__ - includes the API package for building [FastAPI [:material-arrow-right-bottom:]](https://fastapi.tiangolo.com/) backends.
 - __Models Only__ - includes the models package for building React components using Python.
 

@@ -38,8 +38,6 @@ nav:
   - Getting Started:
       - Getting Started: starting/index.md
       - Installation: starting/install.md
-      - Usage Guides:
-        - SDK: starting/usage/sdk.md
   - SDK:
     - Zentra SDK: sdk/index.md
     - Tutorial - User Guide: 

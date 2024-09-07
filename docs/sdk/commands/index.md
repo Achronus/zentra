@@ -1,6 +1,6 @@
 # CLI Commands
 
-This section focuses on the command line interface (CLI) commands you can use with the [`zentra-sdk`](#) package.
+This section focuses on the command line interface (CLI) commands you can use with the [`zentra-sdk`](../../sdk/index.md) package.
 
 !!! note
 
@@ -17,4 +17,4 @@ Like the tutorial series, we've divided this section into separate pages to make
 
 ## Available Commands
 
-- [init](/sdk/commands/init)
+- [init](../../sdk/commands/init.md)

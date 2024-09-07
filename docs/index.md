@@ -9,8 +9,10 @@ hide:
 
 <a href="/" style="display: flex; justify-items: center;">![Zentra Logo](assets/imgs/zentra-logo.jpg)</a>
 
-<p id="slogan" align="center">
-    <em>Zentra, your all in one Python SDK for building <a href="https://fastapi.tiangolo.com/">FastAPI</a> and <a href="https://nextjs.org/">Next.js</a> applications.</em>
+<p id="slogan" align="center" markdown>
+
+    *Zentra, your all in one Python SDK for building [FastAPI [:material-arrow-right-bottom:]](https://fastapi.tiangolo.com/) and [Next.js [:material-arrow-right-bottom:]](https://nextjs.org/) applications.*
+
 </p>
 
 ---
@@ -36,6 +38,25 @@ Introducing __Zentra__ — an open-source, free to use, SDK for rapidly creating
 
 Packed with an intuitive suite of CLI commands, documentation, and development kit, this tool simplifies your development process, allowing you to effortlessly build applications in weeks, not months.
 
+<div class="grid cards" markdown>
+
+-   :material-rocket-launch:{ .lg .middle } __Getting Started__
+
+    ---
+
+    What are you waiting for?!
+
+    [:octicons-arrow-right-24: Get Started](starting/index.md)
+
+-   :material-scale-balance:{ .lg .middle } __Open Source, MIT__
+
+    ---
+
+    All Zentra packages are licensed under the MIT License.
+
+    [:octicons-arrow-right-24: License](starting/license.md)
+
+</div>
 
 ## Active Development
 

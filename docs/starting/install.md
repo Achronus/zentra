@@ -43,7 +43,7 @@ All Zentra packages require [Python 3.12+ [:material-arrow-right-bottom:]](https
 
     Install the complete suite in a flash.
 
-    [:octicons-arrow-right-24: Install the SDK](/sdk)
+    [:octicons-arrow-right-24: Install the SDK](../sdk/index.md)
 
 </div>
 
@@ -55,7 +55,7 @@ All Zentra packages require [Python 3.12+ [:material-arrow-right-bottom:]](https
 
     Only install the API package.
 
-    [:octicons-arrow-right-24: Install the API](/api)
+    [:octicons-arrow-right-24: Install the API](../api/index.md)
 
 -   :simple-react:{ .lg .middle } __Zentra Models__
 
@@ -63,6 +63,6 @@ All Zentra packages require [Python 3.12+ [:material-arrow-right-bottom:]](https
 
     Only install the Models package.
 
-    [:octicons-arrow-right-24: Install the Models](/models)
+    [:octicons-arrow-right-24: Install the Models](../models/index.md)
 
 </div>

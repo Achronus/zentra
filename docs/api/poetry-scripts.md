@@ -6,7 +6,7 @@ Every new API project is preconfigured with a few unique ones stored inside the 
 
 These are directly connected to the `scripts` folder and only work when you have installed the your newly built project using the `install poetry` command. 
 
-You can read more about this in the [First Steps](/api/tutorial/first-steps) tutorial.
+You can read more about this in the [First Steps](../api/tutorial/first-steps.md) tutorial.
 
 === "pyproject.toml"
     

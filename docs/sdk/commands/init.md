@@ -11,4 +11,4 @@ This command initialises the current directory as a [`Zentra`](#) project, confi
 zentra init
 ```
 
-You can read more about this command in our [Creating a Project Tutorial](/sdk/tutorial/create).
+You can read more about this command in our [Creating a Project Tutorial](../../sdk/tutorial/create.md).

@@ -16,15 +16,15 @@ Each error will come with a code that will help you navigate to a part of this p
 
 Simply use the find (`Ctrl + f` on Windows, Linux and ChromeOS, or `cmd + f` on Mac) function in your browser. Then, copy and paste the `Error Code: [number]` to find it on the page.
 
-If you've encountered something extremely mind boggling (trust me, you'll know :wink:), please follow our [Reporting Issues Guide](/help/report).
+If you've encountered something extremely mind boggling (trust me, you'll know :wink:), please follow our [Reporting Issues Guide](../report.md).
 
 ## Types of Errors
 
 Error messages are split into three main categories:
 
-- [`common`](/help/errors/common) - errors that can occur across all commands and packages. These range between `[1, 10]`
-- [`setup`](/help/errors/setup) - errors specific to the [`init`](#) command. These range between `[11, 20]`.
-- [`build`](/help/errors/build) - errors specific to the [`generate`](#) and [`build`](#) commands. These range between `[21, 30]`.
+- [`common`](../errors/common.md) - errors that can occur across all commands and packages. These range between `[1, 10]`
+- [`setup`](../errors/setup.md) - errors specific to the [`init`](#) command. These range between `[11, 20]`.
+- [`build`](../errors/build.md) - errors specific to the [`generate`](#) and [`build`](#) commands. These range between `[21, 30]`.
 
 ## 1000: Unknown Error
 
@@ -32,4 +32,4 @@ Error messages are split into three main categories:
 
 You'll encounter this error when something happens that we haven't accounted for.
 
-For these types of errors, please follow our [Reporting Issues Guide](/help/report).
+For these types of errors, please follow our [Reporting Issues Guide](../report.md).

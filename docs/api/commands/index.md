@@ -1,6 +1,6 @@
 # CLI Commands
 
-This section focuses on the command line interface (CLI) commands you can use with the [`zentra-api`](#) package.
+This section focuses on the command line interface (CLI) commands you can use with the [`zentra-api`](../../api/index.md) package.
 
 Like the tutorial series, we've divided this section into separate pages to make things easier to navigate. You can access the commands using the navigation menu on the left or select a command from the list below.
 
@@ -13,7 +13,7 @@ Like the tutorial series, we've divided this section into separate pages to make
 
 ## Available Commands
 
-- [init](/api/commands/init)
-- [add-route](/api/commands/add-route)
-- [new-key](/api/commands/new-key)
-- [build](/api/commands/build)
+- [init](../../api/commands/init.md)
+- [add-route](../../api/commands/add-route.md)
+- [new-key](../../api/commands/new-key.md)
+- [build](../../api/commands/build.md)

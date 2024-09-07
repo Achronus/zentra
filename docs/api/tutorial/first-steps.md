@@ -2,11 +2,11 @@
 
 Our first step is a simple one: **create a new project**. 
 
-Zentra makes this extremely easy and provides a lot of functionality out of the box ([What's Included?](/api/#whats-included)). 
+Zentra makes this extremely easy and provides a lot of functionality out of the box ([What's Included?](../../api/index.md#whats-included)). 
 
 ## Creating a Project
 
-To create a new project we use the [`init`](/api/commands/init) command with a custom [`<project_name>`](#) like so:
+To create a new project we use the [`init`](../../api/commands/init.md) command with a custom [`<project_name>`](#) like so:
 
 ```cmd title=""
 zentra-api init <project_name>
@@ -46,7 +46,7 @@ This may look daunting at first, but don't worry, we'll break it down for you!
 
 !!! tip
 
-    Already been here and know about the files? Skip to [Starting Our Project](/api/tutorial/first-steps#starting-our-project) ✨
+    Already been here and know about the files? Skip to [Starting Our Project](../../api/tutorial/first-steps.md#starting-our-project) ✨
 
 To start with, let's explore our main configuration files. You'll likely only touch these occassionally, specifically at the start of the project and towards the end when moving into production. 
 
@@ -138,7 +138,7 @@ The `name` is directly tied to the `app` directory and should only be changed wh
 
 The `poetry.scripts` are unique commands to your project and are connected to the `scripts` directory. They won't actually work yet until you install them (we'll get to that soon!). 
 
-Interested in what they do? Check out the [Poetry Scripts](/api/poetry-scripts) page.
+Interested in what they do? Check out the [Poetry Scripts](../../api/poetry-scripts.md) page.
 
 ### Environment Variables (.env file)
 
@@ -186,7 +186,7 @@ The 😎 part about this file is that the highlighted lines are randomly generat
 
 !!! tip
 
-    Desperately need a new `SECRET_KEY` or `PASSWORD`? Use the [`new-key`](/api/commands/new-key) CLI commmand! 😏
+    Desperately need a new `SECRET_KEY` or `PASSWORD`? Use the [`new-key`](../../api/commands/new-key.md) CLI commmand! 😏
 
 To start with, you won't need to change this file unless you have a specific database in mind. By default we use a [SQLite [:material-arrow-right-bottom:]](https://www.sqlite.org/) database with [SQLAlchemy [:material-arrow-right-bottom:]](https://www.sqlalchemy.org/) for **development**.
 
@@ -250,7 +250,7 @@ This helps `Alembic` know which database tables it needs to manage. Admittedly, 
 
 A folder dedicated to `poetry.scripts` used in the project. 
 
-You can read more about this in the [Poetry Scripts](/api/poetry-scripts) page.
+You can read more about this in the [Poetry Scripts](../../api/poetry-scripts.md) page.
 
 ## App Directory
 
@@ -312,6 +312,6 @@ Whew! Okay, that was a lot to digest! Now that we have installed the project and
 
 4. Navigate to [http://localhost:8080/api/docs](http://localhost:8080/api/docs) and you should see your authentication routes already configured!
 
-![FastAPI setup example](/assets/imgs/api/fastapi-auth-routes.jpg)
+![FastAPI setup example](../../assets/imgs/api/fastapi-auth-routes.jpg)
 
 Awesome work! 👏 In the next chapter we'll start building some **API routes**. See you there!

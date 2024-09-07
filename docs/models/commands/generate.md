@@ -8,7 +8,7 @@
 This is the main command you will run when using `Zentra`. It creates and updates your `React` components by reading the information in the `Zentra` app.
 
 ```shell title=""
-zentra generate
+zentra-models generate
 ```
 
 You can read more about it in our [Basic Usage Guide](basic_usage.md#generating-components).

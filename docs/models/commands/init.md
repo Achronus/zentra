@@ -8,7 +8,7 @@
 This command initialises the current directory as a `Zentra` project, configuring it with the specific files required for using `Zentra`.
 
 ```shell title=""
-zentra-api init <project_name>
+zentra-models init <project_name>
 ```
 
 This requires confirmation to initialise the application and is the recommended approach to running the command.

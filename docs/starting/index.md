@@ -6,8 +6,8 @@ Zentra is a powerful tool that can help speed up your workflow and make developm
 
 Zentra SDK is divided into two packages:
 
-- [API](/api) - an SDK and CLI tool for building [FastAPI [:material-arrow-right-bottom:]](https://fastapi.tiangolo.com/) applications
-- [Models](/models) - a Python based component library, turning [Pydantic [:material-arrow-right-bottom:]](https://docs.pydantic.dev/latest/) models into React components
+- [API](../api/index.md) - an SDK and CLI tool for building [FastAPI [:material-arrow-right-bottom:]](https://fastapi.tiangolo.com/) applications
+- [Models](../models/index.md) - a Python based component library, turning [Pydantic [:material-arrow-right-bottom:]](https://docs.pydantic.dev/latest/) models into React components
 
 Each package works independently so you can maximise their benefits with ease.
 
@@ -23,7 +23,7 @@ Perhaps you only want to build a FastAPI project, or simply want to build React 
 
     Choose the packages to install.
 
-    [:octicons-arrow-right-24: Start Installing](/starting/install)
+    [:octicons-arrow-right-24: Start Installing](../starting/install.md)
 
 </div>
 
@@ -37,7 +37,7 @@ Perhaps you only want to build a FastAPI project, or simply want to build React 
 
     Learn how to use the full-suite at once.
 
-    [:octicons-arrow-right-24: Start learning](/sdk/tutorial)
+    [:octicons-arrow-right-24: Start learning](../sdk/tutorial/index.md)
 
 </div>
 
@@ -49,7 +49,7 @@ Perhaps you only want to build a FastAPI project, or simply want to build React 
 
     Learn how to build FastAPI's apps with ease.
 
-    [:octicons-arrow-right-24: Start learning](/api/tutorial)
+    [:octicons-arrow-right-24: Start learning](../api/tutorial/index.md)
 
 -   :simple-react:{ .lg .middle } __Zentra Models__
 
@@ -57,6 +57,6 @@ Perhaps you only want to build a FastAPI project, or simply want to build React 
 
     Learn how to build React components faster using Pydantic models.
 
-    [:octicons-arrow-right-24: Start learning](/models/tutorial)
+    [:octicons-arrow-right-24: Start learning](../models/tutorial/index.md)
 
 </div>

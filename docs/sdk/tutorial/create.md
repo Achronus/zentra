@@ -2,7 +2,7 @@
 
 Using the SDK is the easiest method for getting started with a new project.
 
-Simply run the [`init`](/sdk/commands/init) command and you'll have a [FastAPI [:material-arrow-right-bottom:]](https://fastapi.tiangolo.com/) backend and [Next.js [:material-arrow-right-bottom:]](https://nextjs.org/) frontend in seconds! No extra parameters needed.
+Simply run the [`init`](../commands/init.md) command and you'll have a [FastAPI [:material-arrow-right-bottom:]](https://fastapi.tiangolo.com/) backend and [Next.js [:material-arrow-right-bottom:]](https://nextjs.org/) frontend in seconds! No extra parameters needed.
 
 ```cmd title=""
 zentra init
@@ -39,16 +39,16 @@ You'll find two new shiny directories in your project folder that will look simi
 
 ??? question "Did you know?"
 
-    We built the backend using the [`zentra-api`](/api) package! 
+    We built the backend using the [`zentra-api`](../../api/index.md) package! 
     ```cmd title=""
     zentra-api init backend
     ```
 
     Pretty cool right?! 🤓
 
-The backend directory is home to our `FastAPI` files and is fully managed by the [`zentra-api`](/api) package. 
+The backend directory is home to our `FastAPI` files and is fully managed by the [`zentra-api`](../../api/index.md) package. 
 
-You can read more about it in the API [First Steps](/api/tutorial/first-steps/) tutorial.
+You can read more about it in the API [First Steps](../../api/tutorial/first-steps.md) tutorial.
 
 ## Frontend Directory
 

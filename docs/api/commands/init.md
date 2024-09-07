@@ -19,4 +19,4 @@ The [`project_name`](#) must be a string that is at least 2 characters long.
 |------------------|------------------------------|
 |`--hide-output`   | Suppresses the console output, hiding it from view. |
 
-You can read more about this command in our [First Steps Tutorial](/api/tutorial/first-steps).
+You can read more about this command in our [First Steps Tutorial](../../api/tutorial/first-steps.md).

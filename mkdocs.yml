@@ -64,12 +64,15 @@ nav:
       - new-key: api/commands/new-key.md
       # - build: api/commands/build.md
     - Poetry Scripts: api/poetry-scripts.md
-    
   - Models:
     - Models: models/index.md
   - Help:
       - Help: help/index.md
-      - Encountering Errors: help/errors.md
+      - Errors: 
+        - Errors: help/errors/index.md
+        - Common Errors: help/errors/common.md
+        - Setup Errors: help/errors/setup.md
+        - Build/Generate Errors: help/errors/build.md
       - Reporting Issues: help/report.md
   - Changelog: changelog.md
 

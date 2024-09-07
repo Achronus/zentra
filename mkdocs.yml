@@ -38,6 +38,7 @@ nav:
   - Getting Started:
       - Getting Started: starting/index.md
       - Installation: starting/install.md
+      - Homage: starting/stack.md
       - License: starting/license.md
   - SDK:
     - Zentra SDK: sdk/index.md
@@ -96,6 +97,9 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
+      options:
+        custom_icons:
+          - docs/assets/icons
   - pymdownx.highlight:
       pygments_lang_class: true
       auto_title: true

@@ -41,39 +41,40 @@ nav:
       - Homage: starting/stack.md
       - License: starting/license.md
   - SDK:
-    - Zentra SDK: sdk/index.md
-    - Tutorial - User Guide: 
-      - Tutorial - User Guide: sdk/tutorial/index.md
-      - Creating a Project: sdk/tutorial/create.md
-    - CLI Commands:
-      - CLI Commands: sdk/commands/index.md
-      - init: sdk/commands/init.md
+      - Zentra SDK: sdk/index.md
+      - Tutorial - User Guide:
+          - Tutorial - User Guide: sdk/tutorial/index.md
+          - Creating a Project: sdk/tutorial/create.md
+          - Frontend Files: sdk/tutorial/frontend-files.md
+      - CLI Commands:
+          - CLI Commands: sdk/commands/index.md
+          - init: sdk/commands/init.md
   - API:
-    - Zentra API: api/index.md
-    - Tutorial - User Guide: 
-      - Tutorial - User Guide: api/tutorial/index.md
-      - First Steps: api/tutorial/first-steps.md
-      - Creating Routes: api/tutorial/create-routes.md
-      - Creating Tables: api/tutorial/create-tables.md
-      - Route Responses: api/tutorial/responses.md
-    - API Package - Extras:
-      - API Package - Extras: api/extras/index.md
-    - CLI Commands:
-      - CLI Commands: api/commands/index.md
-      - init: api/commands/init.md
-      - add-route: api/commands/add-route.md
-      - new-key: api/commands/new-key.md
-      # - build: api/commands/build.md
-    - Poetry Scripts: api/poetry-scripts.md
+      - Zentra API: api/index.md
+      - Tutorial - User Guide:
+          - Tutorial - User Guide: api/tutorial/index.md
+          - First Steps: api/tutorial/first-steps.md
+          - Creating Routes: api/tutorial/create-routes.md
+          # - Creating Tables: api/tutorial/create-tables.md
+          - Route Responses: api/tutorial/responses.md
+      - API Package - Extras:
+          - API Package - Extras: api/extras/index.md
+      - CLI Commands:
+          - CLI Commands: api/commands/index.md
+          - init: api/commands/init.md
+          # - add-route: api/commands/add-route.md
+          - new-key: api/commands/new-key.md
+        # - build: api/commands/build.md
+      - Poetry Scripts: api/poetry-scripts.md
   - Models:
-    - Models: models/index.md
+      - Models: models/index.md
   - Help:
       - Help: help/index.md
-      - Errors: 
-        - Errors: help/errors/index.md
-        - Common Errors: help/errors/common.md
-        - Setup Errors: help/errors/setup.md
-        - Build/Generate Errors: help/errors/build.md
+      - Errors:
+          - Errors: help/errors/index.md
+          - Common Errors: help/errors/common.md
+          - Setup Errors: help/errors/setup.md
+          - Build/Generate Errors: help/errors/build.md
       - Reporting Issues: help/report.md
   - Changelog: changelog.md
 
@@ -84,7 +85,7 @@ extra:
     - icon: fontawesome/brands/github
       link: https://github.com/Achronus/zentra
     - icon: fontawesome/brands/python
-      link: https://pypi.org/project/zentra_models/
+      link: https://pypi.org/project/zentra
 
 markdown_extensions:
   - attr_list

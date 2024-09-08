@@ -56,7 +56,7 @@ nav:
           - First Steps: api/tutorial/first-steps.md
           - Creating Routes: api/tutorial/create-routes.md
           - Creating Tables: api/tutorial/create-tables.md
-          - Route Responses: api/tutorial/responses.md
+          - Authentication: api/tutorial/authentication.md
           - Project Settings: api/tutorial/settings.md
       - API Reference:
           - API Reference: api/lib/index.md

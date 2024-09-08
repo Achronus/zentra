@@ -278,7 +278,12 @@ Here's what it looks like:
 ...
 ```
 
-For now, we'll leave this directory at that 🤫. It's got a lot of important files in it and we'd rather dedicate a separate chapter to each folder so that you don't miss any details!
+This folder starts with four directories:
+
+- [`api`](#) - a place to store all your API routes. We'll explore this in more detail in the next chapter - [Creating Routes](../../api/tutorial/create-routes.md).
+- [`auth`](#) - files dedicated to user authentication. We discuss more about this in the [Authentication](../../api/tutorial/authentication.md) chapter.
+- [`core`](#) - this contains all of our configuration settings for the project. Check out the [Project Settings](../../api/tutorial/settings.md) chapter for more details.
+- [`db_models`](#) - our one-stop shop for our [SQLAlchemy [:material-arrow-right-bottom:]](https://www.sqlalchemy.org/) database models. We discuss this in more detail in the [Creating Tables](../../api/tutorial/create-tables.md) chapter.
 
 ## Starting Our Project
 

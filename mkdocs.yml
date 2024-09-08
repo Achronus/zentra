@@ -55,16 +55,23 @@ nav:
           - Tutorial - User Guide: api/tutorial/index.md
           - First Steps: api/tutorial/first-steps.md
           - Creating Routes: api/tutorial/create-routes.md
-          # - Creating Tables: api/tutorial/create-tables.md
+          - Creating Tables: api/tutorial/create-tables.md
           - Route Responses: api/tutorial/responses.md
-      - API Package - Extras:
-          - API Package - Extras: api/extras/index.md
+          - Project Settings: api/tutorial/settings.md
+      - API Reference:
+          - API Reference: api/lib/index.md
+          - zentra_api.auth: api/lib/auth.md
+          - zentra_api.core: api/lib/core.md
+          - zentra_api.crud: api/lib/crud.md
+          - zentra_api.responses: api/lib/responses.md
+          - zentra_api.schema: api/lib/schema.md
       - CLI Commands:
           - CLI Commands: api/commands/index.md
           - init: api/commands/init.md
           # - add-route: api/commands/add-route.md
           - new-key: api/commands/new-key.md
         # - build: api/commands/build.md
+      - Route Responses: api/route-responses.md
       - Poetry Scripts: api/poetry-scripts.md
   - Models:
       - Models: models/index.md

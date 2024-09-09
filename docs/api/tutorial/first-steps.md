@@ -146,7 +146,7 @@ The `.env` file is an essential piece of the project for connecting the database
 
 Here's an example of what yours might look like with a project name of `deep_dive`:
 
-```toml title=".env" hl_lines="6 9"
+```toml title=".env" hl_lines="6 9-10"
 # Database details
 DB__URL=sqlite:///./dev_db.db
 # DB__URL=postgresql://user:password@postgresserver/db
@@ -155,7 +155,8 @@ DB__FIRST_SUPERUSER=admin@example.com
 DB__FIRST_SUPERUSER_PASSWORD=p3qtC5sKhRHJjO3ydDVwfQ
 
 # Authentication configuration details
-AUTH__SECRET_KEY=JijXH8sD1d5x3T4sheWShqNDY64S3oIaMCHyJycOsPE
+AUTH__SECRET_ACCESS_KEY=c_KnbHr01TI5qjsAZoGLpeZrpdK4u5AOy7RXHFpsMeE
+AUTH__SECRET_REFRESH_KEY=M2Myg1Z2vfUNHzIBVcsKhZCcFi6n4knNLv57Gip6a3M
 
 # Project settings
 # This would be set to the production domain with an env var on deployment

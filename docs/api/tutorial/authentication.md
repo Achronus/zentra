@@ -37,7 +37,7 @@ The `auth` directory is just another set of API routes but separated for conveni
     We plan to add a `--no-auth` flag in a future version that will do all of this for you, but 9 times out of 10 you'll need authentication anyway! 😁
 
 
-The main thing you need to know here is how the routes works, rather than the underlying functionality. Feel free to explore the code yourself! It's almost identical to this [FastAPI [:material-arrow-right-bottom:]](https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/) security tutorial just with a bit of Zentra flair.
+The main thing you need to know here is how the routes work, rather than the underlying functionality. Feel free to explore the code yourself! It's an extension of the [FastAPI [:material-arrow-right-bottom:]](https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/) security tutorial with refresh tokens and a bit of Zentra flair 😉.
 
 Okay, now let's check out our routes!
 
@@ -45,14 +45,17 @@ Okay, now let's check out our routes!
 
 !!! note
 
-    All authentication routes start with [`api/auth/`](#routes)! 
+    All authentication routes start with [`api/auth/`](#routes). This simple naming convention keeps our API consistent and easy to use.
 
-Zentra API has four starting authentication routes:
+    We follow the same pattern with our token routes - [`api/auth/token`](#routes).
+
+Zentra API has five starting authentication routes:
 
 1. [`/api/auth/users/me`](#get-user) - retrieves the user's own details, if they are authenticated.
 2. [`/api/auth/register`](#register-user) - creates a user in the database given a `username` and `password`.
 3. [`/api/auth/token`](#login-for-access-token) - provides an access token for the user, if their login details are correct
-4. [`/api/auth/verify-token/{token}`](#verify-user-token) - verifies that an access token is valid (e.g., hasn't expired yet)
+4. [`/api/auth/token/verify/{token}`](#verify-user-token) - verifies that an access token is valid (e.g., hasn't expired yet)
+5. [`/api/auth/token/refresh`](#refresh-access-token) - creates a new access token from the refresh token 
 
 ### Get User
 
@@ -283,11 +286,36 @@ Here's an example of the routes responses:
 
     [`/api/auth/token`](#login-for-access-token)
 
-Next, we have the login for access token route. This generates a new access token when a user provides valid login credentials. 
+Next, we have our login route for retrieving an access and refresh token. Access and refresh tokens are JSON Web Tokens (JWTs) that act as a form of authentication to the API. They both have a slightly different purpose. Here's a brief overview:
 
-It's specific to JSON Web Tokens (JWTs) and is a common way to securely login your users. 
+- **Access token** - allows the user to use the API
+- **Refresh token** - acts as a user session for a period of time 
 
-JWTs are out of the scope of this tutorial, but we highly recommend you check out these links from [JWT.io [:material-arrow-right-bottom:]](https://jwt.io/introduction) and [Auth0 [:material-arrow-right-bottom:]](https://auth0.com/learn/json-web-tokens) for more information.
+In our case, we use the `HS256` algorithm for encryption with a `15` minute expiry for access tokens and a `7` day expiry for refresh tokens. They use the `AUTH__SECRET_ACCESS_KEY` and `AUTH__SECRET_REFRESH_KEY`, respectively, found in your `.env` file. 
+
+??? info "Updating Auth Settings"
+
+    We want to provide a solution that works out of the box without overwhelming you with configuration settings, so we deliberately fixed the algorithm and expiry times - it's less things to worry about!
+
+    However, if you need more flexibility you can tweak these settings using the `.env` file. Here's an example:
+
+    ```toml title=".env" hl_lines="5-7"
+    ...
+    # Authentication configuration details
+    AUTH__SECRET_ACCESS_KEY=c_KnbHr01TI5qjsAZoGLpeZrpdK4u5AOy7RXHFpsMeE # (1)!
+    AUTH__SECRET_REFRESH_KEY=M2Myg1Z2vfUNHzIBVcsKhZCcFi6n4knNLv57Gip6a3M
+    AUTH__ALGORITHM="HS256" # (2)!
+    AUTH__ACCESS_TOKEN_EXPIRE_MINS=15  # (3)!
+    AUTH__REFRESH_TOKEN_EXPIRE_MINS=10080  # (4)!
+    ...
+    ```
+
+    1. The JWT encryption keys. Keep them secret, keep them safe! 🤫 
+    2. The encryption algorithm. Currently, this is limited to three options: `['HS256', 'HS384', 'HS512']`
+    3. The access token expiration time in minutes
+    4. The refresh token expiration time in minutes. `10080 = 7 days`. This always lasts longer than your access token
+
+JWTs are out of the scope of this tutorial, but if you want to learn more, we highly recommend you check out these links from [JWT.io [:material-arrow-right-bottom:]](https://jwt.io/introduction) and [Auth0 [:material-arrow-right-bottom:]](https://auth0.com/learn/json-web-tokens).
 
 Here's an example of the routes responses:
 
@@ -295,7 +323,8 @@ Here's an example of the routes responses:
 
     ```json title=""
     {
-        "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNzI2NDMwMTc5fQ.hvEZ8j-IclgSufY58I_5hB0L4mEtkhkjHORygohMs50",
+        "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNzI1ODg2MjkwfQ.9nkNDi-_6uel6nUIiAHELrB8j1CqK1h-N7hx2QwRYxw",
+        "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNzI2NDkwMTkwfQ.pw5wtaLPq14h0nzbbhSmq-C1qfwYsLsxvNTozzfG4HM",
         "token_type": "bearer"
     }
     ```
@@ -318,9 +347,9 @@ Here's an example of the routes responses:
 
 ??? api "Route"
 
-    [`/api/auth/verify-token/{token}`](#verify-user-token)
+    [`/api/auth/token/verify/{token}`](#verify-user-token)
 
-The final route compliments the previous one and simplify verifies that an access token is valid using your `AUTH__SECRET_KEY` in your `.env` file. 
+This route compliments the previous one and simply verifies that an access token is valid using your `AUTH__SECRET_ACCESS_KEY` in your `.env` file. 
 
 Here's an example of the routes responses:
 
@@ -346,6 +375,42 @@ Here's an example of the routes responses:
         "code": 401,
         "response": "401_UNAUTHORIZED",
         "message": "Not authenticated.",
+        "headers": {
+            "WWW-Authenticate": "Bearer"
+        }
+    }
+    ```
+
+### Refresh Access Token
+
+??? api "Route"
+
+    [`/api/auth/token/refresh`](#refresh-access-token)
+
+The last route is another simple one! Given a refresh token it creates a new access token for the user.
+
+When working with frontend applications, you'll often find yourself using this route and the token verification one together. After all, when an access token expires, you'll need to refresh it!
+
+Here's an example of the routes responses:
+
+=== "201 Created"
+
+    ```json title=""
+    {
+        "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNzI1ODg2MzQzfQ.rQBlpSx6UQgz8U52mSeVqb6-B7Xe8vKUTVO4ghJyaQU",
+        "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNzI2NDkwMTkwfQ.pw5wtaLPq14h0nzbbhSmq-C1qfwYsLsxvNTozzfG4HM",
+        "token_type": "bearer"
+    }
+    ```
+
+=== "401 Unauthorized"
+
+    ```json title=""
+    {
+        "status": "error",
+        "code": 401,
+        "response": "401_UNAUTHORIZED",
+        "message": "Invalid refresh token.",
         "headers": {
             "WWW-Authenticate": "Bearer"
         }

@@ -11,5 +11,5 @@ You'll encounter this error when failing to find the `Zentra` app in `zentra/mod
 To fix it, perform one of the following:
 
 1. If the file exists, initialise `zentra = Zentra()`
-2. Reset the config file with [`zentra init --reset-config`](../starting/commands.md#zentra-init)
+2. Reset the config file with [`zentra init --reset-config`](#)
 

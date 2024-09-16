@@ -11,4 +11,4 @@ This is the main command you will run when using `Zentra`. It creates and update
 zentra-models generate
 ```
 
-You can read more about it in our [Basic Usage Guide](basic_usage.md#generating-components).
+You can read more about it in our [Basic Usage Guide](#).

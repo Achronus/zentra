@@ -20,11 +20,13 @@ If you've encountered something extremely mind boggling (trust me, you'll know :
 
 ## Types of Errors
 
-Error messages are split into three main categories:
+!!! construction "Coming Soon"
 
-- [`common`](../errors/common.md) - errors that can occur across all commands and packages. These range between `[1, 10]`
-- [`setup`](../errors/setup.md) - errors specific to the [`init`](#) command. These range between `[11, 20]`.
-- [`build`](../errors/build.md) - errors specific to the [`generate`](#) and [`build`](#) commands. These range between `[21, 30]`.
+<!-- Error messages are split into three main categories: -->
+
+<!-- - [`common`](../errors/common.md) - errors that can occur across all commands and packages. These range between `[1, 10]` -->
+<!-- - [`setup`](../errors/setup.md) - errors specific to the [`init`](#) command. These range between `[11, 20]`. -->
+<!-- - [`build`](../errors/build.md) - errors specific to the [`generate`](#) and [`build`](#) commands. These range between `[21, 30]`. -->
 
 ## 1000: Unknown Error
 

@@ -60,8 +60,15 @@ nav:
           - Project Settings: api/tutorial/settings.md
       - API Reference:
           - API Reference: api/reference/index.md
-          - zentra_api.auth: api/reference/auth.md
-          - zentra_api.core: api/reference/core.md
+          - zentra_api.auth: 
+            - zentra_api.auth: api/reference/auth/index.md
+            - context: api/reference/auth/context.md
+            - enums: api/reference/auth/enums.md
+            - security: api/reference/auth/security.md
+          - zentra_api.core:
+            - zentra_api.core: api/reference/core/index.md
+            - config: api/reference/core/config.md
+            - utils: api/reference/core/utils.md
           - zentra_api.crud: api/reference/crud.md
           - zentra_api.responses: 
             - zentra_api.responses: api/reference/responses/index.md

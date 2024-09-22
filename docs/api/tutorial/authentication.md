@@ -1,12 +1,12 @@
 # User Authentication
 
-Now let's discuss something integral to almost every project: **user authentication**. 
+Now let's discuss something integral to almost every project: **user authentication**.
 
 I can't tell you how many hours we've spent thinking about this topic, mulling over what frameworks to use, how to integrate it with our databases, etc. Talk about boring! 😴
 
 Thankfully, [FastAPI [:material-arrow-right-bottom:]](https://fastapi.tiangolo.com/tutorial/security/) makes it extremely easy, and with Zentra it's straight out of the box! 😍
 
-We abstract a lot of the details away using the [`zentra_api`](../lib/index.md) package to keep things simple for you, but still give you the freedom to configure authentication how you want!
+We abstract a lot of the details away using the [`zentra_api`](../reference/index.md) package to keep things simple for you, but still give you the freedom to configure authentication how you want!
 
 Our authentication files live in the `app/auth` directory, shown below. 
 

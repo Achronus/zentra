@@ -23,4 +23,4 @@ This requires confirmation to initialise the application and is the recommended 
 |`--force`         | removes confirmation requirement. Also, works with `--reset-config`. |
 | `--reset-config` | hard resets the `zentra/models/__init__.py` file. |
 
-You can read more about the [`zentra init`](#zentra-init) command in our [Basic Usage Guide](basic_usage.md#creating-a-project).
+You can read more about the [`zentra init`](#) command in our [Basic Usage Guide](#).

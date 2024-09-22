@@ -59,12 +59,25 @@ nav:
           - Authentication: api/tutorial/authentication.md
           - Project Settings: api/tutorial/settings.md
       - API Reference:
-          - API Reference: api/lib/index.md
-          - zentra_api.auth: api/lib/auth.md
-          - zentra_api.core: api/lib/core.md
-          - zentra_api.crud: api/lib/crud.md
-          - zentra_api.responses: api/lib/responses.md
-          - zentra_api.schema: api/lib/schema.md
+          - API Reference: api/reference/index.md
+          - zentra_api.auth: 
+            - zentra_api.auth: api/reference/auth/index.md
+            - context: api/reference/auth/context.md
+            - enums: api/reference/auth/enums.md
+            - security: api/reference/auth/security.md
+          - zentra_api.core:
+            - zentra_api.core: api/reference/core/index.md
+            - config: api/reference/core/config.md
+            - utils: api/reference/core/utils.md
+          - zentra_api.crud: api/reference/crud.md
+          - zentra_api.responses: 
+            - zentra_api.responses: api/reference/responses/index.md
+            - base: api/reference/responses/base.md  
+            - exceptions: api/reference/responses/exceptions.md
+            - messages: api/reference/responses/messages.md
+            - models: api/reference/responses/models.md
+            - utils: api/reference/responses/utils.md
+          - zentra_api.schema: api/reference/schema.md
       - CLI Commands:
           - CLI Commands: api/commands/index.md
           - init: api/commands/init.md
@@ -79,9 +92,9 @@ nav:
       - Help: help/index.md
       - Errors:
           - Errors: help/errors/index.md
-          - Common Errors: help/errors/common.md
-          - Setup Errors: help/errors/setup.md
-          - Build/Generate Errors: help/errors/build.md
+          # - Common Errors: help/errors/common.md
+          # - Setup Errors: help/errors/setup.md
+          # - Build/Generate Errors: help/errors/build.md
       - Reporting Issues: help/report.md
   - Changelog: changelog.md
 
@@ -119,12 +132,20 @@ markdown_extensions:
       title: Page Contents
 
 plugins:
+  - search
   - mike:
       alias_type: symlink
       canonical_version: latest
-  - search
   - mkdocstrings:
       handlers:
         python:
-          paths: [.]
+          preload_modules:
+            - zentra_api
           options:
+            show_source: true
+            show_root_toc_entry: false
+            show_object_full_path: true
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            show_object_full_path: false
+            docstring_style: google

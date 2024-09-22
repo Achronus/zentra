@@ -78,6 +78,6 @@ We'll read more about this in the next chapter, but for now, we should probably 
 
 4. Navigate to [http://localhost:3000](http://localhost:3000) and you should see the following:
 
-![Frontend example](/assets/imgs/frontend-startup.jpg)
+![Frontend example](../../assets/imgs/frontend-startup.jpg)
 
 If so, you are good to go! 🚀

@@ -1,4 +1,4 @@
-# Schema
+# zentra_api.schema
 
 Custom [Pydantic [:material-arrow-right-bottom:]](https://docs.pydantic.dev/latest/) models used throughout the Zentra API package.
 
